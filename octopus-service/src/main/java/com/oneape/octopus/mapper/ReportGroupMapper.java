@@ -1,11 +1,11 @@
 package com.oneape.octopus.mapper;
 
 import com.oneape.octopus.model.DO.ReportGroupDO;
-import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 报表组Mapper
  */
-@Repository
+@Mapper
 public interface ReportGroupMapper extends BaseMapper<ReportGroupDO> {
 }

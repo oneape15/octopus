@@ -1,12 +1,12 @@
 package com.oneape.octopus.mapper;
 
 import com.oneape.octopus.model.DO.DatasourceDO;
-import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 数据源Mapper
  */
-@Repository
+@Mapper
 public interface DatasourceMapper extends BaseMapper<DatasourceDO> {
 
 }

@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class UserDO extends BaseDO {
+
     /**
      * 登录名（唯一）
      */
@@ -27,9 +28,17 @@ public class UserDO extends BaseDO {
      */
     private String signature;
     /**
+     * 手机号
+     */
+    private String phone;
+    /**
      * 邮箱地址
      */
     private String email;
+    /**
+     * 联系地址
+     */
+    private String address;
     /**
      * 账号状态
      */
