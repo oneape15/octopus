@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    include: jdbc
+  cors:
+    allow-origin:
+    allow-methods:
+      - POST
+      - GET
+      - DELETE
+    allow-headers:
+      - Token
+    allow-credentials: true
