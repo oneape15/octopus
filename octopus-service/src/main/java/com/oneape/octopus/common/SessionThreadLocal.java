@@ -1,19 +1,19 @@
 package com.oneape.octopus.common;
 
-import com.oneape.octopus.model.DO.UserDO;
+import com.oneape.octopus.model.VO.UserVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public final class SessionThreadLocal {
 
-    private static ThreadLocal<UserDO> local = new ThreadLocal<>();
+    private static ThreadLocal<UserVO> local = new ThreadLocal<>();
 
     /**
      * 设置用户Session
      *
      * @param session UserDO
      */
-    public static void setSession(UserDO session) {
+    public static void setSession(UserVO session) {
         local.set(session);
     }
 
@@ -22,7 +22,7 @@ public final class SessionThreadLocal {
      *
      * @return UserDO
      */
-    public static UserDO getSession() {
+    public static UserVO getSession() {
         return local.get();
     }
 
@@ -32,8 +32,13 @@ public final class SessionThreadLocal {
      * @return Long
      */
     public static Long getUserId() {
-        UserDO user = local.get();
-        return user == null ? null : user.getId();
+        UserVO user = local.get();
+        return user == null ? null : user.getUserId();
+    }
+
+    public static Long getUserIdOfDefault(Long defaultVal) {
+        Long useId = getUserId();
+        return useId == null ? defaultVal : useId;
     }
 
     /**

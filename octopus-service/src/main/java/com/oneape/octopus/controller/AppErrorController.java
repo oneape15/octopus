@@ -48,11 +48,11 @@ public class AppErrorController implements ErrorController {
     @RequestMapping(value = ERROR_PATH)
     @ResponseBody
     @ExceptionHandler(value = {BizException.class})
-    public ApiResult errorHandler(HttpServletRequest request, final Exception ex, final WebRequest req) {
+    public ApiResult<String> errorHandler(HttpServletRequest request, final Exception ex, final WebRequest req) {
         Map<String, Object> attr = errorAttributes.getErrorAttributes(req, false);
         int status = getStatus(request);
 
-        return ApiResult.ofError(status, String.valueOf(attr.getOrDefault("message", "error")));
+        return ApiResult.ofError(status, String.valueOf(attr.getOrDefault("error_message", "error")));
     }
 
     private int getStatus(HttpServletRequest request) {

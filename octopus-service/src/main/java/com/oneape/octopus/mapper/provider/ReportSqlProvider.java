@@ -1,10 +1,9 @@
 package com.oneape.octopus.mapper.provider;
 
-import com.oneape.octopus.model.DO.UserDO;
+import com.oneape.octopus.model.DO.ReportDO;
 
-public class UserSqlProvider extends BaseSqlProvider<UserDO> {
-
-    public static final String TABLE_NAME = "sys_user";
+public class ReportSqlProvider extends BaseSqlProvider<ReportDO> {
+    public static final String TABLE_NAME = "report";
 
     /**
      * 获取表名

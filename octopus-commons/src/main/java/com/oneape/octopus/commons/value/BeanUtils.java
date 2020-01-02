@@ -30,6 +30,7 @@ public class BeanUtils {
                 prop.setType(field.getType().getName());
                 Object value = null;
                 try {
+                    field.setAccessible(true);
                     value = field.get(o);
                 } catch (Exception e) {
                     // nothing to do
@@ -41,6 +42,11 @@ public class BeanUtils {
                     prop.setDbColumn(true);
                     prop.setNullAble(column.nullable());
                     prop.setDbColumnName(StringUtils.stripToNull(column.name()));
+                }
+
+                // 如果没有设置db_column则使用name值
+                if (StringUtils.isBlank(prop.getDbColumnName())) {
+                    prop.setDbColumnName(prop.getName());
                 }
                 props.add(prop);
             });

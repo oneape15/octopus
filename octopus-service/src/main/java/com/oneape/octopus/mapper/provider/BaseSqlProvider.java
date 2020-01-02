@@ -1,5 +1,6 @@
-package com.oneape.octopus.mapper;
+package com.oneape.octopus.mapper.provider;
 
+import com.oneape.octopus.common.SessionThreadLocal;
 import com.oneape.octopus.commons.dto.BeanProperties;
 import com.oneape.octopus.commons.value.BeanUtils;
 import com.oneape.octopus.model.DO.BaseDO;
@@ -58,18 +59,32 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
 
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
-        String[] columns = new String[fields.size()];
-        String[] values = new String[fields.size()];
+        List<String> columns = new ArrayList<>();
+        List<String> values = new ArrayList<>();
 
-        int index = 0;
         for (BeanProperties field : fields) {
-            columns[index] = field.getName();
-            if (StringUtils.equals(field.getName(), FIELD_CREATED)) {
-                values[index] = "unix_timestamp(now())";
-            } else {
-                values[index] = "#{" + field.getDbColumnName() + "}";
+            // 特殊处理的字段
+            if (StringUtils.equals(field.getName(), FIELD_PRIMARY_ID)) {
+                columns.add(FIELD_PRIMARY_ID);
+                values.add("#{" + FIELD_PRIMARY_ID + "}");
+                continue;
             }
-            index++;
+            if (StringUtils.equals(field.getName(), FIELD_CREATED)) {
+                columns.add(FIELD_CREATED);
+                values.add("unix_timestamp(now())");
+                continue;
+            }
+            if (StringUtils.equals(field.getName(), FIELD_CREATOR)) {
+                columns.add(FIELD_CREATOR);
+                values.add(SessionThreadLocal.getUserIdOfDefault(-1L) + "");
+                continue;
+            }
+
+            if (field.getValue() == null) {
+                continue;
+            }
+            columns.add(field.getDbColumnName());
+            values.add("#{" + field.getName() + "}");
         }
 
         Assert.isTrue(fields.size() != 0, "插入数据操作字段为空");
@@ -77,8 +92,8 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
         return new SQL() {
             {
                 INSERT_INTO(getTableName());
-                INTO_COLUMNS(columns);
-                INTO_VALUES(values);
+                INTO_COLUMNS(columns.toArray(new String[columns.size()]));
+                INTO_VALUES(values.toArray(new String[values.size()]));
             }
         }.toString();
     }
@@ -98,13 +113,20 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
         List<String> sets = new ArrayList<>();
 
         fields.forEach(field -> {
-            if (field.getValue() != null &&
-                    !StringUtils.equalsAny(field.getName(), FIELD_PRIMARY_ID, FIELD_CREATED, FIELD_CREATOR)) {
-                String columnName = field.getDbColumnName();
-                if (StringUtils.isBlank(columnName)) {
-                    columnName = field.getName();
+
+            if (StringUtils.equals(field.getName(), FIELD_MODIFIED)) {
+                sets.add(FIELD_MODIFIED + " = unix_timestamp(now())");
+            } else if (StringUtils.equals(field.getName(), FIELD_MODIFIER)) {
+                sets.add(FIELD_MODIFIER + " = " + SessionThreadLocal.getUserIdOfDefault(-1L) + "");
+            } else {
+                if (field.getValue() != null &&
+                        !StringUtils.equalsAny(field.getName(), FIELD_PRIMARY_ID, FIELD_CREATED, FIELD_CREATOR)) {
+                    String columnName = field.getDbColumnName();
+                    if (StringUtils.isBlank(columnName)) {
+                        columnName = field.getName();
+                    }
+                    sets.add(columnName + " = #{" + field.getName() + "}");
                 }
-                sets.add(columnName + " = #{" + field.getName() + "}");
             }
         });
 

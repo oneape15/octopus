@@ -1,6 +1,5 @@
 package com.oneape.octopus.mapper.provider;
 
-import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.model.DO.UserSessionDO;
 
 public class UserSessionSqlProvider extends BaseSqlProvider<UserSessionDO> {

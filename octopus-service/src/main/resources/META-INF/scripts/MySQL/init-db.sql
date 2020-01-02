@@ -1,8 +1,23 @@
+-- 全局唯一生成器
+CREATE TABLE `uid_worker_node`
+(
+    id          BIGINT(20)  NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+    host_name   VARCHAR(64) NOT NULL COMMENT '主机名',
+    port        VARCHAR(64) NOT NULL COMMENT '端口',
+    type        INT         NOT NULL COMMENT '节点类型 ACTUAL 或 CONTAINER',
+    launch_time BIGINT(20)  NOT NULL COMMENT '触发时间',
+    created     BIGINT(20)  NOT NULL COMMENT '创建时间',
+    modified    BIGINT(20)  NOT NULL COMMENT '修改时间',
+    PRIMARY KEY (id)
+)
+    COMMENT 'UID生成器'
+    ENGINE InnoDB;
+
 -- sys_user 系统用户信息表
 CREATE TABLE `sys_user`
 (
     `id`         BIGINT(20)   NOT NULL,
-    `nickname`   VARCHAR(128) NOT NULL COMMENT '用户昵称',
+    `nickname`   VARCHAR(128) NULL COMMENT '用户昵称',
     `username`   VARCHAR(256) NOT NULL COMMENT '登录用户名, 这里为登录邮箱地址',
     `password`   VARCHAR(128) NOT NULL COMMENT '登录密码',
     `avatar`     VARCHAR(512) NULL COMMENT '用户头像',

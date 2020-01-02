@@ -1,6 +1,6 @@
 package com.oneape.octopus.service;
 
-import com.oneape.octopus.model.DO.UserDO;
+import com.oneape.octopus.model.VO.UserVO;
 
 public interface AccountService {
 
@@ -8,27 +8,46 @@ public interface AccountService {
     static final long ONE_MINUTE = 60 * 1000;
     // token 失效时间 一个小时(60分钟)
     static final int TOKEN_TIMEOUT = 60;
+    // token原生信息分隔字符串
+    static final String TOKEN_INFO_SPLIT = "<@>";
 
     /**
      * 根据token获取用户信息
      *
      * @param token String
-     * @return UserDO
+     * @return UserVO
      */
-    UserDO getUserInfoByToken(String token);
+    UserVO getUserInfoByToken(String token);
 
     /**
      * 获取当前用户
      *
-     * @return UserDO
+     * @return UserVO
      */
-    UserDO getCurrentUser();
+    UserVO getCurrentUser();
 
     /**
      * 根据用户名查询用户信息
      *
      * @param username String
-     * @return UserDO
+     * @return UserVO
      */
-    UserDO getByUsername(String username);
+    UserVO getByUsername(String username);
+
+    /**
+     * 用户登录操作
+     *
+     * @param username String
+     * @param password String
+     * @return UserVO
+     */
+    UserVO login(String username, String password);
+
+    /**
+     * 创建用户
+     *
+     * @param user UserVO
+     * @return int
+     */
+    int addUser(UserVO user);
 }

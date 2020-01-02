@@ -41,7 +41,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ApiResult<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.error("参数解析失败:{}", e.getMessage(), e);
-        return new ApiResult<>(StateCode.BadRequest, "参数解析失败");
+        return new ApiResult<>(StateCode.BadRequest);
     }
 
     /**

@@ -3,10 +3,10 @@ package com.oneape.octopus.interceptor;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.oneape.octopus.common.BizException;
-import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.common.SessionThreadLocal;
+import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.config.ApplicationContextProvider;
-import com.oneape.octopus.model.DO.UserDO;
+import com.oneape.octopus.model.VO.UserVO;
 import com.oneape.octopus.service.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +29,7 @@ public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
 
     private AccountService accountService;
 
-    private Cache<String, UserDO> cache = CacheBuilder.newBuilder()
+    private Cache<String, UserVO> cache = CacheBuilder.newBuilder()
             // 设置缓存的最大容量
             .maximumSize(100)
             // 设置缓存在写入一分钟后失效
@@ -51,8 +51,8 @@ public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
         filterUris.add("/checkHealth");
         filterUris.add("/index.html");
         filterUris.add("/index.htm");
-        filterUris.add("/user/login");
-        filterUris.add("/user/reg");
+        filterUris.add("/account/login");
+        filterUris.add("/account/reg");
 
         // 过滤以xx开始的url
         filterUriOfStart.add("/activate/");
@@ -83,7 +83,7 @@ public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
      * @param token String 唯一token
      * @return boolean true-成功; false-失败
      */
-    private UserDO getUserInfoByToken(String token) {
+    private UserVO getUserInfoByToken(String token) {
         if (accountService == null) {
             synchronized (this) {
                 if (accountService == null) {
@@ -135,7 +135,7 @@ public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
         }
 
         //检测token的合法性
-        UserDO user = cache.getIfPresent(KEY_TOKEN + token);
+        UserVO user = cache.getIfPresent(KEY_TOKEN + token);
         if (user == null) {
             user = getUserInfoByToken(token);
         }

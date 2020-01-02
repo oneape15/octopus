@@ -4,6 +4,8 @@ public enum StateCode {
     OK(200, "请求已成功"),
     BadRequest(400, "语义有误，当前请求无法被服务器理解"),
     Unauthorized(401, "当前请求需要用户验证"),
+    LoginError(401001, "登录失败"),
+    RegError(401002, "注册用户失败"),
     PaymentRequired(403, "服务器已经理解请求，但是拒绝执行它"),
     NotFound(404, "请求失败，请求的资源未被服务器发现"),
     MethodNotAllowed(405, "请求方法不能被用于请求相应的资源"),

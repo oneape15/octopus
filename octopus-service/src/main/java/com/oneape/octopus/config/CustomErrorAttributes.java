@@ -14,8 +14,8 @@ public class CustomErrorAttributes extends DefaultErrorAttributes {
         Map<String, Object> map = super.getErrorAttributes(webRequest, includeStackTrace);
 
         Map<String, Object> newMap = new HashMap<>();
-        newMap.put("error_code", "---code");
-        newMap.put("error_message", "message");
+        newMap.put("error_code", map.getOrDefault("status", 0));
+        newMap.put("error_message", map.getOrDefault("error", ""));
         return newMap;
     }
 }

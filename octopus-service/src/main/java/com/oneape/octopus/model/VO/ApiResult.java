@@ -39,6 +39,11 @@ public class ApiResult<T> implements Serializable {
         this.data = data;
     }
 
+    public ApiResult(Integer code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
     public ApiResult(T data, Integer code, String message) {
         this.code = code;
         this.message = message;
@@ -58,6 +63,10 @@ public class ApiResult<T> implements Serializable {
 
     public static <T> ApiResult<T> ofData(T data) {
         return new ApiResult<>(data);
+    }
+
+    public static <T> ApiResult<T> ofMessage(String message) {
+        return new ApiResult<>(StateCode.OK.getCode(), message);
     }
 
     public static <T> ApiResult<T> ofError(StateCode stateCode) {
