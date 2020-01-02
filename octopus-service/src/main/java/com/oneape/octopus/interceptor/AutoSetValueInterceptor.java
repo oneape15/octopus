@@ -4,6 +4,7 @@ import com.oneape.octopus.annotation.AutoUniqueId;
 import com.oneape.octopus.annotation.Creator;
 import com.oneape.octopus.annotation.Modifier;
 import com.oneape.octopus.annotation.SortId;
+import com.oneape.octopus.common.GlobalConstant;
 import com.oneape.octopus.config.ApplicationContextProvider;
 import com.oneape.octopus.model.VO.UserVO;
 import com.oneape.octopus.service.AccountService;
@@ -90,7 +91,7 @@ public class AutoSetValueInterceptor implements Interceptor {
                         if (user != null) {
                             field.set(param, user.getUserId());
                         } else {
-                            field.set(param, -1L);
+                            field.set(param, GlobalConstant.SYS_USER);
                         }
                     }
                 }
@@ -104,7 +105,7 @@ public class AutoSetValueInterceptor implements Interceptor {
                     if (user != null) {
                         field.set(param, user.getUserId());
                     } else {
-                        field.set(param, -1L);
+                        field.set(param, GlobalConstant.SYS_USER);
                     }
                 }
             }

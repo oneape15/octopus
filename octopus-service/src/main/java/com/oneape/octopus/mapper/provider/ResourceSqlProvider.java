@@ -1,9 +1,9 @@
 package com.oneape.octopus.mapper.provider;
 
-import com.oneape.octopus.model.DO.DatasourceDO;
+import com.oneape.octopus.model.DO.ResourceDO;
 
-public class DatasourceSqlProvider extends BaseSqlProvider<DatasourceDO> {
-    public static final String TABLE_NAME = "r_datasource";
+public class ResourceSqlProvider extends BaseSqlProvider<ResourceDO> {
+    public static final String TABLE_NAME = "sys_resource";
 
     /**
      * 获取表名

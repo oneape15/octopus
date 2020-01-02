@@ -3,6 +3,8 @@ package com.oneape.octopus.model.DO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.persistence.Column;
+
 /**
  * 数据源DO
  */
@@ -20,6 +22,7 @@ public class DatasourceDO extends BaseDO {
     /**
      * 驱动class名称
      */
+    @Column(name = "driver_class")
     private String driverClass;
     /**
      * 数据源用户名
@@ -29,4 +32,8 @@ public class DatasourceDO extends BaseDO {
      * 数据源登录密码
      */
     private String password;
+    /**
+     * 描述
+     */
+    private String comment;
 }

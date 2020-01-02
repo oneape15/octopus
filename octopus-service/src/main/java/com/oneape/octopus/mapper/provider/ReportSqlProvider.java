@@ -1,9 +1,9 @@
 package com.oneape.octopus.mapper.provider;
 
-import com.oneape.octopus.model.DO.ReportDO;
+import com.oneape.octopus.model.DO.ReportSqlDO;
 
-public class ReportSqlProvider extends BaseSqlProvider<ReportDO> {
-    public static final String TABLE_NAME = "report";
+public class ReportSqlProvider extends BaseSqlProvider<ReportSqlDO> {
+    public static final String TABLE_NAME = "r_report_sql";
 
     /**
      * 获取表名

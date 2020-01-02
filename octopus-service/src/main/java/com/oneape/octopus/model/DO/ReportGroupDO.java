@@ -1,17 +1,30 @@
 package com.oneape.octopus.model.DO;
 
+import com.oneape.octopus.annotation.Creator;
+import com.oneape.octopus.annotation.SortId;
+import com.oneape.octopus.common.GlobalConstant;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Column;
 
 /**
  * 报表组
  */
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ReportGroupDO extends BaseDO {
     /**
+     * 父节点Id
+     */
+    @Column(name = "parent_id", nullable = false)
+    private Long parentId = GlobalConstant.DEFAULT_VALUE;
+    /**
      * 报表组名称
      */
+    @Column(nullable = false)
     private String name;
     /**
      * 报表组图标
@@ -20,13 +33,29 @@ public class ReportGroupDO extends BaseDO {
     /**
      * 状态 0 - 正常； 1 - 上线中
      */
-    private String status;
+    private Integer status;
+    /**
+     * 所在层级
+     */
+    private Integer level;
     /**
      * 拥有者
      */
+    @Creator
     private Long owner;
+    /**
+     * 排序Id
+     */
+    @SortId
+    @Column(name = "sort_id")
+    private Long sortId = GlobalConstant.DEFAULT_VALUE;
     /**
      * 描述信息
      */
     private String comment;
+
+    public ReportGroupDO(Long parentId, String name) {
+        this.parentId = parentId;
+        this.name = name;
+    }
 }
