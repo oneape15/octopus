@@ -22,7 +22,7 @@ public class UserForm implements Serializable {
 
     public UserVO toVO() {
         UserVO vo = new UserVO();
-        vo.setUserId(userId);
+        vo.setId(userId);
         vo.setUsername(username);
         vo.setPassword(password);
 

@@ -1,8 +1,9 @@
 package com.oneape.octopus.service;
 
+import com.oneape.octopus.model.DO.UserDO;
 import com.oneape.octopus.model.VO.UserVO;
 
-public interface AccountService {
+public interface AccountService extends BaseService<UserDO> {
 
     // 一分钟的毫秒数
     static final long ONE_MINUTE = 60 * 1000;

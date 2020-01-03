@@ -1,12 +1,10 @@
 package com.oneape.octopus.model.DO;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class UserDO extends BaseDO {
@@ -47,4 +45,12 @@ public class UserDO extends BaseDO {
      * 账号状态
      */
     private Integer status;
+
+    public UserDO(String username) {
+        this.username = username;
+    }
+
+    public UserDO(Long id) {
+        setId(id);
+    }
 }

@@ -1,12 +1,10 @@
 package com.oneape.octopus.model.DO;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class RoleDO extends BaseDO {

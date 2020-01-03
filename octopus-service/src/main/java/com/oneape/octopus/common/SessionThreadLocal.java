@@ -33,7 +33,7 @@ public final class SessionThreadLocal {
      */
     public static Long getUserId() {
         UserVO user = local.get();
-        return user == null ? null : user.getUserId();
+        return user == null ? null : user.getId();
     }
 
     public static Long getUserIdOfDefault(Long defaultVal) {

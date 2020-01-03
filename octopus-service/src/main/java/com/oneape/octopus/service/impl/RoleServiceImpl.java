@@ -58,6 +58,7 @@ public class RoleServiceImpl implements RoleService {
         Assert.isTrue(model.getId() != null, "主键为空");
         Assert.isTrue(StringUtils.isNotBlank(model.getName()), "角色名称为空");
         Assert.isTrue(StringUtils.isNotBlank(model.getCode()), "角色编码为空");
+
         RoleDO tmp = new RoleDO();
         // 判断code或name是否重复
         tmp.setName(model.getName());

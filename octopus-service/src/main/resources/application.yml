@@ -10,3 +10,11 @@ spring:
     allow-headers:
       - Token
     allow-credentials: true
+
+mail:
+  smtp-server:
+  smtp-username:
+  smtp-password:
+  smtp-port:
+  secure-smtp: true
+  session-debug: true

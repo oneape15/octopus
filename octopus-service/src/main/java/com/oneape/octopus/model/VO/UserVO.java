@@ -5,11 +5,12 @@ import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class UserVO implements Serializable {
     // 用户Id
-    private Long userId;
+    private Long id;
     // 登录名（唯一）
     private String username;
     // 昵称
@@ -28,10 +29,10 @@ public class UserVO implements Serializable {
     private String address;
     // 账号状态
     private Integer status;
-
     // 会话Token
     private String token;
-
+    // 角色Id列表
+    private List<Long> roleIds;
 
     public static UserVO ofDO(UserDO udo) {
         if (udo == null) {
@@ -39,14 +40,12 @@ public class UserVO implements Serializable {
         }
         UserVO vo = new UserVO();
         BeanUtils.copyProperties(udo, vo);
-        vo.setUserId(udo.getId());
         return vo;
     }
 
     public UserDO toDO() {
         UserDO udo = new UserDO();
         BeanUtils.copyProperties(this, udo);
-        udo.setId(this.userId);
         return udo;
     }
 }

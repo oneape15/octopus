@@ -62,7 +62,7 @@ public class ReportServiceImpl implements ReportService {
         }
         ReportVO vo = ReportVO.ofDO(report);
         // 获取查询参数
-        List<ReportParamDO> paramDOS = reportParamMapper.list(ReportParamDO.builder().reportId(reportId).build());
+        List<ReportParamDO> paramDOS = reportParamMapper.list(new ReportParamDO(reportId));
         List<ReportParamVO> params = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(paramDOS)) {
             paramDOS.forEach(pdo -> params.add(ReportParamVO.ofDO(pdo)));
@@ -70,7 +70,7 @@ public class ReportServiceImpl implements ReportService {
         vo.setParams(params);
 
         // 获取报表列
-        List<ReportColumnDO> columnDOS = reportColumnMapper.list(ReportColumnDO.builder().reportId(reportId).build());
+        List<ReportColumnDO> columnDOS = reportColumnMapper.list(new ReportColumnDO(reportId));
         List<ReportColumnVO> columns = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(columnDOS)) {
             columnDOS.forEach(cdo -> columns.add(ReportColumnVO.ofDO(cdo)));
@@ -93,7 +93,7 @@ public class ReportServiceImpl implements ReportService {
         if (StringUtils.isBlank(model.getCode())) {
             model.setCode(CodeBuilderUtils.RadmonStr(REPORT_CODE_LEN));
         } else {
-            List<ReportDO> list = reportMapper.list(ReportDO.builder().code(model.getCode()).build());
+            List<ReportDO> list = reportMapper.list(new ReportDO(model.getCode()));
             if (CollectionUtils.isNotEmpty(list)) {
                 throw new BizException("报表编码已存在~");
             }
@@ -135,11 +135,11 @@ public class ReportServiceImpl implements ReportService {
         }
         Long reportId = model.getId();
         // 删除关系
-        groupRlReportMapper.delete(GroupRlReportDO.builder().reportId(reportId).build());
+        groupRlReportMapper.delete(new GroupRlReportDO(reportId, null));
 
         // 删除字段和查询条件
-        reportColumnMapper.delete(ReportColumnDO.builder().reportId(reportId).build());
-        reportParamMapper.delete(ReportParamDO.builder().reportId(reportId).build());
+        reportColumnMapper.delete(new ReportColumnDO(reportId));
+        reportParamMapper.delete(new ReportParamDO(reportId));
 
         return delStatus;
     }
@@ -187,7 +187,7 @@ public class ReportServiceImpl implements ReportService {
 
         Long reportId = reportDO.getId();
         // 判断报表组是否有变更
-        List<GroupRlReportDO> groups = groupRlReportMapper.list(GroupRlReportDO.builder().reportId(reportId).build());
+        List<GroupRlReportDO> groups = groupRlReportMapper.list(new GroupRlReportDO(reportId, null));
         List<Long> oldGroupIds = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(groups)) {
             groups.forEach(g -> oldGroupIds.add(g.getGroupId()));
@@ -195,7 +195,7 @@ public class ReportServiceImpl implements ReportService {
         List<Long> newGroupIds = reportVO.getGroupIdList();
         if (CollectionUtils.isEmpty(newGroupIds)) {
             // 删除与报表关联的报表组关系
-            groupRlReportMapper.delete(GroupRlReportDO.builder().reportId(reportId).build());
+            groupRlReportMapper.delete(new GroupRlReportDO(reportId, null));
         } else {
             // 删除
             Collection<Long> needDelGroupIds = CollectionUtils.removeAll(oldGroupIds, newGroupIds);
@@ -203,7 +203,7 @@ public class ReportServiceImpl implements ReportService {
 
             // 新增
             Collection<Long> needAddGroupIds = CollectionUtils.removeAll(newGroupIds, oldGroupIds);
-            needAddGroupIds.forEach(gId -> groupRlReportMapper.insert(GroupRlReportDO.builder().reportId(reportId).groupId(gId).build()));
+            needAddGroupIds.forEach(gId -> groupRlReportMapper.insert(new GroupRlReportDO(reportId, gId)));
         }
 
         return editStatus;
@@ -224,7 +224,7 @@ public class ReportServiceImpl implements ReportService {
         }
 
         // 删除旧的查询参数
-        reportParamMapper.delete(ReportParamDO.builder().reportId(reportId).build());
+        reportParamMapper.delete(new ReportParamDO(reportId));
 
         if (CollectionUtils.isEmpty(params)) {
             return GlobalConstant.SUCCESS;
@@ -266,7 +266,7 @@ public class ReportServiceImpl implements ReportService {
         }
 
         // 删除旧的报表列
-        reportColumnMapper.delete(ReportColumnDO.builder().reportId(reportId).build());
+        reportColumnMapper.delete(new ReportColumnDO(reportId));
 
         // 新的列为空的话，直接返回成功
         if (CollectionUtils.isEmpty(columns)) {

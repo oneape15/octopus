@@ -1,13 +1,9 @@
 package com.oneape.octopus.commons.value;
 
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
+
 import org.apache.commons.lang3.StringUtils;
 
-
 public class DockerUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DockerUtils.class);
-
     /**
      * Environment param keys
      */
@@ -84,7 +80,6 @@ public class DockerUtils {
             IS_DOCKER = false;
 
         } else {
-            LOGGER.error("Missing host or port from env for Docker. host:{}, port:{}", DOCKER_HOST, DOCKER_PORT);
             throw new RuntimeException(
                     "Missing host or port from env for Docker. host:" + DOCKER_HOST + ", port:" + DOCKER_PORT);
         }

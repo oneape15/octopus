@@ -89,7 +89,7 @@ public class AutoSetValueInterceptor implements Interceptor {
                     if (o == null) {
                         UserVO user = accountService.getCurrentUser();
                         if (user != null) {
-                            field.set(param, user.getUserId());
+                            field.set(param, user.getId());
                         } else {
                             field.set(param, GlobalConstant.SYS_USER);
                         }
@@ -103,7 +103,7 @@ public class AutoSetValueInterceptor implements Interceptor {
                     UserVO user = accountService.getCurrentUser();
                     field.setAccessible(true);
                     if (user != null) {
-                        field.set(param, user.getUserId());
+                        field.set(param, user.getId());
                     } else {
                         field.set(param, GlobalConstant.SYS_USER);
                     }

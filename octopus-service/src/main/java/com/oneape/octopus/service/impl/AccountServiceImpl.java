@@ -7,13 +7,18 @@ import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.commons.value.CodeBuilderUtils;
 import com.oneape.octopus.commons.value.MD5Utils;
 import com.oneape.octopus.mapper.UserMapper;
+import com.oneape.octopus.mapper.UserRlRoleMapper;
 import com.oneape.octopus.mapper.UserSessionMapper;
 import com.oneape.octopus.model.DO.UserDO;
+import com.oneape.octopus.model.DO.UserRlRoleDO;
 import com.oneape.octopus.model.DO.UserSessionDO;
 import com.oneape.octopus.model.VO.UserVO;
 import com.oneape.octopus.service.AccountService;
+import com.oneape.octopus.service.MailService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -21,6 +26,7 @@ import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -30,7 +36,74 @@ public class AccountServiceImpl implements AccountService {
     @Resource
     private UserMapper userMapper;
     @Resource
+    private UserRlRoleMapper userRlRoleMapper;
+    @Resource
     private UserSessionMapper userSessionMapper;
+
+    @Autowired
+    private MailService mailService;
+
+    /**
+     * 新增数据
+     *
+     * @param model T
+     * @return int 1 - 成功； 0 - 失败；
+     */
+    @Override
+    public int insert(UserDO model) {
+        Assert.isTrue(StringUtils.isNotBlank(model.getUsername()), "用户名为空");
+        List<UserDO> users = userMapper.list(new UserDO(model.getUsername()));
+        if (CollectionUtils.isNotEmpty(users)) {
+            throw new BizException("用户名已存在");
+        }
+
+        String rawPwd = model.getPassword();
+        if (StringUtils.isBlank(rawPwd)) {
+            rawPwd = CodeBuilderUtils.RadmonStr(6);
+        }
+        String pwdMd5 = MD5Utils.saltUserPassword(model.getUsername(), rawPwd, null);
+        model.setPassword(pwdMd5);
+        int status = userMapper.insert(model);
+        if (status > 0) {
+            model.setPassword(rawPwd);
+        }
+
+        return status;
+    }
+
+    /**
+     * 修改数据
+     *
+     * @param model T
+     * @return int 1 - 成功； 0 - 失败；
+     */
+    @Override
+    public int edit(UserDO model) {
+        Assert.isTrue(model.getId() != null, "用户ID为空");
+        // 用户登录名不能修改
+        model.setUsername(null);
+        model.setPassword(null);
+
+        return userMapper.update(model);
+    }
+
+    /**
+     * 根据主键Id删除
+     *
+     * @param model T
+     * @return int 1 - 成功； 0 - 失败；
+     */
+    @Override
+    public int deleteById(UserDO model) {
+        Assert.isTrue(model.getId() != null, "用户ID为空");
+
+        int status = userMapper.delete(new UserDO(model.getId()));
+        if (status > 0) {
+            // 删除角色关系
+            userRlRoleMapper.delete(new UserRlRoleDO(model.getId(), null));
+        }
+        return status;
+    }
 
     /**
      * 根据token获取用户信息
@@ -84,7 +157,7 @@ public class AccountServiceImpl implements AccountService {
         if (user == null) {
             return GlobalConstant.SYS_USER;
         }
-        return user.getUserId();
+        return user.getId();
     }
 
     /**
@@ -118,7 +191,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
         // 生成登录成功token
-        String token = createUserSessionToken(uvo.getUserId());
+        String token = createUserSessionToken(uvo.getId());
         if (StringUtils.isNotBlank(token)) {
             uvo.setToken(token);
             return uvo;
@@ -135,35 +208,31 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public int addUser(UserVO user) {
-        Assert.isTrue(StringUtils.isNotBlank(user.getUsername()), "用户名为空");
-        UserVO sameNameUser = getByUsername(user.getUsername());
-        if (sameNameUser != null) {
-            throw new BizException("用户名已存在");
+        UserDO tmp = user.toDO();
+        int status = insert(tmp);
+        if (status < GlobalConstant.SUCCESS) {
+            return GlobalConstant.FAIL;
         }
 
-        String rawPwd = user.getPassword();
-        if (StringUtils.isBlank(rawPwd)) {
-            rawPwd = CodeBuilderUtils.RadmonStr(6);
+        // 保存用户与角色信息
+        if (CollectionUtils.isNotEmpty(user.getRoleIds())) {
+            user.getRoleIds().forEach(rId -> userRlRoleMapper.insert(new UserRlRoleDO(user.getId(), rId)));
         }
-        String pwdMd5 = MD5Utils.saltUserPassword(user.getUsername(), rawPwd, null);
-        user.setPassword(pwdMd5);
-        int status = userMapper.insert(user.toDO());
-        if (status > 0) {
-            try {
-                String template_name = "templates/email/sys-reg-success.html";
-                String content = getFileContent(template_name);
 
-                // 这里不使用MessageFormat.format的原因,在于 style中会存在{dispaly:none}这种字符串存在
-                content = StringUtils.replace(content, "{0}", user.getNickname());
-                content = StringUtils.replace(content, "{1}", "");
-                content = StringUtils.replace(content, "{2}", user.getUsername());
-                content = StringUtils.replace(content, "{3}", rawPwd);
+        try {
+            String template_name = "templates/email/sys-reg-success.html";
+            String content = getFileContent(template_name);
 
-//                iMailService.sendSimpleMail(user.getEmail(), "拉冬-数据平台密码重置", content);
-            } catch (Exception e) {
-                log.error("发送邮件失败~", e);
-                throw new BizException("发送邮件失败, 邮箱地址:" + user.getEmail());
-            }
+            // 这里不使用MessageFormat.format的原因,在于 style中会存在{dispaly:none}这种字符串存在
+            content = StringUtils.replace(content, "{0}", user.getNickname());
+            content = StringUtils.replace(content, "{1}", "");
+            content = StringUtils.replace(content, "{2}", user.getUsername());
+            content = StringUtils.replace(content, "{3}", tmp.getPassword());
+
+            mailService.sendSimpleMail(user.getEmail(), "OCTOPUS-数据平台密码重置", content);
+        } catch (Exception e) {
+            log.error("发送邮件失败~", e);
+            throw new BizException("发送邮件失败, 邮箱地址:" + user.getEmail());
         }
         return status;
     }

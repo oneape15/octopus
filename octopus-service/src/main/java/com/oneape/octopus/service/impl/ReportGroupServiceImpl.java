@@ -33,7 +33,6 @@ public class ReportGroupServiceImpl implements ReportGroupService {
     public int insert(ReportGroupDO model) {
         Assert.isTrue(StringUtils.isNotBlank(model.getName()), "报表组名称为空");
 
-
         Long parentId = model.getParentId();
         if (parentId == null) {
             parentId = GlobalConstant.DEFAULT_VALUE;
@@ -67,7 +66,6 @@ public class ReportGroupServiceImpl implements ReportGroupService {
     @Override
     public int edit(ReportGroupDO model) {
         Assert.isTrue(model.getId() != null, "主键Key为空");
-        ReportGroupDO oldGroup = reportGroupMapper.findById(model.getId());
 
         Long parentId = model.getParentId();
         if (parentId == null) {
