@@ -2,10 +2,7 @@ package com.oneape.octopus.mapper;
 
 import com.oneape.octopus.mapper.provider.ReportSqlProvider;
 import com.oneape.octopus.model.DO.ReportDO;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -14,6 +11,15 @@ import java.util.List;
  */
 @Mapper
 public interface ReportMapper {
+    /**
+     * 新增数据
+     *
+     * @param model T
+     * @return int 1 - 成功； 0 - 失败
+     */
+    @InsertProvider(type = ReportSqlProvider.class, method = "insert")
+    int insert(ReportDO model);
+
     /**
      * 通过主键更新数据
      *

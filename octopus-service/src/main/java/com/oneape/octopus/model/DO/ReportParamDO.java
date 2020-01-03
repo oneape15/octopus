@@ -2,11 +2,17 @@ package com.oneape.octopus.model.DO;
 
 import com.oneape.octopus.annotation.SortId;
 import com.oneape.octopus.common.GlobalConstant;
+import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 
 @Data
+@Builder
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class ReportParamDO extends BaseDO {
     /**
      * 报表Id

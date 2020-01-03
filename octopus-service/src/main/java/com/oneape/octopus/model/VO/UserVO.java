@@ -8,50 +8,28 @@ import java.io.Serializable;
 
 @Data
 public class UserVO implements Serializable {
-    /**
-     * 用户Id
-     */
+    // 用户Id
     private Long userId;
-    /**
-     * 登录名（唯一）
-     */
+    // 登录名（唯一）
     private String username;
-    /**
-     * 昵称
-     */
+    // 昵称
     private String nickname;
-    /**
-     * 密码
-     */
+    // 密码
     private transient String password;
-    /**
-     * 头像
-     */
+    // 头像
     private String avatar;
-    /**
-     * 个性签名
-     */
+    // 个性签名
     private String signature;
-    /**
-     * 手机号
-     */
+    // 手机号
     private String phone;
-    /**
-     * 邮箱地址
-     */
+    // 邮箱地址
     private String email;
-    /**
-     * 联系地址
-     */
+    // 联系地址
     private String address;
-    /**
-     * 账号状态
-     */
+    // 账号状态
     private Integer status;
 
-    /**
-     * 会话Token
-     */
+    // 会话Token
     private String token;
 
 

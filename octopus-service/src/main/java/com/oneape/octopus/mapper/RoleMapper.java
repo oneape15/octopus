@@ -52,4 +52,13 @@ public interface RoleMapper {
      */
     @SelectProvider(type = RoleSqlProvider.class, method = "list")
     List<RoleDO> list(@Param("model") RoleDO model);
+
+    /**
+     * 根据实体中不为null的属性通过"OR"关键字关联起来进行查询
+     *
+     * @param model T
+     * @return List
+     */
+    @SelectProvider(type = RoleSqlProvider.class, method = "listOrLink")
+    List<RoleDO> listOrLink(@Param("model") RoleDO model);
 }

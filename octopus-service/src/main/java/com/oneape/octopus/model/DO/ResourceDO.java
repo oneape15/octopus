@@ -2,8 +2,10 @@ package com.oneape.octopus.model.DO;
 
 import com.oneape.octopus.annotation.SortId;
 import com.oneape.octopus.common.GlobalConstant;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 
@@ -11,6 +13,8 @@ import javax.persistence.Column;
  * 资源信息表
  */
 @Data
+@Builder
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ResourceDO extends BaseDO {
     /**

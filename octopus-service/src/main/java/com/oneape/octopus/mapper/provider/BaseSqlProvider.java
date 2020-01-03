@@ -192,9 +192,6 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
         fields.forEach(field -> {
             if (field.getValue() != null) {
                 String columnName = field.getDbColumnName();
-                if (StringUtils.isBlank(columnName)) {
-                    columnName = field.getName();
-                }
                 wheres.add(columnName + " = #{" + field.getName() + "}");
             }
         });
@@ -204,6 +201,39 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
                 SELECT("*");
                 FROM(getTableName());
                 WHERE(wheres.toArray(new String[wheres.size()]));
+            }
+        }.toString();
+    }
+
+    /**
+     * 根据实体中不为null的属性值，使用 OR 连接起来进行操作
+     *
+     * @param model T
+     * @return String
+     */
+    public String listOrLink(@Param("model") T model) {
+        Assert.isTrue(model != null, "查询数据集实体为空");
+        List<BeanProperties> fields = BeanUtils.getFields(model);
+
+        StringBuilder wheres = new StringBuilder();
+
+        int index = 0;
+        for (BeanProperties field : fields) {
+            if (field.getValue() == null) {
+                continue;
+            }
+            String columnName = field.getDbColumnName();
+            if (index > 0) {
+                wheres.append(" OR ");
+            }
+            wheres.append(columnName).append(" = #{").append(field.getName()).append("}");
+            index++;
+        }
+        return new SQL() {
+            {
+                SELECT("*");
+                FROM(getTableName());
+                WHERE(wheres.toString());
             }
         }.toString();
     }

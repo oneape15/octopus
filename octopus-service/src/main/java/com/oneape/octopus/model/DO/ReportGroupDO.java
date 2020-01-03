@@ -3,6 +3,7 @@ package com.oneape.octopus.model.DO;
 import com.oneape.octopus.annotation.Creator;
 import com.oneape.octopus.annotation.SortId;
 import com.oneape.octopus.common.GlobalConstant;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import javax.persistence.Column;
  * 报表组
  */
 @Data
+@Builder
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ReportGroupDO extends BaseDO {

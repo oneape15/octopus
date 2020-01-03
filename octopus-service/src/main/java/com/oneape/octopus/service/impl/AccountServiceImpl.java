@@ -1,6 +1,7 @@
 package com.oneape.octopus.service.impl;
 
 import com.oneape.octopus.common.BizException;
+import com.oneape.octopus.common.GlobalConstant;
 import com.oneape.octopus.common.SessionThreadLocal;
 import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.commons.value.CodeBuilderUtils;
@@ -70,6 +71,20 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public UserVO getCurrentUser() {
         return SessionThreadLocal.getSession();
+    }
+
+    /**
+     * 获取当前用户Id
+     *
+     * @return Long
+     */
+    @Override
+    public Long getCurrentUserId() {
+        UserVO user = SessionThreadLocal.getSession();
+        if (user == null) {
+            return GlobalConstant.SYS_USER;
+        }
+        return user.getUserId();
     }
 
     /**
@@ -191,7 +206,7 @@ public class AccountServiceImpl implements AccountService {
         UserSessionDO us = new UserSessionDO(userId, token);
         us.setLoginTime(System.currentTimeMillis());
         us.setTimeout(TOKEN_TIMEOUT * 2); // 二小时失效
-        int status =  userSessionMapper.insert(us);
+        int status = userSessionMapper.insert(us);
         if (status > 0) {
             return token;
         }

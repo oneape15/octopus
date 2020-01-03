@@ -1,7 +1,9 @@
 package com.oneape.octopus.model.DO;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 
@@ -9,6 +11,8 @@ import javax.persistence.Column;
  * 数据源DO
  */
 @Data
+@Builder
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class DatasourceDO extends BaseDO {
     /**

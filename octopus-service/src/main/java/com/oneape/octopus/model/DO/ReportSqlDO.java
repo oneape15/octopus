@@ -1,10 +1,14 @@
 package com.oneape.octopus.model.DO;
 
 import com.oneape.octopus.common.GlobalConstant;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ReportSqlDO extends BaseDO {
     /**

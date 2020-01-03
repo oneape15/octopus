@@ -27,6 +27,13 @@ public interface AccountService {
     UserVO getCurrentUser();
 
     /**
+     * 获取当前用户Id
+     *
+     * @return Long
+     */
+    Long getCurrentUserId();
+
+    /**
      * 根据用户名查询用户信息
      *
      * @param username String

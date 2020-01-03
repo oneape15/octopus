@@ -1,5 +1,6 @@
 package com.oneape.octopus.model.DO;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 
 @Data
+@Builder
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class UserSessionDO extends BaseDO {

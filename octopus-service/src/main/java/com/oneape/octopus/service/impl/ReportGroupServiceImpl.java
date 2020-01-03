@@ -4,6 +4,7 @@ import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.GlobalConstant;
 import com.oneape.octopus.mapper.ReportGroupMapper;
 import com.oneape.octopus.model.DO.ReportGroupDO;
+import com.oneape.octopus.model.VO.ReportGroupVO;
 import com.oneape.octopus.service.ReportGroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -103,5 +105,21 @@ public class ReportGroupServiceImpl implements ReportGroupService {
     public int deleteById(ReportGroupDO model) {
         Assert.isTrue(model.getId() != null, "主键Key为空");
         return reportGroupMapper.delete(model);
+    }
+
+    /**
+     * 根据报表组信息查询
+     *
+     * @param group ReportGroupDO
+     * @return List
+     */
+    @Override
+    public List<ReportGroupVO> listBy(ReportGroupDO group) {
+        List<ReportGroupDO> groups = reportGroupMapper.list(group);
+        List<ReportGroupVO> vos = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(groups)) {
+            groups.forEach(g -> vos.add(ReportGroupVO.ofDO(g)));
+        }
+        return vos;
     }
 }
