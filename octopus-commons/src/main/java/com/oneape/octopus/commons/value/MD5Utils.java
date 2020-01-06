@@ -2,12 +2,13 @@ package com.oneape.octopus.commons.value;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
 public class MD5Utils {
 
     // 盐值, 用于混淆md5
-    private static final String slat = "*I_*_Need_some_slat*";
+    private static final String slat = "*I_think*tomorrow_Will_be_better*";
 
     public static String getMD5(String str) {
         return getMD5(str, false);
@@ -21,13 +22,13 @@ public class MD5Utils {
 
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(base.getBytes("UTF8"));
-            byte digest[] = md.digest();
-            String result = "";
-            for (int i = 0; i < digest.length; i++) {
-                result += Integer.toHexString((0x000000FF & digest[i]) | 0xFFFFFF00).substring(6);
+            md.update(base.getBytes(StandardCharsets.UTF_8));
+            byte[] digest = md.digest();
+            StringBuilder result = new StringBuilder();
+            for (byte b : digest) {
+                result.append(Integer.toHexString((0x000000FF & b) | 0xFFFFFF00).substring(6));
             }
-            return result.toUpperCase();
+            return result.toString().toUpperCase();
         } catch (Exception e) {
             //
         }
