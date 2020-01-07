@@ -10,6 +10,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,8 @@ public class QueryFactoryTest {
 
     private QueryFactory queryFactory;
     private DatasourceInfo dsi;
+    private DatasourceInfo dsiOfPgSql;
+    private DatasourceInfo dsiOfH2;
     private String schema;
 
     @Before
@@ -30,7 +34,25 @@ public class QueryFactoryTest {
         dsi.setUrl("jdbc:mysql://localhost:3306/octopus");
         dsi.setDatasourceType(DatasourceTypeHelper.MySQL);
 
+        dsiOfPgSql = new DatasourceInfo();
+        dsiOfPgSql.setUsername("dx2");
+        dsiOfPgSql.setPassword("helloword");
+        dsiOfPgSql.setUrl("jdbc:postgresql://pg-dev.dian.so:5432/dx2");
+        dsiOfPgSql.setDatasourceType(DatasourceTypeHelper.PostgreSQL);
+
+        dsiOfH2 = new DatasourceInfo();
+        dsiOfH2.setUrl("jdbc:h2:~/test");
+        dsiOfH2.setUsername("sa");
+        dsiOfH2.setPassword("");
+        dsiOfH2.setDatasourceType(DatasourceTypeHelper.H2);
+
         queryFactory = new DefaultQueryFactory(datasourceFactory);
+    }
+
+    @Test
+    public void h2ConnTest() {
+        List<String> list = queryFactory.allDatabase(dsiOfH2);
+        log.info("数据库如下： {}", JSON.toJSONString(list));
     }
 
     @Test
@@ -67,9 +89,18 @@ public class QueryFactoryTest {
 
     @Test
     public void tableFieldsTest() {
-        List<FieldInfo> fields = queryFactory.fieldOfTable(dsi, schema, "r_datasource");
+        String tableName = "r_datasource";
+        List<FieldInfo> fields = queryFactory.fieldOfTable(dsi, schema, tableName);
         Assert.assertNotNull(fields);
-        log.info("表：{}字段信息如下：{}", "r_resource", JSON.toJSONString(fields));
+        log.info("表：{}字段信息如下：{}", tableName, JSON.toJSONString(fields));
+    }
+
+    @Test
+    public void tableFieldsOfPgSqlTest() {
+        String tableName = "agent_department";
+        List<FieldInfo> fields = queryFactory.fieldOfTable(dsiOfPgSql, "dx2", tableName);
+        Assert.assertNotNull(fields);
+        log.info("表：{}字段信息如下：{}", tableName, JSON.toJSONString(fields));
     }
 
     @Test
@@ -105,6 +136,24 @@ public class QueryFactoryTest {
         execParam.setPageSize(5);
 
         Result result = queryFactory.execSql(dsi, execParam);
+
+        log.info("查询结果： {}", JSON.toJSONString(result));
+    }
+
+    @Test
+    public void queryPgSqlTest() {
+        String rawSql = "SELECT * FROM agent_department WHERE agent_id = ? and updator = ?";
+        ExecParam execParam = new ExecParam();
+        execParam.setNeedTotalSize(true);
+        execParam.setRawSql(rawSql);
+        List<Value> values = new ArrayList<>();
+        values.add(new Value(1, DataType.INTEGER));
+        values.add(new Value("秋葵", DataType.VARCHAR));
+        execParam.setParams(values);
+        execParam.setPageIndex(1);
+        execParam.setPageSize(5);
+
+        Result result = queryFactory.execSql(dsiOfPgSql, execParam);
 
         log.info("查询结果： {}", JSON.toJSONString(result));
     }

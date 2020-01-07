@@ -1,8 +1,6 @@
 package com.oneape.octopus.datasource.dialect;
 
-import com.alibaba.fastjson.JSON;
 import com.oneape.octopus.datasource.DataType;
-import com.oneape.octopus.datasource.DatasourceInfo;
 import com.oneape.octopus.datasource.ExecParam;
 import com.oneape.octopus.datasource.data.ColumnHead;
 import com.oneape.octopus.datasource.data.Result;
@@ -19,9 +17,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * SQL执行器
@@ -42,8 +38,6 @@ public abstract class Actuator {
     public static final String COL_NULLABLE = "nullable";
     // 数据类型字段名称
     public static final String COL_DATA_TYPE = "data_type";
-    // 字符最大长度字段名称
-    public static final String COL_CHAR_MAX_LEN = "max_len";
     // 是否为主键名称
     public static final String COL_PRI_KEY = "pri_key";
     // 备注字段名称
@@ -63,14 +57,14 @@ public abstract class Actuator {
      *
      * @return String
      */
-    abstract String getAllDatabaseSql();
+    public abstract String getAllDatabaseSql();
 
     /**
      * 获取所有表的执行SQL
      *
      * @return String
      */
-    abstract String getAllTablesSql();
+    public abstract String getAllTablesSql();
 
     /**
      * 获取指定数据库的表信息SQL
@@ -78,14 +72,14 @@ public abstract class Actuator {
      * @param schema String 数据库名称
      * @return String
      */
-    abstract String getTablesSqlOfDb(String schema);
+    public abstract String getTablesSqlOfDb(String schema);
 
     /**
      * 获取所有表字段执行SQL
      *
      * @return String
      */
-    abstract String getAllFieldsSql();
+    public abstract String getAllFieldsSql();
 
     /**
      * 获取指定数据库所有字段信息
@@ -93,7 +87,7 @@ public abstract class Actuator {
      * @param schema String 数据库名称
      * @return String
      */
-    abstract String getFieldsSqlOfDb(String schema);
+    public abstract String getFieldsSqlOfDb(String schema);
 
     /**
      * 获取指定表字段执行SQL
@@ -102,7 +96,7 @@ public abstract class Actuator {
      * @param tableName String 表名称
      * @return String
      */
-    abstract String getFieldsSqlOfTable(String schema, String tableName);
+    public abstract String getFieldsSqlOfTable(String schema, String tableName);
 
     /**
      * 将不同数据源的数据类型转换标准的数据类型
@@ -110,15 +104,16 @@ public abstract class Actuator {
      * @param dataType String
      * @return DataType
      */
-    abstract DataType dialect2StandDataType(String dataType);
+    public abstract DataType dialect2StandDataType(String dataType);
 
     /**
      * 将列类型转换成标准的数据类型
      *
-     * @param columnType int
+     * @param columnType     int
+     * @param columnTypeName String
      * @return DataType
      */
-    abstract DataType columnType2StandDataType(int columnType);
+    public abstract DataType columnType2StandDataType(int columnType, String columnTypeName);
 
     /**
      * 获取数据总条数SQL
@@ -126,7 +121,7 @@ public abstract class Actuator {
      * @param detailSql String
      * @return String
      */
-    abstract String wrapperTotalSql(String detailSql);
+    public abstract String wrapperTotalSql(String detailSql);
 
     /**
      * 进行分页处理
@@ -136,7 +131,7 @@ public abstract class Actuator {
      * @param pageSize  int 一页显示条数
      * @return String
      */
-    abstract String wrapperPageableSql(final String detailSql, int pageIndex, int pageSize);
+    public abstract String wrapperPageableSql(final String detailSql, int pageIndex, int pageSize);
 
     /**
      * 判断是否已经分页
@@ -144,7 +139,7 @@ public abstract class Actuator {
      * @param detailSql String
      * @return true - 已经分页； false - 未分页
      */
-    abstract boolean hasPageable(String detailSql);
+    public abstract boolean hasPageable(String detailSql);
 
     /**
      * 根据不同的数据源，将值代入SQL中进行处理
@@ -152,7 +147,45 @@ public abstract class Actuator {
      * @param value Value
      * @return String
      */
-    abstract String valueQuoting2String(Value value);
+    public String valueQuoting2String(Value value) {
+        if (value == null || value.getValue() == null) {
+            return "''";
+        }
+        Object val = value.getValue();
+        String ret;
+        switch (value.getDataType()) {
+            case INTEGER:
+                ret = Integer.toString((Integer) val);
+                break;
+            case DECIMAL:
+                ret = val.toString();
+                break;
+            case BOOLEAN:
+                ret = Boolean.toString((Boolean) val);
+                break;
+            case DOUBLE:
+                ret = Double.toString((Double) val);
+                break;
+            case FLOAT:
+                ret = Float.toString((Float) val);
+                break;
+            case LONG:
+                ret = Long.toString((Long) val);
+                break;
+            case TIMESTAMP:
+            case DATETIME:
+            case VARCHAR:
+            case BINARY:
+            case TIME:
+            case DATE:
+                ret = "'" + val.toString() + "'";
+                break;
+            default:
+                ret = val.toString();
+        }
+
+        return ret;
+    }
 
 
     /**
@@ -163,6 +196,9 @@ public abstract class Actuator {
     public List<String> allDatabase() {
         List<String> dbs = new ArrayList<>();
         String runSql = getAllDatabaseSql();
+        if (StringUtils.isBlank(runSql)) {
+            throw new RuntimeException("运行SQL为空");
+        }
         try (ResultSet rs = statement.executeQuery(runSql)) {
             while (rs.next()) {
                 String name = rs.getString(COL_SCHEMA);
@@ -267,7 +303,6 @@ public abstract class Actuator {
                 fi.setDefaultValue(rs.getObject(COL_DEFAULT_VAL));
                 fi.setAllowNull(rs.getInt(COL_NULLABLE) == 0);
                 fi.setDataType(dialect2StandDataType(rs.getString(COL_DATA_TYPE)));
-                fi.setMaxLen(rs.getInt(COL_CHAR_MAX_LEN));
                 fi.setComment(rs.getString(COL_COMMENT));
                 infos.add(fi);
             }
@@ -418,7 +453,7 @@ public abstract class Actuator {
             String columnLabel = rsmd.getColumnLabel(index);
             String columnName = rsmd.getColumnName(index);
             ColumnHead head = new ColumnHead(columnName, columnLabel);
-            head.setDataType(columnType2StandDataType(rsmd.getColumnType(index)));
+            head.setDataType(columnType2StandDataType(rsmd.getColumnType(index), rsmd.getColumnTypeName(index)));
             heads.add(head);
         }
 

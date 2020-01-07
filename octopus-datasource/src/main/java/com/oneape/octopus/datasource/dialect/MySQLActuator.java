@@ -1,14 +1,11 @@
 package com.oneape.octopus.datasource.dialect;
 
 import com.mysql.cj.MysqlType;
-import com.mysql.cj.result.Field;
 import com.oneape.octopus.commons.value.DataUtils;
 import com.oneape.octopus.datasource.DataType;
-import com.oneape.octopus.datasource.data.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import java.math.BigDecimal;
 import java.sql.Statement;
 
 /**
@@ -29,7 +26,7 @@ public class MySQLActuator extends Actuator {
      * @return String
      */
     @Override
-    String getAllDatabaseSql() {
+    public String getAllDatabaseSql() {
         return "SELECT " +
                 " DISTINCT TABLE_SCHEMA " + COL_SCHEMA + " " +
                 "FROM " +
@@ -42,7 +39,7 @@ public class MySQLActuator extends Actuator {
      * @return String
      */
     @Override
-    String getAllTablesSql() {
+    public String getAllTablesSql() {
         return getTablesSqlOfDb(null);
     }
 
@@ -53,7 +50,7 @@ public class MySQLActuator extends Actuator {
      * @return String
      */
     @Override
-    String getTablesSqlOfDb(String schema) {
+    public String getTablesSqlOfDb(String schema) {
         String whereSql = "";
         if (StringUtils.isNotBlank(schema)) {
             whereSql = " WHERE TABLE_SCHEMA = '" + schema + "' ";
@@ -78,7 +75,7 @@ public class MySQLActuator extends Actuator {
      * @return String
      */
     @Override
-    String getAllFieldsSql() {
+    public String getAllFieldsSql() {
         return getFieldsSqlOfTable(null, null);
     }
 
@@ -89,7 +86,7 @@ public class MySQLActuator extends Actuator {
      * @return String
      */
     @Override
-    String getFieldsSqlOfDb(String schema) {
+    public String getFieldsSqlOfDb(String schema) {
         return getFieldsSqlOfTable(schema, null);
     }
 
@@ -101,7 +98,7 @@ public class MySQLActuator extends Actuator {
      * @return String
      */
     @Override
-    String getFieldsSqlOfTable(String schema, String tableName) {
+    public String getFieldsSqlOfTable(String schema, String tableName) {
         String whereSql = " WHERE 1 = 1 ";
         if (StringUtils.isNotBlank(schema)) {
             whereSql += " AND TABLE_SCHEMA = '" + schema + "'";
@@ -117,7 +114,6 @@ public class MySQLActuator extends Actuator {
                 " CASE IS_NULLABLE " +
                 "   WHEN UPPER( IS_NULLABLE ) = 'YES' THEN 1 ELSE 0 END " + COL_NULLABLE + ", " +
                 " DATA_TYPE " + COL_DATA_TYPE + ", " +
-                " CHARACTER_MAXIMUM_LENGTH " + COL_CHAR_MAX_LEN + ", " +
                 " IF ( COLUMN_KEY = 'PRI', 1, 0 ) " + COL_PRI_KEY + ", " +
                 " COLUMN_COMMENT  " + COL_COMMENT + " " +
                 "FROM information_schema.`COLUMNS` " +
@@ -132,7 +128,7 @@ public class MySQLActuator extends Actuator {
      * @return DataType
      */
     @Override
-    DataType dialect2StandDataType(String dataType) {
+    public DataType dialect2StandDataType(String dataType) {
         String tmp = StringUtils.trimToEmpty(dataType).toUpperCase();
         return mysqlType2DataType(MysqlType.getByName(tmp));
     }
@@ -140,11 +136,12 @@ public class MySQLActuator extends Actuator {
     /**
      * 将列类型转换成标准的数据类型
      *
-     * @param columnType int
+     * @param columnType     int
+     * @param columnTypeName String
      * @return DataType
      */
     @Override
-    DataType columnType2StandDataType(int columnType) {
+    public DataType columnType2StandDataType(int columnType, String columnTypeName) {
         MysqlType mt = MysqlType.getByJdbcType(columnType);
         return mysqlType2DataType(mt);
     }
@@ -222,7 +219,7 @@ public class MySQLActuator extends Actuator {
      * @return String
      */
     @Override
-    String wrapperTotalSql(String detailSql) {
+    public String wrapperTotalSql(String detailSql) {
         return "SELECT COUNT(1) AS " + COL_COUNT_SIZE +
                 " FROM (" + detailSql +
                 ") AS tmp";
@@ -237,12 +234,13 @@ public class MySQLActuator extends Actuator {
      * @return String
      */
     @Override
-    String wrapperPageableSql(final String detailSql, int pageIndex, int pageSize) {
+    public String wrapperPageableSql(final String detailSql, int pageIndex, int pageSize) {
         if (StringUtils.isBlank(detailSql)) {
             return detailSql;
         }
 
-        return detailSql + " " + PAGE_KEY + " " + pageIndex * pageSize + ", " + pageSize;
+        return detailSql + " " +
+                PAGE_KEY + " " + (pageIndex * pageSize) + ", " + pageSize;
     }
 
     /**
@@ -253,7 +251,7 @@ public class MySQLActuator extends Actuator {
      * @return true - 已经分页； false - 未分页
      */
     @Override
-    boolean hasPageable(String detailSql) {
+    public boolean hasPageable(String detailSql) {
         if (StringUtils.isBlank(detailSql)) {
             return false;
         }
@@ -265,7 +263,7 @@ public class MySQLActuator extends Actuator {
 
         int startIndex = index + PAGE_KEY.length();
         // 判断SQL是否以 LIMIT int1 或 LIMIT int1, int2结束
-        String subString = StringUtils.substring(tmp, startIndex);
+        String subString = StringUtils.substring(tmp, startIndex).trim();
         if (StringUtils.isBlank(subString)) {
             log.error("不合法的SQL: {}", detailSql);
             throw new RuntimeException("不合法的SQL:" + detailSql);
@@ -283,52 +281,5 @@ public class MySQLActuator extends Actuator {
         }
 
         return false;
-    }
-
-    /**
-     * 根据不同的数据源，将值代入SQL中进行处理
-     *
-     * @param value Value
-     * @return String
-     */
-    @Override
-    String valueQuoting2String(Value value) {
-        if (value == null || value.getValue() == null) {
-            return "''";
-        }
-        Object val = value.getValue();
-        String ret;
-        switch (value.getDataType()) {
-            case INTEGER:
-                ret = Integer.toString((Integer) val);
-                break;
-            case DECIMAL:
-                ret = val.toString();
-                break;
-            case BOOLEAN:
-                ret = Boolean.toString((Boolean) val);
-                break;
-            case DOUBLE:
-                ret = Double.toString((Double) val);
-                break;
-            case FLOAT:
-                ret = Float.toString((Float) val);
-                break;
-            case LONG:
-                ret = Long.toString((Long) val);
-                break;
-            case TIMESTAMP:
-            case DATETIME:
-            case VARCHAR:
-            case BINARY:
-            case TIME:
-            case DATE:
-                ret = "'" + val.toString() + "'";
-                break;
-            default:
-                ret = val.toString();
-        }
-
-        return ret;
     }
 }

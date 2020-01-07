@@ -23,25 +23,18 @@ public class ActuatorFactory {
             case MySQL:
                 actuator = new MySQLActuator(statement);
                 break;
-            case HSQLDB:
-                break;
-            case IbmDB2:
-                break;
-            case Oracle:
-                break;
-            case SQLite:
-                break;
-            case MariaDB:
-                break;
-            case Firebird:
-                break;
             case PostgreSQL:
                 actuator = new PostgreSQLActuator(statement);
                 break;
+            case HSQLDB:
+            case IbmDB2:
+            case Oracle:
+            case SQLite:
+            case MariaDB:
+            case Firebird:
             case IbmInformix:
-                break;
             default:
-                break;
+                throw new RuntimeException("该数据源暂未支持");
         }
         return actuator;
     }

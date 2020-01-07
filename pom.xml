@@ -37,6 +37,7 @@
         <commons-fileupload.version>1.4</commons-fileupload.version>
         <logback-classic.version>1.2.3</logback-classic.version>
         <mysql-connector-java.version>8.0.18</mysql-connector-java.version>
+        <postgresql.version>42.2.9</postgresql.version>
         <persistence-api.version>1.0.2</persistence-api.version>
         <javax.mail-api.version>1.6.2</javax.mail-api.version>
         <pagehelper-spring-boot-starter.version>1.2.13</pagehelper-spring-boot-starter.version>
@@ -171,6 +172,13 @@
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql-connector-java.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
+            </dependency>
+
 
         </dependencies>
     </dependencyManagement>

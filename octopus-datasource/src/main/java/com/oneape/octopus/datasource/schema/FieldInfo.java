@@ -40,11 +40,6 @@ public class FieldInfo implements Serializable {
      * 是否允许为空
      */
     private Boolean allowNull = Boolean.TRUE;
-
-    /**
-     * 最大长度
-     */
-    private Integer maxLen = -1;
     /**
      * 备注、描述
      */

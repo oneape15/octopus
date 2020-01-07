@@ -1,7 +1,6 @@
 package com.oneape.octopus.datasource.dialect;
 
 import com.oneape.octopus.datasource.DataType;
-import com.oneape.octopus.datasource.data.Value;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Statement;
@@ -22,8 +21,11 @@ public class H2Actuator extends Actuator {
      * @return String
      */
     @Override
-    String getAllDatabaseSql() {
-        return null;
+    public String getAllDatabaseSql() {
+        return "SELECT " +
+                " DISTINCT TABLE_CATALOG " + COL_SCHEMA + " " +
+                "FROM " +
+                "INFORMATION_SCHEMA.`TABLES`";
     }
 
     /**
@@ -32,8 +34,8 @@ public class H2Actuator extends Actuator {
      * @return String
      */
     @Override
-    String getAllTablesSql() {
-        return null;
+    public String getAllTablesSql() {
+        return getTablesSqlOfDb(null);
     }
 
     /**
@@ -43,7 +45,7 @@ public class H2Actuator extends Actuator {
      * @return String
      */
     @Override
-    String getTablesSqlOfDb(String schema) {
+    public String getTablesSqlOfDb(String schema) {
         return null;
     }
 
@@ -53,7 +55,7 @@ public class H2Actuator extends Actuator {
      * @return String
      */
     @Override
-    String getAllFieldsSql() {
+    public String getAllFieldsSql() {
         return null;
     }
 
@@ -64,7 +66,7 @@ public class H2Actuator extends Actuator {
      * @return String
      */
     @Override
-    String getFieldsSqlOfDb(String schema) {
+    public String getFieldsSqlOfDb(String schema) {
         return null;
     }
 
@@ -76,7 +78,7 @@ public class H2Actuator extends Actuator {
      * @return String
      */
     @Override
-    String getFieldsSqlOfTable(String schema, String tableName) {
+    public String getFieldsSqlOfTable(String schema, String tableName) {
         return null;
     }
 
@@ -87,18 +89,19 @@ public class H2Actuator extends Actuator {
      * @return DataType
      */
     @Override
-    DataType dialect2StandDataType(String dataType) {
+    public DataType dialect2StandDataType(String dataType) {
         return null;
     }
 
     /**
      * 将列类型转换成标准的数据类型
      *
-     * @param columnType int
+     * @param columnType     int
+     * @param columnTypeName String
      * @return DataType
      */
     @Override
-    DataType columnType2StandDataType(int columnType) {
+    public DataType columnType2StandDataType(int columnType, String columnTypeName) {
         return null;
     }
 
@@ -109,7 +112,7 @@ public class H2Actuator extends Actuator {
      * @return String
      */
     @Override
-    String wrapperTotalSql(String detailSql) {
+    public String wrapperTotalSql(String detailSql) {
         return null;
     }
 
@@ -117,12 +120,12 @@ public class H2Actuator extends Actuator {
      * 进行分页处理
      *
      * @param detailSql String 详细sql
-     * @param pageIndex int 第几页
+     * @param pageIndex int 第几页 从0开始
      * @param pageSize  int 一页显示条数
      * @return String
      */
     @Override
-    String wrapperPageableSql(String detailSql, int pageIndex, int pageSize) {
+    public String wrapperPageableSql(String detailSql, int pageIndex, int pageSize) {
         return null;
     }
 
@@ -133,18 +136,7 @@ public class H2Actuator extends Actuator {
      * @return true - 已经分页； false - 未分页
      */
     @Override
-    boolean hasPageable(String detailSql) {
+    public boolean hasPageable(String detailSql) {
         return false;
-    }
-
-    /**
-     * 根据不同的数据源，将值代入SQL中进行处理
-     *
-     * @param value Value
-     * @return String
-     */
-    @Override
-    String valueQuoting2String(Value value) {
-        return null;
     }
 }

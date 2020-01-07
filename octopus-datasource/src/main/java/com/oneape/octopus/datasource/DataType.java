@@ -24,5 +24,7 @@ public enum DataType {
     // 时间戳
     TIMESTAMP,
     // 日期时间
-    DATETIME;
+    DATETIME,
+    // 其他对象
+    OBJ;
 }

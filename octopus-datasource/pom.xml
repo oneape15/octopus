@@ -16,13 +16,20 @@
             <groupId>com.oneape</groupId>
             <artifactId>octopus-commons</artifactId>
         </dependency>
+        <!-- H2数据源驱动 -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
+        <!-- MySQL数据源驱动 -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <!-- PostgreSQL数据源驱动-->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
