@@ -1,7 +1,9 @@
 package com.oneape.octopus.datasource.dialect;
 
+import com.oneape.octopus.commons.value.DataUtils;
 import com.oneape.octopus.datasource.DataType;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Statement;
 
@@ -10,6 +12,7 @@ import java.sql.Statement;
  */
 @Slf4j
 public class H2Actuator extends Actuator {
+    private static final String PAGE_KEY = "LIMIT";
 
     public H2Actuator(Statement statement) {
         super(statement);
@@ -46,7 +49,15 @@ public class H2Actuator extends Actuator {
      */
     @Override
     public String getTablesSqlOfDb(String schema) {
-        return null;
+        return "SELECT " +
+                " TABLE_CATALOG " + COL_SCHEMA + "," +
+                " TABLE_NAME " + COL_TABLE + ", " +
+                " REMARKS  " + COL_COMMENT + "," +
+                " 1 " + COL_TABLE_TYPE + " " +
+                "FROM " +
+                " INFORMATION_SCHEMA.TABLES " +
+                "WHERE " +
+                " TABLE_SCHEMA='PUBLIC'";
     }
 
     /**
@@ -56,7 +67,7 @@ public class H2Actuator extends Actuator {
      */
     @Override
     public String getAllFieldsSql() {
-        return null;
+        return getFieldsSqlOfTable(null, null);
     }
 
     /**
@@ -67,7 +78,7 @@ public class H2Actuator extends Actuator {
      */
     @Override
     public String getFieldsSqlOfDb(String schema) {
-        return null;
+        return getFieldsSqlOfTable(schema, null);
     }
 
     /**
@@ -79,7 +90,25 @@ public class H2Actuator extends Actuator {
      */
     @Override
     public String getFieldsSqlOfTable(String schema, String tableName) {
-        return null;
+        String whereSql = " WHERE TABLE_SCHEMA='PUBLIC' ";
+        if (StringUtils.isNotBlank(schema)) {
+            whereSql += " AND TABLE_CATALOG = '" + schema + "'";
+        }
+        if (StringUtils.isNotBlank(tableName)) {
+            whereSql += " AND TABLE_NAME = '" + tableName + "'";
+        }
+        return "SELECT " +
+                " TABLE_CATALOG " + COL_SCHEMA + ", " +
+                " TABLE_NAME " + COL_TABLE + ", " +
+                " COLUMN_NAME " + COL_COLUMN + ", " +
+                " COLUMN_DEFAULT " + COL_DEFAULT_VAL + ", " +
+                " CASE WHEN NULLABLE = 1 THEN 0 ELSE 1 END " + COL_NULLABLE + ", " +
+                " DATA_TYPE " + COL_DATA_TYPE + ", " +
+                " 0 " + COL_PRI_KEY + ", " +
+                " REMARKS  " + COL_COMMENT + " " +
+                "FROM information_schema.`COLUMNS` " +
+                whereSql + " " +
+                "ORDER BY TABLE_SCHEMA, TABLE_NAME, ORDINAL_POSITION";
     }
 
     /**
@@ -90,7 +119,7 @@ public class H2Actuator extends Actuator {
      */
     @Override
     public DataType dialect2StandDataType(String dataType) {
-        return null;
+        return h2type2StandDataType(dataType);
     }
 
     /**
@@ -102,7 +131,104 @@ public class H2Actuator extends Actuator {
      */
     @Override
     public DataType columnType2StandDataType(int columnType, String columnTypeName) {
-        return null;
+        return h2type2StandDataType(columnTypeName);
+    }
+
+    private DataType h2type2StandDataType(String dataType) {
+        String tmp = StringUtils.trimToEmpty(dataType).toLowerCase();
+        int index;
+        if ((index = StringUtils.indexOf(tmp, "(")) > -1) {
+            tmp = StringUtils.substring(tmp, 0, index).trim();
+        }
+        if ((index = StringUtils.indexOf(tmp, " ")) > -1) {
+            tmp = StringUtils.substring(tmp, 0, index).trim();
+        }
+        DataType dt = null;
+        switch (tmp) {
+            case "int":
+            case "integer":
+            case "mediumint":
+            case "int4":
+            case "signed":
+            case "tinyint":
+            case "smallint":
+            case "int2":
+            case "year":
+            case "enum":
+                dt = DataType.INTEGER;
+                break;
+            case "bigint":
+            case "int8":
+            case "identity":
+                dt = DataType.LONG;
+                break;
+            case "decimal":
+            case "number":
+            case "dec":
+            case "numeric":
+                dt = DataType.DECIMAL;
+                break;
+            case "double":
+            case "float8":
+                dt = DataType.DOUBLE;
+                break;
+            case "float":
+            case "real":
+            case "float4":
+                dt = DataType.FLOAT;
+                break;
+            case "boolean":
+            case "bit":
+            case "bool":
+                dt = DataType.BOOLEAN;
+                break;
+            case "time":
+                dt = DataType.TIME;
+                break;
+            case "date":
+                dt = DataType.DATE;
+                break;
+            case "timestamp":
+            case "datetime":
+            case "smalldatetime":
+                dt = DataType.TIMESTAMP;
+                break;
+            case "binary":
+            case "varbinary":
+            case "longvarbinary":
+            case "raw":
+            case "bytea":
+            case "blob":
+            case "tinyblob":
+            case "mediumblob":
+            case "longblob":
+            case "image":
+            case "oid":
+            case "clob":
+            case "tinytext":
+            case "text":
+            case "longtext":
+            case "ntext":
+            case "nclob":
+                dt = DataType.BINARY;
+                break;
+            case "varchar":
+            case "varchar2":
+            case "nvarchar":
+            case "varchar_casesensitive":
+            case "varchar_ignorecase":
+            case "longvarchar":
+            case "char":
+            case "character":
+            case "nchar":
+                dt = DataType.VARCHAR;
+                break;
+            case "other":
+            default:
+                dt = DataType.OBJ;
+                break;
+        }
+        return dt;
     }
 
     /**
@@ -113,7 +239,9 @@ public class H2Actuator extends Actuator {
      */
     @Override
     public String wrapperTotalSql(String detailSql) {
-        return null;
+        return "SELECT COUNT(1) AS " + COL_COUNT_SIZE +
+                " FROM (" + detailSql +
+                ") AS tmp";
     }
 
     /**
@@ -126,7 +254,12 @@ public class H2Actuator extends Actuator {
      */
     @Override
     public String wrapperPageableSql(String detailSql, int pageIndex, int pageSize) {
-        return null;
+        if (StringUtils.isBlank(detailSql)) {
+            return detailSql;
+        }
+
+        return detailSql + " " +
+                PAGE_KEY + " " + (pageIndex * pageSize) + ", " + pageSize;
     }
 
     /**
@@ -137,6 +270,34 @@ public class H2Actuator extends Actuator {
      */
     @Override
     public boolean hasPageable(String detailSql) {
+        if (StringUtils.isBlank(detailSql)) {
+            return false;
+        }
+        String tmp = StringUtils.upperCase(detailSql).trim();
+        int index = StringUtils.lastIndexOf(tmp, PAGE_KEY);
+        if (index < 0) {
+            return false;
+        }
+
+        int startIndex = index + PAGE_KEY.length();
+        // 判断SQL是否以 LIMIT int1 或 LIMIT int1, int2结束
+        String subString = StringUtils.substring(tmp, startIndex).trim();
+        if (StringUtils.isBlank(subString)) {
+            log.error("不合法的SQL: {}", detailSql);
+            throw new RuntimeException("不合法的SQL:" + detailSql);
+        }
+
+        String[] arr = StringUtils.split(subString, ",");
+        if (arr == null || arr.length > 2) {
+            return false;
+        }
+
+        if (arr.length == 1) {
+            return DataUtils.isInteger(arr[0]);
+        } else if (arr.length == 2) {
+            return DataUtils.isInteger(arr[0]) && DataUtils.isInteger(arr[1]);
+        }
+
         return false;
     }
 }

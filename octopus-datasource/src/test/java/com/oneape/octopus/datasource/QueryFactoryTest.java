@@ -56,6 +56,29 @@ public class QueryFactoryTest {
     }
 
     @Test
+    public void h2TablesTest() {
+        List<TableInfo> tableInfos = queryFactory.allTables(dsiOfH2);
+
+        Assert.assertNotNull(tableInfos);
+        Assert.assertTrue(tableInfos.size() > 0);
+        log.info("表信息如下： {}", JSON.toJSONString(tableInfos));
+    }
+
+    @Test
+    public void h2FieldsTest() {
+        List<FieldInfo> fields = queryFactory.allFields(dsiOfH2);
+        Assert.assertNotNull(fields);
+        log.info("数据库字段信息如下：{}", JSON.toJSONString(fields));
+    }
+
+    @Test
+    public void h2FieldsBySchemaTest() {
+        List<FieldInfo> fields = queryFactory.allFields(dsiOfH2, "TEST");
+        Assert.assertNotNull(fields);
+        log.info("数据库字段信息如下：{}", JSON.toJSONString(fields));
+    }
+
+    @Test
     public void allDatabaseTest() {
         List<String> databaseNames = queryFactory.allDatabase(dsi);
         Assert.assertNotNull("数据库列表为空", databaseNames);
