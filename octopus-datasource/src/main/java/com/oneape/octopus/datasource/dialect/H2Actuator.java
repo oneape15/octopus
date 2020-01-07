@@ -1,6 +1,7 @@
 package com.oneape.octopus.datasource.dialect;
 
 import com.oneape.octopus.datasource.DataType;
+import com.oneape.octopus.datasource.data.Value;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Statement;
@@ -87,6 +88,63 @@ public class H2Actuator extends Actuator {
      */
     @Override
     DataType dialect2StandDataType(String dataType) {
+        return null;
+    }
+
+    /**
+     * 将列类型转换成标准的数据类型
+     *
+     * @param columnType int
+     * @return DataType
+     */
+    @Override
+    DataType columnType2StandDataType(int columnType) {
+        return null;
+    }
+
+    /**
+     * 获取数据总条数SQL
+     *
+     * @param detailSql String
+     * @return String
+     */
+    @Override
+    String wrapperTotalSql(String detailSql) {
+        return null;
+    }
+
+    /**
+     * 进行分页处理
+     *
+     * @param detailSql String 详细sql
+     * @param pageIndex int 第几页
+     * @param pageSize  int 一页显示条数
+     * @return String
+     */
+    @Override
+    String wrapperPageableSql(String detailSql, int pageIndex, int pageSize) {
+        return null;
+    }
+
+    /**
+     * 判断是否已经分页
+     *
+     * @param detailSql String
+     * @return true - 已经分页； false - 未分页
+     */
+    @Override
+    boolean hasPageable(String detailSql) {
+        return false;
+    }
+
+    /**
+     * 根据不同的数据源，将值代入SQL中进行处理
+     *
+     * @param value Value
+     * @return String
+     */
+    @Override
+    String valueQuoting2String(Value value) {
         return null;
     }
 }

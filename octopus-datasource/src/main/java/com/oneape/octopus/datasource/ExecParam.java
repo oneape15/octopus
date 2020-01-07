@@ -4,6 +4,7 @@ import com.oneape.octopus.datasource.data.Value;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,7 +19,7 @@ public class ExecParam implements Serializable {
     /**
      * 查询参数
      */
-    private Map<String, Value> params;
+    private List<Value> params;
     /**
      * 第几页
      */

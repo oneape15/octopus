@@ -1,17 +1,27 @@
 package com.oneape.octopus.datasource.dialect;
 
+import com.alibaba.fastjson.JSON;
 import com.oneape.octopus.datasource.DataType;
+import com.oneape.octopus.datasource.DatasourceInfo;
 import com.oneape.octopus.datasource.ExecParam;
+import com.oneape.octopus.datasource.data.ColumnHead;
 import com.oneape.octopus.datasource.data.Result;
+import com.oneape.octopus.datasource.data.Value;
 import com.oneape.octopus.datasource.schema.FieldInfo;
 import com.oneape.octopus.datasource.schema.TableInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * SQL执行器
@@ -38,6 +48,8 @@ public abstract class Actuator {
     public static final String COL_PRI_KEY = "pri_key";
     // 备注字段名称
     public static final String COL_COMMENT = "comment";
+    // 总条数字段名称
+    public static final String COL_COUNT_SIZE = "count_size";
 
 
     protected Statement statement;
@@ -99,6 +111,49 @@ public abstract class Actuator {
      * @return DataType
      */
     abstract DataType dialect2StandDataType(String dataType);
+
+    /**
+     * 将列类型转换成标准的数据类型
+     *
+     * @param columnType int
+     * @return DataType
+     */
+    abstract DataType columnType2StandDataType(int columnType);
+
+    /**
+     * 获取数据总条数SQL
+     *
+     * @param detailSql String
+     * @return String
+     */
+    abstract String wrapperTotalSql(String detailSql);
+
+    /**
+     * 进行分页处理
+     *
+     * @param detailSql String 详细sql
+     * @param pageIndex int 第几页 从0开始
+     * @param pageSize  int 一页显示条数
+     * @return String
+     */
+    abstract String wrapperPageableSql(final String detailSql, int pageIndex, int pageSize);
+
+    /**
+     * 判断是否已经分页
+     *
+     * @param detailSql String
+     * @return true - 已经分页； false - 未分页
+     */
+    abstract boolean hasPageable(String detailSql);
+
+    /**
+     * 根据不同的数据源，将值代入SQL中进行处理
+     *
+     * @param value Value
+     * @return String
+     */
+    abstract String valueQuoting2String(Value value);
+
 
     /**
      * 获取所有数据库名称
@@ -230,7 +285,143 @@ public abstract class Actuator {
      * @return Result
      */
     public Result execSql(ExecParam param) {
+        Result result = new Result();
 
-        return null;
+        if (param == null) {
+            result.getRunInfo().put(Result.KEY_ERR_MSG, "查询参数为空");
+            return result;
+        }
+
+        String detailSql = param.getRawSql();
+        if (StringUtils.isBlank(detailSql)) {
+            result.getRunInfo().put(Result.KEY_ERR_MSG, "运行SQL为空");
+            return result;
+        }
+
+        // 组装查询SQL
+        detailSql = assembleDetailSql(detailSql, param.getParams());
+
+        /*
+         * 获取数据总条数
+         */
+        boolean needTotalSize = param.getNeedTotalSize();
+        int countSize = -1;
+        if (needTotalSize) {
+            String countSql = wrapperTotalSql(detailSql);
+            result.getRunInfo().put(Result.KEY_TOTAL_SQL, countSql);
+            try {
+                countSize = getTotalSizeBySql(countSql);
+            } catch (Exception e) {
+                result.getRunInfo().put(Result.KEY_ERR_MSG, e.toString());
+                return result;
+            }
+        }
+        result.setTotalSize(countSize);
+
+        // 判断是否为分页
+        if (param.getPageSize() != null && param.getPageSize() > 0) {
+            int pageSize = param.getPageSize();
+            int pageIndex = param.getPageIndex() - 1;
+            if (pageIndex < 0) {
+                pageIndex = 0;
+            }
+            boolean hasPageable = hasPageable(detailSql);
+            // 未进行分页设置
+            if (!hasPageable) {
+                detailSql = wrapperPageableSql(detailSql, pageIndex, pageSize);
+            }
+        }
+
+        // 设置查询SQL
+        result.getRunInfo().put(Result.KEY_DETAIL_SQL, detailSql);
+
+        StopWatch watch = new StopWatch();
+        watch.start();
+        try (ResultSet rs = statement.executeQuery(detailSql)) {
+            // 得到 ResultSetMetaData 对象
+            List<ColumnHead> columnHeads = getColumnHeads(rs.getMetaData());
+            result.setColumns(columnHeads);
+            int columnSize = columnHeads.size();
+
+            List<Object[]> rows = new ArrayList<>();
+            // 循环获取数据行
+            while (rs.next()) {
+                Object[] row = new Object[columnSize];
+                for (int i = 0; i < columnSize; i++) {
+                    row[i] = rs.getObject(i + 1);
+                }
+                rows.add(row);
+            }
+            result.setRows(rows);
+        } catch (Exception e) {
+            result.getRunInfo().put(Result.KEY_ERR_MSG, e.toString());
+        } finally {
+            watch.stop();
+            result.getRunInfo().put(Result.KYE_RUN_TIME, watch.getTime() + "");
+        }
+
+        return result;
+    }
+
+    /**
+     * 获取数据总条数
+     *
+     * @param countSql String
+     * @return int -1 - 未获取到
+     */
+    private int getTotalSizeBySql(String countSql) {
+        if (StringUtils.isBlank(countSql)) {
+            throw new RuntimeException("执行TOTAL查询语句为空");
+        }
+        try (ResultSet rs = statement.executeQuery(countSql)) {
+            rs.next();
+            return rs.getInt(COL_COUNT_SIZE);
+        } catch (Exception e) {
+            throw new RuntimeException("获取数据总条数异常~", e);
+        }
+    }
+
+    /**
+     * 组装查询SQL
+     *
+     * @param rawSql String
+     * @param params List
+     * @return String
+     */
+    private String assembleDetailSql(String rawSql, List<Value> params) {
+        if (CollectionUtils.isEmpty(params)) {
+            return rawSql;
+        }
+
+        for (Value val : params) {
+            String tmp = valueQuoting2String(val);
+            rawSql = StringUtils.replaceOnce(rawSql, "?", tmp);
+        }
+        return rawSql;
+    }
+
+    /**
+     * 获取字段列信息
+     *
+     * @param rsmd ResultSetMetaData
+     * @return list
+     * @throws SQLException e
+     */
+    private List<ColumnHead> getColumnHeads(ResultSetMetaData rsmd) throws SQLException {
+        List<ColumnHead> heads = new ArrayList<>();
+        if (rsmd == null) {
+            return heads;
+        }
+
+        for (int i = 0; i < rsmd.getColumnCount(); i++) {
+            int index = i + 1;
+            String columnLabel = rsmd.getColumnLabel(index);
+            String columnName = rsmd.getColumnName(index);
+            ColumnHead head = new ColumnHead(columnName, columnLabel);
+            head.setDataType(columnType2StandDataType(rsmd.getColumnType(index)));
+            heads.add(head);
+        }
+
+        return heads;
     }
 }

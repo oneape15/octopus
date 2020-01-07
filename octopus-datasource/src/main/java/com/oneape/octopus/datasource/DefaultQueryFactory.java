@@ -56,8 +56,8 @@ public class DefaultQueryFactory implements QueryFactory {
             }
         } catch (Exception e) {
             log.error("获取表信息失败~", e);
+            throw new RuntimeException("获取数据库全部表信息失败", e);
         }
-        return null;
     }
 
     /**
@@ -161,7 +161,10 @@ public class DefaultQueryFactory implements QueryFactory {
             }
         } catch (Exception e) {
             log.error("执行SQL: {} 失败", JSON.toJSONString(param), e);
+            Result result = new Result();
+            result.setStatus(Result.QueryStatus.ERROR);
+            result.getRunInfo().put(Result.KEY_ERR_MSG, JSON.toJSONString(e));
+            return result;
         }
-        return null;
     }
 }

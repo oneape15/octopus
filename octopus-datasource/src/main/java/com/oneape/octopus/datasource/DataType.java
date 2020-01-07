@@ -14,6 +14,7 @@ public enum DataType {
     INTEGER,
     // 高精度
     DECIMAL,
+    LONG,
     FLOAT,
     DOUBLE,
     // 日期
