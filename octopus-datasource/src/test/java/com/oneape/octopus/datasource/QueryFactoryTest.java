@@ -151,8 +151,8 @@ public class QueryFactoryTest {
         execParam.setNeedTotalSize(true);
         execParam.setRawSql(rawSql);
         List<Value> values = new ArrayList<>();
-        values.add(new Value("octopus", DataType.VARCHAR));
-        values.add(new Value("r_datasource", DataType.VARCHAR));
+        values.add(new Value("octopus", DataType.STRING));
+        values.add(new Value("r_datasource", DataType.STRING));
         values.add(new Value(1, DataType.INTEGER));
         execParam.setParams(values);
         execParam.setPageIndex(1);
@@ -171,7 +171,7 @@ public class QueryFactoryTest {
         execParam.setRawSql(rawSql);
         List<Value> values = new ArrayList<>();
         values.add(new Value(1, DataType.INTEGER));
-        values.add(new Value("秋葵", DataType.VARCHAR));
+        values.add(new Value("秋葵", DataType.STRING));
         execParam.setParams(values);
         execParam.setPageIndex(1);
         execParam.setPageSize(5);

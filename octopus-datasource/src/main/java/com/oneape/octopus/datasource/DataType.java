@@ -5,7 +5,7 @@ package com.oneape.octopus.datasource;
  */
 public enum DataType {
     // 字符类型
-    VARCHAR,
+    STRING,
     // 二进制
     BINARY,
     // 布尔类型
@@ -14,8 +14,11 @@ public enum DataType {
     INTEGER,
     // 高精度
     DECIMAL,
+    //
     LONG,
+    //
     FLOAT,
+    //
     DOUBLE,
     // 日期
     DATE,

@@ -182,7 +182,7 @@ public class PostgreSQLActuator extends Actuator {
             case "varchar":
             case "text":
             case "name":
-                dt = DataType.VARCHAR;
+                dt = DataType.STRING;
                 break;
             case "bool":
             case "bit":

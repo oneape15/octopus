@@ -174,7 +174,7 @@ public abstract class Actuator {
                 break;
             case TIMESTAMP:
             case DATETIME:
-            case VARCHAR:
+            case STRING:
             case BINARY:
             case TIME:
             case DATE:

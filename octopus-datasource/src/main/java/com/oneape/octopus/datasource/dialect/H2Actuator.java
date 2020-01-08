@@ -221,7 +221,7 @@ public class H2Actuator extends Actuator {
             case "char":
             case "character":
             case "nchar":
-                dt = DataType.VARCHAR;
+                dt = DataType.STRING;
                 break;
             case "other":
             default:

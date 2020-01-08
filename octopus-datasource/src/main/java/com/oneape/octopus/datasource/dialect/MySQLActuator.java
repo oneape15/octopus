@@ -173,7 +173,7 @@ public class MySQLActuator extends Actuator {
             case TEXT:
             case MEDIUMTEXT:
             case LONGTEXT:
-                return DataType.VARCHAR;
+                return DataType.STRING;
             case TINYBLOB:
             case BLOB:
             case MEDIUMBLOB:
