@@ -1,9 +1,9 @@
 package com.oneape.octopus.service;
 
-import com.oneape.octopus.model.DO.ReportColumnDO;
-import com.oneape.octopus.model.DO.ReportDO;
-import com.oneape.octopus.model.DO.ReportParamDO;
-import com.oneape.octopus.model.DO.ReportSqlDO;
+import com.oneape.octopus.model.DO.report.ReportColumnDO;
+import com.oneape.octopus.model.DO.report.ReportDO;
+import com.oneape.octopus.model.DO.report.ReportParamDO;
+import com.oneape.octopus.model.DO.report.ReportSqlDO;
 import com.oneape.octopus.model.VO.ReportVO;
 
 import java.util.List;

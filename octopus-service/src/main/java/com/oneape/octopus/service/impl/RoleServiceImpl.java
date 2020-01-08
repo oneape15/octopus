@@ -1,10 +1,10 @@
 package com.oneape.octopus.service.impl;
 
 import com.oneape.octopus.common.BizException;
-import com.oneape.octopus.mapper.RoleMapper;
-import com.oneape.octopus.mapper.UserRlRoleMapper;
-import com.oneape.octopus.model.DO.RoleDO;
-import com.oneape.octopus.model.DO.UserRlRoleDO;
+import com.oneape.octopus.mapper.system.RoleMapper;
+import com.oneape.octopus.mapper.system.UserRlRoleMapper;
+import com.oneape.octopus.model.DO.system.RoleDO;
+import com.oneape.octopus.model.DO.system.UserRlRoleDO;
 import com.oneape.octopus.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

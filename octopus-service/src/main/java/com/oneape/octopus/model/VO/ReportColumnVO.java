@@ -1,7 +1,7 @@
 package com.oneape.octopus.model.VO;
 
 import com.oneape.octopus.common.GlobalConstant;
-import com.oneape.octopus.model.DO.ReportColumnDO;
+import com.oneape.octopus.model.DO.report.ReportColumnDO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 

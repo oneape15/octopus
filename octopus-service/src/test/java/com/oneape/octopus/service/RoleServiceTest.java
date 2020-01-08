@@ -1,7 +1,7 @@
 package com.oneape.octopus.service;
 
 import com.oneape.octopus.Application;
-import com.oneape.octopus.model.DO.RoleDO;
+import com.oneape.octopus.model.DO.system.RoleDO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package com.oneape.octopus.service;
 
-import com.oneape.octopus.model.DO.DatasourceDO;
+import com.oneape.octopus.model.DO.report.DatasourceDO;
 import com.oneape.octopus.model.VO.DatasourceVO;
 
 import java.util.List;

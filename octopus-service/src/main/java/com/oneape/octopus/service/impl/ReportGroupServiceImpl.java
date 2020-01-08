@@ -2,8 +2,8 @@ package com.oneape.octopus.service.impl;
 
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.GlobalConstant;
-import com.oneape.octopus.mapper.ReportGroupMapper;
-import com.oneape.octopus.model.DO.ReportGroupDO;
+import com.oneape.octopus.mapper.report.ReportGroupMapper;
+import com.oneape.octopus.model.DO.report.ReportGroupDO;
 import com.oneape.octopus.model.VO.ReportGroupVO;
 import com.oneape.octopus.service.ReportGroupService;
 import lombok.extern.slf4j.Slf4j;

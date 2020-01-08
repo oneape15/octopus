@@ -2,10 +2,10 @@ package com.oneape.octopus.service.impl;
 
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.GlobalConstant;
-import com.oneape.octopus.mapper.ResourceMapper;
-import com.oneape.octopus.mapper.RoleRlResourceMapper;
-import com.oneape.octopus.model.DO.ResourceDO;
-import com.oneape.octopus.model.DO.RoleRlResourceDO;
+import com.oneape.octopus.mapper.system.ResourceMapper;
+import com.oneape.octopus.mapper.system.RoleRlResourceMapper;
+import com.oneape.octopus.model.DO.system.ResourceDO;
+import com.oneape.octopus.model.DO.system.RoleRlResourceDO;
 import com.oneape.octopus.service.ResourceService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

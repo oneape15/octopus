@@ -1,6 +1,6 @@
 package com.oneape.octopus.service;
 
-import com.oneape.octopus.model.DO.UserDO;
+import com.oneape.octopus.model.DO.system.UserDO;
 import com.oneape.octopus.model.VO.UserVO;
 
 public interface AccountService extends BaseService<UserDO> {

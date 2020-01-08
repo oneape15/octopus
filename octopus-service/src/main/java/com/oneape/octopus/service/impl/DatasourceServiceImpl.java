@@ -1,8 +1,8 @@
 package com.oneape.octopus.service.impl;
 
 import com.oneape.octopus.common.BizException;
-import com.oneape.octopus.mapper.DatasourceMapper;
-import com.oneape.octopus.model.DO.DatasourceDO;
+import com.oneape.octopus.mapper.report.DatasourceMapper;
+import com.oneape.octopus.model.DO.report.DatasourceDO;
 import com.oneape.octopus.model.VO.DatasourceVO;
 import com.oneape.octopus.service.DatasourceService;
 import lombok.extern.slf4j.Slf4j;

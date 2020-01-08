@@ -1,6 +1,6 @@
 package com.oneape.octopus.service;
 
-import com.oneape.octopus.model.DO.ReportGroupDO;
+import com.oneape.octopus.model.DO.report.ReportGroupDO;
 import com.oneape.octopus.model.VO.ReportGroupVO;
 
 import java.util.List;
