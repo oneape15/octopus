@@ -2,6 +2,7 @@ package com.oneape.octopus.datasource;
 
 import com.alibaba.fastjson.JSON;
 import com.oneape.octopus.datasource.data.Result;
+import com.oneape.octopus.datasource.data.Value;
 import com.oneape.octopus.datasource.dialect.Actuator;
 import com.oneape.octopus.datasource.schema.FieldInfo;
 import com.oneape.octopus.datasource.schema.TableInfo;
@@ -153,11 +154,24 @@ public class DefaultQueryFactory implements QueryFactory {
      */
     @Override
     public Result execSql(DatasourceInfo dsi, ExecParam param) {
+        return execSql(dsi, param, null);
+    }
+
+    /**
+     * 执行SQL操作
+     *
+     * @param dsi     DatasourceInfo
+     * @param param   ExecParam
+     * @param process CellProcess
+     * @return Result
+     */
+    @Override
+    public Result execSql(DatasourceInfo dsi, ExecParam param, CellProcess<Cell, Object> process) {
         try {
             Connection conn = datasourceFactory.getConnection(dsi);
             try (Statement statement = conn.createStatement()) {
                 Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
-                return actuator.execSql(param);
+                return actuator.execSql(param, process);
             }
         } catch (Exception e) {
             log.error("执行SQL: {} 失败", JSON.toJSONString(param), e);

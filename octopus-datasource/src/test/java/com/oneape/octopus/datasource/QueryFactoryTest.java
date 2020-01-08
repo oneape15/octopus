@@ -6,6 +6,7 @@ import com.oneape.octopus.datasource.data.Value;
 import com.oneape.octopus.datasource.schema.FieldInfo;
 import com.oneape.octopus.datasource.schema.TableInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -176,7 +177,12 @@ public class QueryFactoryTest {
         execParam.setPageIndex(1);
         execParam.setPageSize(5);
 
-        Result result = queryFactory.execSql(dsiOfPgSql, execParam);
+        Result result = queryFactory.execSql(dsiOfPgSql, execParam, cell -> {
+            if (StringUtils.equals("updator", cell.getHead().getLabel())) {
+                return String.valueOf(cell.getValue()) + "_大人";
+            }
+            return cell.getValue();
+        });
 
         log.info("查询结果： {}", JSON.toJSONString(result));
     }

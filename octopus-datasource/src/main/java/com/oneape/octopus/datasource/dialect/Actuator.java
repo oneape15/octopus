@@ -1,5 +1,7 @@
 package com.oneape.octopus.datasource.dialect;
 
+import com.oneape.octopus.datasource.Cell;
+import com.oneape.octopus.datasource.CellProcess;
 import com.oneape.octopus.datasource.DataType;
 import com.oneape.octopus.datasource.ExecParam;
 import com.oneape.octopus.datasource.data.ColumnHead;
@@ -316,10 +318,11 @@ public abstract class Actuator {
     /**
      * 执行SQL操作
      *
-     * @param param ExecParam
+     * @param param   ExecParam
+     * @param process CellProcess
      * @return Result
      */
-    public Result execSql(ExecParam param) {
+    public Result execSql(ExecParam param, CellProcess<Cell, Object> process) {
         Result result = new Result();
 
         if (param == null) {
@@ -374,7 +377,7 @@ public abstract class Actuator {
         watch.start();
         try (ResultSet rs = statement.executeQuery(detailSql)) {
             // 得到 ResultSetMetaData 对象
-            List<ColumnHead> columnHeads = getColumnHeads(rs.getMetaData());
+            final List<ColumnHead> columnHeads = getColumnHeads(rs.getMetaData());
             result.setColumns(columnHeads);
             int columnSize = columnHeads.size();
 
@@ -383,7 +386,12 @@ public abstract class Actuator {
             while (rs.next()) {
                 Object[] row = new Object[columnSize];
                 for (int i = 0; i < columnSize; i++) {
-                    row[i] = rs.getObject(i + 1);
+                    Object obj = rs.getObject(i + 1);
+                    if (process != null) {
+                        row[i] = process.process(new Cell(columnHeads.get(i), obj));
+                    } else {
+                        row[i] = obj;
+                    }
                 }
                 rows.add(row);
             }

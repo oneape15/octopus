@@ -1,6 +1,7 @@
 package com.oneape.octopus.datasource;
 
 import com.oneape.octopus.datasource.data.Result;
+import com.oneape.octopus.datasource.data.Value;
 import com.oneape.octopus.datasource.schema.FieldInfo;
 import com.oneape.octopus.datasource.schema.TableInfo;
 
@@ -68,4 +69,14 @@ public interface QueryFactory {
      * @return Result
      */
     Result execSql(DatasourceInfo dsi, ExecParam param);
+
+    /**
+     * 执行SQL操作
+     *
+     * @param dsi     DatasourceInfo
+     * @param param   ExecParam
+     * @param process CellProcess
+     * @return Result
+     */
+    Result execSql(DatasourceInfo dsi, ExecParam param, CellProcess<Cell, Object> process);
 }
