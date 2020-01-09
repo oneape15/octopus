@@ -12,7 +12,7 @@ public class BizException extends RuntimeException {
      * 默认异常构造器.
      */
     public BizException() {
-        this(StateCode.InternalServerError);
+        this(StateCode.BizError);
     }
 
     public BizException(StateCode stateCode) {
@@ -50,7 +50,7 @@ public class BizException extends RuntimeException {
      * @param cause   原生异常.
      */
     public BizException(final String message, final Throwable cause) {
-        this(StateCode.InternalServerError.getCode(), message, cause);
+        this(StateCode.BizError, message, cause);
     }
 
     /**
@@ -59,9 +59,8 @@ public class BizException extends RuntimeException {
      * @param message 异常信息.
      */
     public BizException(final String message) {
-        this(StateCode.InternalServerError.getCode(), message);
+        this(StateCode.BizError.getCode(), message);
     }
-
 
     /**
      * 根据原生异常构造对象.
@@ -69,11 +68,17 @@ public class BizException extends RuntimeException {
      * @param cause 原生异常.
      */
     public BizException(final Throwable cause) {
-        this(StateCode.InternalServerError, cause);
+        this(StateCode.BizError, cause);
     }
 
     public BizException(final StateCode stateCode, final Throwable cause) {
         this(stateCode.getCode(), stateCode.getMessage(), cause);
+    }
+
+    public BizException(final StateCode stateCode, final String errMsg, final Throwable cause) {
+        super(errMsg, cause);
+        this.code = stateCode != null ? stateCode.getCode() : StateCode.BizError.getCode();
+
     }
 
     @Override

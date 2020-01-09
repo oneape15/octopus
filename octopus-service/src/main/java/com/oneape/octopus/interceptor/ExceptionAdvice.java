@@ -1,7 +1,7 @@
 package com.oneape.octopus.interceptor;
 
-import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.StateCode;
+import com.oneape.octopus.common.UnauthorizedException;
 import com.oneape.octopus.model.VO.ApiResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -98,6 +98,16 @@ public class ExceptionAdvice {
     }
 
     /**
+     * 401 - unauthorized
+     */
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UnauthorizedException.class)
+    public ApiResult<String> handleUnauthorizedException(UnauthorizedException e) {
+        log.error("未授权的操作");
+        return new ApiResult<>(StateCode.Unauthorized);
+    }
+
+    /**
      * 405 - Method Not Allowed
      */
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
@@ -117,8 +127,8 @@ public class ExceptionAdvice {
         String errorMsg = e.getMessage();
         // 错误消息为空 或者消息长度超过一定长度的认定为未捕获到的异常
         if (StringUtils.isBlank(errorMsg) || StringUtils.length(errorMsg) > 50) {
-            errorMsg = StateCode.InternalServerError.getMessage();
+            errorMsg = StateCode.BizError.getMessage();
         }
-        return new ApiResult<>(errorMsg);
+        return ApiResult.ofError(StateCode.BizError, errorMsg);
     }
 }

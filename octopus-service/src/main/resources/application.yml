@@ -3,12 +3,15 @@ spring:
     include: jdbc
   cors:
     allow-origin:
+      - http://localhost:8000
     allow-methods:
       - POST
       - GET
       - DELETE
+      - OPTIONS
     allow-headers:
       - Token
+      - Content-type
     allow-credentials: true
 
 mail:

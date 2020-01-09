@@ -76,4 +76,10 @@ public class ApiResult<T> implements Serializable {
     public static <T> ApiResult<T> ofError(int code, String message) {
         return new ApiResult<>(null, code, message);
     }
+
+    public static <T> ApiResult<T> ofError(StateCode stateCode, String message) {
+        ApiResult<T> ret = new ApiResult<>(stateCode);
+        ret.setMessage(message);
+        return ret;
+    }
 }

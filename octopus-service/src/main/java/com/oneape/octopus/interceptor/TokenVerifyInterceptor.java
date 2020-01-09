@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.SessionThreadLocal;
 import com.oneape.octopus.common.StateCode;
+import com.oneape.octopus.common.UnauthorizedException;
 import com.oneape.octopus.config.ApplicationContextProvider;
 import com.oneape.octopus.model.VO.UserVO;
 import com.oneape.octopus.service.AccountService;
@@ -131,7 +132,7 @@ public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
 
         String token = getToken(request);
         if (StringUtils.isBlank(token)) {
-            throw new BizException(StateCode.Unauthorized);
+            throw new UnauthorizedException();
         }
 
         //检测token的合法性
@@ -141,7 +142,7 @@ public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
         }
         if (user == null) {
             log.info("token验证失败! token:{}", token);
-            throw new BizException(StateCode.Unauthorized);
+            throw new UnauthorizedException();
         }
 
         cache.put(KEY_TOKEN + token, user);

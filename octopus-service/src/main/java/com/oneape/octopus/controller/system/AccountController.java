@@ -1,8 +1,11 @@
 package com.oneape.octopus.controller.system;
 
+import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.StateCode;
+import com.oneape.octopus.common.UnauthorizedException;
 import com.oneape.octopus.controller.system.form.UserForm;
 import com.oneape.octopus.model.VO.ApiResult;
+import com.oneape.octopus.model.VO.MenuVO;
 import com.oneape.octopus.model.VO.UserVO;
 import com.oneape.octopus.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/account")
@@ -25,7 +30,7 @@ public class AccountController {
      * @param form UserForm
      * @return ApiResult
      */
-    @PostMapping("/login")
+    @RequestMapping("/login")
     public ApiResult<UserVO> doLogin(@RequestBody @Validated(value = UserForm.LoginCheck.class) UserForm form) {
         UserVO vo = accountService.login(form.getUsername(), form.getPassword());
         if (vo == null) {
@@ -49,5 +54,31 @@ public class AccountController {
 
         return ApiResult.ofMessage("注册成功");
     }
+
+    /**
+     * 获取当前用户信息
+     *
+     * @return UserVO
+     */
+    @PostMapping("/getCurrent")
+    public ApiResult<UserVO> getCurrent() {
+        UserVO vo = accountService.getCurrentUser();
+        if (vo == null) {
+            throw new UnauthorizedException();
+        }
+        return ApiResult.ofData(vo);
+    }
+
+    /**
+     * 获取当前用户拥有的菜单列表
+     *
+     * @return List
+     */
+    @PostMapping("/menuTree")
+    public ApiResult<List<MenuVO>> getCurrentUserMenu() {
+        List<MenuVO> menus = accountService.getCurrentMenus();
+        return ApiResult.ofData(menus);
+    }
+
 
 }

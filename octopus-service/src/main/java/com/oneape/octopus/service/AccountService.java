@@ -1,7 +1,10 @@
 package com.oneape.octopus.service;
 
 import com.oneape.octopus.model.DO.system.UserDO;
+import com.oneape.octopus.model.VO.MenuVO;
 import com.oneape.octopus.model.VO.UserVO;
+
+import java.util.List;
 
 public interface AccountService extends BaseService<UserDO> {
 
@@ -33,6 +36,13 @@ public interface AccountService extends BaseService<UserDO> {
      * @return Long
      */
     Long getCurrentUserId();
+
+    /**
+     * 获取当前用户的前端菜单列表
+     *
+     * @return List
+     */
+    List<MenuVO> getCurrentMenus();
 
     /**
      * 根据用户名查询用户信息

@@ -16,6 +16,7 @@ public enum StateCode {
     NotImplemented(501, "服务器不支持当前请求所需要的某个功能"),
     BadGateway(502, "作为网关或者代理工作的服务器尝试执行请求时，从上游服务器接收到无效的响应"),
 
+    BizError(1000, "业务处理错误")
     ;
 
 

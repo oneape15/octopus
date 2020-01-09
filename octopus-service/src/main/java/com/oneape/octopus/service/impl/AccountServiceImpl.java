@@ -3,7 +3,7 @@ package com.oneape.octopus.service.impl;
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.GlobalConstant;
 import com.oneape.octopus.common.SessionThreadLocal;
-import com.oneape.octopus.common.StateCode;
+import com.oneape.octopus.common.UnauthorizedException;
 import com.oneape.octopus.commons.value.CodeBuilderUtils;
 import com.oneape.octopus.commons.value.MD5Utils;
 import com.oneape.octopus.mapper.system.UserMapper;
@@ -12,6 +12,7 @@ import com.oneape.octopus.mapper.system.UserSessionMapper;
 import com.oneape.octopus.model.DO.system.UserDO;
 import com.oneape.octopus.model.DO.system.UserRlRoleDO;
 import com.oneape.octopus.model.DO.system.UserSessionDO;
+import com.oneape.octopus.model.VO.MenuVO;
 import com.oneape.octopus.model.VO.UserVO;
 import com.oneape.octopus.service.AccountService;
 import com.oneape.octopus.service.MailService;
@@ -119,7 +120,7 @@ public class AccountServiceImpl implements AccountService {
 
         // 验证token
         if (us == null) {
-            throw new BizException(StateCode.Unauthorized.getCode(), "无效的Token");
+            throw new UnauthorizedException("无效的Token");
         }
 
         Long loginTime = us.getLoginTime();
@@ -129,7 +130,7 @@ public class AccountServiceImpl implements AccountService {
             timeout = TOKEN_TIMEOUT; // 默认60分钟失效
         }
         if (loginTime == null || loginTime + timeout * ONE_MINUTE < System.currentTimeMillis()) {
-            throw new BizException(StateCode.Unauthorized.getCode(), "登录令牌已失效, 请重新登录");
+            throw new UnauthorizedException("登录令牌已失效, 请重新登录");
         }
 
         UserDO udo = userMapper.findById(us.getUserId());
@@ -161,6 +162,16 @@ public class AccountServiceImpl implements AccountService {
     }
 
     /**
+     * 获取当前用户的前端菜单列表
+     *
+     * @return List
+     */
+    @Override
+    public List<MenuVO> getCurrentMenus() {
+        return null;
+    }
+
+    /**
      * 根据用户名查询用户信息
      *
      * @param username String
@@ -187,7 +198,7 @@ public class AccountServiceImpl implements AccountService {
     public UserVO login(String username, String password) {
         UserVO uvo = getByUsername(username);
         if (uvo == null || !StringUtils.equals(password, uvo.getPassword())) {
-            throw new BizException(StateCode.OK.getCode(), "用户名或密码错误~");
+            throw new BizException("用户名或密码错误~");
         }
 
         // 生成登录成功token
@@ -197,7 +208,7 @@ public class AccountServiceImpl implements AccountService {
             return uvo;
         }
 
-        throw new BizException(StateCode.BadGateway.getCode(), "用户名或密码错误~");
+        throw new BizException("用户名或密码错误~");
     }
 
     /**
