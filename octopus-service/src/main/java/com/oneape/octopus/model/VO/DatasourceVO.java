@@ -4,8 +4,10 @@ import com.oneape.octopus.model.DO.report.DatasourceDO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
+import java.io.Serializable;
+
 @Data
-public class DatasourceVO {
+public class DatasourceVO implements Serializable {
     private Long id;
     // 数据库别名
     private String nickname;

@@ -1,14 +1,13 @@
 package com.oneape.octopus.service.impl;
 
-import com.oneape.octopus.common.BizException;
-import com.oneape.octopus.common.GlobalConstant;
-import com.oneape.octopus.common.SessionThreadLocal;
-import com.oneape.octopus.common.UnauthorizedException;
+import com.oneape.octopus.common.*;
 import com.oneape.octopus.commons.value.CodeBuilderUtils;
 import com.oneape.octopus.commons.value.MD5Utils;
+import com.oneape.octopus.mapper.system.ResourceMapper;
 import com.oneape.octopus.mapper.system.UserMapper;
 import com.oneape.octopus.mapper.system.UserRlRoleMapper;
 import com.oneape.octopus.mapper.system.UserSessionMapper;
+import com.oneape.octopus.model.DO.system.ResourceDO;
 import com.oneape.octopus.model.DO.system.UserDO;
 import com.oneape.octopus.model.DO.system.UserRlRoleDO;
 import com.oneape.octopus.model.DO.system.UserSessionDO;
@@ -16,8 +15,10 @@ import com.oneape.octopus.model.VO.MenuVO;
 import com.oneape.octopus.model.VO.UserVO;
 import com.oneape.octopus.service.AccountService;
 import com.oneape.octopus.service.MailService;
+import com.oneape.octopus.service.ResourceService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.map.LazySortedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,8 +28,8 @@ import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -40,6 +41,8 @@ public class AccountServiceImpl implements AccountService {
     private UserRlRoleMapper userRlRoleMapper;
     @Resource
     private UserSessionMapper userSessionMapper;
+    @Resource
+    private ResourceMapper resourceMapper;
 
     @Autowired
     private MailService mailService;
@@ -168,7 +171,51 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public List<MenuVO> getCurrentMenus() {
-        return null;
+        ResourceDO qrd = new ResourceDO();
+        qrd.setType(0); // 只查询类型为菜单的资料
+
+        // 设置排序方式
+        List<String> orders = new ArrayList<>();
+        orders.add("level");
+        orders.add("sort_id DESC");
+        List<ResourceDO> resources = resourceMapper.listWithOrder(qrd, orders);
+
+        Map<Integer, List<ResourceDO>> levelMap = new HashMap<>();
+        for (ResourceDO r : resources) {
+            if (!levelMap.containsKey(r.getLevel())) {
+                levelMap.put(r.getLevel(), new ArrayList<>());
+            }
+            levelMap.get(r.getLevel()).add(r);
+        }
+
+        List<Integer> levels = levelMap.keySet()
+                .stream()
+                .sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList());
+
+        // 从下往上遍历
+        Map<Long, List<MenuVO>> preLevelMap = new LinkedHashMap<>();
+        for (Integer level : levels) {
+            Map<Long, List<MenuVO>> curLevelMap = new LinkedHashMap<>();
+            for (ResourceDO r : levelMap.get(level)) {
+                Long id = r.getId();
+                Long pId = r.getParentId();
+                MenuVO menu = new MenuVO(r.getName(), r.getPath(), r.getIcon());
+                if (preLevelMap.containsKey(id)) {
+                    menu.setChildren(preLevelMap.get(id));
+                }
+                if (!curLevelMap.containsKey(pId)) {
+                    curLevelMap.put(pId, new ArrayList<>());
+                }
+                curLevelMap.get(pId).add(menu);
+            }
+            preLevelMap = curLevelMap;
+        }
+
+        List<MenuVO> menus = new ArrayList<>();
+        preLevelMap.values().forEach(menus::addAll);
+
+        return menus;
     }
 
     /**
@@ -203,12 +250,38 @@ public class AccountServiceImpl implements AccountService {
 
         // 生成登录成功token
         String token = createUserSessionToken(uvo.getId());
-        if (StringUtils.isNotBlank(token)) {
-            uvo.setToken(token);
-            return uvo;
+        if (StringUtils.isBlank(token)) {
+            throw new BizException("登录令牌生成失败，请重试~");
         }
+        uvo.setToken(token);
 
-        throw new BizException("用户名或密码错误~");
+        // 获取资源操作权限
+        Map<String, List<Integer>> optPermission = getResOptPermission(uvo.getId());
+        uvo.setOptPermission(optPermission);
+        return uvo;
+
+    }
+
+    /**
+     * 获取用户资源操作权限
+     *
+     * @param userId Long
+     * @return Map
+     */
+    @Override
+    public Map<String, List<Integer>> getResOptPermission(Long userId) {
+        List<ResourceDO> list = resourceMapper.list(new ResourceDO());
+
+        Map<String, List<Integer>> ret = new HashMap<>();
+
+        List<Integer> masks = MaskUtils.getAllList();
+        list.forEach(resource -> {
+            if (StringUtils.isNotBlank(resource.getPath())) {
+                ret.put(resource.getPath(), masks);
+            }
+        });
+
+        return ret;
     }
 
     /**
@@ -291,5 +364,21 @@ public class AccountServiceImpl implements AccountService {
             return token;
         }
         return null;
+    }
+
+    /**
+     * 获取用户列表
+     *
+     * @param user UserDO
+     * @return List
+     */
+    @Override
+    public List<UserVO> find(UserDO user) {
+        List<UserDO> users = userMapper.list(user);
+        List<UserVO> vos = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(users)) {
+            users.forEach(u -> vos.add(UserVO.ofDO(u)));
+        }
+        return vos;
     }
 }

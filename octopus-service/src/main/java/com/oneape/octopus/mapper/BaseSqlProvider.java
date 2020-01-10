@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,27 +18,27 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
     /**
      * 主键字段名称
      */
-    private final static String FIELD_PRIMARY_ID = "id";
+    public final static String FIELD_PRIMARY_ID = "id";
     /**
      * 创建时间字段名称
      */
-    private final static String FIELD_CREATED = "created";
+    public final static String FIELD_CREATED = "created";
     /**
      * 创建人字段名称
      */
-    private final static String FIELD_CREATOR = "creator";
+    public final static String FIELD_CREATOR = "creator";
     /**
      * 修改时间字段名称
      */
-    private final static String FIELD_MODIFIED = "modified";
+    public final static String FIELD_MODIFIED = "modified";
     /**
      * 修改人字段名称
      */
-    private final static String FIELD_MODIFIER = "modifier";
+    public final static String FIELD_MODIFIER = "modifier";
     /**
      * 归档字段名称
      */
-    private final static String FIELD_ARCHIVE = "archive";
+    public final static String FIELD_ARCHIVE = "archive";
 
     /**
      * 获取表名
@@ -153,13 +153,47 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
         return new SQL() {
             {
                 UPDATE(getTableName());
-                SET(FIELD_ARCHIVE + "= " + Archive.ARCHIVE,
+                SET(FIELD_ARCHIVE + " = " + Archive.ARCHIVE.value(),
                         FIELD_MODIFIED + " = unix_timestamp(now())",
-                        FIELD_MODIFIER + "#{" + FIELD_MODIFIER + "}");
+                        FIELD_MODIFIER + " = #{" + FIELD_MODIFIER + "}");
                 WHERE(FIELD_PRIMARY_ID + "= #{" + FIELD_PRIMARY_ID + "}");
             }
         }.toString();
     }
+
+    /**
+     * 根据传入条件进行删除
+     *
+     * @param model T
+     * @return String
+     */
+    public String delete(T model) {
+        Assert.isTrue(model != null, "删除操作实体为空");
+        List<BeanProperties> fields = BeanUtils.getFields(model);
+
+        List<String> whereSql = new ArrayList<>();
+
+        fields.forEach(field -> {
+            if (field.getValue() != null) {
+                String columnName = field.getDbColumnName();
+                if (StringUtils.isBlank(columnName)) {
+                    columnName = field.getName();
+                }
+                whereSql.add(columnName + " = #{" + field.getName() + "}");
+            }
+        });
+
+        return new SQL() {
+            {
+                UPDATE(getTableName());
+                SET(FIELD_ARCHIVE + " = " + Archive.ARCHIVE.value(),
+                        FIELD_MODIFIED + " = unix_timestamp(now())",
+                        FIELD_MODIFIER + " = #{" + FIELD_MODIFIER + "}");
+                WHERE(whereSql.toArray(new String[whereSql.size()]));
+            }
+        }.toString();
+    }
+
 
     /**
      * 根据Id查询
@@ -192,7 +226,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
         fields.forEach(field -> {
             if (field.getValue() != null) {
                 String columnName = field.getDbColumnName();
-                wheres.add(columnName + " = #{" + field.getName() + "}");
+                wheres.add(columnName + " = #{model." + field.getName() + "}");
             }
         });
 
@@ -201,6 +235,46 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
                 SELECT("*");
                 FROM(getTableName());
                 WHERE(wheres.toArray(new String[wheres.size()]));
+            }
+        }.toString();
+    }
+
+    /**
+     * 根据实体中不为null的属性作为查询条件查询
+     *
+     * @param model       T
+     * @param orderFields List
+     * @return String
+     */
+    public String listWithOrder(@Param("model") T model, @Param("orderFields") List<String> orderFields) {
+        Assert.isTrue(model != null, "查询数据集实体为空");
+        List<BeanProperties> fields = BeanUtils.getFields(model);
+
+        List<String> wheres = new ArrayList<>();
+        List<String> orders = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(orderFields)) {
+            for (String tmp : orderFields) {
+                if (StringUtils.isNotBlank(tmp)) {
+                    orders.add(tmp);
+                }
+            }
+        } else {
+            orders.add(FIELD_CREATED + " DESC ");
+        }
+
+        fields.forEach(field -> {
+            if (field.getValue() != null) {
+                String columnName = field.getDbColumnName();
+                wheres.add(columnName + " = #{model." + field.getName() + "}");
+            }
+        });
+
+        return new SQL() {
+            {
+                SELECT("*");
+                FROM(getTableName());
+                WHERE(wheres.toArray(new String[wheres.size()]));
+                ORDER_BY(orders.toArray(new String[orders.size()]));
             }
         }.toString();
     }
@@ -226,7 +300,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
             if (index > 0) {
                 wheres.append(" OR ");
             }
-            wheres.append(columnName).append(" = #{").append(field.getName()).append("}");
+            wheres.append(columnName).append(" = #{model.").append(field.getName()).append("}");
             index++;
         }
         return new SQL() {

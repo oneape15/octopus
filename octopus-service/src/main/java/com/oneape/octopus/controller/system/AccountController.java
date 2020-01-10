@@ -1,8 +1,10 @@
 package com.oneape.octopus.controller.system;
 
-import com.oneape.octopus.common.BizException;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.common.UnauthorizedException;
+import com.oneape.octopus.commons.value.BeanUtils;
 import com.oneape.octopus.controller.system.form.UserForm;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.MenuVO;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/account")
@@ -53,6 +56,19 @@ public class AccountController {
         }
 
         return ApiResult.ofMessage("注册成功");
+    }
+
+    /**
+     * 获取列表
+     *
+     * @param form UserForm
+     * @return PageInfo
+     */
+    @PostMapping("/list")
+    public ApiResult<PageInfo<UserVO>> list(@RequestBody @Validated UserForm form) {
+        PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
+        List<UserVO> vos = accountService.find(form.toDO());
+        return ApiResult.ofData(new PageInfo<>(vos));
     }
 
     /**

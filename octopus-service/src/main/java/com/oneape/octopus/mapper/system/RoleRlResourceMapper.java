@@ -32,7 +32,7 @@ public interface RoleRlResourceMapper {
      * @param model T
      * @return int 1 - 成功； 0 - 失败
      */
-    @UpdateProvider(type = RoleRlResourceSqlProvider.class, method = "deleteById")
+    @UpdateProvider(type = RoleRlResourceSqlProvider.class, method = "delete")
     int delete(RoleRlResourceDO model);
 
     /**

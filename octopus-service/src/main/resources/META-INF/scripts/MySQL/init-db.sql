@@ -85,14 +85,14 @@ create table `sys_role`
 -- sys_user_rl_role 用户与角色关联关系表
 CREATE TABLE `sys_user_rl_role`
 (
-    `id`        BIGINT(20) NOT NULL,
-    `user_id` BIGINT(20) NOT NULL COMMENT '用户Id',
+    `id`       BIGINT(20) NOT NULL,
+    `user_id`  BIGINT(20) NOT NULL COMMENT '用户Id',
     `role_id`  BIGINT(20) NOT NULL COMMENT '角色Id',
-    `archive`   TINYINT(1) NOT NULL DEFAULT 0 COMMENT '0 - 正常数据; 1 - 已归档(删除)',
-    `created`   BIGINT(20) NOT NULL COMMENT '创建时间',
-    `creator`   BIGINT(20) NOT NULL COMMENT '创建人',
-    `modified`  BIGINT(20) NULL     DEFAULT NULL COMMENT '最后一次更新时间',
-    `modifier`  BIGINT(20) NULL     DEFAULT NULL COMMENT '最后一次修改人',
+    `archive`  TINYINT(1) NOT NULL DEFAULT 0 COMMENT '0 - 正常数据; 1 - 已归档(删除)',
+    `created`  BIGINT(20) NOT NULL COMMENT '创建时间',
+    `creator`  BIGINT(20) NOT NULL COMMENT '创建人',
+    `modified` BIGINT(20) NULL     DEFAULT NULL COMMENT '最后一次更新时间',
+    `modifier` BIGINT(20) NULL     DEFAULT NULL COMMENT '最后一次修改人',
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB
@@ -110,7 +110,7 @@ create table `sys_resource`
     `icon`      VARCHAR(512) NULL COMMENT '资源图标',
     `type`      TINYINT(1)   NOT NULL COMMENT '类型, 0 - 菜单; 1 - 资源项',
     `path`      VARCHAR(512) NULL COMMENT '资源路径',
-    `auth_code` varchar(128) not null comment '权限编码',
+    `auth_code` varchar(128) null comment '权限编码',
     `sort_id`   BIGINT(20)   not null default 0 comment '排序Id',
     `comment`   VARCHAR(256) NULL COMMENT '描述',
     `archive`   TINYINT(1)   NOT NULL DEFAULT 0 COMMENT '0 - 正常数据; 1 - 已归档(删除)',
@@ -128,14 +128,14 @@ create table `sys_resource`
 -- sys_role_rl_resource 角色与资源关联关系表
 CREATE TABLE `sys_role_rl_resource`
 (
-    `id`        BIGINT(20) NOT NULL,
-    `role_id`  BIGINT(20) NOT NULL COMMENT '角色Id',
+    `id`          BIGINT(20) NOT NULL,
+    `role_id`     BIGINT(20) NOT NULL COMMENT '角色Id',
     `resource_id` BIGINT(20) NOT NULL COMMENT '资源Id',
-    `archive`   TINYINT(1) NOT NULL DEFAULT 0 COMMENT '0 - 正常数据; 1 - 已归档(删除)',
-    `created`   BIGINT(20) NOT NULL COMMENT '创建时间',
-    `creator`   BIGINT(20) NOT NULL COMMENT '创建人',
-    `modified`  BIGINT(20) NULL     DEFAULT NULL COMMENT '最后一次更新时间',
-    `modifier`  BIGINT(20) NULL     DEFAULT NULL COMMENT '最后一次修改人',
+    `archive`     TINYINT(1) NOT NULL DEFAULT 0 COMMENT '0 - 正常数据; 1 - 已归档(删除)',
+    `created`     BIGINT(20) NOT NULL COMMENT '创建时间',
+    `creator`     BIGINT(20) NOT NULL COMMENT '创建人',
+    `modified`    BIGINT(20) NULL     DEFAULT NULL COMMENT '最后一次更新时间',
+    `modifier`    BIGINT(20) NULL     DEFAULT NULL COMMENT '最后一次修改人',
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB

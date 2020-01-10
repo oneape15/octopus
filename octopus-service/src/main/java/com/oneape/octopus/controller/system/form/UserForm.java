@@ -1,13 +1,16 @@
 package com.oneape.octopus.controller.system.form;
 
+import com.oneape.octopus.controller.BaseForm;
+import com.oneape.octopus.model.DO.system.UserDO;
 import com.oneape.octopus.model.VO.UserVO;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
-public class UserForm implements Serializable {
+public class UserForm extends BaseForm implements Serializable {
     private Long userId;
     @NotBlank(message = "用户名不能为空", groups = {LoginCheck.class, RegCheck.class})
     private String username;
@@ -22,10 +25,17 @@ public class UserForm implements Serializable {
 
     public UserVO toVO() {
         UserVO vo = new UserVO();
+        BeanUtils.copyProperties(this, vo);
         vo.setId(userId);
-        vo.setUsername(username);
-        vo.setPassword(password);
 
         return vo;
+    }
+
+    public UserDO toDO() {
+        UserDO udo = new UserDO();
+        BeanUtils.copyProperties(this, udo);
+        udo.setId(userId);
+
+        return udo;
     }
 }

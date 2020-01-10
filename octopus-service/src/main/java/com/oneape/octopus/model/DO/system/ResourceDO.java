@@ -1,7 +1,6 @@
 package com.oneape.octopus.model.DO.system;
 
 import com.oneape.octopus.annotation.SortId;
-import com.oneape.octopus.common.GlobalConstant;
 import com.oneape.octopus.model.DO.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -51,7 +50,7 @@ public class ResourceDO extends BaseDO {
      */
     @SortId
     @Column(name = "sort_id")
-    private Long sortId = GlobalConstant.DEFAULT_VALUE;
+    private Long sortId;
     /**
      * 描述
      */

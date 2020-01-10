@@ -5,7 +5,9 @@ import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class UserVO implements Serializable {
@@ -33,6 +35,10 @@ public class UserVO implements Serializable {
     private String token;
     // 角色Id列表
     private List<Long> roleIds;
+    // 角色名称列表
+    private List<String> roleNames = new ArrayList<>();
+    // 资源操作列表
+    private Map<String, List<Integer>> optPermission;
 
     public static UserVO ofDO(UserDO udo) {
         if (udo == null) {

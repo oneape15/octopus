@@ -52,4 +52,13 @@ public interface ResourceMapper {
      */
     @SelectProvider(type = ResourceSqlProvider.class, method = "list")
     List<ResourceDO> list(@Param("model") ResourceDO model);
+
+    /**
+     * 根据实体中不为null的属性作为查询条件查询
+     *
+     * @param model T
+     * @return List
+     */
+    @SelectProvider(type = ResourceSqlProvider.class, method = "listWithOrder")
+    List<ResourceDO> listWithOrder(@Param("model") ResourceDO model, @Param("orderFields") List<String> orderFields);
 }

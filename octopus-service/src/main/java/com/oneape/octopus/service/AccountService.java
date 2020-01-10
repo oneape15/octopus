@@ -5,6 +5,7 @@ import com.oneape.octopus.model.VO.MenuVO;
 import com.oneape.octopus.model.VO.UserVO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface AccountService extends BaseService<UserDO> {
 
@@ -62,10 +63,26 @@ public interface AccountService extends BaseService<UserDO> {
     UserVO login(String username, String password);
 
     /**
+     * 获取用户资源操作权限
+     *
+     * @param userId Long
+     * @return Map
+     */
+    Map<String, List<Integer>> getResOptPermission(Long userId);
+
+    /**
      * 创建用户
      *
      * @param user UserVO
      * @return int
      */
     int addUser(UserVO user);
+
+    /**
+     * 获取用户列表
+     *
+     * @param user UserDO
+     * @return List
+     */
+    List<UserVO> find(UserDO user);
 }

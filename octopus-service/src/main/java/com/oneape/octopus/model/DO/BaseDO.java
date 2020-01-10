@@ -1,6 +1,8 @@
 package com.oneape.octopus.model.DO;
 
 import com.oneape.octopus.annotation.AutoUniqueId;
+import com.oneape.octopus.annotation.Creator;
+import com.oneape.octopus.annotation.Modifier;
 import com.oneape.octopus.model.enums.Archive;
 import lombok.Data;
 
@@ -23,6 +25,7 @@ public class BaseDO implements Serializable {
     /**
      * 创建人
      */
+    @Creator
     private Long creator;
     /**
      * 创建时间
@@ -31,6 +34,7 @@ public class BaseDO implements Serializable {
     /**
      * 修改人
      */
+    @Modifier
     private Long modifier;
     /**
      * 修改时间

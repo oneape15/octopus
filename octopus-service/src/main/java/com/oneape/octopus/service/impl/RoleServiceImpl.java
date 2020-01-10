@@ -1,10 +1,14 @@
 package com.oneape.octopus.service.impl;
 
 import com.oneape.octopus.common.BizException;
+import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.mapper.system.RoleMapper;
 import com.oneape.octopus.mapper.system.UserRlRoleMapper;
+import com.oneape.octopus.model.DO.system.ResourceDO;
 import com.oneape.octopus.model.DO.system.RoleDO;
 import com.oneape.octopus.model.DO.system.UserRlRoleDO;
+import com.oneape.octopus.model.VO.ResourceVO;
+import com.oneape.octopus.model.VO.RoleVO;
 import com.oneape.octopus.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -32,8 +37,7 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public int insert(RoleDO model) {
-        Assert.isTrue(StringUtils.isNotBlank(model.getName()), "角色名称为空");
-        Assert.isTrue(StringUtils.isNotBlank(model.getCode()), "角色编码为空");
+        Assert.isTrue(StringUtils.isNoneBlank(model.getName(), model.getCode()), "角色名称或编码为空");
 
         RoleDO tmp = new RoleDO();
         // 判断code或name是否重复
@@ -56,8 +60,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public int edit(RoleDO model) {
         Assert.isTrue(model.getId() != null, "主键为空");
-        Assert.isTrue(StringUtils.isNotBlank(model.getName()), "角色名称为空");
-        Assert.isTrue(StringUtils.isNotBlank(model.getCode()), "角色编码为空");
+        Assert.isTrue(StringUtils.isNoneBlank(model.getName(), model.getCode()), "角色名称或编码为空");
 
         RoleDO tmp = new RoleDO();
         // 判断code或name是否重复
@@ -92,5 +95,26 @@ public class RoleServiceImpl implements RoleService {
             throw new BizException("当前角色还在使用中，不能被删除~");
         }
         return roleMapper.delete(model);
+    }
+
+    /**
+     * 根据条件查询资源
+     *
+     * @param role RoleDO
+     * @return List
+     */
+    @Override
+    public List<RoleVO> find(RoleDO role) {
+        List<String> orders = new ArrayList<>();
+        orders.add(BaseSqlProvider.FIELD_CREATED + " DESC");
+        List<RoleDO> list = roleMapper.listWithOrder(role, orders);
+        if (CollectionUtils.isEmpty(list)) {
+            return new ArrayList<>();
+        }
+
+        List<RoleVO> vos = new ArrayList<>();
+        list.forEach(rdo -> vos.add(RoleVO.ofDO(rdo)));
+
+        return vos;
     }
 }
