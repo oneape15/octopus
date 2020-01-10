@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -117,6 +119,41 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
     @Override
     public int getDatasourceSize() {
         return datasourceMap.size();
+    }
+
+    private static String getValueWithDefault(String value, String defaultValue) {
+        return StringUtils.isNotEmpty(value) ? value : defaultValue;
+    }
+
+    /**
+     * 测试数据源是否有效
+     *
+     * @param dsInfo DatasourceInfo
+     * @return boolean  true - 有效的； false - 无效的；
+     */
+    @Override
+    public boolean testDatasource(DatasourceInfo dsInfo) {
+        if (dsInfo == null || dsInfo.getDatasourceType() == null) {
+            throw new RuntimeException("数据源信息为空");
+        }
+        String url = dsInfo.getUrl();
+        String userName = getValueWithDefault(dsInfo.getUsername(), "");
+        String password = getValueWithDefault(dsInfo.getPassword(), "");
+        String testSql = getValueWithDefault(dsInfo.getTestSql(), "select 1");
+
+        try {
+            Class.forName(dsInfo.getDatasourceType().getDriverClass());
+            try (Connection connection = DriverManager.getConnection(url, userName, password);
+                 Statement statement = connection.createStatement()) {
+                statement.setQueryTimeout(10);
+                statement.executeQuery(testSql);
+                log.info("数据源连接测试成功");
+                return true;
+            }
+        } catch (Exception e) {
+            log.error("数据库连接测试失败", e);
+            return false;
+        }
     }
 
     /**

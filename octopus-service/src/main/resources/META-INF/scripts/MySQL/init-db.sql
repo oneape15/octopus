@@ -13,6 +13,27 @@ CREATE TABLE `uid_worker_node`
     COMMENT 'UID生成器'
     ENGINE InnoDB;
 
+
+-- 基础信息表 sys_common_info
+CREATE TABLE `sys_common_info`
+(
+    `id`        BIGINT(20)  NOT NULL COMMENT '主键Id',
+    `parent_id` BIGINT(20)  NOT NULL DEFAULT 0 COMMENT '父类id',
+    `classify`  VARCHAR(32) NOT NULL COMMENT '基础信息分类表',
+    `code`      VARCHAR(64) NOT NULL COMMENT '编码信息',
+    `name`      VARCHAR(64) NOT NULL COMMENT '数据源名称',
+    `archive`   TINYINT(1)  NOT NULL DEFAULT 0 COMMENT '0 - 正常数据; 1 - 已归档(删除)',
+    `created`   BIGINT(20)  NOT NULL COMMENT '创建时间',
+    `creator`   BIGINT(20)  NOT NULL COMMENT '创建人',
+    `modified`  BIGINT(20)  NULL     DEFAULT NULL COMMENT '最后一次更新时间',
+    `modifier`  BIGINT(20)  NULL     DEFAULT NULL COMMENT '最后一次修改人',
+    PRIMARY KEY (`id`)
+)
+    ENGINE = InnoDB
+    COMMENT '基础信息表'
+    DEFAULT CHARACTER SET = utf8
+    COLLATE = utf8_general_ci;
+
 -- sys_user 系统用户信息表
 CREATE TABLE `sys_user`
 (
@@ -146,21 +167,22 @@ CREATE TABLE `sys_role_rl_resource`
 -- r_datasource 数据源信息表
 create table `r_datasource`
 (
-    `id`        BIGINT(20)   NOT NULL,
-    `parent_id` BIGINT(20)   NOT NULL comment '父节点',
-    `level`     INT(11)      NOT NULL comment '层级，开始为1',
-    `name`      VARCHAR(128) NOT NULL COMMENT '资源名称',
-    `icon`      VARCHAR(512) NULL COMMENT '资源图标',
-    `type`      TINYINT(1)   NOT NULL COMMENT '类型, 0 - 菜单; 1 - 资源项',
-    `path`      VARCHAR(512) NULL COMMENT '资源路径',
-    `auth_code` varchar(128) not null comment '权限编码',
-    `sort_id`   BIGINT(20)   not null default 0 comment '排序Id',
-    `comment`   VARCHAR(256) NULL COMMENT '描述',
-    `archive`   TINYINT(1)   NOT NULL DEFAULT 0 COMMENT '0 - 正常数据; 1 - 已归档(删除)',
-    `created`   BIGINT(20)   NOT NULL COMMENT '创建时间',
-    `creator`   BIGINT(20)   NOT NULL COMMENT '创建人',
-    `modified`  BIGINT(20)   NULL     DEFAULT NULL COMMENT '最后一次更新时间',
-    `modifier`  BIGINT(20)   NULL     DEFAULT NULL COMMENT '最后一次修改人',
+    `id`          BIGINT(20)    NOT NULL COMMENT '主键Id',
+    `name`        VARCHAR(64)   NOT NULL COMMENT '数据源名称',
+    `type`        VARCHAR(64)   NOT NULL COMMENT '数据源类型, MySQL, Oracle',
+    `status`      TINYINT(1)    NOT NULL DEFAULT 0 COMMENT '状态, 0 - 可用; 1 - 不可用',
+    `jdbc_driver` VARCHAR(256)  NOT NULL COMMENT 'jdbc驱动',
+    `jdbc_url`    VARCHAR(512)  NOT NULL COMMENT 'jdbc URL',
+    `username`    VARCHAR(64)   NOT NULL COMMENT '登录用户名',
+    `password`    VARCHAR(64)   NULL     DEFAULT NULL COMMENT '登录密码',
+    `timeout`     INT(11)       NOT NULL COMMENT '连接池超时时间(ms)',
+    `test_sql`    VARCHAR(1024) NULL COMMENT '检测SQL',
+    `comment`     VARCHAR(256)  NULL COMMENT '描述',
+    `archive`     TINYINT(1)    NOT NULL DEFAULT 0 COMMENT '0 - 正常数据; 1 - 已归档(删除)',
+    `created`     BIGINT(20)    NOT NULL COMMENT '创建时间',
+    `creator`     BIGINT(20)    NOT NULL COMMENT '创建人',
+    `modified`    BIGINT(20)    NULL     DEFAULT NULL COMMENT '最后一次更新时间',
+    `modifier`    BIGINT(20)    NULL     DEFAULT NULL COMMENT '最后一次修改人',
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB

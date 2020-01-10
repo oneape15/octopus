@@ -22,4 +22,9 @@ public class DatasourceInfo implements Serializable {
      * 密码
      */
     private String password;
+
+    /**
+     * 检测SQL
+     */
+    private String testSql;
 }

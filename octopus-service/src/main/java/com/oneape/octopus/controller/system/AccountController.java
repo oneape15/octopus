@@ -4,8 +4,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.common.UnauthorizedException;
-import com.oneape.octopus.commons.value.BeanUtils;
 import com.oneape.octopus.controller.system.form.UserForm;
+import com.oneape.octopus.model.DO.system.UserDO;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.MenuVO;
 import com.oneape.octopus.model.VO.UserVO;
@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
+/**
+ * 账号相关
+ */
 @RestController
 @RequestMapping("/account")
 public class AccountController {
@@ -94,6 +96,11 @@ public class AccountController {
     public ApiResult<List<MenuVO>> getCurrentUserMenu() {
         List<MenuVO> menus = accountService.getCurrentMenus();
         return ApiResult.ofData(menus);
+    }
+
+    @PostMapping("/users")
+    public ApiResult<List<UserVO>> getAllUsers() {
+        return ApiResult.ofData(accountService.find(new UserDO()));
     }
 
 

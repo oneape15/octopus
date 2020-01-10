@@ -30,8 +30,8 @@ public class DatasourceServiceImpl implements DatasourceService {
      */
     @Override
     public int insert(DatasourceDO model) {
-        Assert.isTrue(StringUtils.isNotBlank(model.getNickname()), "数据源名称为空");
-        List<DatasourceDO> list = datasourceMapper.list(new DatasourceDO(model.getNickname()));
+        Assert.isTrue(StringUtils.isNotBlank(model.getName()), "数据源名称为空");
+        List<DatasourceDO> list = datasourceMapper.list(new DatasourceDO(model.getName()));
         if (CollectionUtils.isNotEmpty(list)) {
             throw new BizException("存在相同名称的数据源");
         }
@@ -48,8 +48,8 @@ public class DatasourceServiceImpl implements DatasourceService {
     @Override
     public int edit(DatasourceDO model) {
         Assert.isTrue(model.getId() != null, "主键Key为空");
-        Assert.isTrue(StringUtils.isNotBlank(model.getNickname()), "数据源名称为空");
-        List<DatasourceDO> list = datasourceMapper.list(new DatasourceDO(model.getNickname()));
+        Assert.isTrue(StringUtils.isNotBlank(model.getName()), "数据源名称为空");
+        List<DatasourceDO> list = datasourceMapper.list(new DatasourceDO(model.getName()));
         if (CollectionUtils.isNotEmpty(list)) {
             long size = list.stream().filter(ds -> !ds.getId().equals(model.getId())).count();
             if (size > 0) {

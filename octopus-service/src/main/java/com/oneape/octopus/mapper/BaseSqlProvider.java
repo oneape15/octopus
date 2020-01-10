@@ -240,6 +240,34 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
     }
 
     /**
+     * 获取数量SQL
+     *
+     * @param model T
+     * @return String
+     */
+    public String size(@Param("model") T model) {
+        Assert.isTrue(model != null, "查询数据集实体为空");
+        List<BeanProperties> fields = BeanUtils.getFields(model);
+
+        List<String> wheres = new ArrayList<>();
+
+        fields.forEach(field -> {
+            if (field.getValue() != null) {
+                String columnName = field.getDbColumnName();
+                wheres.add(columnName + " = #{model." + field.getName() + "}");
+            }
+        });
+
+        return new SQL() {
+            {
+                SELECT("COUNT(1)");
+                FROM(getTableName());
+                WHERE(wheres.toArray(new String[wheres.size()]));
+            }
+        }.toString();
+    }
+
+    /**
      * 根据实体中不为null的属性作为查询条件查询
      *
      * @param model       T

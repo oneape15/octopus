@@ -56,4 +56,16 @@ public enum DatasourceTypeHelper {
         }
         return false;
     }
+
+    public static DatasourceTypeHelper byName(String databaseName) {
+        if (StringUtils.isBlank(databaseName)) {
+            return null;
+        }
+        for (DatasourceTypeHelper dbth : values()) {
+            if (StringUtils.equalsIgnoreCase(dbth.name(), databaseName)) {
+                return dbth;
+            }
+        }
+        return null;
+    }
 }

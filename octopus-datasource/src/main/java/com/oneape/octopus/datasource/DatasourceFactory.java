@@ -41,4 +41,12 @@ public interface DatasourceFactory {
      * @return int
      */
     int getDatasourceSize();
+
+    /**
+     * 测试数据源是否有效
+     *
+     * @param dsInfo DatasourceInfo
+     * @return boolean  true - 有效的； false - 无效的；
+     */
+    boolean testDatasource(DatasourceInfo dsInfo);
 }

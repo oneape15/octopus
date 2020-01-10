@@ -15,18 +15,27 @@ import javax.persistence.Column;
 @EqualsAndHashCode(callSuper = true)
 public class DatasourceDO extends BaseDO {
     /**
-     * 数据库别名
+     * 数据库名称
      */
-    private String nickname;
+    private String name;
+    /**
+     * 数据源类型 MySQL, Oracle
+     */
+    private String type;
+    /**
+     * 状态, 0 - 可用; 1 - 不可用
+     */
+    private Integer status;
     /**
      * 数据源地址
      */
-    private String url;
+    @Column(name = "jdbc_url")
+    private String jdbcUrl;
     /**
-     * 驱动class名称
+     * jdbc驱动
      */
-    @Column(name = "driver_class")
-    private String driverClass;
+    @Column(name = "jdbc_driver")
+    private String jdbcDriver;
     /**
      * 数据源用户名
      */
@@ -36,11 +45,20 @@ public class DatasourceDO extends BaseDO {
      */
     private String password;
     /**
+     * 连接池超时时间(ms)
+     */
+    private Integer timeout;
+    /**
+     * 检测SQL
+     */
+    @Column(name = "test_sql")
+    private String testSql;
+    /**
      * 描述
      */
     private String comment;
 
-    public DatasourceDO(String nickname) {
-        this.nickname = nickname;
+    public DatasourceDO(String name) {
+        this.name = name;
     }
 }
