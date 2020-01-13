@@ -162,7 +162,8 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
      * @param dsi DatasourceInfo
      * @return String
      */
-    protected String getDatasourceKey(DatasourceInfo dsi) {
+    @Override
+    public String getDatasourceKey(DatasourceInfo dsi) {
         if (dsi == null) {
             throw new RuntimeException("数据源信息为空~");
         }

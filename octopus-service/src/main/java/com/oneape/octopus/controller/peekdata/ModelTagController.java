@@ -3,6 +3,7 @@ package com.oneape.octopus.controller.peekdata;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.controller.peekdata.form.TagForm;
+import com.oneape.octopus.model.DO.peekdata.ModelTagDO;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.ModelTagVO;
 import com.oneape.octopus.service.ModelTagService;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 标签管理
+ */
 @RestController
 @RequestMapping("/peek/tag")
 public class ModelTagController {
@@ -45,5 +49,15 @@ public class ModelTagController {
         PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
         List<ModelTagVO> vos = modelTagService.find(form.toDO());
         return ApiResult.ofData(new PageInfo<>(vos));
+    }
+
+    /**
+     * 获取所有标签信息
+     *
+     * @return List
+     */
+    @PostMapping("/listAll")
+    public ApiResult<List<ModelTagVO>> doAllList() {
+        return ApiResult.ofData(modelTagService.find(new ModelTagDO()));
     }
 }

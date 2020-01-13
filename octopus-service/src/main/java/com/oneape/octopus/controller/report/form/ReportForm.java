@@ -4,6 +4,7 @@ import com.oneape.octopus.controller.BaseForm;
 import com.oneape.octopus.model.DO.report.ReportDO;
 import com.oneape.octopus.model.VO.ReportVO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotBlank;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class ReportForm extends BaseForm implements Serializable {
     @NotNull(message = "报表主键不能为空", groups = {EditCheck.class, KeyCheck.class})
     private Long reportId;

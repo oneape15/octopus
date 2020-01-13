@@ -241,6 +241,7 @@ public class ReportServiceImpl implements ReportService {
                 mapper.insert(pdo);
                 count++;
             }
+            session.commit();
         } catch (Exception e) {
             log.error("批量插入报表查询参数异常", e);
             session.rollback();
@@ -284,6 +285,7 @@ public class ReportServiceImpl implements ReportService {
                 mapper.insert(cdo);
                 count++;
             }
+            session.commit();
         } catch (Exception e) {
             log.error("批量插入报表列信息异常", e);
             session.rollback();

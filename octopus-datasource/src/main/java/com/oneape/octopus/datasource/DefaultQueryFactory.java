@@ -1,21 +1,39 @@
 package com.oneape.octopus.datasource;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.datasource.data.Value;
 import com.oneape.octopus.datasource.dialect.Actuator;
 import com.oneape.octopus.datasource.schema.FieldInfo;
 import com.oneape.octopus.datasource.schema.TableInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class DefaultQueryFactory implements QueryFactory {
 
     private DatasourceFactory datasourceFactory;
+    // 表信息缓存
+    private static final String KEY_TABLE = "table_";
+    private Cache<String, List<TableInfo>> tableCache = CacheBuilder
+            .newBuilder()
+            .expireAfterWrite(15, TimeUnit.MINUTES)
+            .maximumSize(4 * 1024 * 1024)
+            .build();
+    // 字段信息缓存
+    private static final String KEY_FIELD = "field_";
+    private Cache<String, List<FieldInfo>> fieldCache = CacheBuilder
+            .newBuilder()
+            .expireAfterWrite(15, TimeUnit.MINUTES)
+            .maximumSize(10 * 1024 * 1024)
+            .build();
 
     public DefaultQueryFactory(DatasourceFactory datasourceFactory) {
         this.datasourceFactory = datasourceFactory;
@@ -30,11 +48,8 @@ public class DefaultQueryFactory implements QueryFactory {
     @Override
     public String getSchema(DatasourceInfo dsi) {
         try {
-            Connection conn = datasourceFactory.getConnection(dsi);
-            try (Statement statement = conn.createStatement()) {
-                Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
-                return actuator.getSchema(dsi.getUrl());
-            }
+            Actuator actuator = ActuatorFactory.build(null, dsi.getDatasourceType());
+            return actuator.getSchema(dsi.getUrl());
         } catch (Exception e) {
             log.error("获取数据库失败~", e);
             throw new RuntimeException(e);
@@ -70,11 +85,22 @@ public class DefaultQueryFactory implements QueryFactory {
     @Override
     public List<TableInfo> allTables(DatasourceInfo dsi) {
         try {
+            String cacheKey = KEY_TABLE + datasourceFactory.getDatasourceKey(dsi) + "_ALL";
+
+            List<TableInfo> tables = tableCache.getIfPresent(cacheKey);
+            if (CollectionUtils.isNotEmpty(tables)) {
+                return tables;
+            }
+
             Connection conn = datasourceFactory.getConnection(dsi);
             try (Statement statement = conn.createStatement()) {
                 Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
-                return actuator.allTables();
+                tables = actuator.allTables();
+                if (CollectionUtils.isNotEmpty(tables)) {
+                    tableCache.put(cacheKey, tables);
+                }
             }
+            return tables;
         } catch (Exception e) {
             log.error("获取表信息失败~", e);
             throw new RuntimeException("获取数据库全部表信息失败", e);
@@ -91,11 +117,22 @@ public class DefaultQueryFactory implements QueryFactory {
     @Override
     public List<TableInfo> allTables(DatasourceInfo dsi, String schema) {
         try {
+            String cacheKey = KEY_TABLE + datasourceFactory.getDatasourceKey(dsi) + "_" + schema;
+
+            List<TableInfo> tables = tableCache.getIfPresent(cacheKey);
+            if (CollectionUtils.isNotEmpty(tables)) {
+                return tables;
+            }
+
             Connection conn = datasourceFactory.getConnection(dsi);
             try (Statement statement = conn.createStatement()) {
                 Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
-                return actuator.allTablesOfDb(schema);
+                tables = actuator.allTablesOfDb(schema);
+                if (CollectionUtils.isNotEmpty(tables)) {
+                    tableCache.put(cacheKey, tables);
+                }
             }
+            return tables;
         } catch (Exception e) {
             log.error("获取表信息失败~", e);
             throw new RuntimeException("获取数据库：" + schema + " 表信息失败", e);
@@ -111,11 +148,23 @@ public class DefaultQueryFactory implements QueryFactory {
     @Override
     public List<FieldInfo> allFields(DatasourceInfo dsi) {
         try {
+            String cacheKey = KEY_FIELD + datasourceFactory.getDatasourceKey(dsi) + "_ALL_ALL";
+            List<FieldInfo> fields = fieldCache.getIfPresent(cacheKey);
+            if (CollectionUtils.isNotEmpty(fields)) {
+                return fields;
+            }
+
             Connection conn = datasourceFactory.getConnection(dsi);
             try (Statement statement = conn.createStatement()) {
                 Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
-                return actuator.allFields();
+                fields = actuator.allFields();
+
+                if (CollectionUtils.isNotEmpty(fields)) {
+                    fieldCache.put(cacheKey, fields);
+                }
             }
+
+            return fields;
         } catch (Exception e) {
             log.error("获取所有表字段信息失败", e);
             throw new RuntimeException("获取数据源字段列表失败", e);
@@ -132,11 +181,22 @@ public class DefaultQueryFactory implements QueryFactory {
     @Override
     public List<FieldInfo> allFields(DatasourceInfo dsi, String schema) {
         try {
+            String cacheKey = KEY_FIELD + datasourceFactory.getDatasourceKey(dsi) + "_" + schema + "_ALL";
+            List<FieldInfo> fields = fieldCache.getIfPresent(cacheKey);
+            if (CollectionUtils.isNotEmpty(fields)) {
+                return fields;
+            }
+
             Connection conn = datasourceFactory.getConnection(dsi);
             try (Statement statement = conn.createStatement()) {
                 Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
-                return actuator.allFieldsOfDb(schema);
+                fields = actuator.allFieldsOfDb(schema);
+
+                if (CollectionUtils.isNotEmpty(fields)) {
+                    fieldCache.put(cacheKey, fields);
+                }
             }
+            return fields;
         } catch (Exception e) {
             log.error("获取所有表字段信息失败", e);
             throw new RuntimeException("获取数据库:" + schema + " 表字段信息失败", e);
@@ -154,11 +214,22 @@ public class DefaultQueryFactory implements QueryFactory {
     @Override
     public List<FieldInfo> fieldOfTable(DatasourceInfo dsi, String schema, String tableName) {
         try {
+            String cacheKey = KEY_FIELD + datasourceFactory.getDatasourceKey(dsi) + "_" + schema + "_" + tableName;
+            List<FieldInfo> fields = fieldCache.getIfPresent(cacheKey);
+            if (CollectionUtils.isNotEmpty(fields)) {
+                return fields;
+            }
+
             Connection conn = datasourceFactory.getConnection(dsi);
             try (Statement statement = conn.createStatement()) {
                 Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
-                return actuator.fieldOfTable(schema, tableName);
+                fields = actuator.fieldOfTable(schema, tableName);
+
+                if (CollectionUtils.isNotEmpty(fields)) {
+                    fieldCache.put(cacheKey, fields);
+                }
             }
+            return fields;
         } catch (Exception e) {
             log.error("获取表: {} 字段信息失败", tableName, e);
             throw new RuntimeException("获取数据库：" + schema + " 中表:" + tableName + " 字段信息失败", e);

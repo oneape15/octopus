@@ -14,11 +14,11 @@ public enum DataType {
     INTEGER,
     // 高精度
     DECIMAL,
-    //
+    // 长整数
     LONG,
-    //
+    // 单精度浮点数
     FLOAT,
-    //
+    // 双精度浮点数
     DOUBLE,
     // 日期
     DATE,

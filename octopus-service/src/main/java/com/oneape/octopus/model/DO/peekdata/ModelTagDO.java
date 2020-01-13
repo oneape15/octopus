@@ -2,8 +2,10 @@ package com.oneape.octopus.model.DO.peekdata;
 
 import com.oneape.octopus.model.DO.BaseDO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class ModelTagDO extends BaseDO {
     /**
      * 标签名

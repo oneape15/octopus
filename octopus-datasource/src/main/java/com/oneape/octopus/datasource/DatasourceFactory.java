@@ -6,6 +6,14 @@ import java.sql.SQLException;
 public interface DatasourceFactory {
 
     /**
+     * 获取数据源唯一识别码
+     *
+     * @param dsi DatasourceInfo
+     * @return String
+     */
+    String getDatasourceKey(DatasourceInfo dsi);
+
+    /**
      * 获取连接对象
      *
      * @param dsInfo DatasourceInfo

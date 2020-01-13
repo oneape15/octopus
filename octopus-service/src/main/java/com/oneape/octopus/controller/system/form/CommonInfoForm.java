@@ -3,6 +3,7 @@ package com.oneape.octopus.controller.system.form;
 import com.oneape.octopus.controller.BaseForm;
 import com.oneape.octopus.model.DO.system.CommonInfoDO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotBlank;
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class CommonInfoForm extends BaseForm implements Serializable {
     // 主键
     @NotNull(message = "主键不能为空", groups = {EditCheck.class, KeyCheck.class})

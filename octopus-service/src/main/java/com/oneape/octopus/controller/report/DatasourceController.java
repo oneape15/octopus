@@ -4,10 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.controller.report.form.DatasourceForm;
-import com.oneape.octopus.datasource.DatasourceFactory;
-import com.oneape.octopus.datasource.DatasourceInfo;
-import com.oneape.octopus.datasource.DatasourceTypeHelper;
-import com.oneape.octopus.datasource.QueryFactory;
+import com.oneape.octopus.datasource.*;
 import com.oneape.octopus.datasource.schema.TableInfo;
 import com.oneape.octopus.model.DO.report.DatasourceDO;
 import com.oneape.octopus.model.VO.ApiResult;
@@ -132,6 +129,15 @@ public class DatasourceController {
         List<TableInfo> tables = queryFactory.allTables(dsi, schema);
 
         return ApiResult.ofData(tables);
+    }
+
+    @PostMapping("/getDataTypes")
+    public ApiResult<List<String>> getDataTypes() {
+        List<String> ret = new ArrayList<>();
+        for (DataType dt : DataType.values()) {
+            ret.add(dt.name());
+        }
+        return ApiResult.ofData(ret);
     }
 
 }

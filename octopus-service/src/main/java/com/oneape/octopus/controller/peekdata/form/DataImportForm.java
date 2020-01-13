@@ -3,12 +3,14 @@ package com.oneape.octopus.controller.peekdata.form;
 import com.oneape.octopus.controller.BaseForm;
 import com.oneape.octopus.model.DO.peekdata.ImportRecordDO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class DataImportForm extends BaseForm implements Serializable {
     private Long recordId;
     @NotNull(message = "数据源不能为空", groups = {ImportCheck.class})

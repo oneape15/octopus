@@ -375,6 +375,71 @@ CREATE TABLE `r_report_sql_log`
     DEFAULT CHARACTER SET = utf8
     COLLATE = utf8_general_ci;
 
+-- 取数实例信息表 pd_peek
+CREATE TABLE `pd_peek`
+(
+    `id`         BIGINT(20)  NOT NULL COMMENT '主键Id',
+    `model_id`   BIGINT(20)  NOT NULL COMMENT '模型Id',
+    `name`       VARCHAR(64) NOT NULL COMMENT '取数实例名称',
+    `field_list` TEXT COMMENT '返回的数据字段名列表, 多个以","隔开',
+    `peek_time`  INT(11)     NULL     DEFAULT 0 COMMENT '取数次数',
+    `archive`    TINYINT(1)  NOT NULL DEFAULT 0 COMMENT '0 - 正常数据; 1 - 已归档(删除)',
+    `created`    BIGINT(20)  NOT NULL COMMENT '创建时间',
+    `creator`    BIGINT(20)  NOT NULL COMMENT '创建人',
+    `modified`   BIGINT(20)  NULL     DEFAULT NULL COMMENT '最后一次更新时间',
+    `modifier`   BIGINT(20)  NULL     DEFAULT NULL COMMENT '最后一次修改人',
+    PRIMARY KEY (`id`)
+)
+    ENGINE = InnoDB
+    COMMENT '取数实例信息表'
+    DEFAULT CHARACTER SET = utf8
+    COLLATE = utf8_general_ci;
+
+-- 模型信息表 pd_model
+CREATE TABLE `pd_model`
+(
+    `id`            BIGINT(20)   NOT NULL COMMENT '主键Id',
+    `name`          VARCHAR(64)  NOT NULL COMMENT '模型名称',
+    `datasource_id` BIGINT(20)   NOT NULL COMMENT '数据源Id',
+    `table_name`    VARCHAR(512) NOT NULL COMMENT '具体表名',
+    `status`        TINYINT(1)   NOT NULL DEFAULT 0 COMMENT '模型状态 0 - 使用中; 1 - 已停用',
+    `comment`       VARCHAR(512) NULL COMMENT '描述',
+    `archive`       TINYINT(1)   NOT NULL DEFAULT 0 COMMENT '0 - 正常数据; 1 - 已归档(删除)',
+    `created`       BIGINT(20)   NOT NULL COMMENT '创建时间',
+    `creator`       BIGINT(20)   NOT NULL COMMENT '创建人',
+    `modified`      BIGINT(20)   NULL     DEFAULT NULL COMMENT '最后一次更新时间',
+    `modifier`      BIGINT(20)   NULL     DEFAULT NULL COMMENT '最后一次修改人',
+    PRIMARY KEY (`id`)
+)
+    ENGINE = InnoDB
+    COMMENT '模型信息表'
+    DEFAULT CHARACTER SET = utf8
+    COLLATE = utf8_general_ci;
+
+-- 模型元素信息表 pd_model_meta
+CREATE TABLE `pd_model_meta`
+(
+    `id`               BIGINT(20)   NOT NULL COMMENT '主键Id',
+    `model_id`         BIGINT(20)   NOT NULL COMMENT '模型Id',
+    `group_name`       VARCHAR(512) NOT NULL COMMENT '元素分组名',
+    `name`             VARCHAR(64)  NOT NULL COMMENT '元素名称(表字段名称)',
+    `show_name`        VARCHAR(64)  NOT NULL COMMENT '显示名称',
+    `origin_data_type` VARCHAR(64)  NOT NULL COMMENT '原始数据类型',
+    `data_type`        VARCHAR(64)  NOT NULL COMMENT '数据类型',
+    `display`          TINYINT(1)   NULL     DEFAULT 1 COMMENT '是否显示, 1-显示; 0 - 不显示',
+    `tag_id`           BIGINT(20)            DEFAULT NULL COMMENT '标签id',
+    `comment`          VARCHAR(255) NULL COMMENT '字段详细描述',
+    `archive`          TINYINT(1)   NOT NULL DEFAULT 0 COMMENT '0 - 正常数据; 1 - 已归档(删除)',
+    `created`          BIGINT(20)   NOT NULL COMMENT '创建时间',
+    `creator`          BIGINT(20)   NOT NULL COMMENT '创建人',
+    `modified`         BIGINT(20)   NULL     DEFAULT NULL COMMENT '最后一次更新时间',
+    `modifier`         BIGINT(20)   NULL     DEFAULT NULL COMMENT '最后一次修改人',
+    PRIMARY KEY (`id`)
+)
+    ENGINE = InnoDB
+    COMMENT '模型元素信息表'
+    DEFAULT CHARACTER SET = utf8
+    COLLATE = utf8_general_ci;
 
 -- 模型标签表 pd_model_tag
 CREATE TABLE `pd_model_tag`

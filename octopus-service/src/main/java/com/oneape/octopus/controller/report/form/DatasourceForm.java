@@ -3,6 +3,7 @@ package com.oneape.octopus.controller.report.form;
 import com.oneape.octopus.controller.BaseForm;
 import com.oneape.octopus.model.DO.report.DatasourceDO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotBlank;
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class DatasourceForm extends BaseForm implements Serializable {
     @NotNull(message = "主键不能为空", groups = {EditCheck.class, KeyCheck.class})
     private Long dsId;
