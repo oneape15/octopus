@@ -89,4 +89,15 @@ public class DatasourceServiceImpl implements DatasourceService {
         ddos.forEach(ddo -> dvo.add(DatasourceVO.ofDO(ddo)));
         return dvo;
     }
+
+    /**
+     * 根据Id获取数据源信息
+     *
+     * @param dsId Long
+     * @return DatasourceDO
+     */
+    @Override
+    public DatasourceDO findById(Long dsId) {
+        return datasourceMapper.findById(dsId);
+    }
 }

@@ -19,6 +19,27 @@ public class H2Actuator extends Actuator {
     }
 
     /**
+     * 从URL中获取数据库名称
+     *
+     * @param url String
+     * @return String
+     */
+    @Override
+    public String getSchemaNameFromUrl(String url) {
+        String startString = "jdbc:h2:tcp://";
+        if (!StringUtils.startsWithIgnoreCase(url, startString)) {
+            throw new RuntimeException("不是合法的H2连接地址: " + url);
+        }
+        String tmp = StringUtils.substring(url, startString.length());
+        int index;
+        if ((index = StringUtils.indexOf(tmp, "/")) > -1 && index + 1 < tmp.length()) {
+            String schema = StringUtils.substring(tmp, index + 1);
+            return StringUtils.trimToNull(schema);
+        }
+        return null;
+    }
+
+    /**
      * 获取所有数据库名称SQL
      *
      * @return String

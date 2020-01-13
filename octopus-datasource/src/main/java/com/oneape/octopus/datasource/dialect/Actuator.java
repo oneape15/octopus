@@ -55,6 +55,14 @@ public abstract class Actuator {
     }
 
     /**
+     * 从URL中获取数据库名称
+     *
+     * @param url String
+     * @return String
+     */
+    public abstract String getSchemaNameFromUrl(String url);
+
+    /**
      * 获取所有数据库名称SQL
      *
      * @return String
@@ -189,6 +197,25 @@ public abstract class Actuator {
         return ret;
     }
 
+    /**
+     * 获取数据库名称
+     *
+     * @param url String
+     * @return String
+     */
+    public String getSchema(String url) {
+        if (StringUtils.isBlank(url)) {
+            return null;
+        }
+
+        // 去除url后面的参数
+        int index = StringUtils.lastIndexOf(url, "?");
+        String tmp = url;
+        if (index > -1) {
+            tmp = StringUtils.substring(url, 0, index);
+        }
+        return getSchemaNameFromUrl(tmp);
+    }
 
     /**
      * 获取所有数据库名称

@@ -10,6 +10,14 @@ import java.util.List;
 public interface QueryFactory {
 
     /**
+     * 获取数据库名
+     *
+     * @param dsi DatasourceInfo
+     * @return String
+     */
+    String getSchema(DatasourceInfo dsi);
+
+    /**
      * 获取所有数据库名称
      *
      * @param dsi DatasourceInfo

@@ -21,6 +21,27 @@ public class MySQLActuator extends Actuator {
     }
 
     /**
+     * 从URL中获取数据库名称
+     *
+     * @param url String
+     * @return String
+     */
+    @Override
+    public String getSchemaNameFromUrl(String url) {
+        String startString = "jdbc:mysql://";
+        if (!StringUtils.startsWithIgnoreCase(url, startString)) {
+            throw new RuntimeException("不是合法的MySQL连接地址: " + url);
+        }
+        String tmp = StringUtils.substring(url, startString.length());
+        int index;
+        if ((index = StringUtils.indexOf(tmp, "/")) > -1 && index + 1 < tmp.length()) {
+            String schema = StringUtils.substring(tmp, index + 1);
+            return StringUtils.trimToNull(schema);
+        }
+        return null;
+    }
+
+    /**
      * 获取所有数据库名称SQL
      *
      * @return String
@@ -51,9 +72,9 @@ public class MySQLActuator extends Actuator {
      */
     @Override
     public String getTablesSqlOfDb(String schema) {
-        String whereSql = "";
+        String whereSql = " WHERE TABLE_SCHEMA != 'information_schema'";
         if (StringUtils.isNotBlank(schema)) {
-            whereSql = " WHERE TABLE_SCHEMA = '" + schema + "' ";
+            whereSql += "  AND TABLE_SCHEMA = '" + schema + "' ";
         }
         return "SELECT " +
                 " TABLE_SCHEMA " + COL_SCHEMA + "," +

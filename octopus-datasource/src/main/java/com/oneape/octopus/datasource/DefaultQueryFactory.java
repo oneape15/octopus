@@ -22,6 +22,26 @@ public class DefaultQueryFactory implements QueryFactory {
     }
 
     /**
+     * 获取数据库名
+     *
+     * @param dsi DatasourceInfo
+     * @return String
+     */
+    @Override
+    public String getSchema(DatasourceInfo dsi) {
+        try {
+            Connection conn = datasourceFactory.getConnection(dsi);
+            try (Statement statement = conn.createStatement()) {
+                Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
+                return actuator.getSchema(dsi.getUrl());
+            }
+        } catch (Exception e) {
+            log.error("获取数据库失败~", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * 获取所有数据库名称
      *
      * @param dsi DatasourceInfo

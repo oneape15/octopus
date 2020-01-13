@@ -2,10 +2,14 @@ package com.oneape.octopus.controller.report;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.controller.report.form.DatasourceForm;
 import com.oneape.octopus.datasource.DatasourceFactory;
 import com.oneape.octopus.datasource.DatasourceInfo;
 import com.oneape.octopus.datasource.DatasourceTypeHelper;
+import com.oneape.octopus.datasource.QueryFactory;
+import com.oneape.octopus.datasource.schema.TableInfo;
+import com.oneape.octopus.model.DO.report.DatasourceDO;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.DatasourceVO;
 import com.oneape.octopus.service.DatasourceService;
@@ -28,6 +32,8 @@ public class DatasourceController {
     private DatasourceService datasourceService;
     @Autowired
     private DatasourceFactory datasourceFactory;
+    @Autowired
+    private QueryFactory queryFactory;
 
     @PostMapping("/add")
     public ApiResult<String> doAddDs(@RequestBody @Validated(value = DatasourceForm.AddCheck.class) DatasourceForm form) {
@@ -72,6 +78,18 @@ public class DatasourceController {
     }
 
     /**
+     * 获取所有可用数据源
+     *
+     * @return List
+     */
+    @RequestMapping("/getAllSimple")
+    public ApiResult<List<DatasourceVO>> getAllSimple() {
+        List<DatasourceVO> vos = datasourceService.find(new DatasourceDO());
+
+        return ApiResult.ofData(vos);
+    }
+
+    /**
      * 数据源测试
      *
      * @param form DatasourceForm
@@ -90,6 +108,30 @@ public class DatasourceController {
         } else {
             return ApiResult.ofError(1000, "数据库连接测试失败");
         }
+    }
+
+    /**
+     * 根据数据源id 获取包括的所有表信息
+     *
+     * @param form DatasourceForm
+     * @return List
+     */
+    @PostMapping("/getTables")
+    public ApiResult<List<TableInfo>> getDatasourceTables(@RequestBody @Validated(value = DatasourceForm.KeyCheck.class) DatasourceForm form) {
+        DatasourceDO ddo = datasourceService.findById(form.getDsId());
+        if (ddo == null) {
+            return ApiResult.ofError(StateCode.BizError, "数据信息不存在");
+        }
+        DatasourceInfo dsi = new DatasourceInfo();
+        dsi.setUrl(ddo.getJdbcUrl());
+        dsi.setUsername(ddo.getUsername());
+        dsi.setPassword(ddo.getPassword());
+        dsi.setDatasourceType(DatasourceTypeHelper.byName(ddo.getType()));
+
+        String schema = queryFactory.getSchema(dsi);
+        List<TableInfo> tables = queryFactory.allTables(dsi, schema);
+
+        return ApiResult.ofData(tables);
     }
 
 }
