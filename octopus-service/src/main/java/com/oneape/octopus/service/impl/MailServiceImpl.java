@@ -4,10 +4,10 @@ import com.oneape.octopus.config.props.MailProperties;
 import com.oneape.octopus.service.MailService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.activation.DataHandler;
+import javax.annotation.Resource;
 import javax.mail.*;
 import javax.mail.internet.*;
 import javax.mail.util.ByteArrayDataSource;
@@ -18,7 +18,7 @@ import java.util.Properties;
 @Service
 public class MailServiceImpl implements MailService {
 
-    @Autowired
+    @Resource
     private MailProperties mailProps;
 
     /**

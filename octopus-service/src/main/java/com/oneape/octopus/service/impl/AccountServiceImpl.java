@@ -15,12 +15,9 @@ import com.oneape.octopus.model.VO.MenuVO;
 import com.oneape.octopus.model.VO.UserVO;
 import com.oneape.octopus.service.AccountService;
 import com.oneape.octopus.service.MailService;
-import com.oneape.octopus.service.ResourceService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.map.LazySortedMap;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -44,7 +41,7 @@ public class AccountServiceImpl implements AccountService {
     @Resource
     private ResourceMapper resourceMapper;
 
-    @Autowired
+    @Resource
     private MailService mailService;
 
     /**

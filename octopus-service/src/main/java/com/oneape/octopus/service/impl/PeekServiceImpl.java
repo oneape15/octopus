@@ -10,7 +10,9 @@ import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.mapper.peekdata.PeekFieldMapper;
 import com.oneape.octopus.mapper.peekdata.PeekMapper;
 import com.oneape.octopus.mapper.peekdata.PeekRuleMapper;
-import com.oneape.octopus.model.DO.peekdata.*;
+import com.oneape.octopus.model.DO.peekdata.PeekDO;
+import com.oneape.octopus.model.DO.peekdata.PeekFieldDO;
+import com.oneape.octopus.model.DO.peekdata.PeekRuleDO;
 import com.oneape.octopus.model.VO.*;
 import com.oneape.octopus.service.AccountService;
 import com.oneape.octopus.service.DatasourceService;
@@ -23,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -48,17 +49,17 @@ public class PeekServiceImpl implements PeekService {
     private PeekRuleMapper peekRuleMapper;
 
 
-    @Autowired
+    @Resource
     private ModelService modelService;
-    @Autowired
+    @Resource
     private SqlSessionFactory sqlSessionFactory;
-    @Autowired
+    @Resource
     private UIDGeneratorService uidGeneratorService;
-    @Autowired
+    @Resource
     private AccountService accountService;
-    @Autowired
+    @Resource
     private DatasourceService datasourceService;
-    @Autowired
+    @Resource
     private QueryFactory queryFactory;
 
     /**

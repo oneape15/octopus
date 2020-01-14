@@ -12,7 +12,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -26,11 +25,11 @@ public class ModelMetaServiceImpl implements ModelMetaService {
     @Resource
     private ModelMetaMapper modelMetaMapper;
 
-    @Autowired
+    @Resource
     private SqlSessionFactory sqlSessionFactory;
-    @Autowired
+    @Resource
     private UIDGeneratorService uidGeneratorService;
-    @Autowired
+    @Resource
     private AccountService accountService;
 
     /**

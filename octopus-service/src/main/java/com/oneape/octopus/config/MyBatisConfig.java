@@ -5,11 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.Properties;
 
@@ -20,7 +20,7 @@ public class MyBatisConfig {
 
     public static final String MYBATIS_CONFIG = "classpath:META-INF/mybatis/mybatis-config.xml";
 
-    @Autowired
+    @Resource
     private DataSource dataSource;
 
     @Bean

@@ -11,13 +11,13 @@ import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.PeekVO;
 import com.oneape.octopus.service.PeekService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +26,7 @@ import java.util.Map;
 @RequestMapping("/peek")
 public class PeekController {
 
-    @Autowired
+    @Resource
     private PeekService peekService;
 
     @PostMapping("/add")

@@ -6,19 +6,19 @@ import com.oneape.octopus.controller.system.form.RoleForm;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.RoleVO;
 import com.oneape.octopus.service.RoleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
 @RequestMapping("/role")
 public class RoleController {
-    @Autowired
+    @Resource
     private RoleService roleService;
 
     @PostMapping("/add")

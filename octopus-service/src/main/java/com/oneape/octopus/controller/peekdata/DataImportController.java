@@ -9,11 +9,11 @@ import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.ImportRecordVO;
 import com.oneape.octopus.service.ImportRecordService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -24,7 +24,7 @@ import java.util.List;
 @RequestMapping("/peek/import")
 public class DataImportController {
 
-    @Autowired
+    @Resource
     private ImportRecordService importRecordService;
 
     /**

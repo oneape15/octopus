@@ -10,13 +10,13 @@ import com.oneape.octopus.model.DO.report.DatasourceDO;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.DatasourceVO;
 import com.oneape.octopus.service.DatasourceService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,11 +25,11 @@ import java.util.Map;
 @RestController
 @RequestMapping("/ds")
 public class DatasourceController {
-    @Autowired
+    @Resource
     private DatasourceService datasourceService;
-    @Autowired
+    @Resource
     private DatasourceFactory datasourceFactory;
-    @Autowired
+    @Resource
     private QueryFactory queryFactory;
 
     @PostMapping("/add")

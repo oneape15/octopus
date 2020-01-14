@@ -8,8 +8,6 @@ import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.oneape.octopus.config.props.CorsProperties;
 import com.oneape.octopus.interceptor.TokenVerifyInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -21,6 +19,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
+import javax.annotation.Resource;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,7 @@ import java.util.List;
 @Configuration
 @ImportResource(locations = {"classpath:config/uid-spring.xml"})
 public class WebConfig extends WebMvcConfigurationSupport {
-    @Autowired
+    @Resource
     private CorsProperties corsProperties;
 
     private String[] list2Array(List<String> tmps, String defaultVal) {

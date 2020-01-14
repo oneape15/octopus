@@ -7,13 +7,13 @@ import com.oneape.octopus.model.DO.peekdata.ModelTagDO;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.ModelTagVO;
 import com.oneape.octopus.service.ModelTagService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -23,7 +23,7 @@ import java.util.List;
 @RequestMapping("/peek/tag")
 public class ModelTagController {
 
-    @Autowired
+    @Resource
     private ModelTagService modelTagService;
 
     @PostMapping("/add")
