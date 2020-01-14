@@ -2,6 +2,7 @@ package com.oneape.octopus.controller.peekdata;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.controller.peekdata.form.ModelForm;
 import com.oneape.octopus.model.DO.peekdata.ModelDO;
 import com.oneape.octopus.model.DO.peekdata.ModelMetaDO;
@@ -32,19 +33,28 @@ public class ModelController {
     @PostMapping("/add")
     public ApiResult<String> doAddModel(@RequestBody @Validated(value = ModelForm.AddCheck.class) ModelForm form) {
         int status = modelService.addModelInfo(form.toDO(), form.getFields());
-        return ApiResult.ofData(status > 0 ? "添加模型成功" : "添加模型失败");
+        if (status > 0) {
+            return ApiResult.ofData("添加模型成功");
+        }
+        return ApiResult.ofError(StateCode.BizError, "添加模型失败");
     }
 
     @PostMapping("/edit")
     public ApiResult<String> doEditModel(@RequestBody @Validated(value = ModelForm.EditCheck.class) ModelForm form) {
         int status = modelService.editModelInfo(form.toDO(), form.getFields());
-        return ApiResult.ofData(status > 0 ? "修改模型成功" : "修改模型失败");
+        if (status > 0) {
+            return ApiResult.ofData("修改模型成功");
+        }
+        return ApiResult.ofError(StateCode.BizError, "修改模型失败");
     }
 
     @PostMapping("/del")
     public ApiResult<String> doDelModel(@RequestBody @Validated(value = ModelForm.KeyCheck.class) ModelForm form) {
         int status = modelService.deleteById(form.toDO());
-        return ApiResult.ofData(status > 0 ? "删除模型成功" : "删除模型失败");
+        if (status > 0) {
+            return ApiResult.ofData("删除模型成功");
+        }
+        return ApiResult.ofError(StateCode.BizError, "删除模型失败");
     }
 
     /**
@@ -62,6 +72,7 @@ public class ModelController {
     public ApiResult<List<ModelMetaVO>> listModelMeta(@RequestBody @Validated(value = ModelForm.KeyCheck.class) ModelForm form) {
         ModelMetaDO mmdo = new ModelMetaDO();
         mmdo.setDisplay(1); // 只返回显示的字段列表
+        mmdo.setModelId(form.getModelId());
         return ApiResult.ofData(modelService.listModelMeta(mmdo));
     }
 
@@ -82,6 +93,18 @@ public class ModelController {
     public ApiResult<List<ModelVO>> getAllModels() {
         List<ModelVO> list = modelService.find(new ModelDO());
         return ApiResult.ofData(list);
+    }
+
+    /**
+     * 修改模型状态
+     */
+    @PostMapping("/changeStatus")
+    public ApiResult<String> changeStatus(@RequestBody @Validated(value = ModelForm.ChangeStatusCheck.class) ModelForm form) {
+        int status = modelService.changeStatus(form.getModelId(), form.getStatus());
+        if (status > 0) {
+            return ApiResult.ofData("更改状态成功");
+        }
+        return ApiResult.ofError(StateCode.BizError, "更新状态失败");
     }
 
     /**

@@ -65,4 +65,13 @@ public interface ModelMetaMapper {
      */
     @SelectProvider(type = ModelMetaSqlProvider.class, method = "list")
     List<ModelMetaDO> list(@Param("model") ModelMetaDO model);
+
+    /**
+     * 根据Id列表进行删除
+     *
+     * @param ids List
+     * @return int
+     */
+    @UpdateProvider(type = ModelMetaSqlProvider.class, method = "delByIds")
+    int delByIds(@Param("ids") List<Long> ids);
 }

@@ -34,10 +34,10 @@ public class DataImportController {
     public ApiResult<String> uploadData(@RequestBody @Validated(value = DataImportForm.ImportCheck.class) DataImportForm form,
                                         @RequestParam("file") MultipartFile file) {
         int status = importRecordService.uploadData(form.toDO(), file);
-        if (status == 0) {
-            return ApiResult.ofError(StateCode.BizError, "导入数据失败");
+        if (status > 0) {
+            return ApiResult.ofData("数据导入成功");
         }
-        return ApiResult.ofData("数据导入成功");
+        return ApiResult.ofError(StateCode.BizError, "导入数据失败");
     }
 
     /**

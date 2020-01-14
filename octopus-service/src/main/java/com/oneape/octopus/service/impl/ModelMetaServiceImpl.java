@@ -60,6 +60,18 @@ public class ModelMetaServiceImpl implements ModelMetaService {
         if (modelId == null || modelId < 0) {
             throw new BizException("模型Id为空");
         }
+        if (CollectionUtils.isEmpty(metas)) return 1;
+
+        List<Long> ids = new ArrayList<>();
+        metas.forEach(m -> {
+            if (m.getId() != null) {
+                ids.add(m.getId());
+            }
+        });
+
+        // 删除已经存在的元素信息
+        modelMetaMapper.delByIds(ids);
+
         // 批量添加新的查询参数
         SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH);
         int count = 0;

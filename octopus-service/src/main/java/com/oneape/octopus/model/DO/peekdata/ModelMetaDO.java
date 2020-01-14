@@ -17,11 +17,6 @@ public class ModelMetaDO extends BaseDO {
     @Column(name = "model_id")
     private Long modelId;
     /**
-     * 元素分组名
-     */
-    @Column(name = "group_name")
-    private String groupName;
-    /**
      * 元素名称(表字段名称)
      */
     private String name;

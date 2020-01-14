@@ -464,7 +464,6 @@ CREATE TABLE `pd_model_meta`
 (
     `id`               BIGINT(20)   NOT NULL COMMENT '主键Id',
     `model_id`         BIGINT(20)   NOT NULL COMMENT '模型Id',
-    `group_name`       VARCHAR(512) NOT NULL COMMENT '元素分组名',
     `name`             VARCHAR(64)  NOT NULL COMMENT '元素名称(表字段名称)',
     `show_name`        VARCHAR(64)  NOT NULL COMMENT '显示名称',
     `origin_data_type` VARCHAR(64)  NOT NULL COMMENT '原始数据类型',

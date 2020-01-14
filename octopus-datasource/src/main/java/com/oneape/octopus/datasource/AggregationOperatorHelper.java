@@ -24,7 +24,7 @@ public enum AggregationOperatorHelper {
 
     static {
         Arrays.stream(AggregationOperatorHelper.values())
-                .forEach(aoh -> cached.put(aoh.code, aoh));
+                .forEach(aoh -> cached.put(StringUtils.lowerCase(aoh.code), aoh));
     }
 
     AggregationOperatorHelper(String code, String desc) {
@@ -35,9 +35,9 @@ public enum AggregationOperatorHelper {
     public String toSql(String field) {
         String sqlSection = getCode() + "( ";
         if (getCode().equals(COUNT_DISTINCT.code)) {
-            sqlSection = " COUNT ( DISTINCT ";
+            sqlSection = " COUNT( DISTINCT( ";
         }
-        return sqlSection + field + " ) AS " + field;
+        return sqlSection + field + ") ) AS " + field;
     }
 
     /**
@@ -50,7 +50,7 @@ public enum AggregationOperatorHelper {
         if (StringUtils.isBlank(code)) {
             return null;
         }
-        return cached.get(code);
+        return cached.get(StringUtils.lowerCase(code));
     }
 
     public String getCode() {

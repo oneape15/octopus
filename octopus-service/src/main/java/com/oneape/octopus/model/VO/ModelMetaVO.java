@@ -11,8 +11,6 @@ public class ModelMetaVO implements Serializable {
     private Long id;
     // 模型Id
     private Long modelId;
-    // 元素分组名
-    private String groupName;
     // 元素名称(表字段名称)
     private String name;
     // 显示名称

@@ -30,7 +30,7 @@ public interface ModelService extends BaseService<ModelDO> {
      * 修改模型信息
      *
      * @param model ModelDO
-     * @param metas List
+     * @param metas List 有更改的字段信息
      * @return int 0 - 失败； 1 - 成功；
      */
     int editModelInfo(ModelDO model, List<ModelMetaVO> metas);
@@ -60,4 +60,13 @@ public interface ModelService extends BaseService<ModelDO> {
      * @return List
      */
     List<ModelMetaVO> listModelMeta(ModelMetaDO mm);
+
+    /**
+     * 修改模型状态
+     *
+     * @param modelId Long
+     * @param status  Integer
+     * @return int
+     */
+    int changeStatus(Long modelId, Integer status);
 }

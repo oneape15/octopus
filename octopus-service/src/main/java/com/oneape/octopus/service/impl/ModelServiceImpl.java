@@ -1,5 +1,6 @@
 package com.oneape.octopus.service.impl;
 
+import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.datasource.DatasourceInfo;
@@ -76,7 +77,7 @@ public class ModelServiceImpl implements ModelService {
      * 修改模型信息
      *
      * @param model ModelDO
-     * @param metas List
+     * @param metas List 有更改的字段信息
      * @return int 0 - 失败； 1 - 成功；
      */
     @Override
@@ -230,5 +231,23 @@ public class ModelServiceImpl implements ModelService {
     @Override
     public List<ModelMetaVO> listModelMeta(ModelMetaDO mm) {
         return modelMetaService.find(mm);
+    }
+
+    /**
+     * 修改模型状态
+     *
+     * @param modelId Long
+     * @param status  Integer
+     * @return int
+     */
+    @Override
+    public int changeStatus(Long modelId, Integer status) {
+        Preconditions.checkNotNull(modelId, "主键为空");
+        Preconditions.checkArgument(status == 1 || status == 0, "状态值无效");
+
+        ModelDO model = new ModelDO();
+        model.setId(modelId);
+        model.setStatus(status);
+        return modelMapper.update(model);
     }
 }
