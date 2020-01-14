@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class PeekVO implements Serializable {
@@ -13,10 +14,12 @@ public class PeekVO implements Serializable {
     private Long modelId;
     // 取数实例名称
     private String name;
-    // 返回的数据字段名列表, 多个以","隔开
-    private String fieldList;
     // 取数次数
     private Integer peekTime;
+    // 取数字段
+    private List<PeekFieldVO> fields;
+    // 取数规则
+    private List<PeekRuleVO> rules;
 
 
     public static PeekVO ofDO(PeekDO mdo) {

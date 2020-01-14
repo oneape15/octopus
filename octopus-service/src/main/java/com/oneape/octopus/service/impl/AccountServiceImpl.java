@@ -63,7 +63,7 @@ public class AccountServiceImpl implements AccountService {
 
         String rawPwd = model.getPassword();
         if (StringUtils.isBlank(rawPwd)) {
-            rawPwd = CodeBuilderUtils.RadmonStr(6);
+            rawPwd = CodeBuilderUtils.RandmonStr(6);
         }
         String pwdMd5 = MD5Utils.saltUserPassword(model.getUsername(), rawPwd, null);
         model.setPassword(pwdMd5);

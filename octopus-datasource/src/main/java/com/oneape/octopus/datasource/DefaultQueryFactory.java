@@ -272,4 +272,41 @@ public class DefaultQueryFactory implements QueryFactory {
             return result;
         }
     }
+
+    /**
+     * 导出数据操作
+     *
+     * @param dsi   DatasourceInfo
+     * @param param ExportDataParam
+     * @return int 1 - 成功; 0 - 失败;
+     */
+    @Override
+    public Result exportData(DatasourceInfo dsi, ExportDataParam param) {
+        return exportData(dsi, param, null);
+    }
+
+    /**
+     * 导出数据操作
+     *
+     * @param dsi     DatasourceInfo
+     * @param param   ExportDataParam
+     * @param process
+     * @return int 1 - 成功; 0 - 失败;
+     */
+    @Override
+    public Result exportData(DatasourceInfo dsi, ExportDataParam param, CellProcess<Cell, Object> process) {
+        try {
+            Connection conn = datasourceFactory.getConnection(dsi);
+            try (Statement statement = conn.createStatement()) {
+                Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
+                return actuator.exportData(param, process);
+            }
+        } catch (Exception e) {
+            log.error("执行SQL: {} 失败", JSON.toJSONString(param), e);
+            Result result = new Result();
+            result.setStatus(Result.QueryStatus.ERROR);
+            result.getRunInfo().put(Result.KEY_ERR_MSG, JSON.toJSONString(e));
+            return result;
+        }
+    }
 }

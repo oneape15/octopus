@@ -2,13 +2,17 @@ package com.oneape.octopus.controller.peekdata.form;
 
 import com.oneape.octopus.controller.BaseForm;
 import com.oneape.octopus.model.DO.peekdata.PeekDO;
+import com.oneape.octopus.model.VO.PeekFieldVO;
+import com.oneape.octopus.model.VO.PeekRuleVO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -17,13 +21,16 @@ public class PeekForm extends BaseForm implements Serializable {
     @NotNull(message = "取数Id不能为空", groups = {EditCheck.class, KeyCheck.class})
     private Long peekId;
     // 模型Id
-    @NotNull(message = "模型Id不能为空", groups = {AddCheck.class, EditCheck.class})
+    @NotNull(message = "模型Id不能为空", groups = {AddCheck.class, EditCheck.class, PreviewCheck.class})
     private Long modelId;
     // 取数实例名称
     @NotBlank(message = "取数名称不能为空", groups = {AddCheck.class, EditCheck.class})
     private String name;
-    // 返回的数据字段名列表, 多个以","隔开
-    private String fieldList;
+    // 返回的数据字段名列表
+    @NotEmpty(message = "返回字段不能为空", groups = {PreviewCheck.class})
+    private List<PeekFieldVO> fields;
+    // 取数规则列表
+    private List<PeekRuleVO> rules;
 
     public interface AddCheck {
     }
@@ -32,6 +39,9 @@ public class PeekForm extends BaseForm implements Serializable {
     }
 
     public interface KeyCheck {
+    }
+
+    public interface PreviewCheck {
     }
 
     public PeekDO toDO() {

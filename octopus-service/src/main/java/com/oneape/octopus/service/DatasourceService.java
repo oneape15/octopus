@@ -1,5 +1,6 @@
 package com.oneape.octopus.service;
 
+import com.oneape.octopus.datasource.DatasourceInfo;
 import com.oneape.octopus.model.DO.report.DatasourceDO;
 import com.oneape.octopus.model.VO.DatasourceVO;
 
@@ -17,8 +18,17 @@ public interface DatasourceService extends BaseService<DatasourceDO> {
 
     /**
      * 根据Id获取数据源信息
+     *
      * @param dsId Long
      * @return DatasourceDO
      */
     DatasourceDO findById(Long dsId);
+
+    /**
+     * 根据Id获取数据源信息
+     *
+     * @param dsId Long
+     * @return DatasourceInfo
+     */
+    DatasourceInfo getDatasourceInfoById(Long dsId);
 }

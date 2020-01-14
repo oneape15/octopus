@@ -87,4 +87,22 @@ public interface QueryFactory {
      * @return Result
      */
     Result execSql(DatasourceInfo dsi, ExecParam param, CellProcess<Cell, Object> process);
+
+    /**
+     * 导出数据操作
+     *
+     * @param dsi   DatasourceInfo
+     * @param param ExportDataParam
+     * @return int 1 - 成功; 0 - 失败;
+     */
+    Result exportData(DatasourceInfo dsi, ExportDataParam param);
+
+    /**
+     * 导出数据操作
+     *
+     * @param dsi   DatasourceInfo
+     * @param param ExportDataParam
+     * @return int 1 - 成功; 0 - 失败;
+     */
+    Result exportData(DatasourceInfo dsi, ExportDataParam param, CellProcess<Cell, Object> process);
 }

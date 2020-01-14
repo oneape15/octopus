@@ -22,7 +22,7 @@ public class CodeBuilderUtils {
      * @param len int
      * @return String
      */
-    public static String RadmonStr(int len) {
+    public static String RandmonStr(int len) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < len; i++) {
             sb.append(ALL_CHAR[random.nextInt(ALL_CHAR_LEN)]);

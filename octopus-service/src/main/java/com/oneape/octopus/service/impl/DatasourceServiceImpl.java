@@ -1,6 +1,8 @@
 package com.oneape.octopus.service.impl;
 
 import com.oneape.octopus.common.BizException;
+import com.oneape.octopus.datasource.DatasourceInfo;
+import com.oneape.octopus.datasource.DatasourceTypeHelper;
 import com.oneape.octopus.mapper.report.DatasourceMapper;
 import com.oneape.octopus.model.DO.report.DatasourceDO;
 import com.oneape.octopus.model.VO.DatasourceVO;
@@ -99,5 +101,26 @@ public class DatasourceServiceImpl implements DatasourceService {
     @Override
     public DatasourceDO findById(Long dsId) {
         return datasourceMapper.findById(dsId);
+    }
+
+    /**
+     * 根据Id获取数据源信息
+     *
+     * @param dsId Long
+     * @return DatasourceInfo
+     */
+    @Override
+    public DatasourceInfo getDatasourceInfoById(Long dsId) {
+        DatasourceDO ddo = findById(dsId);
+        if (ddo == null) {
+            return null;
+        }
+        DatasourceInfo dsi = new DatasourceInfo();
+        dsi.setDatasourceType(DatasourceTypeHelper.byName(ddo.getType()));
+        dsi.setUsername(ddo.getUsername());
+        dsi.setPassword(ddo.getPassword());
+        dsi.setUrl(ddo.getJdbcUrl());
+
+        return dsi;
     }
 }

@@ -91,7 +91,7 @@ public class ReportServiceImpl implements ReportService {
         Assert.isTrue(StringUtils.isNotBlank(model.getName()), "报表名称为空");
 
         if (StringUtils.isBlank(model.getCode())) {
-            model.setCode(CodeBuilderUtils.RadmonStr(REPORT_CODE_LEN));
+            model.setCode(CodeBuilderUtils.RandmonStr(REPORT_CODE_LEN));
         } else {
             List<ReportDO> list = reportMapper.list(new ReportDO(model.getCode()));
             if (CollectionUtils.isNotEmpty(list)) {

@@ -56,4 +56,13 @@ public interface PeekMapper {
      */
     @SelectProvider(type = PeekSqlProvider.class, method = "list")
     List<PeekDO> list(@Param("model") PeekDO model);
+
+    /**
+     * 取数增加一次
+     *
+     * @param peekId Long
+     * @return int
+     */
+    @UpdateProvider(type = PeekSqlProvider.class, method = "incPeekTime")
+    int incPeekTime(@Param("peekId") Long peekId);
 }

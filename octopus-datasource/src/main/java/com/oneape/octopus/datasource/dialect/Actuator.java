@@ -1,9 +1,9 @@
 package com.oneape.octopus.datasource.dialect;
 
-import com.oneape.octopus.datasource.Cell;
-import com.oneape.octopus.datasource.CellProcess;
-import com.oneape.octopus.datasource.DataType;
-import com.oneape.octopus.datasource.ExecParam;
+import com.oneape.octopus.commons.files.CSVHelper;
+import com.oneape.octopus.commons.files.ZipUtils;
+import com.oneape.octopus.commons.value.CodeBuilderUtils;
+import com.oneape.octopus.datasource.*;
 import com.oneape.octopus.datasource.data.ColumnHead;
 import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.datasource.data.Value;
@@ -14,6 +14,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -26,6 +28,10 @@ import java.util.List;
  */
 @Slf4j
 public abstract class Actuator {
+    private static final String FILE_PATH = "/Users/xiaodian/Desktop/";
+    private static final String CSV_FILE_SUFFIX = ".csv";
+    private static final String ZIP_FILE_SUFFIX = ".zip";
+
     // 数据库字段名称
     public static final String COL_SCHEMA = "schema_name";
     // 表字段名称
@@ -167,9 +173,6 @@ public abstract class Actuator {
             case INTEGER:
                 ret = Integer.toString((Integer) val);
                 break;
-            case DECIMAL:
-                ret = val.toString();
-                break;
             case BOOLEAN:
                 ret = Boolean.toString((Boolean) val);
                 break;
@@ -190,6 +193,7 @@ public abstract class Actuator {
             case DATE:
                 ret = "'" + val.toString() + "'";
                 break;
+            case DECIMAL:
             default:
                 ret = val.toString();
         }
@@ -343,29 +347,25 @@ public abstract class Actuator {
     }
 
     /**
-     * 执行SQL操作
+     * 查询前置处理
      *
-     * @param param   ExecParam
-     * @param process CellProcess
-     * @return Result
+     * @param param  ExecParam
+     * @param result Result
      */
-    public Result execSql(ExecParam param, CellProcess<Cell, Object> process) {
-        Result result = new Result();
-
+    private void preDealOfQuery(ExecParam param, Result result) {
         if (param == null) {
             result.getRunInfo().put(Result.KEY_ERR_MSG, "查询参数为空");
-            return result;
+            throw new RuntimeException("查询参数为空");
         }
 
         String detailSql = param.getRawSql();
         if (StringUtils.isBlank(detailSql)) {
             result.getRunInfo().put(Result.KEY_ERR_MSG, "运行SQL为空");
-            return result;
+            throw new RuntimeException("运行SQL为空");
         }
 
         // 组装查询SQL
         detailSql = assembleDetailSql(detailSql, param.getParams());
-
         /*
          * 获取数据总条数
          */
@@ -378,10 +378,141 @@ public abstract class Actuator {
                 countSize = getTotalSizeBySql(countSql);
             } catch (Exception e) {
                 result.getRunInfo().put(Result.KEY_ERR_MSG, e.toString());
-                return result;
+                throw new RuntimeException(e);
             }
         }
         result.setTotalSize(countSize);
+        // 设置查询SQL
+        result.getRunInfo().put(Result.KEY_DETAIL_SQL, detailSql);
+    }
+
+    /**
+     * 导出数据
+     *
+     * @param param   ExportDataParam
+     * @param process CellProcess
+     * @return Result
+     */
+    public Result exportData(ExportDataParam param, CellProcess<Cell, Object> process) {
+        Result result = new Result();
+        try {
+            preDealOfQuery(param, result);
+        } catch (Exception e) {
+            return result;
+        }
+
+        String detailSql = result.getRunInfo().get(Result.KEY_DETAIL_SQL);
+
+        // 临时文件名称
+        String fileName = "report_" + Thread.currentThread().getId() +
+                "_" + System.currentTimeMillis() +
+                "_" + CodeBuilderUtils.RandmonStr(16);
+        String fullFileName = FILE_PATH + fileName + CSV_FILE_SUFFIX;
+
+        boolean initStatus = CSVHelper.initCSVFile(fullFileName);
+        if (!initStatus) {
+            throw new RuntimeException("初始化CSV文件失败~");
+        }
+
+        StopWatch watch = new StopWatch();
+        watch.start();
+        try (ResultSet rs = statement.executeQuery(detailSql)) {
+            // 得到 ResultSetMetaData 对象
+            final List<ColumnHead> columnHeads = getColumnHeads(rs.getMetaData());
+
+            // 写入表格头
+            List<Object> headString = new ArrayList<>(columnHeads.size());
+            columnHeads.forEach(ch -> headString.add(ch.getLabel()));
+            CSVHelper.writeRow(headString);
+
+            result.setColumns(columnHeads);
+            int columnSize = columnHeads.size();
+
+            // 循环获取数据行
+            int index = 0;
+            int totalSize = 0;
+            while (rs.next()) {
+                totalSize++;
+                index++;
+                List<Object> row = new ArrayList<>(columnSize);
+                for (int i = 0; i < columnSize; i++) {
+                    Object obj = rs.getObject(i + 1);
+                    if (process != null) {
+                        obj = process.process(new Cell(columnHeads.get(i), obj));
+                    }
+                    row.add(obj);
+                }
+                // 写一行数据
+                CSVHelper.writeRow(row);
+
+                // 超过最大行数判断
+                if (param.getLimitSize() > 0 && totalSize > param.getLimitSize()) {
+                    break;
+                }
+
+                // 每100条刷新到磁盘
+                if (index >= 100) {
+                    index = 0;
+                    CSVHelper.flush();
+                    // 大循环空出时间，给高优先级的线程使用
+                    Thread.sleep(1);
+                }
+            }
+        } catch (Exception e) {
+            result.getRunInfo().put(Result.KEY_ERR_MSG, e.toString());
+            return result;
+        } finally {
+            // csv操作流关闭
+            CSVHelper.finish();
+            watch.stop();
+            result.getRunInfo().put(Result.KYE_RUN_TIME, watch.getTime() + "");
+        }
+
+        File file = new File(fullFileName);
+        if (!file.exists()) {
+            log.error("生成" + fullFileName + "文件失败！");
+            result.getRunInfo().put(Result.KEY_ERR_MSG, "生成" + fullFileName + "文件失败！");
+            return result;
+        }
+
+        try {
+            // 压缩csv文件
+            String zipFileName = FILE_PATH + fileName + ZIP_FILE_SUFFIX;
+            File zipFile = new File(zipFileName);
+            ZipUtils.toZip(file, new FileOutputStream(zipFile));
+
+            // 删除原始文件
+            if (file.exists()) {
+                boolean status = file.delete();
+                log.info("临时文件删除状态：{}", status);
+            }
+
+            // 返回文件路径
+            result.getRunInfo().put(Result.KYE_EXPORT_FILE, zipFileName);
+        } catch (Exception e) {
+            log.error("压缩文件异常", e);
+            result.getRunInfo().put(Result.KEY_ERR_MSG, "压缩文件异常: " + e.getMessage());
+            return result;
+        }
+
+        return result;
+    }
+
+    /**
+     * 执行SQL操作
+     *
+     * @param param   ExecParam
+     * @param process CellProcess
+     * @return Result
+     */
+    public Result execSql(ExecParam param, CellProcess<Cell, Object> process) {
+        Result result = new Result();
+        try {
+            preDealOfQuery(param, result);
+        } catch (Exception e) {
+            return result;
+        }
+        String detailSql = result.getRunInfo().get(Result.KEY_DETAIL_SQL);
 
         // 判断是否为分页
         if (param.getPageSize() != null && param.getPageSize() > 0) {

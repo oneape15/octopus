@@ -395,6 +395,49 @@ CREATE TABLE `pd_peek`
     DEFAULT CHARACTER SET = utf8
     COLLATE = utf8_general_ci;
 
+-- 取数字段信息表 pd_peek_field
+CREATE TABLE `pd_peek_field`
+(
+    `id`             BIGINT(20)  NOT NULL COMMENT '主键Id',
+    `peek_id`        BIGINT(20)  NOT NULL COMMENT '取数id',
+    `meta_id`        BIGINT(20)  NULL COMMENT '字段id',
+    `type`           TINYINT(1)  NULL     DEFAULT 0 COMMENT '类型; 0 -维度; 1-指标',
+    `agg_expression` VARCHAR(50) NULL COMMENT '聚合函数',
+    `data_type`      VARCHAR(50) NULL COMMENT '数据类型',
+    `format`         VARCHAR(50) NULL COMMENT '格式',
+    `archive`        TINYINT(1)  NOT NULL DEFAULT 0 COMMENT '0 - 正常数据; 1 - 已归档(删除)',
+    `created`        BIGINT(20)  NOT NULL COMMENT '创建时间',
+    `creator`        BIGINT(20)  NOT NULL COMMENT '创建人',
+    `modified`       BIGINT(20)  NULL     DEFAULT NULL COMMENT '最后一次更新时间',
+    `modifier`       BIGINT(20)  NULL     DEFAULT NULL COMMENT '最后一次修改人',
+    PRIMARY KEY (`id`)
+)
+    ENGINE = InnoDB
+    COMMENT '取数字段信息表'
+    DEFAULT CHARACTER SET = utf8
+    COLLATE = utf8_general_ci;
+
+-- 取数规则信息表 pd_peek_rule
+CREATE TABLE `pd_peek_rule`
+(
+    `id`          BIGINT(20)   NOT NULL COMMENT '主键Id',
+    `peek_id`     BIGINT(20)   NOT NULL COMMENT '取数id',
+    `meta_id`     BIGINT(20)   NULL COMMENT '字段id',
+    `field_name`  VARCHAR(128) COMMENT '字段名称',
+    `rule`        VARCHAR(64)  NOT NULL COMMENT '规则名称',
+    `input_value` VARCHAR(512) NOT NULL COMMENT '代入值',
+    `archive`     TINYINT(1)   NOT NULL DEFAULT 0 COMMENT '0 - 正常数据; 1 - 已归档(删除)',
+    `created`     BIGINT(20)   NOT NULL COMMENT '创建时间',
+    `creator`     BIGINT(20)   NOT NULL COMMENT '创建人',
+    `modified`    BIGINT(20)   NULL     DEFAULT NULL COMMENT '最后一次更新时间',
+    `modifier`    BIGINT(20)   NULL     DEFAULT NULL COMMENT '最后一次修改人',
+    PRIMARY KEY (`id`)
+)
+    ENGINE = InnoDB
+    COMMENT '取数规则信息表'
+    DEFAULT CHARACTER SET = utf8
+    COLLATE = utf8_general_ci;
+
 -- 模型信息表 pd_model
 CREATE TABLE `pd_model`
 (

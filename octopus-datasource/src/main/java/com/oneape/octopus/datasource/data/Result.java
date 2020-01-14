@@ -20,6 +20,9 @@ public class Result implements Serializable {
     public static final String KEY_ERR_MSG = "err_msg";
     // 运行时间
     public static final String KYE_RUN_TIME = "run_time";
+    // 导出文件路径
+    public static final String KYE_EXPORT_FILE = "export_file";
+
 
     /**
      * 查询状态

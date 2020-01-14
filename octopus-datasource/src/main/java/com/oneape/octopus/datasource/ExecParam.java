@@ -29,6 +29,10 @@ public class ExecParam implements Serializable {
      */
     private Integer pageSize;
     /**
+     * 限制数量
+     */
+    private Integer limitSize = -1;
+    /**
      * 需要合计数
      */
     private Boolean needTotalSize = Boolean.FALSE;

@@ -1,7 +1,9 @@
 package com.oneape.octopus.datasource;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 取数规则类型
@@ -28,6 +30,13 @@ public enum PeekRuleTypeHelper {
     PeekRuleTypeHelper(String code, String desc) {
         this.code = code;
         this.desc = desc;
+    }
+
+    private static final Map<String, PeekRuleTypeHelper> cached = new HashMap<>();
+
+    static {
+        Arrays.stream(PeekRuleTypeHelper.values())
+                .forEach(aoh -> cached.put(aoh.code.toLowerCase(), aoh));
     }
 
     public String getCode() {
@@ -89,6 +98,141 @@ public enum PeekRuleTypeHelper {
                 break;
         }
         return list;
+    }
+
+    /**
+     * 根据code进行查找
+     *
+     * @param code String
+     * @return PeekRuleTypeHelper
+     */
+    public static PeekRuleTypeHelper byCode(String code) {
+        if (StringUtils.isNotBlank(code)) {
+            return cached.get(code.toLowerCase());
+        }
+        return null;
+    }
+
+    /**
+     * 根据规则组装sql语句段
+     *
+     * @param dt        DataTye 数据类型
+     * @param fieldName String  字段名称
+     * @param value     String  值
+     * @return String
+     */
+    public String toSqlSection(DataType dt, String fieldName, String value) {
+        String section = "";
+        switch (dt) {
+            case STRING:
+                switch (this) {
+                    case EQUALS:
+                    case EQUALS_IGNORE_CASE:
+                        section = " = '" + value + "'";
+                        break;
+                    case NOT_EQUALS:
+                        section = " != '" + value + "'";
+                        break;
+                    case START_WITH:
+                        section = " LIKE '" + value + "%'";
+                        break;
+                    case END_WITH:
+                        section = " LIKE '%" + value + "'";
+                        break;
+                    case CONTAINS:
+                        section = " LIKE '%" + value + "%'";
+                        break;
+                    case INCLUDES:
+                        section = " IN " + toIn(value, true);
+                        break;
+                    case NOT_INCLUDES:
+                        section = " NOT IN " + toIn(value, true);
+                        break;
+                    default:
+                        section = "";
+                        break;
+                }
+                break;
+            case INTEGER:
+            case LONG:
+            case FLOAT:
+            case DOUBLE:
+            case DECIMAL:
+                switch (this) {
+                    case EQUALS:
+                        section = " = " + value;
+                        break;
+                    case NOT_EQUALS:
+                        section = " != " + value;
+                        break;
+                    case NO_LESS_THAN:
+                        section = " >= " + value;
+                        break;
+                    case NO_MORE_THAN:
+                        section = " <= " + value;
+                        break;
+                    case LESS_THAN:
+                        section = " < " + value;
+                        break;
+                    case GREATER_THAN:
+                        section = " > " + value;
+                        break;
+                    case INCLUDES:
+                        section = " IN " + toIn(value, false);
+                        break;
+                    case NOT_INCLUDES:
+                        section = " NOT IN " + toIn(value, false);
+                        break;
+                    default:
+                        section = "";
+                        break;
+                }
+                break;
+            case DATE:
+            case TIME:
+            case DATETIME:
+            case TIMESTAMP:
+                switch (this) {
+                    case EQUALS:
+                        section = " = '" + value + "'";
+                        break;
+                    case GREATER_THAN:
+                        section = " > '" + value + "'";
+                        break;
+                    case NO_MORE_THAN:
+                        section = " <= '" + value + "'";
+                        break;
+                    case LESS_THAN:
+                        section = " < '" + value + "'";
+                        break;
+                    case NO_LESS_THAN:
+                        section = " >= '" + value + "'";
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case BOOLEAN:
+            case BINARY:
+            case OBJ:
+            default:
+                section = " = " + value;
+                break;
+        }
+        return fieldName + section;
+    }
+
+    private static String toIn(String str, boolean needQuota) {
+        String preSuffix = needQuota ? "'" : "";
+        if (str == null) {
+            return "(" + preSuffix + preSuffix + ")";
+        }
+        String[] arr = StringUtils.split(str, ",");
+        return Arrays.stream(arr)
+                .map(String::trim)
+                .filter(StringUtils::isNoneEmpty)
+                .map(item -> String.format("%s%s%s", preSuffix, item, preSuffix))
+                .collect(Collectors.joining(",", "(", ")"));
     }
 
 }

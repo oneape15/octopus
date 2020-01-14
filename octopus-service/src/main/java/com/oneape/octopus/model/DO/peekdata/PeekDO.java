@@ -3,10 +3,12 @@ package com.oneape.octopus.model.DO.peekdata;
 import com.oneape.octopus.model.DO.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class PeekDO extends BaseDO {
     /**
@@ -19,13 +21,19 @@ public class PeekDO extends BaseDO {
      */
     private String name;
     /**
-     * 返回的数据字段名列表, 多个以","隔开
-     */
-    @Column(name = "field_list")
-    private String fieldList;
-    /**
      * 取数次数
      */
     @Column(name = "peek_time")
     private Integer peekTime;
+
+    public PeekDO(Long modelId, String name) {
+        this.modelId = modelId;
+        this.name = name;
+    }
+
+    public PeekDO(Long id, Long modelId, String name) {
+        this.setId(id);
+        this.modelId = modelId;
+        this.name = name;
+    }
 }
