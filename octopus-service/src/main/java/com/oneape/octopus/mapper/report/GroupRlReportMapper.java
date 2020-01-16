@@ -34,6 +34,15 @@ public interface GroupRlReportMapper {
      */
     @UpdateProvider(type = GroupRlReportSqlProvider.class, method = "deleteById")
     int delete(GroupRlReportDO model);
+    /**
+     * 根据报表Id删除
+     *
+     * @param reportId Long
+     * @return int 1 - 成功；0 - 失败
+     */
+    @UpdateProvider(type = GroupRlReportSqlProvider.class, method = "deleteByReportId")
+    int deleteByReportId(@Param("reportId") Long reportId);
+
 
     /**
      * 通过主键查找

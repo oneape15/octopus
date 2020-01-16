@@ -2,7 +2,6 @@ package com.oneape.octopus.mapper.system;
 
 import com.oneape.octopus.mapper.system.provider.CommonInfoSqlProvider;
 import com.oneape.octopus.model.DO.system.CommonInfoDO;
-import com.oneape.octopus.model.enums.Archive;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

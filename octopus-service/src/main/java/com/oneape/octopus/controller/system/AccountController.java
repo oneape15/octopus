@@ -31,9 +31,6 @@ public class AccountController {
 
     /**
      * 用户登录
-     *
-     * @param form UserForm
-     * @return ApiResult
      */
     @RequestMapping("/login")
     public ApiResult<UserVO> doLogin(@RequestBody @Validated(value = UserForm.LoginCheck.class) UserForm form) {
@@ -46,9 +43,6 @@ public class AccountController {
 
     /**
      * 注册用户
-     *
-     * @param form UserForm
-     * @return ApiResult
      */
     @PostMapping("/reg")
     public ApiResult<String> regUser(@RequestBody @Validated(value = UserForm.RegCheck.class) UserForm form) {
@@ -62,9 +56,6 @@ public class AccountController {
 
     /**
      * 获取列表
-     *
-     * @param form UserForm
-     * @return PageInfo
      */
     @PostMapping("/list")
     public ApiResult<PageInfo<UserVO>> list(@RequestBody @Validated UserForm form) {
@@ -75,8 +66,6 @@ public class AccountController {
 
     /**
      * 获取当前用户信息
-     *
-     * @return UserVO
      */
     @PostMapping("/getCurrent")
     public ApiResult<UserVO> getCurrent() {
@@ -89,8 +78,6 @@ public class AccountController {
 
     /**
      * 获取当前用户拥有的菜单列表
-     *
-     * @return List
      */
     @PostMapping("/menuTree")
     public ApiResult<List<MenuVO>> getCurrentUserMenu() {
@@ -98,10 +85,24 @@ public class AccountController {
         return ApiResult.ofData(menus);
     }
 
+    /**
+     * 获取所有用户基本信息
+     */
     @PostMapping("/users")
     public ApiResult<List<UserVO>> getAllUsers() {
         return ApiResult.ofData(accountService.find(new UserDO()));
     }
 
+    /**
+     * 重置密码
+     */
+    @PostMapping("/resetPwd")
+    public ApiResult<String> resetPwd(@RequestBody @Validated(value = UserForm.KeyCheck.class) UserForm form) {
+        int status = accountService.resetPwd(form.getUserId());
+        if (status > 0) {
+            return ApiResult.ofData("重置密码成功");
+        }
+        return ApiResult.ofError(StateCode.BizError, "重置密码失败");
+    }
 
 }

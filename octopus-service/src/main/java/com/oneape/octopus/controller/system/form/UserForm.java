@@ -8,11 +8,13 @@ import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class UserForm extends BaseForm implements Serializable {
+    @NotNull(message = "用户Id不能为空", groups = {KeyCheck.class})
     private Long userId;
     @NotBlank(message = "用户名不能为空", groups = {LoginCheck.class, RegCheck.class})
     private String username;
@@ -23,6 +25,9 @@ public class UserForm extends BaseForm implements Serializable {
     }
 
     public interface RegCheck {
+    }
+
+    public interface KeyCheck {
     }
 
     public UserVO toVO() {

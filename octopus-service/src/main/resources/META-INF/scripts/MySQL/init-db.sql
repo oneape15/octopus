@@ -152,6 +152,7 @@ CREATE TABLE `sys_role_rl_resource`
     `id`          BIGINT(20) NOT NULL,
     `role_id`     BIGINT(20) NOT NULL COMMENT '角色Id',
     `resource_id` BIGINT(20) NOT NULL COMMENT '资源Id',
+    `mask`        INT(11)    NOT NULL DEFAULT 0 COMMENT '权限掩码 1 - 查看; 2 - 新增; 4 - 修改; 8 - 删除',
     `archive`     TINYINT(1) NOT NULL DEFAULT 0 COMMENT '0 - 正常数据; 1 - 已归档(删除)',
     `created`     BIGINT(20) NOT NULL COMMENT '创建时间',
     `creator`     BIGINT(20) NOT NULL COMMENT '创建人',
@@ -352,8 +353,8 @@ CREATE TABLE `r_report_sql`
     DEFAULT CHARACTER SET = utf8
     COLLATE = utf8_general_ci;
 
--- r_report_sql_log sql执行日志表
-CREATE TABLE `r_report_sql_log`
+-- r_sql_log sql执行日志表
+CREATE TABLE `r_sql_log`
 (
     `id`            BIGINT(20) NOT NULL COMMENT '主键Id',
     `ds_id`         BIGINT(20) NOT NULL COMMENT '依赖的数据源Id',
@@ -371,7 +372,7 @@ CREATE TABLE `r_report_sql_log`
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB
-    COMMENT '报表执行sql表'
+    COMMENT 'sql执行日志表'
     DEFAULT CHARACTER SET = utf8
     COLLATE = utf8_general_ci;
 

@@ -2,7 +2,9 @@ package com.oneape.octopus.controller.system;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.controller.system.form.RoleForm;
+import com.oneape.octopus.model.DO.system.RoleDO;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.RoleVO;
 import com.oneape.octopus.service.RoleService;
@@ -24,27 +26,45 @@ public class RoleController {
     @PostMapping("/add")
     public ApiResult<String> doAddRole(@RequestBody @Validated(value = RoleForm.AddCheck.class) RoleForm form) {
         int status = roleService.insert(form.toDO());
-        return ApiResult.ofData(status > 0 ? "添加角色成功" : "添加角色失败");
+        if (status > 0) {
+            return ApiResult.ofData("添加角色成功");
+        }
+        return ApiResult.ofError(StateCode.BizError, "添加角色失败");
     }
 
     @PostMapping("/edit")
     public ApiResult<String> doEditRole(@RequestBody @Validated(value = RoleForm.EditCheck.class) RoleForm form) {
         int status = roleService.edit(form.toDO());
-        return ApiResult.ofData(status > 0 ? "修改角色成功" : "修改角色失败");
+        if (status > 0) {
+            return ApiResult.ofData("修改角色成功");
+        }
+        return ApiResult.ofError(StateCode.BizError, "修改角色失败");
     }
 
     @PostMapping("/del")
     public ApiResult<String> doDelRole(@RequestBody @Validated(value = RoleForm.KeyCheck.class) RoleForm form) {
         int status = roleService.deleteById(form.toDO());
-        return ApiResult.ofData(status > 0 ? "删除角色成功" : "删除角色失败");
+        if (status > 0) {
+            return ApiResult.ofData("删除角色成功");
+        }
+        return ApiResult.ofError(StateCode.BizError, "删除角色失败");
     }
 
+    /**
+     * 分页查询
+     */
     @PostMapping("/list")
-    public ApiResult<PageInfo> doList(@RequestBody @Validated RoleForm form) {
+    public ApiResult<PageInfo<RoleVO>> doList(@RequestBody @Validated RoleForm form) {
         PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
         List<RoleVO> vos = roleService.find(form.toDO());
-        PageInfo<RoleVO> pageInfo = new PageInfo<>(vos);
+        return ApiResult.ofData(new PageInfo<>(vos));
+    }
 
-        return ApiResult.ofData(pageInfo);
+    /**
+     * 获取所有角色
+     */
+    @PostMapping("/all")
+    public ApiResult<List<RoleVO>> getAllRoles() {
+        return ApiResult.ofData(roleService.find(new RoleDO()));
     }
 }

@@ -100,10 +100,8 @@ public class ModelServiceImpl implements ModelService {
     @Override
     public List<ModelMetaVO> getTableColumns(Long modelId, Long dsId, String tableName) {
         if (modelId == null || modelId <= 0) {
-            DatasourceDO datasourceDO = datasourceService.findById(dsId);
-            if (datasourceDO == null) {
-                throw new BizException("数据源信息不存在");
-            }
+            DatasourceDO datasourceDO = Preconditions.checkNotNull(datasourceService.findById(dsId),
+                    "数据源信息不存在");
 
             DatasourceInfo dsi = new DatasourceInfo();
             dsi.setUrl(datasourceDO.getJdbcUrl());

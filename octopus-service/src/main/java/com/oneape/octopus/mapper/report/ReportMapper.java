@@ -2,6 +2,7 @@ package com.oneape.octopus.mapper.report;
 
 import com.oneape.octopus.mapper.report.provider.ReportSqlProvider;
 import com.oneape.octopus.model.DO.report.ReportDO;
+import com.oneape.octopus.model.VO.ReportVO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -55,4 +56,13 @@ public interface ReportMapper {
      */
     @SelectProvider(type = ReportSqlProvider.class, method = "list")
     List<ReportDO> list(@Param("model") ReportDO model);
+
+    /**
+     * 获取简单的报表信息
+     *
+     * @param model T
+     * @return List
+     */
+    @SelectProvider(type = ReportSqlProvider.class, method = "findSimpleReport")
+    List<ReportVO> findSimpleReport(@Param("model") ReportDO model);
 }

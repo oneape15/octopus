@@ -1,4 +1,4 @@
-package com.oneape.octopus.controller.report.form;
+package com.oneape.octopus.controller.system.form;
 
 import com.oneape.octopus.controller.BaseForm;
 import com.oneape.octopus.model.DO.report.DatasourceDO;

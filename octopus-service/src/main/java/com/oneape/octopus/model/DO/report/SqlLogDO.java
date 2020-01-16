@@ -10,7 +10,7 @@ import javax.persistence.Column;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ReportSqlLogDO extends BaseDO {
+public class SqlLogDO extends BaseDO {
     /**
      * 依赖的数据源Id
      */

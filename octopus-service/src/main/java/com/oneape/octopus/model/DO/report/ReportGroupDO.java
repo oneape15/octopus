@@ -49,7 +49,7 @@ public class ReportGroupDO extends BaseDO {
      */
     @SortId
     @Column(name = "sort_id")
-    private Long sortId = GlobalConstant.DEFAULT_VALUE;
+    private Long sortId;
     /**
      * 描述信息
      */

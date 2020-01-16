@@ -1,5 +1,6 @@
 package com.oneape.octopus.service.impl;
 
+import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.*;
 import com.oneape.octopus.commons.value.CodeBuilderUtils;
 import com.oneape.octopus.commons.value.MD5Utils;
@@ -256,7 +257,42 @@ public class AccountServiceImpl implements AccountService {
         Map<String, List<Integer>> optPermission = getResOptPermission(uvo.getId());
         uvo.setOptPermission(optPermission);
         return uvo;
+    }
 
+    /**
+     * 重置用户密码
+     *
+     * @param userId Long
+     * @return int
+     */
+    @Override
+    public int resetPwd(Long userId) {
+        Preconditions.checkNotNull(userId, "用户Id为空");
+        UserDO user = Preconditions.checkNotNull(userMapper.findById(userId), "用户信息不存在");
+        // 随机生成一个密码
+        String pwd = CodeBuilderUtils.RandmonStr(6);
+        String pwdMd5 = MD5Utils.saltUserPassword(user.getUsername(), pwd, null);
+        user.setPassword(pwdMd5);
+        int status = userMapper.update(user);
+        if (status > 0) {
+            // 密码被修改了,必须发送一封邮件给相应的用户
+
+            try {
+                String template_name = "templates/email/user-reset-pwd.html";
+                String content = getFileContent(template_name);
+
+                // 这里不使用MessageFormat.format的原因,在于 style中会存在{dispaly:none}这种字符串存在
+                content = StringUtils.replace(content, "{0}", user.getUsername());
+                content = StringUtils.replace(content, "{1}", "");
+                content = StringUtils.replace(content, "{2}", pwd);
+
+                mailService.sendSimpleMail(user.getEmail(), "OCTOPUS-数据平台密码重置", content);
+            } catch (Exception e) {
+                log.error("发送邮件失败~", e);
+                throw new BizException("发送邮件失败, 邮箱地址:" + user.getEmail());
+            }
+        }
+        return status;
     }
 
     /**

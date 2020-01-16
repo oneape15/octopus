@@ -41,7 +41,7 @@ public class ReportColumnVO implements Serializable {
     // 格式化宏
     private String formatMacro;
     // 排序Id
-    private Long sortId = GlobalConstant.DEFAULT_VALUE;
+    private Long sortId;
     // 描述信息
     private String comment;
 

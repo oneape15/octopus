@@ -52,4 +52,13 @@ public interface RoleRlResourceMapper {
      */
     @SelectProvider(type = RoleRlResourceSqlProvider.class, method = "list")
     List<RoleRlResourceDO> list(@Param("model") RoleRlResourceDO model);
+
+    /**
+     * 根据角色Id列表，获取对应的资源id信息
+     *
+     * @param roleIds List
+     * @return List
+     */
+    @SelectProvider(type = RoleRlResourceSqlProvider.class, method = "getResIdByRoleIds")
+    List<RoleRlResourceDO> getResIdByRoleIds(@Param("roleIds") List<Long> roleIds);
 }

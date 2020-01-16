@@ -2,6 +2,7 @@ package com.oneape.octopus.controller.system;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.controller.system.form.CommonInfoForm;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.CommonInfoVO;
@@ -27,19 +28,28 @@ public class CommonInfoController {
     @PostMapping("/add")
     public ApiResult<String> doAddCommonInfo(@RequestBody @Validated(value = CommonInfoForm.AddCheck.class) CommonInfoForm form) {
         int status = commonInfoService.insert(form.toDO());
-        return ApiResult.ofData(status > 0 ? "添加基础信息成功" : "添加基础信息失败");
+        if (status > 0) {
+            return ApiResult.ofData("添加基础信息成功");
+        }
+        return ApiResult.ofError(StateCode.BizError, "添加基础信息失败");
     }
 
     @PostMapping("/edit")
     public ApiResult<String> doEditCommonInfo(@RequestBody @Validated(value = CommonInfoForm.EditCheck.class) CommonInfoForm form) {
         int status = commonInfoService.edit(form.toDO());
-        return ApiResult.ofData(status > 0 ? "修改基础信息成功" : "修改基础信息失败");
+        if (status > 0) {
+            return ApiResult.ofData("修改基础信息成功");
+        }
+        return ApiResult.ofError(StateCode.BizError, "修改基础信息失败");
     }
 
     @PostMapping("/del")
     public ApiResult<String> doDelCommonInfo(@RequestBody @Validated(value = CommonInfoForm.KeyCheck.class) CommonInfoForm form) {
         int status = commonInfoService.deleteById(form.toDO());
-        return ApiResult.ofData(status > 0 ? "删除基础信息成功" : "删除基础信息失败");
+        if (status > 0) {
+            return ApiResult.ofData("删除基础信息成功");
+        }
+        return ApiResult.ofError(StateCode.BizError, "删除基础信息失败");
     }
 
     @PostMapping("/list")

@@ -3,6 +3,7 @@ package com.oneape.octopus.mapper.report.provider;
 import com.google.common.base.Joiner;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.model.DO.report.GroupRlReportDO;
+import com.oneape.octopus.model.enums.Archive;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
 
@@ -35,6 +36,17 @@ public class GroupRlReportSqlProvider extends BaseSqlProvider<GroupRlReportDO> {
             {
                 DELETE_FROM(getTableName());
                 WHERE(sb.toString());
+            }
+        }.toString();
+    }
+
+    public String deleteByReportId(@Param("reportId") Long reportId) {
+        return new SQL() {
+            {
+                UPDATE(getTableName());
+                SET(FIELD_ARCHIVE + " = " + Archive.ARCHIVE.value(),
+                        FIELD_MODIFIED + " = unix_timestamp(now())");
+                WHERE(" report_id = #{reportId}");
             }
         }.toString();
     }

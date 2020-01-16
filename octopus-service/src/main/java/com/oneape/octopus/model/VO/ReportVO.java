@@ -40,6 +40,7 @@ public class ReportVO implements Serializable {
     private String comment;
     // 所在报表组Id
     private List<Long> groupIdList;
+    private String groupIds;
     // 查询参数
     private List<ReportParamVO> params;
     // 报表列信息

@@ -31,6 +31,15 @@ public interface ReportGroupMapper {
     int update(ReportGroupDO model);
 
     /**
+     * 计算数量
+     *
+     * @param model T
+     * @return int 数量值
+     */
+    @SelectProvider(type = ReportGroupSqlProvider.class, method = "size")
+    int size(ReportGroupDO model);
+
+    /**
      * 通过主键删除数据（软删除，更新archive状态)
      *
      * @param model T
@@ -56,4 +65,15 @@ public interface ReportGroupMapper {
      */
     @SelectProvider(type = ReportGroupSqlProvider.class, method = "list")
     List<ReportGroupDO> list(@Param("model") ReportGroupDO model);
+
+
+    /**
+     * 根据实体中不为null的属性作为查询条件查询
+     *
+     * @param model T
+     * @return List
+     */
+    @SelectProvider(type = ReportGroupSqlProvider.class, method = "listWithOrder")
+    List<ReportGroupDO> listWithOrder(@Param("model") ReportGroupDO model,
+                                      @Param("orderFields") List<String> orderFields);
 }

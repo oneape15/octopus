@@ -245,7 +245,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      * @param model T
      * @return String
      */
-    public String size(@Param("model") T model) {
+    public String size(T model) {
         Assert.isTrue(model != null, "查询数据集实体为空");
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
@@ -254,7 +254,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
         fields.forEach(field -> {
             if (field.getValue() != null) {
                 String columnName = field.getDbColumnName();
-                wheres.add(columnName + " = #{model." + field.getName() + "}");
+                wheres.add(columnName + " = #{" + field.getName() + "}");
             }
         });
 

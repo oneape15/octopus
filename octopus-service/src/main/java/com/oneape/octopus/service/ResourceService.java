@@ -2,8 +2,10 @@ package com.oneape.octopus.service;
 
 import com.oneape.octopus.model.DO.system.ResourceDO;
 import com.oneape.octopus.model.VO.ResourceVO;
+import com.oneape.octopus.model.VO.TreeNodeVO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ResourceService extends BaseService<ResourceDO> {
 
@@ -14,4 +16,19 @@ public interface ResourceService extends BaseService<ResourceDO> {
      * @return List
      */
     List<ResourceVO> findTree(ResourceDO resource);
+
+    /**
+     * 获取整棵资源树
+     *
+     * @return List
+     */
+    List<TreeNodeVO> fullTree();
+
+    /**
+     * 获取指定角色拥有的资源权限集合
+     *
+     * @param roleId Long 角色Id
+     * @return Map
+     */
+    Map<Long, List<Integer>> getByRoleId(Long roleId);
 }

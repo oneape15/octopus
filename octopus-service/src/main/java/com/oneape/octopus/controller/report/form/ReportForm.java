@@ -2,6 +2,8 @@ package com.oneape.octopus.controller.report.form;
 
 import com.oneape.octopus.controller.BaseForm;
 import com.oneape.octopus.model.DO.report.ReportDO;
+import com.oneape.octopus.model.VO.ReportColumnVO;
+import com.oneape.octopus.model.VO.ReportParamVO;
 import com.oneape.octopus.model.VO.ReportVO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -49,6 +51,14 @@ public class ReportForm extends BaseForm implements Serializable {
     private String comment;
     // 所在报表组Id
     private List<Long> groupIdList;
+    // 需要过滤的报表Id列表
+    private List<Long> filterIds;
+    // 携带特定项
+    private String fixOption;
+    // 查询参数列表
+    private List<ReportParamVO> reportParams;
+    // 报表字段列表
+    private List<ReportColumnVO> reportColumns;
 
     public interface AddCheck {
     }
@@ -59,6 +69,7 @@ public class ReportForm extends BaseForm implements Serializable {
 
     public interface KeyCheck {
     }
+
 
     public ReportVO toVO() {
         ReportVO vo = new ReportVO();

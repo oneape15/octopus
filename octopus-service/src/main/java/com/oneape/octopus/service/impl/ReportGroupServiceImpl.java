@@ -2,9 +2,12 @@ package com.oneape.octopus.service.impl;
 
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.GlobalConstant;
+import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.mapper.report.ReportGroupMapper;
 import com.oneape.octopus.model.DO.report.ReportGroupDO;
 import com.oneape.octopus.model.VO.ReportGroupVO;
+import com.oneape.octopus.model.VO.ResourceVO;
+import com.oneape.octopus.model.VO.TreeNodeVO;
 import com.oneape.octopus.service.ReportGroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -13,8 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -102,6 +105,12 @@ public class ReportGroupServiceImpl implements ReportGroupService {
     @Override
     public int deleteById(ReportGroupDO model) {
         Assert.isTrue(model.getId() != null, "主键Key为空");
+        ReportGroupDO query = new ReportGroupDO();
+        query.setParentId(model.getId());
+        int size = reportGroupMapper.size(query);
+        if (size > 0) {
+            throw new BizException(StateCode.BizError.getCode(), "报表组还存在子节点，不能被删除");
+        }
         return reportGroupMapper.delete(model);
     }
 
@@ -112,12 +121,73 @@ public class ReportGroupServiceImpl implements ReportGroupService {
      * @return List
      */
     @Override
-    public List<ReportGroupVO> listBy(ReportGroupDO group) {
+    public List<ReportGroupVO> find(ReportGroupDO group) {
         List<ReportGroupDO> groups = reportGroupMapper.list(group);
         List<ReportGroupVO> vos = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(groups)) {
             groups.forEach(g -> vos.add(ReportGroupVO.ofDO(g)));
         }
         return vos;
+    }
+
+    /**
+     * 获取报表组树型结构
+     *
+     * @return List
+     */
+    @Override
+    public List<TreeNodeVO> getGroupTree() {
+        // 设置排序方式
+        List<String> orders = new ArrayList<>();
+        orders.add("level");
+        orders.add("sort_id DESC");
+        List<ReportGroupDO> groups = reportGroupMapper.listWithOrder(new ReportGroupDO(), orders);
+
+        Map<Integer, List<ReportGroupDO>> levelMap = new HashMap<>();
+        for (ReportGroupDO rg : groups) {
+            if (!levelMap.containsKey(rg.getLevel())) {
+                levelMap.put(rg.getLevel(), new ArrayList<>());
+            }
+            levelMap.get(rg.getLevel()).add(rg);
+        }
+
+        List<Integer> levels = levelMap.keySet()
+                .stream()
+                .sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList());
+
+        // 从下往上遍历
+        Map<Long, List<TreeNodeVO>> preLevelMap = new LinkedHashMap<>();
+        for (Integer level : levels) {
+            Map<Long, List<TreeNodeVO>> curLevelMap = new LinkedHashMap<>();
+            for (ReportGroupDO r : levelMap.get(level)) {
+                Long id = r.getId();
+                Long pId = r.getParentId();
+                TreeNodeVO vo = new TreeNodeVO();
+                vo.setKey(r.getId() + "");
+                vo.setValue(vo.getKey());
+                vo.setTitle(r.getName());
+                vo.setIcon(r.getIcon());
+                if (preLevelMap.containsKey(id)) {
+                    vo.setChildren(preLevelMap.get(id));
+                }
+                if (!curLevelMap.containsKey(pId)) {
+                    curLevelMap.put(pId, new ArrayList<>());
+                }
+                curLevelMap.get(pId).add(vo);
+            }
+            preLevelMap = curLevelMap;
+        }
+
+        List<TreeNodeVO> list = new ArrayList<>();
+        preLevelMap.values().forEach(list::addAll);
+
+        TreeNodeVO root = new TreeNodeVO("0", "根节点", "bars");
+        root.setChildren(list);
+
+        List<TreeNodeVO> ret = new ArrayList<>();
+        ret.add(root);
+
+        return ret;
     }
 }

@@ -1,10 +1,11 @@
 package com.oneape.octopus.model.DO.report;
 
-import com.oneape.octopus.common.GlobalConstant;
 import com.oneape.octopus.model.DO.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.Column;
 
 @Data
 @NoArgsConstructor
@@ -13,14 +14,16 @@ public class ReportSqlDO extends BaseDO {
     /**
      * 依赖数据源ID
      */
+    @Column(name = "ds_id")
     private Long dsId;
     /**
      * 是否需要缓存 0 - 不需要； 1 - 需要
      */
-    private Integer cached = GlobalConstant.NO;
+    private Integer cached;
     /**
      * 缓存时间（秒）
      */
+    @Column(name = "cached_time")
     private Integer cachedTime;
     /**
      * 查询超时时间(秒)
@@ -29,15 +32,17 @@ public class ReportSqlDO extends BaseDO {
     /**
      * 是否分页
      */
-    private Integer paging = GlobalConstant.NO;
+    private Integer paging;
     /**
      * SQL内容
      */
+    @Column(name = "raw_sql")
     private String rawSql;
     /**
      * 是否需要运行日志
      */
-    private Integer needDetailLog = GlobalConstant.YES;
+    @Column(name = "need_detail_log")
+    private Integer needDetailLog;
     /**
      * 描述信息
      */

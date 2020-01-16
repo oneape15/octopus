@@ -82,6 +82,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
         supportedMediaTypes.add(MediaType.APPLICATION_ATOM_XML);
         supportedMediaTypes.add(MediaType.APPLICATION_FORM_URLENCODED);
         supportedMediaTypes.add(MediaType.APPLICATION_OCTET_STREAM);
+        supportedMediaTypes.add(MediaType.MULTIPART_FORM_DATA);
         supportedMediaTypes.add(MediaType.APPLICATION_PDF);
         supportedMediaTypes.add(MediaType.APPLICATION_RSS_XML);
         supportedMediaTypes.add(MediaType.APPLICATION_XHTML_XML);

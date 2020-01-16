@@ -15,4 +15,5 @@ public class ReportGroupSqlProvider extends BaseSqlProvider<ReportGroupDO> {
     public String getTableName() {
         return TABLE_NAME;
     }
+
 }

@@ -1,7 +1,9 @@
 package com.oneape.octopus.commons.value;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+@Slf4j
 public class DataUtils {
     /**
      * 判断字符串是否为Integer
@@ -21,8 +23,12 @@ public class DataUtils {
         return true;
     }
 
-    public static void main(String[] args) {
-        String tmp = "2.14";
-        System.out.println(DataUtils.isInteger(tmp));
+    public static Long toLong(String obj, Long defaultVal) {
+        try {
+            return Long.parseLong(obj);
+        } catch (Exception e) {
+            log.debug("String2Long 失败, value: {}", obj);
+            return defaultVal;
+        }
     }
 }

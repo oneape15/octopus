@@ -63,6 +63,14 @@ public interface AccountService extends BaseService<UserDO> {
     UserVO login(String username, String password);
 
     /**
+     * 重置用户密码
+     *
+     * @param userId Long
+     * @return int
+     */
+    int resetPwd(Long userId);
+
+    /**
      * 获取用户资源操作权限
      *
      * @param userId Long
