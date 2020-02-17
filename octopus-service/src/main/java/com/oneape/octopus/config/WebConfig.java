@@ -13,10 +13,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import javax.annotation.Resource;
@@ -133,6 +135,26 @@ public class WebConfig extends WebMvcConfigurationSupport {
     protected void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new TokenVerifyInterceptor());
         super.addInterceptors(registry);
+    }
+
+    /**
+     * 访问静态资源
+     */
+    @Override
+    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+        /*
+         * SpringBoot自动配置本身并不会把/swagger-ui.html
+         * 这个路径映射到对应的目录META-INF/resources/下面
+         * 采用WebMvcConfigurerAdapter将swagger的静态文件进行发布;
+         */
+        registry.addResourceHandler("swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        //将所有/static/** 访问都映射到classpath:/static/ 目录下
+//        registry.addResourceHandler("/static/**").addResourceLocations(ResourceUtils.CLASSPATH_URL_PREFIX + "/static/");
+        super.addResourceHandlers(registry);
     }
 
     @Bean

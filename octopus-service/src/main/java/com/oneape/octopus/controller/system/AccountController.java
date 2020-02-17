@@ -11,10 +11,7 @@ import com.oneape.octopus.model.VO.MenuVO;
 import com.oneape.octopus.model.VO.UserVO;
 import com.oneape.octopus.service.AccountService;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -32,7 +29,7 @@ public class AccountController {
     /**
      * 用户登录
      */
-    @RequestMapping("/login")
+    @RequestMapping(value = "/login", method = {RequestMethod.POST, RequestMethod.GET})
     public ApiResult<UserVO> doLogin(@RequestBody @Validated(value = UserForm.LoginCheck.class) UserForm form) {
         UserVO vo = accountService.login(form.getUsername(), form.getPassword());
         if (vo == null) {

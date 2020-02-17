@@ -30,7 +30,7 @@ public class DataImportController {
     /**
      * 数据导入
      */
-    @RequestMapping("/upload")
+    @RequestMapping(value = "/upload", method = {RequestMethod.POST, RequestMethod.GET})
     public ApiResult<String> uploadData(@RequestBody @Validated(value = DataImportForm.ImportCheck.class) DataImportForm form,
                                         @RequestParam("file") MultipartFile file) {
         int status = importRecordService.uploadData(form.toDO(), file);

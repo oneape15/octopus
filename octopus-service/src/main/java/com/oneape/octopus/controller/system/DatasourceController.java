@@ -15,10 +15,7 @@ import com.oneape.octopus.model.VO.DatasourceVO;
 import com.oneape.octopus.service.DatasourceService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -38,7 +35,7 @@ public class DatasourceController {
     @Resource
     private DatasourceFactory datasourceFactory;
     @Resource
-    private QueryFactory queryFactory;
+    private QueryFactory      queryFactory;
 
     @PostMapping("/add")
     public ApiResult<String> doAddDs(@RequestBody @Validated(value = DatasourceForm.AddCheck.class) DatasourceForm form) {
@@ -67,7 +64,7 @@ public class DatasourceController {
         return ApiResult.ofError(StateCode.BizError, "删除数据源失败");
     }
 
-    @PostMapping("/list")
+    @PostMapping(value = "/list")
     public ApiResult<PageInfo<DatasourceVO>> list(@RequestBody @Validated DatasourceForm form) {
         PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
         List<DatasourceVO> vos = datasourceService.find(form.toDO());
@@ -77,7 +74,7 @@ public class DatasourceController {
     /**
      * 获取支持的数据源类型
      */
-    @RequestMapping("/getAllDsTypes")
+    @RequestMapping(value = "/getAllDsTypes", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResult<List<Map<String, String>>> getAllDsTypes() {
         List<Map<String, String>> list = new ArrayList<>();
         for (DatasourceTypeHelper dt : DatasourceTypeHelper.values()) {
@@ -92,7 +89,7 @@ public class DatasourceController {
     /**
      * 获取所有可用数据源
      */
-    @RequestMapping("/getAllSimple")
+    @RequestMapping(value = "/getAllSimple", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResult<List<DatasourceVO>> getAllSimple() {
         return ApiResult.ofData(datasourceService.find(new DatasourceDO()));
     }
@@ -100,7 +97,7 @@ public class DatasourceController {
     /**
      * 数据源测试
      */
-    @RequestMapping("/test")
+    @RequestMapping(value = "/test", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResult<String> testConnection(@RequestBody @Validated(value = DatasourceForm.AddCheck.class) DatasourceForm form) {
         DatasourceInfo dsi = new DatasourceInfo();
         dsi.setUrl(form.getJdbcUrl());

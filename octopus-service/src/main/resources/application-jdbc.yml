@@ -1,6 +1,6 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/octopus
+    url: jdbc:mysql://localhost:3306/octopus_db
     username: root
-    password: 20061253
+    password: a123456

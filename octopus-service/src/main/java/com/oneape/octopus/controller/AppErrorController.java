@@ -8,6 +8,7 @@ import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
@@ -37,7 +38,7 @@ public class AppErrorController implements ErrorController {
         this.errorAttributes = errorAttributes;
     }
 
-    @RequestMapping(value = ERROR_PATH, produces = "text/html")
+    @RequestMapping(value = ERROR_PATH, produces = "text/html", method = {RequestMethod.GET, RequestMethod.POST})
     public String errorPageHandler(HttpServletRequest request, HttpServletResponse response) {
         int status = response.getStatus();
 
@@ -45,7 +46,7 @@ public class AppErrorController implements ErrorController {
     }
 
 
-    @RequestMapping(value = ERROR_PATH)
+    @RequestMapping(value = ERROR_PATH, method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     @ExceptionHandler(value = {BizException.class})
     public ApiResult<String> errorHandler(HttpServletRequest request, final Exception ex, final WebRequest req) {

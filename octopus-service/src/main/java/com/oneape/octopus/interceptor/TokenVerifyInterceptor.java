@@ -56,6 +56,8 @@ public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
         filterUris.add("/account/reg");
 
         // 过滤以xx开始的url
+        filterUriOfStart.add("/webjars/"); // 静态资源过滤
+        filterUriOfStart.add("/swagger");  // swagger相关请求过滤
         filterUriOfStart.add("/activate/");
         filterUriOfStart.add("/datav/");
     }
