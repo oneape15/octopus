@@ -31,7 +31,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ApiResult<String> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         log.error("缺少请求参数:{}", e.getMessage(), e);
-        return new ApiResult<>(StateCode.BadRequest, "缺少请求参数" + e.getMessage());
+        return ApiResult.ofError(StateCode.BadRequest, "缺少请求参数" + e.getMessage());
     }
 
     /**
@@ -41,7 +41,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ApiResult<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.error("参数解析失败:{}", e.getMessage(), e);
-        return new ApiResult<>(StateCode.BadRequest);
+        return ApiResult.ofError(StateCode.BadRequest);
     }
 
     /**
@@ -52,7 +52,7 @@ public class ExceptionAdvice {
     public ApiResult<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error("参数验证失败:{}", e.getMessage(), e);
         String message = getErrorMessage(e.getBindingResult());
-        return new ApiResult<>(StateCode.BadRequest, message);
+        return ApiResult.ofError(StateCode.BadRequest, message);
     }
 
     /**
@@ -63,7 +63,7 @@ public class ExceptionAdvice {
     public ApiResult<String> handleBindException(BindException e) {
         log.error("参数绑定失败:{}", e.getMessage(), e);
         String message = getErrorMessage(e.getBindingResult());
-        return new ApiResult<>(StateCode.BadRequest, message);
+        return ApiResult.ofError(StateCode.BadRequest, message);
     }
 
     private String getErrorMessage(BindingResult result) {
@@ -84,7 +84,7 @@ public class ExceptionAdvice {
         Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
         ConstraintViolation<?> violation = violations.iterator().next();
         String message = violation.getMessage();
-        return new ApiResult<>(StateCode.BadRequest, message);
+        return ApiResult.ofError(StateCode.BadRequest, message);
     }
 
     /**
@@ -94,7 +94,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(ValidationException.class)
     public ApiResult<String> handleValidationException(ValidationException e) {
         log.error("参数验证失败:{}", e.getMessage(), e);
-        return new ApiResult<>(StateCode.BadRequest, "参数验证失败");
+        return ApiResult.ofError(StateCode.BadRequest, "参数验证失败");
     }
 
     /**
@@ -104,7 +104,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(UnauthorizedException.class)
     public ApiResult<String> handleUnauthorizedException(UnauthorizedException e) {
         log.error("未授权的操作");
-        return new ApiResult<>(StateCode.Unauthorized);
+        return ApiResult.ofError(StateCode.Unauthorized);
     }
 
     /**
@@ -114,7 +114,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ApiResult<String> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         log.warn("不支持当前请求方法:{}", e.getMessage());
-        return new ApiResult<>(StateCode.MethodNotAllowed);
+        return ApiResult.ofError(StateCode.MethodNotAllowed);
     }
 
     /**

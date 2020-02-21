@@ -40,6 +40,7 @@
         <mysql-connector-java.version>8.0.18</mysql-connector-java.version>
         <postgresql.version>42.2.9</postgresql.version>
         <persistence-api.version>1.0.2</persistence-api.version>
+        <javax.mail.version>1.6.2</javax.mail.version>
         <javax.mail-api.version>1.6.2</javax.mail-api.version>
         <pagehelper-spring-boot-starter.version>1.2.13</pagehelper-spring-boot-starter.version>
         <mybatis-spring-boot-starter.version>2.1.1</mybatis-spring-boot-starter.version>
@@ -162,6 +163,13 @@
                 <artifactId>javax.mail-api</artifactId>
                 <version>${javax.mail-api.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/com.sun.mail/javax.mail -->
+            <dependency>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>javax.mail</artifactId>
+                <version>${javax.mail.version}</version>
+            </dependency>
+
             <!-- https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter -->
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
@@ -175,6 +183,7 @@
                 <version>${pagehelper-spring-boot-starter.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+            <!--支持mysql 5.6, 5.7, 8.0 版本-->
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>

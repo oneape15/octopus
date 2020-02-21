@@ -68,7 +68,7 @@ public class ReportController {
     /**
      * 复制报表
      */
-    @PostMapping("/design/copy/{reportId}")
+    @PostMapping(value = "/design/copy/{reportId}", consumes = "application/json")
     public ApiResult<String> doCopy(@PathVariable("reportId") Long reportId) {
         int status = reportService.copyReport(reportId);
         if (status > 0) {
