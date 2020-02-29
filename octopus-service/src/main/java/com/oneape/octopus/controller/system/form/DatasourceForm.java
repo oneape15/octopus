@@ -14,7 +14,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 public class DatasourceForm extends BaseForm implements Serializable {
     @NotNull(message = "主键不能为空", groups = {EditCheck.class, KeyCheck.class})
-    private Long dsId;
+    private Long id;
     // 数据库别名
     @NotBlank(message = "数据源名称不能为空", groups = {AddCheck.class, EditCheck.class})
     private String name;
@@ -50,7 +50,6 @@ public class DatasourceForm extends BaseForm implements Serializable {
     public DatasourceDO toDO() {
         DatasourceDO ddo = new DatasourceDO();
         BeanUtils.copyProperties(this, ddo);
-        ddo.setId(dsId);
         return ddo;
     }
 

@@ -117,7 +117,7 @@ public class DatasourceController {
      */
     @PostMapping("/getTables")
     public ApiResult<List<TableInfo>> getDatasourceTables(@RequestBody @Validated(value = DatasourceForm.KeyCheck.class) DatasourceForm form) {
-        DatasourceInfo dsi = Preconditions.checkNotNull(datasourceService.getDatasourceInfoById(form.getDsId()),
+        DatasourceInfo dsi = Preconditions.checkNotNull(datasourceService.getDatasourceInfoById(form.getId()),
                 "数据源信息为空");
 
         String schema = queryFactory.getSchema(dsi);
@@ -133,7 +133,7 @@ public class DatasourceController {
     public ApiResult<List<Pair<String, List<String>>>> getDataSourceDetail(
             @RequestBody @Validated(value = DatasourceForm.KeyCheck.class) DatasourceForm form) {
         List<Pair<String, List<String>>> pairs = new ArrayList<>();
-        DatasourceInfo dsi = Preconditions.checkNotNull(datasourceService.getDatasourceInfoById(form.getDsId()),
+        DatasourceInfo dsi = Preconditions.checkNotNull(datasourceService.getDatasourceInfoById(form.getId()),
                 "数据源信息为空");
 
         String schema = queryFactory.getSchema(dsi);

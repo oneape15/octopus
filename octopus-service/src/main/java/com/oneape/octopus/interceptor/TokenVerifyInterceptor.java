@@ -148,6 +148,7 @@ public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
         }
 
         cache.put(KEY_TOKEN + token, user);
+        user.setToken(token);
         SessionThreadLocal.setSession(user);
 
         return super.preHandle(request, response, handler);

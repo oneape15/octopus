@@ -14,7 +14,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 public class RoleForm extends BaseForm implements Serializable {
     @NotNull(message = "主键不能为空", groups = {EditCheck.class, KeyCheck.class})
-    private Long roleId;
+    private Long id;
     // 角色名称
     @NotBlank(message = "角色名称不能为空", groups = {AddCheck.class, EditCheck.class})
     private String name;
@@ -41,7 +41,6 @@ public class RoleForm extends BaseForm implements Serializable {
     public RoleDO toDO() {
         RoleDO rdo = new RoleDO();
         BeanUtils.copyProperties(this, rdo);
-        rdo.setId(roleId);
         return rdo;
     }
 }

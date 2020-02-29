@@ -19,6 +19,7 @@ import org.springframework.util.Assert;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -67,6 +68,7 @@ public class RoleServiceImpl implements RoleService {
         tmp.setName(model.getName());
         tmp.setCode(model.getCode());
         List<RoleDO> roleDOS = roleMapper.listOrLink(tmp);
+        roleDOS = roleDOS.stream().filter((r)-> !r.getId().equals(model.getId())).collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(roleDOS)) {
             long size = roleDOS.stream().filter(roleDO -> model.getId().equals(roleDO.getId())).count();
             if (size > 0) {

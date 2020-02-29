@@ -6,6 +6,7 @@ import com.oneape.octopus.datasource.DatasourceTypeHelper;
 import com.oneape.octopus.mapper.report.DatasourceMapper;
 import com.oneape.octopus.model.DO.report.DatasourceDO;
 import com.oneape.octopus.model.VO.DatasourceVO;
+import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.service.DatasourceService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -82,6 +83,7 @@ public class DatasourceServiceImpl implements DatasourceService {
     @Override
     public List<DatasourceVO> find(DatasourceDO datasource) {
         Assert.isTrue(datasource != null, "数据源对象为空");
+        datasource.setArchive(Archive.NORMAL.value());
         List<DatasourceDO> ddos = datasourceMapper.list(datasource);
 
         List<DatasourceVO> dvo = new ArrayList<>();

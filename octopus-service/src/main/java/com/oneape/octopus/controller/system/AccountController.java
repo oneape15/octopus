@@ -95,11 +95,47 @@ public class AccountController {
      */
     @PostMapping("/resetPwd")
     public ApiResult<String> resetPwd(@RequestBody @Validated(value = UserForm.KeyCheck.class) UserForm form) {
-        int status = accountService.resetPwd(form.getUserId());
+        int status = accountService.resetPwd(form.getId());
         if (status > 0) {
             return ApiResult.ofData("重置密码成功");
         }
         return ApiResult.ofError(StateCode.BizError, "重置密码失败");
+    }
+
+    /**
+     * 删除用户
+     */
+    @PostMapping("/delUser")
+    public ApiResult<String> removeUser(@RequestBody @Validated(value = UserForm.DelCheck.class) UserForm form) {
+        int status = accountService.removeUsers(form.getUserIds());
+        if (status > 0) {
+            return ApiResult.ofData("删除用户列表成功");
+        }
+        return ApiResult.ofError(StateCode.BizError, "删除用户列表失败");
+    }
+
+    /**
+     * 添加用户
+     */
+    @PostMapping("/addUser")
+    public ApiResult<String> addUser(@RequestBody @Validated(value = UserForm.AddCheck.class) UserForm form) {
+        int status = accountService.addUser(form.toVO());
+        if (status > 0) {
+            return ApiResult.ofData("添加用户成功");
+        }
+        return ApiResult.ofError(StateCode.BizError, "添加用户失败");
+    }
+
+    /**
+     * 更新用户
+     */
+    @PostMapping("/updateUser")
+    public ApiResult<String> updateUser(@RequestBody @Validated(value = UserForm.AddCheck.class) UserForm form) {
+        int status = accountService.edit(form.toDO());
+        if (status > 0) {
+            return ApiResult.ofData("添加用户成功");
+        }
+        return ApiResult.ofError(StateCode.BizError, "添加用户失败");
     }
 
 }

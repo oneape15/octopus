@@ -47,6 +47,11 @@ public class UserDO extends BaseDO {
      */
     private Integer status;
 
+    /**
+     * 性别 0 - 女; 1 - 男
+     */
+    private Integer gender;
+
     public UserDO(String username) {
         this.username = username;
     }

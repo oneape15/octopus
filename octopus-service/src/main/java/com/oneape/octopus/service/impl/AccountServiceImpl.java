@@ -3,7 +3,7 @@ package com.oneape.octopus.service.impl;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.*;
 import com.oneape.octopus.commons.value.CodeBuilderUtils;
-import com.oneape.octopus.commons.value.MD5Utils;
+import com.oneape.octopus.commons.security.MD5Utils;
 import com.oneape.octopus.mapper.system.ResourceMapper;
 import com.oneape.octopus.mapper.system.UserMapper;
 import com.oneape.octopus.mapper.system.UserRlRoleMapper;
@@ -34,13 +34,13 @@ import java.util.stream.Collectors;
 public class AccountServiceImpl implements AccountService {
 
     @Resource
-    private UserMapper userMapper;
+    private UserMapper        userMapper;
     @Resource
-    private UserRlRoleMapper userRlRoleMapper;
+    private UserRlRoleMapper  userRlRoleMapper;
     @Resource
     private UserSessionMapper userSessionMapper;
     @Resource
-    private ResourceMapper resourceMapper;
+    private ResourceMapper    resourceMapper;
 
     @Resource
     private MailService mailService;
@@ -145,7 +145,13 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public UserVO getCurrentUser() {
-        return SessionThreadLocal.getSession();
+        UserVO uvo = SessionThreadLocal.getSession();
+        if (uvo != null) {
+            // 获取资源操作权限
+            Map<String, List<Integer>> optPermission = getResOptPermission(uvo.getId());
+            uvo.setOptPermission(optPermission);
+        }
+        return uvo;
     }
 
     /**
@@ -413,5 +419,27 @@ public class AccountServiceImpl implements AccountService {
             users.forEach(u -> vos.add(UserVO.ofDO(u)));
         }
         return vos;
+    }
+
+    /**
+     * 删除用户列表
+     *
+     * @param userIds List
+     * @return int
+     */
+    @Override
+    public int removeUsers(List<Long> userIds) {
+        if (CollectionUtils.isEmpty(userIds)) {
+            return 1;
+        }
+        Long curUserId = SessionThreadLocal.getUserId();
+        if (curUserId == null) {
+            throw new BizException("无权限的操作");
+        }
+
+        if (userIds.contains(curUserId)) {
+            throw new BizException("不能将自己删除~");
+        }
+        return userMapper.delByIds(userIds, curUserId);
     }
 }

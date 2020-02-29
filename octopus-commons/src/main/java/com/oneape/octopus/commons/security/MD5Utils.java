@@ -1,10 +1,13 @@
-package com.oneape.octopus.commons.value;
+package com.oneape.octopus.commons.security;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
+/**
+ * md5工具类
+ */
 public class MD5Utils {
 
     // 盐值, 用于混淆md5
@@ -30,13 +33,13 @@ public class MD5Utils {
             }
             return result.toString().toUpperCase();
         } catch (Exception e) {
-            //
+            e.printStackTrace();
         }
         return "";
     }
 
     /**
-     * 对拉冬系统用户进行特殊md5加密
+     * 对系统用户进行特殊md5加密
      * --> md5( ( md5(password + salt) ).toLowerCase()  + username ).toUpperCase()
      *
      * @param username String

@@ -36,6 +36,9 @@ public interface UserMapper {
     @UpdateProvider(type = UserSqlProvider.class, method = "deleteById")
     int delete(UserDO model);
 
+    @UpdateProvider(type = UserSqlProvider.class, method = "delByIds")
+    int delByIds(@Param("userIds") List<Long> userIds, @Param("modifier")Long modifier);
+
     /**
      * 通过主键查找
      *

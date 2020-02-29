@@ -1,6 +1,6 @@
 package com.oneape.octopus.datasource;
 
-import com.oneape.octopus.commons.value.MD5Utils;
+import com.oneape.octopus.commons.security.MD5Utils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;

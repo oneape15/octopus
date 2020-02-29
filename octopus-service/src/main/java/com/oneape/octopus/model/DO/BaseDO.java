@@ -21,7 +21,7 @@ public class BaseDO implements Serializable {
      * 归档状态 0 - 正常； 1 - 已删除；
      */
     @Column(name = "archive", nullable = false)
-    private Integer archive = Archive.NORMAL.value();
+    private Integer archive;
     /**
      * 创建人
      */

@@ -10,9 +10,9 @@ import java.util.Map;
 public interface AccountService extends BaseService<UserDO> {
 
     // 一分钟的毫秒数
-    static final long ONE_MINUTE = 60 * 1000;
+    static final long   ONE_MINUTE       = 60 * 1000;
     // token 失效时间 一个小时(60分钟)
-    static final int TOKEN_TIMEOUT = 60;
+    static final int    TOKEN_TIMEOUT    = 60;
     // token原生信息分隔字符串
     static final String TOKEN_INFO_SPLIT = "<@>";
 
@@ -93,4 +93,12 @@ public interface AccountService extends BaseService<UserDO> {
      * @return List
      */
     List<UserVO> find(UserDO user);
+
+    /**
+     * 删除用户列表
+     *
+     * @param userIds List
+     * @return int
+     */
+    int removeUsers(List<Long> userIds);
 }
