@@ -2,6 +2,7 @@ package com.oneape.octopus.mapper.system;
 
 import com.oneape.octopus.model.DO.system.WorkerNodeDO;
 import org.apache.ibatis.annotations.*;
+import org.springframework.beans.factory.annotation.Value;
 
 @Mapper
 public interface WorkerNodeMapper {
@@ -28,7 +29,7 @@ public interface WorkerNodeMapper {
      */
     @Insert({
             "INSERT INTO " + TB_WORKER_NODE +
-                    "( host_name, port, `type`, launch_time, created, modified " +
+                    "( host_name, port, type, launch_time, created, modified " +
                     ") VALUES (" +
                     "  #{hostName}," +
                     "  #{port}," +

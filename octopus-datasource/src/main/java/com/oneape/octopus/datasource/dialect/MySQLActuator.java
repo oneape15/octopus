@@ -51,7 +51,7 @@ public class MySQLActuator extends Actuator {
         return "SELECT " +
                 " DISTINCT TABLE_SCHEMA " + COL_SCHEMA + " " +
                 "FROM " +
-                "information_schema.`TABLES`";
+                "information_schema.TABLES";
     }
 
     /**
@@ -84,7 +84,7 @@ public class MySQLActuator extends Actuator {
                 "   WHEN UPPER(TABLE_TYPE) = 'BASE TABLE' THEN 0 ELSE 1" +
                 "  END AS " + COL_TABLE_TYPE + " " +
                 "FROM " +
-                " information_schema.`TABLES`  " +
+                " information_schema.TABLES  " +
                 whereSql +
                 "ORDER BY " +
                 " TABLE_SCHEMA";
@@ -137,7 +137,7 @@ public class MySQLActuator extends Actuator {
                 " DATA_TYPE " + COL_DATA_TYPE + ", " +
                 " IF ( COLUMN_KEY = 'PRI', 1, 0 ) " + COL_PRI_KEY + ", " +
                 " COLUMN_COMMENT  " + COL_COMMENT + " " +
-                "FROM information_schema.`COLUMNS` " +
+                "FROM information_schema.COLUMNS " +
                 whereSql + " " +
                 "ORDER BY TABLE_SCHEMA, TABLE_NAME, ORDINAL_POSITION";
     }

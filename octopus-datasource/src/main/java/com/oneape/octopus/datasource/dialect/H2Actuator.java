@@ -49,7 +49,7 @@ public class H2Actuator extends Actuator {
         return "SELECT " +
                 " DISTINCT TABLE_CATALOG " + COL_SCHEMA + " " +
                 "FROM " +
-                "INFORMATION_SCHEMA.`TABLES`";
+                "INFORMATION_SCHEMA.TABLES";
     }
 
     /**
@@ -127,7 +127,7 @@ public class H2Actuator extends Actuator {
                 " DATA_TYPE " + COL_DATA_TYPE + ", " +
                 " 0 " + COL_PRI_KEY + ", " +
                 " REMARKS  " + COL_COMMENT + " " +
-                "FROM information_schema.`COLUMNS` " +
+                "FROM information_schema.COLUMNS " +
                 whereSql + " " +
                 "ORDER BY TABLE_SCHEMA, TABLE_NAME, ORDINAL_POSITION";
     }

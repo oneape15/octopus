@@ -137,7 +137,7 @@ public class QueryFactoryTest {
                 " CHARACTER_MAXIMUM_LENGTH max_len,   " +
                 " COLUMN_COMMENT " +
                 "FROM   " +
-                " information_schema.`COLUMNS`    " +
+                " information_schema.COLUMNS    " +
                 "WHERE   " +
                 " TABLE_SCHEMA = ? " +
                 " AND TABLE_NAME = ?  " +

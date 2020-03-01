@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.oneape.octopus.datasource.data.Result;
-import com.oneape.octopus.datasource.data.Value;
 import com.oneape.octopus.datasource.dialect.Actuator;
 import com.oneape.octopus.datasource.schema.FieldInfo;
 import com.oneape.octopus.datasource.schema.TableInfo;
@@ -22,13 +21,15 @@ public class DefaultQueryFactory implements QueryFactory {
     private DatasourceFactory datasourceFactory;
     // 表信息缓存
     private static final String KEY_TABLE = "table_";
+    // 字段信息缓存
+    private static final String KEY_FIELD = "field_";
+
     private Cache<String, List<TableInfo>> tableCache = CacheBuilder
             .newBuilder()
             .expireAfterWrite(15, TimeUnit.MINUTES)
             .maximumSize(4 * 1024 * 1024)
             .build();
-    // 字段信息缓存
-    private static final String KEY_FIELD = "field_";
+
     private Cache<String, List<FieldInfo>> fieldCache = CacheBuilder
             .newBuilder()
             .expireAfterWrite(15, TimeUnit.MINUTES)
@@ -266,10 +267,7 @@ public class DefaultQueryFactory implements QueryFactory {
             }
         } catch (Exception e) {
             log.error("执行SQL: {} 失败", JSON.toJSONString(param), e);
-            Result result = new Result();
-            result.setStatus(Result.QueryStatus.ERROR);
-            result.getRunInfo().put(Result.KEY_ERR_MSG, JSON.toJSONString(e));
-            return result;
+            return failResult(e);
         }
     }
 
@@ -290,7 +288,7 @@ public class DefaultQueryFactory implements QueryFactory {
      *
      * @param dsi     DatasourceInfo
      * @param param   ExportDataParam
-     * @param process
+     * @param process CellProcess
      * @return int 1 - 成功; 0 - 失败;
      */
     @Override
@@ -303,10 +301,14 @@ public class DefaultQueryFactory implements QueryFactory {
             }
         } catch (Exception e) {
             log.error("执行SQL: {} 失败", JSON.toJSONString(param), e);
-            Result result = new Result();
-            result.setStatus(Result.QueryStatus.ERROR);
-            result.getRunInfo().put(Result.KEY_ERR_MSG, JSON.toJSONString(e));
-            return result;
+            return failResult(e);
         }
+    }
+
+    private Result failResult(Exception e) {
+        Result result = new Result();
+        result.setStatus(Result.QueryStatus.ERROR);
+        result.getRunInfo().put(Result.KEY_ERR_MSG, JSON.toJSONString(e));
+        return result;
     }
 }
