@@ -40,7 +40,7 @@ public class ReportSqlProvider extends BaseSqlProvider<ReportDO> {
         return new SQL() {
             {
                 SELECT("id", "code", "name", "icon", "report_type as reportType", "lov", "owner",
-                        "(select   group_concat(group_id) from r_group_rl_report   grr   where grr.report_id = r.id ) as groupIds");
+                        "(select   group_concat(group_id) from " + GroupRlReportSqlProvider.TABLE_NAME + "   grr   where grr.report_id = r.id ) as groupIds");
                 FROM(getTableName() + " r ");
                 WHERE(wheres.toArray(new String[wheres.size()]));
             }

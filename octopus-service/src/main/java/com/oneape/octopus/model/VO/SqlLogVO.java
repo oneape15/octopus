@@ -8,21 +8,19 @@ import java.io.Serializable;
 
 @Data
 public class SqlLogVO implements Serializable {
-    private Long id;
-    // 依赖的数据源Id
-    private Long dsId;
+    private Long    id;
+    // 数据源Id
+    private Long    dsId;
     // 所在报表Id
-    private Long reportId;
-    // 原sqlId
-    private Long reportSqlId;
+    private String  reportCode;
     // 运行耗时
     private Integer elapsedTime;
     // 是否运行成功
     private Integer complete;
     // sql内容
-    private String rawSql;
+    private String  rawSql;
     // 错误信息
-    private String errInfo;
+    private String  errInfo;
     // 是否缓存中返回的数据
     private Integer cached;
 

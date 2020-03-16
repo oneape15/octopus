@@ -25,7 +25,7 @@ import java.util.List;
 public class ReportController {
 
     @Resource
-    private ReportService reportService;
+    private ReportService      reportService;
     @Resource
     private ReportGroupService reportGroupService;
 
@@ -161,7 +161,7 @@ public class ReportController {
     }
 
     /**
-     * 保存查询参数信息
+     * 保存报表字段信息
      */
     @PostMapping("/design/saveColumns")
     public ApiResult<String> saveColumns(@RequestBody @Validated(value = ReportForm.KeyCheck.class) ReportForm form) {
@@ -232,10 +232,10 @@ public class ReportController {
      * 分页查询
      */
     @PostMapping("/group/list")
-    public ApiResult<PageInfo<ReportGroupVO>> doList(@RequestBody @Validated GroupForm form) {
-        PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
+    public ApiResult<List<ReportGroupVO>> doList(@RequestBody @Validated GroupForm form) {
+//        PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
         List<ReportGroupVO> vos = reportGroupService.find(form.toDO());
-        return ApiResult.ofData(new PageInfo<>(vos));
+        return ApiResult.ofData(/*new PageInfo<>(vos)*/vos);
     }
 
     /**

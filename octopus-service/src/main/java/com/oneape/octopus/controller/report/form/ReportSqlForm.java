@@ -31,7 +31,7 @@ public class ReportSqlForm extends BaseForm implements Serializable {
     private Integer timeout;
     // sql内容
     @NotBlank(message = "SQL内容为空", groups = {SaveCheck.class})
-    private String rawSql;
+    private String text;
     // 是否采用分页模式; 0 - 否; 1 - 是
     private Integer paging;
     // 是否需要详细运行日志, 0 - 不需要(只记录运行耗时、运行错误信息), 1 - 记录运行sql及所有默认信息

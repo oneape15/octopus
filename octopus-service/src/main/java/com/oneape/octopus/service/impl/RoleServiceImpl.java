@@ -3,11 +3,10 @@ package com.oneape.octopus.service.impl;
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.mapper.system.RoleMapper;
+import com.oneape.octopus.mapper.system.RoleRlResourceMapper;
 import com.oneape.octopus.mapper.system.UserRlRoleMapper;
-import com.oneape.octopus.model.DO.system.ResourceDO;
 import com.oneape.octopus.model.DO.system.RoleDO;
 import com.oneape.octopus.model.DO.system.UserRlRoleDO;
-import com.oneape.octopus.model.VO.ResourceVO;
 import com.oneape.octopus.model.VO.RoleVO;
 import com.oneape.octopus.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,9 @@ import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -26,9 +27,11 @@ import java.util.stream.Collectors;
 public class RoleServiceImpl implements RoleService {
 
     @Resource
-    private RoleMapper roleMapper;
+    private RoleMapper           roleMapper;
     @Resource
-    private UserRlRoleMapper userRlRoleMapper;
+    private UserRlRoleMapper     userRlRoleMapper;
+    @Resource
+    private RoleRlResourceMapper roleRlResourceMapper;
 
     /**
      * 新增数据
@@ -68,7 +71,7 @@ public class RoleServiceImpl implements RoleService {
         tmp.setName(model.getName());
         tmp.setCode(model.getCode());
         List<RoleDO> roleDOS = roleMapper.listOrLink(tmp);
-        roleDOS = roleDOS.stream().filter((r)-> !r.getId().equals(model.getId())).collect(Collectors.toList());
+        roleDOS = roleDOS.stream().filter((r) -> !r.getId().equals(model.getId())).collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(roleDOS)) {
             long size = roleDOS.stream().filter(roleDO -> model.getId().equals(roleDO.getId())).count();
             if (size > 0) {
@@ -118,5 +121,21 @@ public class RoleServiceImpl implements RoleService {
         list.forEach(rdo -> vos.add(RoleVO.ofDO(rdo)));
 
         return vos;
+    }
+
+
+    /**
+     * 根据角色Id列表,获取资源
+     *
+     * @param roleIds List
+     * @return Map
+     */
+    @Override
+    public Map<Long, List<Integer>> getRoleRes(List<Long> roleIds) {
+        if (CollectionUtils.isEmpty(roleIds)) {
+            return new HashMap<>();
+        }
+        roleRlResourceMapper.getResIdByRoleIds(roleIds);
+        return null;
     }
 }

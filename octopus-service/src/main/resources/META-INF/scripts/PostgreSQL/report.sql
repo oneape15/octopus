@@ -147,7 +147,7 @@ CREATE TABLE r_report_column
   name            VARCHAR(32)  NOT NULL,
   show_name       VARCHAR(32)  NOT NULL,
   data_type       VARCHAR(32)  NOT NULL,
-  unit            VARCHAR(32)  NOT NULL,
+  unit            VARCHAR(32)  NULL,
   hidden          SMALLINT     NULL     DEFAULT 0,
   drill_report_id BIGINT       NULL,
   drill_params    VARCHAR(256) NULL,
@@ -274,25 +274,23 @@ COMMENT ON COLUMN r_report_sql.modifier IS '最后一次修改人';
 -- r_sql_log sql执行日志表
 CREATE TABLE r_sql_log
 (
-  id            BIGINT   NOT NULL,
-  ds_id         BIGINT   NOT NULL,
-  report_id     BIGINT   NOT NULL,
-  report_sql_id BIGINT   NOT NULL,
-  elapsed_time  INT      NOT NULL,
-  complete      SMALLINT NOT NULL DEFAULT 0,
-  raw_sql       TEXT     NULL,
-  err_info      TEXT     NULL,
-  archive       SMALLINT NOT NULL DEFAULT 0,
-  created       BIGINT   NOT NULL,
-  creator       BIGINT   NOT NULL,
-  modified      BIGINT   NULL     DEFAULT NULL,
-  modifier      BIGINT   NULL     DEFAULT NULL
+  id           BIGINT      NOT NULL,
+  ds_id        BIGINT      NULL,
+  report_code  VARCHAR(32) NOT NULL,
+  elapsed_time INT         NOT NULL,
+  complete     SMALLINT    NOT NULL DEFAULT 0,
+  raw_sql      TEXT        NULL,
+  err_info     TEXT        NULL,
+  archive      SMALLINT    NOT NULL DEFAULT 0,
+  created      BIGINT      NOT NULL,
+  creator      BIGINT      NOT NULL,
+  modified     BIGINT      NULL     DEFAULT NULL,
+  modifier     BIGINT      NULL     DEFAULT NULL
 );
 COMMENT ON TABLE r_sql_log IS 'sql执行日志表';
 COMMENT ON COLUMN r_sql_log.id IS '主键';
-COMMENT ON COLUMN r_sql_log.ds_id IS '依赖的数据源Id';
-COMMENT ON COLUMN r_sql_log.report_id IS '所在报表Id';
-COMMENT ON COLUMN r_sql_log.report_sql_id IS '原sqlId';
+COMMENT ON COLUMN r_sql_log.ds_id IS '数据源Id';
+COMMENT ON COLUMN r_sql_log.report_code IS '所在报表编码';
 COMMENT ON COLUMN r_sql_log.elapsed_time IS '运行耗时';
 COMMENT ON COLUMN r_sql_log.complete IS 'sql运行状态; 0 - 运行出错; 1 - 成功';
 COMMENT ON COLUMN r_sql_log.raw_sql IS 'sql内容';

@@ -15,17 +15,12 @@ public class SqlLogDO extends BaseDO {
      * 依赖的数据源Id
      */
     @Column(name = "ds_id")
-    private Long dsId;
+    private Long    dsId;
     /**
-     * 所在报表Id
+     * 所在报表编码
      */
-    @Column(name = "report_id")
-    private Long reportId;
-    /**
-     * 原sqlId
-     */
-    @Column(name = "report_sql_id")
-    private Long reportSqlId;
+    @Column(name = "report_code")
+    private Long    reportCode;
     /**
      * 运行耗时
      */
@@ -38,13 +33,12 @@ public class SqlLogDO extends BaseDO {
     /**
      * sql内容
      */
-    @Column(name = "raw_sql")
-    private String rawSql;
+    private String  text;
     /**
      * 错误信息
      */
     @Column(name = "err_info")
-    private String errInfo;
+    private String  errInfo;
     /**
      * 是否缓存中返回的数据
      */

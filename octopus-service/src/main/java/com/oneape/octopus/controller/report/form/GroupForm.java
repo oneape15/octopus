@@ -28,6 +28,8 @@ public class GroupForm extends BaseForm implements Serializable {
     private Integer status;
     // 拥有者
     private Long owner;
+    // 描述信息
+    private String comment;
 
     public interface AddCheck {
     }

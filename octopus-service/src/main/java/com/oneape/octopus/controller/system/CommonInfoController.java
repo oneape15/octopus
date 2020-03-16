@@ -60,7 +60,8 @@ public class CommonInfoController {
     }
 
     @PostMapping("/getClassify")
-    public ApiResult<List<String>> getClassify() {
+    public ApiResult<List<String>> getClassify(@RequestBody CommonInfoForm form) {
+        String classify = form.getClassify();
         return ApiResult.ofData(commonInfoService.getAllClassify());
     }
 }

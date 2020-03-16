@@ -25,7 +25,7 @@ public class RoleRlResourceSqlProvider extends BaseSqlProvider<RoleRlResourceDO>
     public String getResIdByRoleIds(@Param("roleIds") List<Long> roleIds) {
         return new SQL() {
             {
-                SELECT("resource_id", "role_id");
+                SELECT("resource_id", "role_id", "mask");
                 FROM(getTableName());
                 WHERE(FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
                         "role_id IN (" + Joiner.on(",").join(roleIds) + ")");

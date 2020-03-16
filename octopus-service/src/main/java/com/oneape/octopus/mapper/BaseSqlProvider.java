@@ -22,23 +22,23 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
     /**
      * 创建时间字段名称
      */
-    public final static String FIELD_CREATED = "created";
+    public final static String FIELD_CREATED    = "created";
     /**
      * 创建人字段名称
      */
-    public final static String FIELD_CREATOR = "creator";
+    public final static String FIELD_CREATOR    = "creator";
     /**
      * 修改时间字段名称
      */
-    public final static String FIELD_MODIFIED = "modified";
+    public final static String FIELD_MODIFIED   = "modified";
     /**
      * 修改人字段名称
      */
-    public final static String FIELD_MODIFIER = "modifier";
+    public final static String FIELD_MODIFIER   = "modifier";
     /**
      * 归档字段名称
      */
-    public final static String FIELD_ARCHIVE = "archive";
+    public final static String FIELD_ARCHIVE    = "archive";
 
     /**
      * 获取表名
@@ -331,6 +331,11 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
             wheres.append(columnName).append(" = #{model.").append(field.getName()).append("}");
             index++;
         }
+
+        if (index == 0) {
+            wheres.append(" 1 = 1 ");
+        }
+
         return new SQL() {
             {
                 SELECT("*");

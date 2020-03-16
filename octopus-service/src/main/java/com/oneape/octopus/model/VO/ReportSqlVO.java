@@ -20,7 +20,7 @@ public class ReportSqlVO implements Serializable {
     // 是否分页
     private Integer paging;
     // SQL内容
-    private String rawSql;
+    private String text;
     // 是否需要运行日志
     private Integer needDetailLog;
     // 描述信息

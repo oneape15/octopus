@@ -9,6 +9,7 @@ import com.oneape.octopus.mapper.report.*;
 import com.oneape.octopus.model.DO.report.*;
 import com.oneape.octopus.model.DO.system.ResourceDO;
 import com.oneape.octopus.model.VO.*;
+import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.model.enums.FixOptionType;
 import com.oneape.octopus.service.AccountService;
 import com.oneape.octopus.service.ReportGroupService;
@@ -33,24 +34,24 @@ import java.util.stream.Collectors;
 @Service
 public class ReportServiceImpl implements ReportService {
     @Resource
-    private ReportMapper reportMapper;
+    private ReportMapper        reportMapper;
     @Resource
     private GroupRlReportMapper groupRlReportMapper;
     @Resource
-    private ReportParamMapper reportParamMapper;
+    private ReportParamMapper   reportParamMapper;
     @Resource
-    private ReportColumnMapper reportColumnMapper;
+    private ReportColumnMapper  reportColumnMapper;
     @Resource
-    private ReportSqlMapper reportSqlMapper;
+    private ReportSqlMapper     reportSqlMapper;
     @Resource
-    private ReportGroupMapper reportGroupMapper;
+    private ReportGroupMapper   reportGroupMapper;
 
     @Resource
-    private SqlSessionFactory sqlSessionFactory;
+    private SqlSessionFactory   sqlSessionFactory;
     @Resource
     private UIDGeneratorService uidGeneratorService;
     @Resource
-    private AccountService accountService;
+    private AccountService      accountService;
 
     /**
      * 根据报表Id获取全量信息
@@ -219,7 +220,9 @@ public class ReportServiceImpl implements ReportService {
         } else {
             // 删除
             Collection<Long> needDelGroupIds = CollectionUtils.removeAll(oldGroupIds, newGroupIds);
-            groupRlReportMapper.deleteBy(reportId, new ArrayList<>(needDelGroupIds));
+            if (CollectionUtils.isNotEmpty(needDelGroupIds)) {
+                groupRlReportMapper.deleteBy(reportId, new ArrayList<>(needDelGroupIds));
+            }
 
             // 新增
             Collection<Long> needAddGroupIds = CollectionUtils.removeAll(newGroupIds, oldGroupIds);
@@ -431,18 +434,20 @@ public class ReportServiceImpl implements ReportService {
 
         Map<Long, List<TreeNodeVO>> groupWithReportsMap = new LinkedHashMap<>();
         reports.forEach(r -> {
-            if (filterIds != null && !filterIds.contains(r.getId())) {
+            if (filterIds == null || !filterIds.contains(r.getId())) {
                 TreeNodeVO node = new TreeNodeVO(r.getId() + "", r.getName(), r.getIcon());
                 node.setLeaf(true);
                 String groupIds = r.getGroupIds();
                 String[] tmps = StringUtils.split(groupIds, ",");
-                for (String tmp : tmps) {
-                    Long groupId = DataUtils.toLong(tmp, null);
-                    if (groupId == null) continue;
-                    if (!groupWithReportsMap.containsKey(groupId)) {
-                        groupWithReportsMap.put(groupId, new ArrayList<>());
+                if (tmps != null) {
+                    for (String tmp : tmps) {
+                        Long groupId = DataUtils.toLong(tmp, null);
+                        if (groupId == null) continue;
+                        if (!groupWithReportsMap.containsKey(groupId)) {
+                            groupWithReportsMap.put(groupId, new ArrayList<>());
+                        }
+                        groupWithReportsMap.get(groupId).add(node);
                     }
-                    groupWithReportsMap.get(groupId).add(node);
                 }
             }
         });
@@ -508,7 +513,9 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public List<ReportParamVO> getParamByReportId(Long reportId) {
         Preconditions.checkNotNull(reportId, "报表Id为空");
-        List<ReportParamDO> params = reportParamMapper.list(new ReportParamDO(reportId));
+        ReportParamDO query = new ReportParamDO(reportId);
+        query.setArchive(Archive.NORMAL.value());
+        List<ReportParamDO> params = reportParamMapper.list(query);
         List<ReportParamVO> ret = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(params)) {
             params.forEach(rp -> ret.add(ReportParamVO.ofDO(rp)));
@@ -525,7 +532,9 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public List<ReportColumnVO> getColumnByReportId(Long reportId) {
         Preconditions.checkNotNull(reportId, "报表Id为空");
-        List<ReportColumnDO> params = reportColumnMapper.list(new ReportColumnDO(reportId));
+        ReportColumnDO query = new ReportColumnDO(reportId);
+        query.setArchive(Archive.NORMAL.value());
+        List<ReportColumnDO> params = reportColumnMapper.list(query);
         List<ReportColumnVO> ret = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(params)) {
             params.forEach(rp -> ret.add(ReportColumnVO.ofDO(rp)));

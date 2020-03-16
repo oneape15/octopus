@@ -36,8 +36,8 @@ public class ReportSqlDO extends BaseDO {
     /**
      * SQL内容
      */
-    @Column(name = "raw_sql")
-    private String rawSql;
+    @Column(name = "text")
+    private String text;
     /**
      * 是否需要运行日志
      */
