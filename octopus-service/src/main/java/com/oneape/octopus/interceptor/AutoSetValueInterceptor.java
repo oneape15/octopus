@@ -6,8 +6,7 @@ import com.oneape.octopus.annotation.Modifier;
 import com.oneape.octopus.annotation.SortId;
 import com.oneape.octopus.common.GlobalConstant;
 import com.oneape.octopus.config.ApplicationContextProvider;
-import com.oneape.octopus.model.VO.UserVO;
-import com.oneape.octopus.service.AccountService;
+import com.oneape.octopus.service.system.AccountService;
 import com.oneape.octopus.service.uid.UIDGeneratorService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.executor.Executor;
@@ -27,27 +26,31 @@ import java.util.Properties;
 })
 public class AutoSetValueInterceptor implements Interceptor {
 
-    private static volatile boolean hasInit = false;
-
-    private AccountService accountService;
+    private AccountService      accountService;
     private UIDGeneratorService uidGeneratorService;
 
-    private void initService() {
-        log.info("AutoSetValueInterceptor init...");
-        synchronized (AutoSetValueInterceptor.class) {
-            if (accountService == null) {
-                synchronized (AutoSetValueInterceptor.class) {
-                    accountService = ApplicationContextProvider.getBean(AccountService.class);
-                    hasInit = true;
-                }
-            }
-            if (uidGeneratorService == null) {
-                synchronized (AutoSetValueInterceptor.class) {
-                    uidGeneratorService = ApplicationContextProvider.getBean(UIDGeneratorService.class);
-                    hasInit = true;
-                }
+    private synchronized Long getUserId() {
+        if (accountService == null) {
+            synchronized (AutoSetValueInterceptor.class) {
+                accountService = ApplicationContextProvider.getBean(AccountService.class);
             }
         }
+        if (accountService != null) {
+            return accountService.getCurrentUserId();
+        }
+        return GlobalConstant.SYS_USER;
+    }
+
+    private synchronized Long getUid() {
+        if (uidGeneratorService == null) {
+            synchronized (AutoSetValueInterceptor.class) {
+                uidGeneratorService = ApplicationContextProvider.getBean(UIDGeneratorService.class);
+            }
+        }
+        if (uidGeneratorService != null) {
+            return uidGeneratorService.getUid();
+        }
+        return -1L;
     }
 
     @Override
@@ -58,10 +61,6 @@ public class AutoSetValueInterceptor implements Interceptor {
         // get params
         Object param = invocation.getArgs()[1];
 
-        if (!hasInit) {
-            initService(); // 初始化
-        }
-
         // 获取私有成员变量
         Field[] declaredFields = getAllFields(param);
         Long autoId = null;
@@ -71,14 +70,14 @@ public class AutoSetValueInterceptor implements Interceptor {
                 if (field.getAnnotation(AutoUniqueId.class) != null) {
                     // set the unique id.
                     field.setAccessible(true);
-                    autoId = uidGeneratorService.getUid();
+                    autoId = getUid();
                     field.set(param, autoId);
                 }
                 if (field.getAnnotation(SortId.class) != null) {
                     // set sort id value.
                     field.setAccessible(true);
                     if (autoId == null) {
-                        autoId = uidGeneratorService.getUid();
+                        autoId = getUid();
                     }
                     field.set(param, autoId);
                 }
@@ -87,12 +86,7 @@ public class AutoSetValueInterceptor implements Interceptor {
                     field.setAccessible(true);
                     Object o = field.get(param);
                     if (o == null) {
-                        UserVO user = accountService.getCurrentUser();
-                        if (user != null) {
-                            field.set(param, user.getId());
-                        } else {
-                            field.set(param, GlobalConstant.SYS_USER);
-                        }
+                        field.set(param, getUserId());
                     }
                 }
             }
@@ -100,13 +94,8 @@ public class AutoSetValueInterceptor implements Interceptor {
             if (sqlCommandType.equals(SqlCommandType.UPDATE)) {
                 // 设置修改者信息
                 if (field.getAnnotation(Modifier.class) != null) {
-                    UserVO user = accountService.getCurrentUser();
                     field.setAccessible(true);
-                    if (user != null) {
-                        field.set(param, user.getId());
-                    } else {
-                        field.set(param, GlobalConstant.SYS_USER);
-                    }
+                    field.set(param, getUserId());
                 }
             }
         }

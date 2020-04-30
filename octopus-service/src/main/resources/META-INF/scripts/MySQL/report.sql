@@ -17,7 +17,7 @@ CREATE TABLE `r_datasource`
   COMMENT '登录用户名',
   `password`    VARCHAR(64)   NULL     DEFAULT NULL
   COMMENT '登录密码',
-  `timeout`     INT(11)       NOT NULL
+  `timeout`     INT(11)       NULL     DEFAULT 60
   COMMENT '连接池超时时间(ms)',
   `test_sql`    VARCHAR(1024) NULL
   COMMENT '检测SQL',

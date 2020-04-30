@@ -7,7 +7,7 @@ import com.oneape.octopus.controller.peekdata.form.TagForm;
 import com.oneape.octopus.model.DO.peekdata.ModelTagDO;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.ModelTagVO;
-import com.oneape.octopus.service.ModelTagService;
+import com.oneape.octopus.service.peekdata.ModelTagService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

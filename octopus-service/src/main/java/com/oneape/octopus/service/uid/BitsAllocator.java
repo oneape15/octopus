@@ -1,7 +1,7 @@
 package com.oneape.octopus.service.uid;
 
+import com.google.common.base.Preconditions;
 import lombok.Getter;
-import org.springframework.util.Assert;
 
 /**
  * described : Allocate 64 bits for the uid(long).
@@ -50,7 +50,7 @@ public class BitsAllocator {
     public BitsAllocator(int timestampBits, int workerIdBits, int sequenceBits) {
 
         int allocateTotalBits = signBits + timestampBits + workerIdBits + sequenceBits;
-        Assert.isTrue(allocateTotalBits == TOTAL_BITS, "allocate not enough 64 bits");
+        Preconditions.checkArgument(allocateTotalBits == TOTAL_BITS, "allocate not enough 64 bits");
 
         // initialize bits
         this.timestampBits = timestampBits;

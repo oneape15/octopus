@@ -7,7 +7,7 @@ import com.oneape.octopus.controller.peekdata.form.DataImportForm;
 import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.ImportRecordVO;
-import com.oneape.octopus.service.ImportRecordService;
+import com.oneape.octopus.service.peekdata.ImportRecordService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

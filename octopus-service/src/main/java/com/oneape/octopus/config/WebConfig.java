@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-@ImportResource(locations = {"classpath:config/uid-spring.xml"})
 public class WebConfig extends WebMvcConfigurationSupport {
     @Resource
     private CorsProperties corsProperties;

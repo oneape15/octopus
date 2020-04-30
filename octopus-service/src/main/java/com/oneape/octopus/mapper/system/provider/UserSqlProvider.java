@@ -3,7 +3,7 @@ package com.oneape.octopus.mapper.system.provider;
 import com.google.common.base.Joiner;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.model.DO.system.UserDO;
-import com.oneape.octopus.model.enums.Archive;
+import com.oneape.octopus.common.enums.Archive;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
 

@@ -4,7 +4,7 @@ import com.oneape.octopus.commons.value.DockerUtils;
 import com.oneape.octopus.commons.value.NetUtils;
 import com.oneape.octopus.mapper.system.WorkerNodeMapper;
 import com.oneape.octopus.model.DO.system.WorkerNodeDO;
-import com.oneape.octopus.model.enums.WorkerNodeType;
+import com.oneape.octopus.common.enums.WorkerNodeType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.transaction.annotation.Transactional;

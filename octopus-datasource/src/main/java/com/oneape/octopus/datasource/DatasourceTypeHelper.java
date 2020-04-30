@@ -15,6 +15,7 @@ public enum DatasourceTypeHelper {
     MySQL("com.mysql.cj.jdbc.Driver", "jdbc:mysql://{host}:{port}/{dbName}"),
     Oracle("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@{host}:{port}:{dbName}"),
     PostgreSQL("org.postgresql.Driver", "jdbc:postgresql://{host}:{port}/{dbName}"),
+    OdpsSQL("com.aliyun.odps.jdbc.OdpsDriver","jdbc:odps:{host}?project={dbName}"),
     SQLite("org.sqlite.SQLiteDataSource", "");
 
     /**

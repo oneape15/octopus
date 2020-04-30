@@ -2,6 +2,7 @@ package com.oneape.octopus.mapper.report;
 
 import com.oneape.octopus.mapper.report.provider.ReportGroupSqlProvider;
 import com.oneape.octopus.model.DO.report.ReportGroupDO;
+import com.oneape.octopus.model.VO.ReportGroupVO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -66,6 +67,14 @@ public interface ReportGroupMapper {
     @SelectProvider(type = ReportGroupSqlProvider.class, method = "list")
     List<ReportGroupDO> list(@Param("model") ReportGroupDO model);
 
+    /**
+     * 根据实体中不为null的属性作为查询条件查询
+     *
+     * @param model T
+     * @return List
+     */
+    @SelectProvider(type = ReportGroupSqlProvider.class, method = "listWithChildrenSize")
+    List<ReportGroupVO> listWithChildrenSize(@Param("model") ReportGroupDO model);
 
     /**
      * 根据实体中不为null的属性作为查询条件查询

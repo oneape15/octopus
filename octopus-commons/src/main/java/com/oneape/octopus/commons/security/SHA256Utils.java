@@ -23,7 +23,7 @@ public class SHA256Utils {
         try {
             messageDigest = MessageDigest.getInstance(KEY_SHA_256);
             messageDigest.update(before.getBytes());
-            after = ByteArrayToStringUtils.byteArrayToString(messageDigest.digest());
+            after = ByteArrayToStringUtils.bytes2String(messageDigest.digest());
         } catch (Exception e) {
             e.printStackTrace();
         }

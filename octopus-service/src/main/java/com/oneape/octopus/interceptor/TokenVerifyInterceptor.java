@@ -2,13 +2,11 @@ package com.oneape.octopus.interceptor;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.SessionThreadLocal;
-import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.common.UnauthorizedException;
 import com.oneape.octopus.config.ApplicationContextProvider;
 import com.oneape.octopus.model.VO.UserVO;
-import com.oneape.octopus.service.AccountService;
+import com.oneape.octopus.service.system.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;

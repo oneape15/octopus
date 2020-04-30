@@ -15,6 +15,6 @@
 
     <plugins>
         <plugin interceptor="com.oneape.octopus.interceptor.AutoSetValueInterceptor"/>
-        <plugin interceptor="com.oneape.octopus.interceptor.SqlLogInterceptor"/>
+        <plugin interceptor="com.oneape.octopus.interceptor.MybatisLogInterceptor"/>
     </plugins>
 </configuration>

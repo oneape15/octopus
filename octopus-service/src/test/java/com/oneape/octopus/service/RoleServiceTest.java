@@ -2,6 +2,7 @@ package com.oneape.octopus.service;
 
 import com.oneape.octopus.Application;
 import com.oneape.octopus.model.DO.system.RoleDO;
+import com.oneape.octopus.service.system.RoleService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

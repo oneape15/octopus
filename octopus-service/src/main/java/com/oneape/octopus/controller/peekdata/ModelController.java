@@ -9,7 +9,7 @@ import com.oneape.octopus.model.DO.peekdata.ModelMetaDO;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.ModelMetaVO;
 import com.oneape.octopus.model.VO.ModelVO;
-import com.oneape.octopus.service.ModelService;
+import com.oneape.octopus.service.peekdata.ModelService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;

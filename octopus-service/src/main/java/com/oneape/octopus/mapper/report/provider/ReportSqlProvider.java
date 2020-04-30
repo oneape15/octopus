@@ -1,12 +1,12 @@
 package com.oneape.octopus.mapper.report.provider;
 
+import com.google.common.base.Preconditions;
 import com.oneape.octopus.commons.dto.BeanProperties;
 import com.oneape.octopus.commons.value.BeanUtils;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.model.DO.report.ReportDO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class ReportSqlProvider extends BaseSqlProvider<ReportDO> {
     }
 
     public String findSimpleReport(@Param("model") ReportDO model) {
-        Assert.isTrue(model != null, "查询数据集实体为空");
+        Preconditions.checkNotNull(model, "查询数据集实体为空");
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
         List<String> wheres = new ArrayList<>();

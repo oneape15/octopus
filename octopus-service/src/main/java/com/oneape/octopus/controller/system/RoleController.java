@@ -2,15 +2,13 @@ package com.oneape.octopus.controller.system;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.google.common.collect.Lists;
 import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.controller.system.form.RoleForm;
 import com.oneape.octopus.model.DO.system.RoleDO;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.RoleVO;
-import com.oneape.octopus.service.RoleService;
-import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.ArrayUtils;
+import com.oneape.octopus.common.enums.Archive;
+import com.oneape.octopus.service.system.RoleService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -70,7 +68,9 @@ public class RoleController {
     @PostMapping("/list")
     public ApiResult<PageInfo<RoleVO>> doList(@RequestBody @Validated RoleForm form) {
         PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
-        List<RoleVO> vos = roleService.find(form.toDO());
+        RoleDO rdo = form.toDO();
+        rdo.setArchive(Archive.NORMAL.value());
+        List<RoleVO> vos = roleService.find(rdo);
         return ApiResult.ofData(new PageInfo<>(vos));
     }
 

@@ -6,7 +6,7 @@ import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.controller.system.form.CommonInfoForm;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.CommonInfoVO;
-import com.oneape.octopus.service.CommonInfoService;
+import com.oneape.octopus.service.system.CommonInfoService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

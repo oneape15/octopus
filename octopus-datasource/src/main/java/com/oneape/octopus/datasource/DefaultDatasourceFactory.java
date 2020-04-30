@@ -1,8 +1,10 @@
 package com.oneape.octopus.datasource;
 
 import com.oneape.octopus.commons.security.MD5Utils;
+import com.oneape.octopus.commons.security.PBEUtils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.util.IsolationLevel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,11 +15,14 @@ import java.sql.Statement;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import static com.oneape.octopus.commons.constant.OctopusConstant.PWD_MASK_TAG;
+
 /**
  * 数据源管理工厂类
  */
 @Slf4j
 public class DefaultDatasourceFactory implements DatasourceFactory {
+
 
     private static ConcurrentHashMap<String, HikariDataSource> datasourceMap = new ConcurrentHashMap<>();
 
@@ -172,6 +177,10 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
         }
 
         String url = StringUtils.substringBefore(dsi.getUrl(), "?");
+        if (dsi.getDatasourceType() == DatasourceTypeHelper.OdpsSQL) {
+            // 当odps多个项目同时,要根据 ?project=xxxx来区分数据源
+            url = StringUtils.trimToEmpty(dsi.getUrl());
+        }
         String password = StringUtils.trimToEmpty(dsi.getPassword());
         String username = StringUtils.trimToEmpty(dsi.getUsername());
 
@@ -192,11 +201,15 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
         hikariConfig.setDriverClassName(dth.getDriverClass());
         hikariConfig.setJdbcUrl(dsi.getUrl());
         hikariConfig.setUsername(dsi.getUsername());
-        hikariConfig.setPassword(dsi.getPassword());
-        hikariConfig.setMaximumPoolSize(20);
+        if (StringUtils.isNotBlank(dsi.getPassword()) && StringUtils.startsWith(dsi.getPassword(), PWD_MASK_TAG)) {
+            PBEUtils.decrypt(StringUtils.substringAfter(dsi.getPassword(), PWD_MASK_TAG));
+        } else {
+            hikariConfig.setPassword(dsi.getPassword());
+        }
+        hikariConfig.setMaximumPoolSize(5);
         hikariConfig.setConnectionTimeout(60 * 1000);
-        hikariConfig.setAutoCommit(true);
-
+        hikariConfig.setAutoCommit(false);
+        hikariConfig.setReadOnly(true);
 
         return new HikariDataSource(hikariConfig);
     }

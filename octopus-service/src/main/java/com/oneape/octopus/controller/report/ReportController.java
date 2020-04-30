@@ -9,10 +9,10 @@ import com.oneape.octopus.controller.report.form.ReportForm;
 import com.oneape.octopus.controller.report.form.ReportSqlForm;
 import com.oneape.octopus.datasource.DataType;
 import com.oneape.octopus.model.VO.*;
-import com.oneape.octopus.model.enums.ReportParamType;
-import com.oneape.octopus.model.enums.ReportType;
-import com.oneape.octopus.service.ReportGroupService;
-import com.oneape.octopus.service.ReportService;
+import com.oneape.octopus.common.enums.ReportParamType;
+import com.oneape.octopus.common.enums.ReportType;
+import com.oneape.octopus.service.report.ReportGroupService;
+import com.oneape.octopus.service.report.ReportService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -229,13 +229,12 @@ public class ReportController {
     }
 
     /**
-     * 分页查询
+     * 数据列表(不分页)
      */
     @PostMapping("/group/list")
     public ApiResult<List<ReportGroupVO>> doList(@RequestBody @Validated GroupForm form) {
-//        PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
         List<ReportGroupVO> vos = reportGroupService.find(form.toDO());
-        return ApiResult.ofData(/*new PageInfo<>(vos)*/vos);
+        return ApiResult.ofData(vos);
     }
 
     /**

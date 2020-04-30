@@ -12,8 +12,8 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     private static ApplicationContext appCtx;
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.appCtx = applicationContext;
+    public void setApplicationContext(ApplicationContext appCtx) throws BeansException {
+        this.appCtx = appCtx;
     }
 
     public static ApplicationContext getAppCtx() {
@@ -27,7 +27,10 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * @return Object
      */
     public static Object getBean(String name) {
-        return getAppCtx().getBean(name);
+        if (getAppCtx() != null) {
+            return getAppCtx().getBean(name);
+        }
+        return null;
     }
 
     /**
@@ -38,7 +41,10 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * @return T
      */
     public static <T> T getBean(Class<T> clazz) {
-        return getAppCtx().getBean(clazz);
+        if (getAppCtx() != null) {
+            return getAppCtx().getBean(clazz);
+        }
+        return null;
     }
 
     /**
@@ -50,13 +56,14 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * @return T
      */
     public static <T> T getBean(String name, Class<T> clazz) {
-        return getAppCtx().getBean(name, clazz);
+        if (getAppCtx() != null) {
+            return getAppCtx().getBean(name, clazz);
+        }
+        return null;
     }
 
     /**
      * 发布容器事件
-     *
-     * @param applicationEvent
      */
     public static void publishEvent(ApplicationEvent applicationEvent) {
         if (appCtx != null) {

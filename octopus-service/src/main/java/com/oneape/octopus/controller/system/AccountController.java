@@ -9,7 +9,7 @@ import com.oneape.octopus.model.DO.system.UserDO;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.MenuVO;
 import com.oneape.octopus.model.VO.UserVO;
-import com.oneape.octopus.service.AccountService;
+import com.oneape.octopus.service.system.AccountService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

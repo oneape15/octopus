@@ -5,7 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.controller.report.form.SqlLogForm;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.SqlLogVO;
-import com.oneape.octopus.service.SqlLogService;
+import com.oneape.octopus.service.report.SqlLogService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

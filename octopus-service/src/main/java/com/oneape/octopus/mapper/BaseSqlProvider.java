@@ -1,14 +1,14 @@
 package com.oneape.octopus.mapper;
 
+import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.SessionThreadLocal;
 import com.oneape.octopus.commons.dto.BeanProperties;
 import com.oneape.octopus.commons.value.BeanUtils;
 import com.oneape.octopus.model.DO.BaseDO;
-import com.oneape.octopus.model.enums.Archive;
+import com.oneape.octopus.common.enums.Archive;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
-import org.springframework.util.Assert;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
@@ -40,6 +40,11 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      */
     public final static String FIELD_ARCHIVE    = "archive";
 
+    /***
+     * 数据库获取当前时间戳
+     */
+    public final static String DB_CURRENT_TIME = "unix_timestamp(now()) * 1000";
+
     /**
      * 获取表名
      *
@@ -54,8 +59,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      * @return String
      */
     public String insert(T model) {
-
-        Assert.isTrue(model != null, "插入操作实体不能为空");
+        Preconditions.checkNotNull(model, "插入操作实体不能为空");
 
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
@@ -71,7 +75,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
             }
             if (StringUtils.equals(field.getName(), FIELD_CREATED)) {
                 columns.add(FIELD_CREATED);
-                values.add("unix_timestamp(now())");
+                values.add(DB_CURRENT_TIME);
                 continue;
             }
             if (StringUtils.equals(field.getName(), FIELD_CREATOR)) {
@@ -87,8 +91,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
             values.add("#{" + field.getName() + "}");
         }
 
-        Assert.isTrue(fields.size() != 0, "插入数据操作字段为空");
-
+        Preconditions.checkArgument(fields.size() != 0, "插入数据操作字段为空");
         return new SQL() {
             {
                 INSERT_INTO(getTableName());
@@ -105,23 +108,23 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      * @return String
      */
     public String updateById(T model) {
-        Assert.isTrue(model != null, "更新数据实体为空");
+        Preconditions.checkNotNull(model, "更新数据实体为空");
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
-        Assert.isTrue(primaryKeyHasValue(fields), "更新时，主键为空");
+        Preconditions.checkArgument(primaryKeyHasValue(fields), "更新时，主键为空");
 
         List<String> sets = new ArrayList<>();
 
         fields.forEach(field -> {
 
-            if (StringUtils.equals(field.getName(), FIELD_MODIFIED)) {
-                sets.add(FIELD_MODIFIED + " = unix_timestamp(now())");
-            } else if (StringUtils.equals(field.getName(), FIELD_MODIFIER)) {
+            String columnName = field.getDbColumnName();
+            if (StringUtils.equals(columnName, FIELD_MODIFIED)) {
+                sets.add(FIELD_MODIFIED + " = " + DB_CURRENT_TIME);
+            } else if (StringUtils.equals(columnName, FIELD_MODIFIER)) {
                 sets.add(FIELD_MODIFIER + " = " + SessionThreadLocal.getUserIdOfDefault(-1L) + "");
             } else {
                 if (field.getValue() != null &&
-                        !StringUtils.equalsAny(field.getName(), FIELD_PRIMARY_ID, FIELD_CREATED, FIELD_CREATOR)) {
-                    String columnName = field.getDbColumnName();
+                        !StringUtils.equalsAny(columnName, FIELD_PRIMARY_ID, FIELD_CREATED, FIELD_CREATOR)) {
                     if (StringUtils.isBlank(columnName)) {
                         columnName = field.getName();
                     }
@@ -130,7 +133,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
             }
         });
 
-        Assert.isTrue(!sets.isEmpty(), "更新数据操作字段为空");
+        Preconditions.checkArgument(!sets.isEmpty(), "更新数据操作字段为空");
         return new SQL() {
             {
                 UPDATE(getTableName());
@@ -147,14 +150,14 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      * @return String
      */
     public String deleteById(T model) {
-        Assert.isTrue(model != null, "删除操作实体为空");
-        Assert.isTrue(primaryKeyHasValue(model), "删除时，主键为空");
+        Preconditions.checkNotNull(model, "删除操作实体为空");
+        Preconditions.checkArgument(primaryKeyHasValue(model), "删除时，主键为空");
 
         return new SQL() {
             {
                 UPDATE(getTableName());
                 SET(FIELD_ARCHIVE + " = " + Archive.ARCHIVE.value(),
-                        FIELD_MODIFIED + " = unix_timestamp(now())",
+                        FIELD_MODIFIED + " = " + DB_CURRENT_TIME,
                         FIELD_MODIFIER + " = #{" + FIELD_MODIFIER + "}");
                 WHERE(FIELD_PRIMARY_ID + "= #{" + FIELD_PRIMARY_ID + "}");
             }
@@ -168,7 +171,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      * @return String
      */
     public String delete(T model) {
-        Assert.isTrue(model != null, "删除操作实体为空");
+        Preconditions.checkNotNull(model, "删除操作实体为空");
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
         List<String> whereSql = new ArrayList<>();
@@ -187,7 +190,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
             {
                 UPDATE(getTableName());
                 SET(FIELD_ARCHIVE + " = " + Archive.ARCHIVE.value(),
-                        FIELD_MODIFIED + " = unix_timestamp(now())",
+                        FIELD_MODIFIED + " = " + DB_CURRENT_TIME,
                         FIELD_MODIFIER + " = #{" + FIELD_MODIFIER + "}");
                 WHERE(whereSql.toArray(new String[whereSql.size()]));
             }
@@ -218,11 +221,12 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      * @return String
      */
     public String list(@Param("model") T model) {
-        Assert.isTrue(model != null, "查询数据集实体为空");
+        Preconditions.checkNotNull(model, "查询数据集实体为空");
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
         List<String> wheres = new ArrayList<>();
 
+        wheres.add(FIELD_ARCHIVE + " = " + Archive.NORMAL.value());
         fields.forEach(field -> {
             if (field.getValue() != null) {
                 String columnName = field.getDbColumnName();
@@ -246,7 +250,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      * @return String
      */
     public String size(T model) {
-        Assert.isTrue(model != null, "查询数据集实体为空");
+        Preconditions.checkNotNull(model, "查询数据集实体为空");
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
         List<String> wheres = new ArrayList<>();
@@ -257,6 +261,10 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
                 wheres.add(columnName + " = #{" + field.getName() + "}");
             }
         });
+
+        if (CollectionUtils.isEmpty(wheres)) {
+            wheres.add(" 1 = 1 ");
+        }
 
         return new SQL() {
             {
@@ -275,7 +283,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      * @return String
      */
     public String listWithOrder(@Param("model") T model, @Param("orderFields") List<String> orderFields) {
-        Assert.isTrue(model != null, "查询数据集实体为空");
+        Preconditions.checkNotNull(model, "查询数据集实体为空");
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
         List<String> wheres = new ArrayList<>();
@@ -290,8 +298,9 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
             orders.add(FIELD_CREATED + " DESC ");
         }
 
+        wheres.add(FIELD_ARCHIVE + " = " + Archive.NORMAL.value());
         fields.forEach(field -> {
-            if (field.getValue() != null) {
+            if (field.getValue() != null && !StringUtils.equals(FIELD_ARCHIVE, field.getName())) {
                 String columnName = field.getDbColumnName();
                 wheres.add(columnName + " = #{model." + field.getName() + "}");
             }
@@ -314,26 +323,27 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      * @return String
      */
     public String listOrLink(@Param("model") T model) {
-        Assert.isTrue(model != null, "查询数据集实体为空");
+        Preconditions.checkNotNull(model, "查询数据集实体为空");
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
-        StringBuilder wheres = new StringBuilder();
 
         int index = 0;
+        StringBuilder subWheres = new StringBuilder();
         for (BeanProperties field : fields) {
             if (field.getValue() == null) {
                 continue;
             }
             String columnName = field.getDbColumnName();
             if (index > 0) {
-                wheres.append(" OR ");
+                subWheres.append(" OR ");
             }
-            wheres.append(columnName).append(" = #{model.").append(field.getName()).append("}");
+            subWheres.append(columnName).append(" = #{model.").append(field.getName()).append("}");
             index++;
         }
 
-        if (index == 0) {
-            wheres.append(" 1 = 1 ");
+        StringBuilder wheres = new StringBuilder(FIELD_ARCHIVE + " = " + Archive.NORMAL.value());
+        if (index > 0) {
+            wheres.append(" AND (").append(subWheres).append(")");
         }
 
         return new SQL() {

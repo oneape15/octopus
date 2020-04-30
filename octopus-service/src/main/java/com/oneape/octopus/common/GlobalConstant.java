@@ -13,8 +13,9 @@ public final class GlobalConstant {
     public final static Long DEFAULT_VALUE = 0L;
 
     public final static Integer YES = 1;
-    public final static Integer NO = 0;
+    public final static Integer NO  = 0;
 
     public final static Integer SUCCESS = 1;
-    public final static Integer FAIL = 0;
+    public final static Integer FAIL    = 0;
+
 }

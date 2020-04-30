@@ -1,10 +1,9 @@
 package com.oneape.octopus.model.VO;
 
-import com.oneape.octopus.model.DO.report.DatasourceDO;
+import com.oneape.octopus.model.DO.schema.DatasourceDO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 
 @Data
