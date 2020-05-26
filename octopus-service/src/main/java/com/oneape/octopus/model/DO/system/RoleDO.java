@@ -22,10 +22,6 @@ public class RoleDO extends BaseDO {
      */
     private Integer type;
     /**
-     * 部门
-     */
-    private String department;
-    /**
      * 描述
      */
     private String comment;

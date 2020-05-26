@@ -17,11 +17,11 @@ public class DatasourceDO extends BaseDO {
     /**
      * 数据库名称
      */
-    private String name;
+    private String  name;
     /**
      * 数据源类型 MySQL, Oracle
      */
-    private String type;
+    private String  type;
     /**
      * 状态, 0 - 可用; 1 - 不可用
      */
@@ -30,20 +30,28 @@ public class DatasourceDO extends BaseDO {
      * 数据源地址
      */
     @Column(name = "jdbc_url")
-    private String jdbcUrl;
+    private String  jdbcUrl;
     /**
      * jdbc驱动
      */
     @Column(name = "jdbc_driver")
-    private String jdbcDriver;
+    private String  jdbcDriver;
     /**
      * 数据源用户名
      */
-    private String username;
+    private String  username;
     /**
      * 数据源登录密码
      */
-    private String password;
+    private String  password;
+    /**
+     * 同步状态 0 - 不同步; 1 - 同步
+     */
+    private Integer sync;
+    /**
+     * 同步周期表达式 '0 0 9 * * ?'
+     */
+    private String  cron;
     /**
      * 连接池超时时间(ms)
      */
@@ -52,11 +60,11 @@ public class DatasourceDO extends BaseDO {
      * 检测SQL
      */
     @Column(name = "test_sql")
-    private String testSql;
+    private String  testSql;
     /**
      * 描述
      */
-    private String comment;
+    private String  comment;
 
     public DatasourceDO(String name) {
         this.name = name;
