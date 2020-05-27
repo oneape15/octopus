@@ -46,6 +46,7 @@
         <mybatis-spring-boot-starter.version>2.1.1</mybatis-spring-boot-starter.version>
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
         <junit-jupiter-api.version>5.6.0-M1</junit-jupiter-api.version>
+        <druid.version>1.1.22</druid.version>
 
         <octopus-commons.version>1.0-SNAPSHOT</octopus-commons.version>
         <octopus-datasource.version>1.0-SNAPSHOT</octopus-datasource.version>
@@ -169,6 +170,13 @@
                 <artifactId>javax.mail</artifactId>
                 <version>${javax.mail.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+
 
             <!-- https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter -->
             <dependency>
