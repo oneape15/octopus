@@ -1,6 +1,5 @@
 package com.oneape.octopus.model.VO;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

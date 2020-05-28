@@ -5,10 +5,8 @@ import com.oneape.octopus.datasource.DataType;
 import com.oneape.octopus.datasource.data.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.postgresql.core.Oid;
 
 import java.sql.Statement;
-import java.sql.Types;
 
 /**
  * PostgreSql数据源执行器

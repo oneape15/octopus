@@ -2,8 +2,8 @@ package com.oneape.octopus.service.system.impl;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.*;
-import com.oneape.octopus.commons.value.CodeBuilderUtils;
 import com.oneape.octopus.commons.security.MD5Utils;
+import com.oneape.octopus.commons.value.CodeBuilderUtils;
 import com.oneape.octopus.mapper.system.ResourceMapper;
 import com.oneape.octopus.mapper.system.UserMapper;
 import com.oneape.octopus.mapper.system.UserRlRoleMapper;

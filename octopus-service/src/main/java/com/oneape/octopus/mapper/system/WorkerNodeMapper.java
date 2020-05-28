@@ -2,7 +2,6 @@ package com.oneape.octopus.mapper.system;
 
 import com.oneape.octopus.model.DO.system.WorkerNodeDO;
 import org.apache.ibatis.annotations.*;
-import org.springframework.beans.factory.annotation.Value;
 
 @Mapper
 public interface WorkerNodeMapper {

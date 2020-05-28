@@ -4,7 +4,6 @@ import com.oneape.octopus.commons.security.MD5Utils;
 import com.oneape.octopus.commons.security.PBEUtils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import com.zaxxer.hikari.util.IsolationLevel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 

@@ -2,14 +2,14 @@ package com.oneape.octopus.mapper;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.SessionThreadLocal;
+import com.oneape.octopus.common.enums.Archive;
 import com.oneape.octopus.commons.dto.BeanProperties;
 import com.oneape.octopus.commons.value.BeanUtils;
 import com.oneape.octopus.model.DO.BaseDO;
-import com.oneape.octopus.common.enums.Archive;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;

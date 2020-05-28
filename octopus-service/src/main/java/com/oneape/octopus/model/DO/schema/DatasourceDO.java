@@ -57,12 +57,12 @@ public class DatasourceDO extends BaseDO {
      */
     private Integer timeout;
     /**
-     * 检测SQL
+     * the sql of check datasource valid
      */
     @Column(name = "test_sql")
     private String  testSql;
     /**
-     * 描述
+     * Data source description information
      */
     private String  comment;
 
