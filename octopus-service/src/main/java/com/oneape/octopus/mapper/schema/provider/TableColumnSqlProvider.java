@@ -23,16 +23,15 @@ public class TableColumnSqlProvider extends BaseSqlProvider<TableSchemaDO> {
         return TABLE_NAME;
     }
 
+    public String deleteBy(@Param("dsId") Long dsId, @Param("tableName") String tableName, @Param("columns") List<String> columns) {
+        Preconditions.checkArgument(CollectionUtils.isNotEmpty(columns), "The data table  column name cannot be empty.");
 
-    public String deleteBy(@Param("dsId") Long dsId, @Param("tableNames") List<String> tableNames) {
-        Preconditions.checkArgument(CollectionUtils.isNotEmpty(tableNames), "The data table name cannot be empty.");
-
-        StringBuilder sb = new StringBuilder(" table_name IN (");
-        for (int i = 0; i < tableNames.size(); i++) {
+        StringBuilder sb = new StringBuilder(" name IN (");
+        for (int i = 0; i < columns.size(); i++) {
             if (i > 0) {
                 sb.append(",");
             }
-            sb.append("'").append(tableNames.get(i)).append("'");
+            sb.append("'").append(columns.get(i)).append("'");
         }
         sb.append(" )");
 
@@ -44,6 +43,29 @@ public class TableColumnSqlProvider extends BaseSqlProvider<TableSchemaDO> {
                         FIELD_MODIFIED + "=" + DB_CURRENT_TIME);
                 WHERE(FIELD_ARCHIVE + "=" + Archive.NORMAL.value(),
                         "datasource_id = #{dsId}",
+                        "table_name = #{tableName}",
+                        sb.toString());
+            }
+        }.toString();
+    }
+
+    public String updateTableColumnHeatValue(@Param("dsId") Long dsId, @Param("tableName") String tableName, @Param("columns") List<String> columns) {
+        Preconditions.checkArgument(CollectionUtils.isNotEmpty(columns), "The data table  column name cannot be empty.");
+        StringBuilder sb = new StringBuilder(" name IN (");
+        for (int i = 0; i < columns.size(); i++) {
+            if (i > 0) {
+                sb.append(",");
+            }
+            sb.append("'").append(columns.get(i)).append("'");
+        }
+        sb.append(" )");
+        return new SQL() {
+            {
+                UPDATE(getTableName());
+                SET(" heat = heat + 1");
+                WHERE(FIELD_ARCHIVE + "=" + Archive.NORMAL.value(),
+                        "datasource_id = #{dsId}",
+                        "table_name = #{tableName}",
                         sb.toString());
             }
         }.toString();

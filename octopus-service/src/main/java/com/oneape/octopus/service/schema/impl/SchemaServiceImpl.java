@@ -138,6 +138,40 @@ public class SchemaServiceImpl implements SchemaService {
     }
 
     /**
+     * Modify the table heat value.
+     *
+     * @param dsId      Long
+     * @param tableName String
+     * @param incHeat   Integer
+     * @return int 0 - fail; 1 - success;
+     */
+    @Override
+    public int updateTableHeat(Long dsId, String tableName, Integer incHeat) {
+        if (StringUtils.isBlank(tableName) || dsId == null || incHeat == null) {
+            return 0;
+        }
+
+        return tableSchemaMapper.updateTableHeatValue(dsId, tableName, incHeat);
+    }
+
+    /**
+     * Batch increment the heat value of the table field.
+     *
+     * @param dsId      Long
+     * @param tableName String
+     * @param columns   List
+     * @return int 0 - fail; 1 - success;
+     */
+    @Override
+    public int incColumnHeat(Long dsId, String tableName, List<String> columns) {
+        if (CollectionUtils.isEmpty(columns) || StringUtils.isBlank(tableName) || dsId == null) {
+            return 0;
+        }
+
+        return tableColumnMapper.updateTableColumnHeatValue(dsId, tableName, columns);
+    }
+
+    /**
      * Batch insert table information
      *
      * @param tableDOs List

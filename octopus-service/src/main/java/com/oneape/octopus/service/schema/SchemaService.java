@@ -42,4 +42,23 @@ public interface SchemaService {
      */
     int changeTableColumnInfo(TableColumnDO tcDo);
 
+    /**
+     * Modify the table heat value.
+     *
+     * @param dsId      Long
+     * @param tableName String
+     * @param incHeat   Integer
+     * @return int 0 - fail; 1 - success;
+     */
+    int updateTableHeat(Long dsId, String tableName, Integer incHeat);
+
+    /**
+     * Batch increment the heat value of the table field.
+     *
+     * @param dsId      Long
+     * @param tableName String
+     * @param columns   List
+     * @return int 0 - fail; 1 - success;
+     */
+    int incColumnHeat(Long dsId, String tableName, List<String> columns);
 }

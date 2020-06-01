@@ -66,4 +66,14 @@ public interface TableSchemaMapper {
                     + " WHERE  " + BaseSqlProvider.FIELD_ARCHIVE + " = 0  AND datasource_id = #{dsId}"
     })
     List<TableSchemaDO> getTableList(@Param("dsId") Long dsId);
+
+    /**
+     * Modify the table heat value.
+     */
+    @Update({
+            "UPDATE " + TableSchemaSqlProvider.TABLE_NAME +
+                    " SET heat = heat + #{incHeat} " +
+                    " WHERE " + BaseSqlProvider.FIELD_ARCHIVE + " = 0  AND datasource_id = #{dsId} AND name = #{tableName}"
+    })
+    int updateTableHeatValue(@Param("dsId") Long dsId, @Param("tableName") String tableName, @Param("incHeat") Integer incHeat);
 }

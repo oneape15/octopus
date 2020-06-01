@@ -11,9 +11,9 @@ import com.oneape.octopus.datasource.schema.FieldInfo;
 import com.oneape.octopus.datasource.schema.TableInfo;
 import com.oneape.octopus.model.DO.schema.DatasourceDO;
 import com.oneape.octopus.model.VO.ApiResult;
-import com.oneape.octopus.model.VO.DatasourceVO;
 import com.oneape.octopus.service.schema.DatasourceService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -103,7 +103,7 @@ public class DatasourceController {
         dsi.setUsername(form.getUsername());
         dsi.setPassword(form.getPassword());
         dsi.setDatasourceType(DatasourceTypeHelper.byName(form.getType()));
-        dsi.setTestSql("select 1");
+        dsi.setTestSql(StringUtils.isBlank(form.getTestSql()) ? "select 1" : form.getTestSql());
         boolean success = datasourceFactory.testDatasource(dsi);
         if (success) {
             return ApiResult.ofData("数据库连接测试成功");

@@ -81,4 +81,7 @@ public interface TableColumnMapper {
                     + " WHERE  " + BaseSqlProvider.FIELD_ARCHIVE + " = 0  AND datasource_id = #{dsId} AND table_name = #{tableName}"
     })
     List<TableColumnDO> getTableColumnList(@Param("dsId") Long dsId, @Param("tableName") String tableName);
+
+    @UpdateProvider(type = TableColumnSqlProvider.class, method = "updateTableColumnHeatValue")
+    int updateTableColumnHeatValue(@Param("dsId") Long dsId, @Param("tableName") String tableName, @Param("columns") List<String> columns);
 }
