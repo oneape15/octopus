@@ -64,9 +64,9 @@ public class DatasourceController {
     }
 
     @PostMapping(value = "/list")
-    public ApiResult<PageInfo<DatasourceVO>> list(@RequestBody @Validated DatasourceForm form) {
+    public ApiResult<PageInfo<DatasourceDO>> list(@RequestBody @Validated DatasourceForm form) {
         PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
-        List<DatasourceVO> vos = datasourceService.find(form.toDO());
+        List<DatasourceDO> vos = datasourceService.find(form.toDO());
         return ApiResult.ofData(new PageInfo<>(vos));
     }
 
@@ -89,7 +89,7 @@ public class DatasourceController {
      * 获取所有可用数据源
      */
     @RequestMapping(value = "/getAllSimple", method = {RequestMethod.GET, RequestMethod.POST})
-    public ApiResult<List<DatasourceVO>> getAllSimple() {
+    public ApiResult<List<DatasourceDO>> getAllSimple() {
         return ApiResult.ofData(datasourceService.find(new DatasourceDO()));
     }
 

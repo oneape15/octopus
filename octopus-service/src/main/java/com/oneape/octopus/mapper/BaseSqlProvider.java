@@ -46,7 +46,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
     public final static String DB_CURRENT_TIME = "unix_timestamp(now()) * 1000";
 
     /**
-     * 获取表名
+     * get table name.
      *
      * @return String
      */

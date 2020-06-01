@@ -3,6 +3,7 @@ package com.oneape.octopus.model.DO.schema;
 import com.oneape.octopus.model.DO.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 
@@ -12,6 +13,7 @@ import javax.persistence.Column;
  * Modify:
  */
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class TableSchemaDO extends BaseDO {
 
@@ -53,5 +55,10 @@ public class TableSchemaDO extends BaseDO {
      * db table description
      */
     private String  comment;
+
+
+    public TableSchemaDO(Long datasourceId) {
+        this.datasourceId = datasourceId;
+    }
 
 }

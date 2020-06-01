@@ -41,7 +41,7 @@ public class DefaultQueryFactory implements QueryFactory {
     }
 
     /**
-     * 获取数据库名
+     * Get the database name
      *
      * @param dsi DatasourceInfo
      * @return String
@@ -52,7 +52,7 @@ public class DefaultQueryFactory implements QueryFactory {
             Actuator actuator = ActuatorFactory.build(null, dsi.getDatasourceType());
             return actuator.getSchema(dsi.getUrl());
         } catch (Exception e) {
-            log.error("获取数据库失败~", e);
+            log.error("Failed to get database~", e);
             throw new RuntimeException(e);
         }
     }
@@ -72,7 +72,7 @@ public class DefaultQueryFactory implements QueryFactory {
                 return actuator.allDatabase();
             }
         } catch (Exception e) {
-            log.error("获取表信息失败~", e);
+            log.error("Failed to get table information~", e);
             throw new RuntimeException(e);
         }
     }
@@ -103,7 +103,7 @@ public class DefaultQueryFactory implements QueryFactory {
             }
             return tables;
         } catch (Exception e) {
-            log.error("获取表信息失败~", e);
+            log.error("Failed to get table information~", e);
             throw new RuntimeException("获取数据库全部表信息失败", e);
         }
     }
@@ -135,7 +135,7 @@ public class DefaultQueryFactory implements QueryFactory {
             }
             return tables;
         } catch (Exception e) {
-            log.error("获取表信息失败~", e);
+            log.error("Failed to get table information~", e);
             throw new RuntimeException("获取数据库：" + schema + " 表信息失败", e);
         }
     }

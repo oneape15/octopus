@@ -94,17 +94,14 @@ public class DatasourceServiceImpl implements DatasourceService {
      * @return List
      */
     @Override
-    public List<DatasourceVO> find(DatasourceDO datasource) {
+    public List<DatasourceDO> find(DatasourceDO datasource) {
         Preconditions.checkNotNull(datasource, "数据源对象为空");
         datasource.setArchive(Archive.NORMAL.value());
         List<DatasourceDO> ddos = datasourceMapper.list(datasource);
-
-        List<DatasourceVO> dvo = new ArrayList<>();
-        if (CollectionUtils.isEmpty(ddos)) {
-            return dvo;
+        if (ddos == null) {
+            return new ArrayList<>();
         }
-        ddos.forEach(ddo -> dvo.add(DatasourceVO.ofDO(ddo)));
-        return dvo;
+        return ddos;
     }
 
     /**
