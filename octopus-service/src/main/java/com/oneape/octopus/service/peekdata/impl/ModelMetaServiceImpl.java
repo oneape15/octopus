@@ -97,10 +97,10 @@ public class ModelMetaServiceImpl implements ModelMetaService {
     }
 
     /**
-     * 新增数据
+     * Add data to table.
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败；
+     * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int insert(ModelMetaDO model) {
@@ -112,7 +112,7 @@ public class ModelMetaServiceImpl implements ModelMetaService {
      * 修改数据
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败；
+     * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int edit(ModelMetaDO model) {
@@ -125,7 +125,7 @@ public class ModelMetaServiceImpl implements ModelMetaService {
      * 根据主键Id删除
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败；
+     * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int deleteById(ModelMetaDO model) {

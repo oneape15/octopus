@@ -127,6 +127,17 @@ public class SchemaServiceImpl implements SchemaService {
     }
 
     /**
+     * Modify the table field information.
+     *
+     * @param tcDo TableColumnDO
+     * @return 0 - fail; 1 - success;
+     */
+    @Override
+    public int changeTableColumnInfo(TableColumnDO tcDo) {
+        return tableColumnMapper.update(tcDo);
+    }
+
+    /**
      * Batch insert table information
      *
      * @param tableDOs List

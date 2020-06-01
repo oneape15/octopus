@@ -199,7 +199,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
 
 
     /**
-     * 根据Id查询
+     * Find by primary key.
      *
      * @param id Long
      * @return String
@@ -215,7 +215,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
     }
 
     /**
-     * 根据实体中不为null的属性作为查询条件查询
+     * The query is based on a property in the entity that is not null.
      *
      * @param model T
      * @return String
@@ -276,7 +276,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
     }
 
     /**
-     * 根据实体中不为null的属性作为查询条件查询
+     * The query is based on a property in the entity that is not null.
      *
      * @param model       T
      * @param orderFields List

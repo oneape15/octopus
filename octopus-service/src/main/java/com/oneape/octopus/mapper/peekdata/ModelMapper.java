@@ -9,34 +9,34 @@ import java.util.List;
 @Mapper
 public interface ModelMapper {
     /**
-     * 新增数据
+     * Add data to table.
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败
+     * @return int 1 - success; 0 - fail.
      */
     @InsertProvider(type = ModelSqlProvider.class, method = "insert")
     int insert(ModelDO model);
 
     /**
-     * 通过主键更新数据
+     * Update data by primary key.
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败
+     * @return int 1 - success; 0 - fail.
      */
     @UpdateProvider(type = ModelSqlProvider.class, method = "updateById")
     int update(ModelDO model);
 
     /**
-     * 通过主键删除数据（软删除，更新archive状态)
+     * Delete data by primary key (soft delete, update archive state).
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败
+     * @return int 1 - success; 0 - fail.
      */
     @UpdateProvider(type = ModelSqlProvider.class, method = "deleteById")
     int delete(ModelDO model);
 
     /**
-     * 通过主键查找
+     * Find by primary key.
      *
      * @param id Long
      * @return T
@@ -49,7 +49,7 @@ public interface ModelMapper {
     List<ModelDO> listOrLink(@Param("model") ModelDO model);
 
     /**
-     * 根据实体中不为null的属性作为查询条件查询
+     * The query is based on a property in the entity that is not null.
      *
      * @param model T
      * @return List

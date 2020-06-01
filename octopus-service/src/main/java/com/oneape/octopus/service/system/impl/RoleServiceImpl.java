@@ -34,10 +34,10 @@ public class RoleServiceImpl implements RoleService {
     private RoleRlResourceMapper roleRlResourceMapper;
 
     /**
-     * 新增数据
+     * Add data to table.
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败；
+     * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int insert(RoleDO model) {
@@ -59,7 +59,7 @@ public class RoleServiceImpl implements RoleService {
      * 修改数据
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败；
+     * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int edit(RoleDO model) {
@@ -86,7 +86,7 @@ public class RoleServiceImpl implements RoleService {
      * 根据主键Id删除
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败；
+     * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int deleteById(RoleDO model) {

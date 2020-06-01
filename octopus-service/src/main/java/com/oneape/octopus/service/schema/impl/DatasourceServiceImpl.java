@@ -29,10 +29,10 @@ public class DatasourceServiceImpl implements DatasourceService {
     private DatasourceMapper datasourceMapper;
 
     /**
-     * 新增数据
+     * Add data to table.
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败；
+     * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int insert(DatasourceDO model) {
@@ -54,7 +54,7 @@ public class DatasourceServiceImpl implements DatasourceService {
      * 修改数据
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败；
+     * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int edit(DatasourceDO model) {
@@ -79,7 +79,7 @@ public class DatasourceServiceImpl implements DatasourceService {
      * 根据主键Id删除
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败；
+     * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int deleteById(DatasourceDO model) {

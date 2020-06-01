@@ -33,10 +33,10 @@ public class ResourceServiceImpl implements ResourceService {
     private RoleRlResourceMapper roleRlResourceMapper;
 
     /**
-     * 新增数据
+     * Add data to table.
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败；
+     * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int insert(ResourceDO model) {
@@ -70,7 +70,7 @@ public class ResourceServiceImpl implements ResourceService {
      * 修改数据
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败；
+     * @return int 1 - success; 0 - fail.；
      */
     @Override
     @Transactional
@@ -139,7 +139,7 @@ public class ResourceServiceImpl implements ResourceService {
      * 根据主键Id删除
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败；
+     * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int deleteById(ResourceDO model) {

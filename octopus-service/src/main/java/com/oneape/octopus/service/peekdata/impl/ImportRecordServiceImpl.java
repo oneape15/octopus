@@ -76,10 +76,10 @@ public class ImportRecordServiceImpl implements ImportRecordService {
     }
 
     /**
-     * 新增数据
+     * Add data to table.
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败；
+     * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int insert(ImportRecordDO model) {
@@ -90,7 +90,7 @@ public class ImportRecordServiceImpl implements ImportRecordService {
      * 修改数据
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败；
+     * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int edit(ImportRecordDO model) {
@@ -101,7 +101,7 @@ public class ImportRecordServiceImpl implements ImportRecordService {
      * 根据主键Id删除
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败；
+     * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int deleteById(ImportRecordDO model) {

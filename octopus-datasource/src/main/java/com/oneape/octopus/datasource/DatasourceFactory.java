@@ -25,7 +25,7 @@ public interface DatasourceFactory {
      * 添加数据源
      *
      * @param dsInfo DatasourceInfo
-     * @return int  1 - 成功； 0 - 失败
+     * @return int  1 - success; 0 - fail.
      */
     int addDatasource(DatasourceInfo dsInfo);
 

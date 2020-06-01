@@ -14,19 +14,19 @@ import java.util.List;
 public interface ReportGroupMapper {
 
     /**
-     * 新增数据
+     * Add data to table.
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败
+     * @return int 1 - success; 0 - fail.
      */
     @InsertProvider(type = ReportGroupSqlProvider.class, method = "insert")
     int insert(ReportGroupDO model);
 
     /**
-     * 通过主键更新数据
+     * Update data by primary key.
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败
+     * @return int 1 - success; 0 - fail.
      */
     @UpdateProvider(type = ReportGroupSqlProvider.class, method = "updateById")
     int update(ReportGroupDO model);
@@ -41,16 +41,16 @@ public interface ReportGroupMapper {
     int size(ReportGroupDO model);
 
     /**
-     * 通过主键删除数据（软删除，更新archive状态)
+     * Delete data by primary key (soft delete, update archive state).
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败
+     * @return int 1 - success; 0 - fail.
      */
     @UpdateProvider(type = ReportGroupSqlProvider.class, method = "deleteById")
     int delete(ReportGroupDO model);
 
     /**
-     * 通过主键查找
+     * Find by primary key.
      *
      * @param id Long
      * @return T
@@ -59,7 +59,7 @@ public interface ReportGroupMapper {
     ReportGroupDO findById(@Param("id") Long id);
 
     /**
-     * 根据实体中不为null的属性作为查询条件查询
+     * The query is based on a property in the entity that is not null.
      *
      * @param model T
      * @return List
@@ -68,7 +68,7 @@ public interface ReportGroupMapper {
     List<ReportGroupDO> list(@Param("model") ReportGroupDO model);
 
     /**
-     * 根据实体中不为null的属性作为查询条件查询
+     * The query is based on a property in the entity that is not null.
      *
      * @param model T
      * @return List
@@ -77,7 +77,7 @@ public interface ReportGroupMapper {
     List<ReportGroupVO> listWithChildrenSize(@Param("model") ReportGroupDO model);
 
     /**
-     * 根据实体中不为null的属性作为查询条件查询
+     * The query is based on a property in the entity that is not null.
      *
      * @param model T
      * @return List

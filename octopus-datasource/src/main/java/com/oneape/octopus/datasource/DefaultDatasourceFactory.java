@@ -52,7 +52,7 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
      * 添加数据源
      *
      * @param dsInfo DatasourceInfo
-     * @return int  1 - 成功； 0 - 失败
+     * @return int  1 - success; 0 - fail.
      */
     @Override
     public int addDatasource(DatasourceInfo dsInfo) {

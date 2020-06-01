@@ -34,4 +34,12 @@ public interface SchemaService {
      */
     List<TableSchemaDO> fetchTableList(Long dsId);
 
+    /**
+     * Modify the table field information.
+     *
+     * @param tcDo TableColumnDO
+     * @return 0 - fail; 1 - success;
+     */
+    int changeTableColumnInfo(TableColumnDO tcDo);
+
 }

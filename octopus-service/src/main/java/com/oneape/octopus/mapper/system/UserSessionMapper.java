@@ -8,28 +8,28 @@ import org.apache.ibatis.annotations.*;
 public interface UserSessionMapper {
 
     /**
-     * 新增数据
+     * Add data to table.
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败
+     * @return int 1 - success; 0 - fail.
      */
     @InsertProvider(type = UserSessionSqlProvider.class, method = "insert")
     int insert(UserSessionDO model);
 
     /**
-     * 通过主键更新数据
+     * Update data by primary key.
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败
+     * @return int 1 - success; 0 - fail.
      */
     @UpdateProvider(type = UserSessionSqlProvider.class, method = "updateById")
     int update(UserSessionDO model);
 
     /**
-     * 通过主键删除数据（软删除，更新archive状态)
+     * Delete data by primary key (soft delete, update archive state).
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败
+     * @return int 1 - success; 0 - fail.
      */
     @UpdateProvider(type = UserSessionSqlProvider.class, method = "deleteById")
     int delete(UserSessionDO model);

@@ -9,28 +9,28 @@ import java.util.List;
 @Mapper
 public interface PeekRuleMapper {
     /**
-     * 新增数据
+     * Add data to table.
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败
+     * @return int 1 - success; 0 - fail.
      */
     @InsertProvider(type = PeekRuleSqlProvider.class, method = "insert")
     int insert(PeekRuleDO model);
 
     /**
-     * 通过主键更新数据
+     * Update data by primary key.
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败
+     * @return int 1 - success; 0 - fail.
      */
     @UpdateProvider(type = PeekRuleSqlProvider.class, method = "updateById")
     int update(PeekRuleDO model);
 
     /**
-     * 通过主键删除数据（软删除，更新archive状态)
+     * Delete data by primary key (soft delete, update archive state).
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败
+     * @return int 1 - success; 0 - fail.
      */
     @UpdateProvider(type = PeekRuleSqlProvider.class, method = "deleteById")
     int deleteById(PeekRuleDO model);
@@ -39,13 +39,13 @@ public interface PeekRuleMapper {
      * 根据传入的对象值内容进行删除
      *
      * @param model T
-     * @return int 1 - 成功； 0 - 失败
+     * @return int 1 - success; 0 - fail.
      */
     @UpdateProvider(type = PeekRuleSqlProvider.class, method = "delete")
     int delete(PeekRuleDO model);
 
     /**
-     * 通过主键查找
+     * Find by primary key.
      *
      * @param id Long
      * @return T
@@ -58,7 +58,7 @@ public interface PeekRuleMapper {
     List<PeekRuleDO> listOrLink(@Param("model") PeekRuleDO model);
 
     /**
-     * 根据实体中不为null的属性作为查询条件查询
+     * The query is based on a property in the entity that is not null.
      *
      * @param model T
      * @return List

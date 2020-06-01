@@ -1,8 +1,10 @@
 package com.oneape.octopus.mapper.schema;
 
 import com.oneape.octopus.mapper.BaseSqlProvider;
+import com.oneape.octopus.mapper.schema.provider.DatasourceSqlProvider;
 import com.oneape.octopus.mapper.schema.provider.TableColumnSqlProvider;
 import com.oneape.octopus.mapper.schema.provider.TableSchemaSqlProvider;
+import com.oneape.octopus.model.DO.schema.DatasourceDO;
 import com.oneape.octopus.model.DO.schema.TableColumnDO;
 import com.oneape.octopus.model.DO.schema.TableSchemaDO;
 import org.apache.ibatis.annotations.*;
@@ -25,6 +27,15 @@ public interface TableColumnMapper {
      */
     @InsertProvider(type = TableColumnSqlProvider.class, method = "insert")
     int insert(TableColumnDO model);
+
+    /**
+     * Update data by primary key.
+     *
+     * @param model T
+     * @return int 1 - success； 0 - fail
+     */
+    @UpdateProvider(type = TableColumnSqlProvider.class, method = "updateById")
+    int update(TableColumnDO model);
 
     /**
      * get data by primary key.
