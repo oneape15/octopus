@@ -67,7 +67,7 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     /**
-     * 修改数据
+     * Modify the data.
      *
      * @param model T
      * @return int 1 - success; 0 - fail.；
@@ -75,7 +75,7 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     @Transactional
     public int edit(ResourceDO model) {
-        Preconditions.checkNotNull(model.getId(), "主键Key为空");
+        Preconditions.checkNotNull(model.getId(), "The primary Key is empty.");
         ResourceDO old = resourceMapper.findById(model.getId());
         if (old == null) {
             throw new BizException("需要修改的资源不存在");
@@ -136,14 +136,14 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     /**
-     * 根据主键Id删除
+     * Delete by primary key Id.
      *
      * @param model T
      * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int deleteById(ResourceDO model) {
-        Preconditions.checkNotNull(model.getId(), "主键Key为空");
+        Preconditions.checkNotNull(model.getId(), "The primary Key is empty.");
 
         int status = resourceMapper.delete(model);
         if (status > GlobalConstant.FAIL) {

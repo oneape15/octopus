@@ -16,32 +16,32 @@ import java.util.List;
 
 public abstract class BaseSqlProvider<T extends BaseDO> {
     /**
-     * 主键字段名称
+     * The name of primary key.
      */
     public final static String FIELD_PRIMARY_ID = "id";
     /**
-     * 创建时间字段名称
+     * The field of create time.
      */
     public final static String FIELD_CREATED    = "created";
     /**
-     * 创建人字段名称
+     * The field of creator.
      */
     public final static String FIELD_CREATOR    = "creator";
     /**
-     * 修改时间字段名称
+     * The field of update time.
      */
     public final static String FIELD_MODIFIED   = "modified";
     /**
-     * 修改人字段名称
+     * the field of modifier.
      */
     public final static String FIELD_MODIFIER   = "modifier";
     /**
-     * 归档字段名称
+     * The field of soft deleted.
      */
     public final static String FIELD_ARCHIVE    = "archive";
 
-    /***
-     * 数据库获取当前时间戳
+    /**
+     * The database gets the current timestamp
      */
     public final static String DB_CURRENT_TIME = "unix_timestamp(now()) * 1000";
 
@@ -53,13 +53,13 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
     public abstract String getTableName();
 
     /**
-     * 插入操作
+     * insert data to db.
      *
      * @param model T
      * @return String
      */
     public String insert(T model) {
-        Preconditions.checkNotNull(model, "插入操作实体不能为空");
+        Preconditions.checkNotNull(model, "The insert data set entity is empty.");
 
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
@@ -67,7 +67,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
         List<String> values = new ArrayList<>();
 
         for (BeanProperties field : fields) {
-            // 特殊处理的字段
+            // Fields for special processing.
             if (StringUtils.equals(field.getName(), FIELD_PRIMARY_ID)) {
                 columns.add(FIELD_PRIMARY_ID);
                 values.add("#{" + FIELD_PRIMARY_ID + "}");
@@ -91,7 +91,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
             values.add("#{" + field.getName() + "}");
         }
 
-        Preconditions.checkArgument(fields.size() != 0, "插入数据操作字段为空");
+        Preconditions.checkArgument(fields.size() != 0, "The insert data action field is empty.");
         return new SQL() {
             {
                 INSERT_INTO(getTableName());
@@ -102,16 +102,16 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
     }
 
     /**
-     * 根据Id更新model中不为null的属性
+     * Update the non-NULL properties in the model based on the Id.
      *
      * @param model T
      * @return String
      */
     public String updateById(T model) {
-        Preconditions.checkNotNull(model, "更新数据实体为空");
+        Preconditions.checkNotNull(model, "The update data set entity is empty.");
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
-        Preconditions.checkArgument(primaryKeyHasValue(fields), "更新时，主键为空");
+        Preconditions.checkArgument(primaryKeyHasValue(fields), "The primary key is empty.");
 
         List<String> sets = new ArrayList<>();
 
@@ -133,7 +133,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
             }
         });
 
-        Preconditions.checkArgument(!sets.isEmpty(), "更新数据操作字段为空");
+        Preconditions.checkArgument(!sets.isEmpty(), "The update data action field is empty.");
         return new SQL() {
             {
                 UPDATE(getTableName());
@@ -144,14 +144,14 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
     }
 
     /**
-     * 根据Id删除
+     * Delete by Id.
      *
      * @param model T
      * @return String
      */
     public String deleteById(T model) {
-        Preconditions.checkNotNull(model, "删除操作实体为空");
-        Preconditions.checkArgument(primaryKeyHasValue(model), "删除时，主键为空");
+        Preconditions.checkNotNull(model, "The data set entity is empty.");
+        Preconditions.checkArgument(primaryKeyHasValue(model), "The primary key is empty.");
 
         return new SQL() {
             {
@@ -165,13 +165,13 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
     }
 
     /**
-     * 根据传入条件进行删除
+     * Deletes according to incoming conditions.
      *
      * @param model T
      * @return String
      */
     public String delete(T model) {
-        Preconditions.checkNotNull(model, "删除操作实体为空");
+        Preconditions.checkNotNull(model, "The delete data set entity is empty.");
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
         List<String> whereSql = new ArrayList<>();
@@ -221,7 +221,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      * @return String
      */
     public String list(@Param("model") T model) {
-        Preconditions.checkNotNull(model, "查询数据集实体为空");
+        Preconditions.checkNotNull(model, "The query data set entity is empty.");
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
         List<String> wheres = new ArrayList<>();
@@ -244,13 +244,13 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
     }
 
     /**
-     * 获取数量SQL
+     * Gets the number of data rows.
      *
      * @param model T
      * @return String
      */
     public String size(T model) {
-        Preconditions.checkNotNull(model, "查询数据集实体为空");
+        Preconditions.checkNotNull(model, "The query data set entity is empty.");
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
         List<String> wheres = new ArrayList<>();
@@ -283,7 +283,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      * @return String
      */
     public String listWithOrder(@Param("model") T model, @Param("orderFields") List<String> orderFields) {
-        Preconditions.checkNotNull(model, "查询数据集实体为空");
+        Preconditions.checkNotNull(model, "The query data set entity is empty.");
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
         List<String> wheres = new ArrayList<>();
@@ -317,13 +317,13 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
     }
 
     /**
-     * 根据实体中不为null的属性值，使用 OR 连接起来进行操作
+     * OR is used to concatenate operations based on attribute values that are not null in the entity.
      *
      * @param model T
      * @return String
      */
     public String listOrLink(@Param("model") T model) {
-        Preconditions.checkNotNull(model, "查询数据集实体为空");
+        Preconditions.checkNotNull(model, "The query data set entity is empty.");
         List<BeanProperties> fields = BeanUtils.getFields(model);
 
 
@@ -356,7 +356,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
     }
 
     /**
-     * 判断主键是否为空
+     * Determines whether the primary key is empty.
      *
      * @param model T
      * @return boolean
@@ -367,7 +367,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
     }
 
     /**
-     * 判断主键是否为空
+     * Determines whether the primary key is empty.
      *
      * @param fields List
      * @return boolean

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DataQueryController {
 
     @PostMapping("/fetchReportInfo/{code}")
-    public ApiResult<ReportVO> fetchReportInfo(@PathVariable("code") String code) {
+    public ApiResult<ReportVO> fetchReportInfo(@PathVariable(name = "code") String code) {
         log.debug(code);
         return ApiResult.ofData(null);
     }

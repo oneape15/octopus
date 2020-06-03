@@ -60,14 +60,14 @@ public class ReportGroupServiceImpl implements ReportGroupService {
     }
 
     /**
-     * 修改数据
+     * Modify the data.
      *
      * @param model T
      * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int edit(ReportGroupDO model) {
-        Preconditions.checkNotNull(model.getId(), "主键Key为空");
+        Preconditions.checkNotNull(model.getId(), "The primary Key is empty.");
 
         Long parentId = model.getParentId();
         if (parentId == null) {
@@ -96,14 +96,14 @@ public class ReportGroupServiceImpl implements ReportGroupService {
     }
 
     /**
-     * 根据主键Id删除
+     * Delete by primary key Id.
      *
      * @param model T
      * @return int 1 - success; 0 - fail.；
      */
     @Override
     public int deleteById(ReportGroupDO model) {
-        Preconditions.checkNotNull(model.getId() , "主键Key为空");
+        Preconditions.checkNotNull(model.getId() , "The primary Key is empty.");
         ReportGroupDO query = new ReportGroupDO();
         query.setParentId(model.getId());
         int size = reportGroupMapper.size(query);

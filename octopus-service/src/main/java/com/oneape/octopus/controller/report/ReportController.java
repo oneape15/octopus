@@ -6,12 +6,9 @@ import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.common.enums.ReportParamType;
 import com.oneape.octopus.common.enums.ReportType;
 import com.oneape.octopus.commons.value.Pair;
-import com.oneape.octopus.controller.report.form.GroupForm;
 import com.oneape.octopus.controller.report.form.ReportForm;
 import com.oneape.octopus.controller.report.form.ReportSqlForm;
-import com.oneape.octopus.datasource.DataType;
 import com.oneape.octopus.model.VO.*;
-import com.oneape.octopus.service.report.ReportGroupService;
 import com.oneape.octopus.service.report.ReportService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +22,7 @@ import java.util.List;
 public class ReportController {
 
     @Resource
-    private ReportService      reportService;
-    @Resource
-    private ReportGroupService reportGroupService;
+    private ReportService reportService;
 
     /**
      * 添加报表
@@ -69,7 +64,7 @@ public class ReportController {
      * 复制报表
      */
     @PostMapping(value = "/design/copy/{reportId}", consumes = "application/json")
-    public ApiResult<String> doCopy(@PathVariable("reportId") Long reportId) {
+    public ApiResult<String> doCopy(@PathVariable(name = "reportId") Long reportId) {
         int status = reportService.copyReport(reportId);
         if (status > 0) {
             return ApiResult.ofData("复制报表成功");
@@ -100,26 +95,6 @@ public class ReportController {
     }
 
     /**
-     * 获取数据类型
-     */
-    @PostMapping("/design/dataTypes")
-    public ApiResult<List<Pair<String, String>>> getDataTypes() {
-        List<Pair<String, String>> types = new ArrayList<>();
-        for (DataType rt : DataType.values()) {
-            types.add(new Pair<>(rt.name(), rt.name()));
-        }
-        return ApiResult.ofData(types);
-    }
-
-    /**
-     * 获取报表树型结构(报表组与报表结合)
-     */
-    @PostMapping("/design/reportTree")
-    public ApiResult<List<TreeNodeVO>> reportTree(@RequestBody @Validated ReportForm form) {
-        return ApiResult.ofData(reportService.getReportTree(form.getLov(), form.getFilterIds(), form.getFixOption()));
-    }
-
-    /**
      * 获取查询字段类型
      */
     @PostMapping("/design/paramTypes")
@@ -136,7 +111,7 @@ public class ReportController {
      * 获取报表查询参数信息
      */
     @PostMapping("/design/params/{reportId}")
-    public ApiResult<List<ReportParamVO>> getParamByReportId(@PathVariable(value = "reportId") Long reportId) {
+    public ApiResult<List<ReportParamVO>> getParamByReportId(@PathVariable(name = "reportId") Long reportId) {
         return ApiResult.ofData(reportService.getParamByReportId(reportId));
     }
 
@@ -156,7 +131,7 @@ public class ReportController {
      * 获取报表字段信息
      */
     @PostMapping("/design/columns/{reportId}")
-    public ApiResult<List<ReportColumnVO>> getColumnByReportId(@PathVariable(value = "reportId") Long reportId) {
+    public ApiResult<List<ReportColumnVO>> getColumnByReportId(@PathVariable(name = "reportId") Long reportId) {
         return ApiResult.ofData(reportService.getColumnByReportId(reportId));
     }
 
@@ -188,60 +163,7 @@ public class ReportController {
      * 根据SQL主键获取详细信息
      */
     @PostMapping("/design/sql/{sqlId}")
-    public ApiResult<ReportSqlVO> getReportSql(@PathVariable(value = "sqlId") Long sqlId) {
+    public ApiResult<ReportSqlVO> getReportSql(@PathVariable(name = "sqlId") Long sqlId) {
         return ApiResult.ofData(reportService.getReportSql(sqlId));
-    }
-
-    /**
-     * 添加报表组
-     */
-    @PostMapping("/group/add")
-    public ApiResult<String> doAddGroup(@RequestBody @Validated(value = GroupForm.AddCheck.class) GroupForm form) {
-        int status = reportGroupService.insert(form.toDO());
-        if (status > 0) {
-            return ApiResult.ofData("创建报表组成功");
-        }
-        return ApiResult.ofError(StateCode.BizError, "创建报表组失败");
-    }
-
-    /**
-     * 修改报表组
-     */
-    @PostMapping("/group/edit")
-    public ApiResult<String> doEditGroup(@RequestBody @Validated(value = GroupForm.EditCheck.class) GroupForm form) {
-        int status = reportGroupService.edit(form.toDO());
-        if (status > 0) {
-            return ApiResult.ofData("修改报表组成功");
-        }
-        return ApiResult.ofError(StateCode.BizError, "修改报表组失败");
-    }
-
-    /**
-     * 删除报表组
-     */
-    @PostMapping("/group/del")
-    public ApiResult<String> doDelGroup(@RequestBody @Validated(value = GroupForm.KeyCheck.class) GroupForm form) {
-        int status = reportGroupService.deleteById(form.toDO());
-        if (status > 0) {
-            return ApiResult.ofData("删除报表组成功");
-        }
-        return ApiResult.ofError(StateCode.BizError, "删除报表组失败");
-    }
-
-    /**
-     * 数据列表(不分页)
-     */
-    @PostMapping("/group/list")
-    public ApiResult<List<ReportGroupVO>> doList(@RequestBody @Validated GroupForm form) {
-        List<ReportGroupVO> vos = reportGroupService.find(form.toDO());
-        return ApiResult.ofData(vos);
-    }
-
-    /**
-     * 获取报表组树形结构
-     */
-    @PostMapping("/group/trees")
-    public ApiResult<List<TreeNodeVO>> getGroupTree() {
-        return ApiResult.ofData(reportGroupService.getGroupTree());
     }
 }

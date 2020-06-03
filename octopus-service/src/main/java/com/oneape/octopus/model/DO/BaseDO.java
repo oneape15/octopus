@@ -11,32 +11,32 @@ import java.io.Serializable;
 @Data
 public class BaseDO implements Serializable {
     /**
-     * 主键
+     * the primary key.
      */
     @AutoUniqueId
     @Column(name = "id", unique = true, nullable = false)
-    private Long id;
+    private Long    id;
     /**
-     * 归档状态 0 - 正常； 1 - 已删除；
+     * The soft deleted status. 0 - normal； 1 - archive；
      */
     @Column(name = "archive", nullable = false)
     private Integer archive;
     /**
-     * 创建人
+     * creator of the data.
      */
     @Creator
-    private Long creator;
+    private Long    creator;
     /**
-     * 创建时间
+     * create time of the data.
      */
-    private Long created;
+    private Long    created;
     /**
-     * 修改人
+     * modifier of the data.
      */
     @Modifier
-    private Long modifier;
+    private Long    modifier;
     /**
-     * 修改时间
+     * Recently, update time of the data.
      */
-    private Long modified;
+    private Long    modified;
 }

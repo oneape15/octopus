@@ -2,17 +2,15 @@ package com.oneape.octopus.controller.schema;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.StateCode;
-import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.controller.schema.form.DatasourceForm;
-import com.oneape.octopus.datasource.*;
-import com.oneape.octopus.datasource.schema.FieldInfo;
-import com.oneape.octopus.datasource.schema.TableInfo;
+import com.oneape.octopus.datasource.DataType;
+import com.oneape.octopus.datasource.DatasourceFactory;
+import com.oneape.octopus.datasource.DatasourceInfo;
+import com.oneape.octopus.datasource.DatasourceTypeHelper;
 import com.oneape.octopus.model.DO.schema.DatasourceDO;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.service.schema.DatasourceService;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 数据源管理
+ * Data source information management。
  */
 @RestController
 @RequestMapping("/ds")
@@ -33,34 +31,32 @@ public class DatasourceController {
     private DatasourceService datasourceService;
     @Resource
     private DatasourceFactory datasourceFactory;
-    @Resource
-    private QueryFactory      queryFactory;
 
     @PostMapping("/add")
     public ApiResult<String> doAddDs(@RequestBody @Validated(value = DatasourceForm.AddCheck.class) DatasourceForm form) {
         int status = datasourceService.insert(form.toDO());
         if (status > 0) {
-            return ApiResult.ofData("添加数据源成功");
+            return ApiResult.ofData("Data source added successfully.");
         }
-        return ApiResult.ofError(StateCode.BizError, "添加数据源失败");
+        return ApiResult.ofError(StateCode.BizError, "Data source added fail.");
     }
 
     @PostMapping("/edit")
     public ApiResult<String> doEditDs(@RequestBody @Validated(value = DatasourceForm.EditCheck.class) DatasourceForm form) {
         int status = datasourceService.edit(form.toDO());
         if (status > 0) {
-            return ApiResult.ofData("修改数据源成功");
+            return ApiResult.ofData("Data source edited successfully.");
         }
-        return ApiResult.ofError(StateCode.BizError, "修改数据源失败");
+        return ApiResult.ofError(StateCode.BizError, "Data source edited fail.");
     }
 
     @PostMapping("/del")
     public ApiResult<String> doDelDs(@RequestBody @Validated(value = DatasourceForm.KeyCheck.class) DatasourceForm form) {
         int status = datasourceService.deleteById(form.toDO());
         if (status > 0) {
-            return ApiResult.ofData("删除数据源成功");
+            return ApiResult.ofData("Data source deleted successfully.");
         }
-        return ApiResult.ofError(StateCode.BizError, "删除数据源失败");
+        return ApiResult.ofError(StateCode.BizError, "Data source deleted fail.");
     }
 
     @PostMapping(value = "/list")
@@ -71,7 +67,7 @@ public class DatasourceController {
     }
 
     /**
-     * 获取支持的数据源类型
+     * Gets the supported data source type
      */
     @RequestMapping(value = "/getAllDsTypes", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResult<List<Map<String, String>>> getAllDsTypes() {
@@ -86,7 +82,7 @@ public class DatasourceController {
     }
 
     /**
-     * 获取所有可用数据源
+     * Take all available data sources.
      */
     @RequestMapping(value = "/getAllSimple", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResult<List<DatasourceDO>> getAllSimple() {
@@ -94,7 +90,7 @@ public class DatasourceController {
     }
 
     /**
-     * 数据源测试
+     * Test whether the data source is available.
      */
     @RequestMapping(value = "/test", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResult<String> testConnection(@RequestBody @Validated(value = DatasourceForm.AddCheck.class) DatasourceForm form) {
@@ -106,54 +102,14 @@ public class DatasourceController {
         dsi.setTestSql(StringUtils.isBlank(form.getTestSql()) ? "select 1" : form.getTestSql());
         boolean success = datasourceFactory.testDatasource(dsi);
         if (success) {
-            return ApiResult.ofData("数据库连接测试成功");
+            return ApiResult.ofData("The database connection test was successful.");
         }
-        return ApiResult.ofError(StateCode.BizError, "数据库连接测试失败");
-    }
-
-    /**
-     * 根据数据源id 获取包括的所有表信息
-     */
-    @PostMapping("/getTables")
-    public ApiResult<List<TableInfo>> getDatasourceTables(@RequestBody @Validated(value = DatasourceForm.KeyCheck.class) DatasourceForm form) {
-        DatasourceInfo dsi = Preconditions.checkNotNull(datasourceService.getDatasourceInfoById(form.getId()),
-                "数据源信息为空");
-
-        String schema = queryFactory.getSchema(dsi);
-        List<TableInfo> tables = queryFactory.allTables(dsi, schema);
-
-        return ApiResult.ofData(tables);
-    }
-
-    /**
-     * 根据数据源id 获取包括的所有表及其字段信息
-     */
-    @PostMapping("/getTablesAndColumns")
-    public ApiResult<List<Pair<String, List<String>>>> getDataSourceDetail(
-            @RequestBody @Validated(value = DatasourceForm.KeyCheck.class) DatasourceForm form) {
-        List<Pair<String, List<String>>> pairs = new ArrayList<>();
-        DatasourceInfo dsi = Preconditions.checkNotNull(datasourceService.getDatasourceInfoById(form.getId()),
-                "数据源信息为空");
-
-        String schema = queryFactory.getSchema(dsi);
-        List<FieldInfo> fields = queryFactory.allFields(dsi, schema);
-        if (CollectionUtils.isNotEmpty(fields)) {
-            Map<String, List<String>> map = new HashMap<>();
-            fields.forEach(f -> {
-                if (!map.containsKey(f.getTableName())) {
-                    map.put(f.getTableName(), new ArrayList<>());
-                }
-                map.get(f.getTableName()).add(f.getName());
-            });
-
-            map.forEach((key, value) -> pairs.add(new Pair<>(key, value)));
-        }
-        return ApiResult.ofData(pairs);
+        return ApiResult.ofError(StateCode.BizError, "The database connection test was fail.");
     }
 
 
     /**
-     * 获取所有数据类型
+     * Gets all data types.
      */
     @PostMapping("/getDataTypes")
     public ApiResult<List<String>> getDataTypes() {

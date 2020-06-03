@@ -1,6 +1,5 @@
 package com.oneape.octopus.service.schema;
 
-import com.oneape.octopus.model.DO.schema.DatasourceDO;
 import com.oneape.octopus.model.DO.schema.TableColumnDO;
 import com.oneape.octopus.model.DO.schema.TableSchemaDO;
 
@@ -16,10 +15,10 @@ public interface SchemaService {
     /**
      * Pulls the specified data source information and saves it.
      *
-     * @param ddo DatasourceDO
+     * @param dsId Long
      * @return 0 - fail; 1 - success;
      */
-    int fetchAndSaveDatabaseInfo(DatasourceDO ddo);
+    int fetchAndSaveDatabaseInfo(Long dsId);
 
     /**
      * @param dsId      Long

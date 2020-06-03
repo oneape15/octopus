@@ -1,12 +1,9 @@
 package com.oneape.octopus.controller.schema;
 
-import com.google.common.base.Preconditions;
 import com.oneape.octopus.controller.schema.form.TableColumnForm;
-import com.oneape.octopus.model.DO.schema.DatasourceDO;
 import com.oneape.octopus.model.DO.schema.TableColumnDO;
 import com.oneape.octopus.model.DO.schema.TableSchemaDO;
 import com.oneape.octopus.model.VO.ApiResult;
-import com.oneape.octopus.service.schema.DatasourceService;
 import com.oneape.octopus.service.schema.SchemaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -26,14 +23,11 @@ import java.util.List;
 public class SchemaController {
 
     @Resource
-    private DatasourceService datasourceService;
-    @Resource
-    private SchemaService     schemaService;
+    private SchemaService schemaService;
 
     @RequestMapping(value = "/reloadDatabase/{dsId}", method = {RequestMethod.GET})
     public ApiResult reloadDatabaseById(@PathVariable(name = "dsId") Long dsId) {
-        DatasourceDO ddo = Preconditions.checkNotNull(datasourceService.findById(dsId), "The data source does not exist");
-        int status = schemaService.fetchAndSaveDatabaseInfo(ddo);
+        int status = schemaService.fetchAndSaveDatabaseInfo(dsId);
         if (status <= 0) {
             return ApiResult.ofMessage("Pull data source Schema fail!");
         }
@@ -42,7 +36,6 @@ public class SchemaController {
 
     @RequestMapping(value = "/fetchTableList/{dsId}", method = {RequestMethod.GET})
     public ApiResult<List<TableSchemaDO>> fetchTableList(@PathVariable(name = "dsId") Long dsId) {
-        Preconditions.checkNotNull(datasourceService.findById(dsId), "The data source does not exist");
         List<TableSchemaDO> tableSchemaDOs = schemaService.fetchTableList(dsId);
 
         return ApiResult.ofData(tableSchemaDOs);
@@ -51,7 +44,6 @@ public class SchemaController {
     @RequestMapping(value = "/fetchTableColumnList/{dsId}/{tableName}", method = {RequestMethod.GET})
     public ApiResult<List<TableColumnDO>> fetchTableColumnList(@PathVariable(name = "dsId") Long dsId,
                                                                @PathVariable(name = "tableName") String tableName) {
-        Preconditions.checkNotNull(datasourceService.findById(dsId), "The data source does not exist");
         List<TableColumnDO> tableSchemaDOs = schemaService.fetchTableColumnList(dsId, tableName);
 
         return ApiResult.ofData(tableSchemaDOs);

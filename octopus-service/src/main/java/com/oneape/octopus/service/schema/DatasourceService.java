@@ -9,7 +9,7 @@ import java.util.List;
 public interface DatasourceService extends BaseService<DatasourceDO> {
 
     /**
-     * 根据对象进行查询
+     * Query by object.
      *
      * @param datasource DatasourceDO
      * @return List
@@ -17,7 +17,7 @@ public interface DatasourceService extends BaseService<DatasourceDO> {
     List<DatasourceDO> find(DatasourceDO datasource);
 
     /**
-     * 根据Id获取数据源信息
+     * Query by data source information  based on the primary key.
      *
      * @param dsId Long
      * @return DatasourceDO
@@ -25,7 +25,7 @@ public interface DatasourceService extends BaseService<DatasourceDO> {
     DatasourceDO findById(Long dsId);
 
     /**
-     * 根据Id获取数据源信息
+     * Get the data source information based on the Id.
      *
      * @param dsId Long
      * @return DatasourceInfo

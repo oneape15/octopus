@@ -161,7 +161,7 @@ public class ModelServiceImpl implements ModelService {
     }
 
     /**
-     * 修改数据
+     * Modify the data.
      *
      * @param model T
      * @return int 1 - success; 0 - fail.；
@@ -183,7 +183,7 @@ public class ModelServiceImpl implements ModelService {
     }
 
     /**
-     * 根据主键Id删除
+     * Delete by primary key Id.
      *
      * @param model T
      * @return int 1 - success; 0 - fail.；

@@ -3,13 +3,11 @@ package com.oneape.octopus.service.schema.impl;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.datasource.DatasourceInfo;
-import com.oneape.octopus.datasource.DatasourceTypeHelper;
 import com.oneape.octopus.datasource.QueryFactory;
 import com.oneape.octopus.datasource.schema.FieldInfo;
 import com.oneape.octopus.datasource.schema.TableInfo;
 import com.oneape.octopus.mapper.schema.TableColumnMapper;
 import com.oneape.octopus.mapper.schema.TableSchemaMapper;
-import com.oneape.octopus.model.DO.schema.DatasourceDO;
 import com.oneape.octopus.model.DO.schema.TableColumnDO;
 import com.oneape.octopus.model.DO.schema.TableSchemaDO;
 import com.oneape.octopus.service.schema.DatasourceService;
@@ -52,13 +50,12 @@ public class SchemaServiceImpl implements SchemaService {
     /**
      * Pulls the specified data source information and saves it.
      *
-     * @param ddo DatasourceDO
+     * @param dsId Long
      * @return 0 - fail; 1 - success;
      */
     @Override
-    public int fetchAndSaveDatabaseInfo(DatasourceDO ddo) {
-        Preconditions.checkNotNull(ddo, "data source info is NULL");
-        DatasourceInfo dsi = fromDatasourceDO(ddo);
+    public int fetchAndSaveDatabaseInfo(Long dsId) {
+        DatasourceInfo dsi = Preconditions.checkNotNull(datasourceService.getDatasourceInfoById(dsId), "The data source does not exist。 dsId: " + dsId);
 
         // Get the database name
         String schema = queryFactory.getSchema(dsi);
@@ -72,7 +69,7 @@ public class SchemaServiceImpl implements SchemaService {
             return 1;
         }
 
-        List<String> existTableNames = tableSchemaMapper.getTableNameList(ddo.getId());
+        List<String> existTableNames = tableSchemaMapper.getTableNameList(dsId);
 
         List<TableSchemaDO> needInsertList = new ArrayList<>();
         List<String> allTables = new ArrayList<>();
@@ -85,7 +82,7 @@ public class SchemaServiceImpl implements SchemaService {
             }
 
             TableSchemaDO tsdo = new TableSchemaDO();
-            tsdo.setDatasourceId(ddo.getId());
+            tsdo.setDatasourceId(dsId);
             tsdo.setName(tableName);
             if (StringUtils.isNotBlank(ti.getComment())) {
                 tsdo.setComment(ti.getComment());
@@ -99,23 +96,11 @@ public class SchemaServiceImpl implements SchemaService {
         // Deletes a data table that no longer exists.
         existTableNames.removeAll(allTables);
         if (CollectionUtils.isNotEmpty(existTableNames)) {
-            tableSchemaMapper.dropTableBy(ddo.getId(), existTableNames);
+            tableSchemaMapper.dropTableBy(dsId, existTableNames);
         }
 
         log.info("Pulls the specified data source information and saves it success!");
         return 1;
-    }
-
-    // The assembly objects
-    private DatasourceInfo fromDatasourceDO(DatasourceDO ddo) {
-        DatasourceInfo dsi = new DatasourceInfo();
-        dsi.setId(ddo.getId());
-        dsi.setDatasourceType(DatasourceTypeHelper.byName(ddo.getType()));
-        dsi.setUsername(ddo.getUsername());
-        dsi.setPassword(ddo.getPassword());
-        dsi.setUrl(ddo.getJdbcUrl());
-
-        return dsi;
     }
 
     /**
@@ -126,9 +111,7 @@ public class SchemaServiceImpl implements SchemaService {
     @Override
     public int fetchAndSaveTableColumnInfo(Long dsId, String tableName) {
         Preconditions.checkArgument(StringUtils.isNotBlank(tableName), "The table name is null.");
-        DatasourceDO ddo = Preconditions.checkNotNull(datasourceService.findById(dsId), "The data source does not exist。 dsId: " + dsId);
-
-        DatasourceInfo dsi = fromDatasourceDO(ddo);
+        DatasourceInfo dsi = Preconditions.checkNotNull(datasourceService.getDatasourceInfoById(dsId), "The data source does not exist。 dsId: " + dsId);
 
         // Get the database name
         String schema = queryFactory.getSchema(dsi);
@@ -182,6 +165,7 @@ public class SchemaServiceImpl implements SchemaService {
      */
     @Override
     public List<TableColumnDO> fetchTableColumnList(Long dsId, String tableName) {
+        Preconditions.checkNotNull(datasourceService.findById(dsId), "The data source does not exist");
         return tableColumnMapper.getTableColumnList(dsId, tableName);
     }
 
@@ -191,6 +175,7 @@ public class SchemaServiceImpl implements SchemaService {
      */
     @Override
     public List<TableSchemaDO> fetchTableList(Long dsId) {
+        Preconditions.checkNotNull(datasourceService.findById(dsId), "The data source does not exist");
         return tableSchemaMapper.list(new TableSchemaDO(dsId));
     }
 

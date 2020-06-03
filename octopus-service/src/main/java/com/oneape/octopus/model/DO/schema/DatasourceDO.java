@@ -8,52 +8,52 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 
 /**
- * 数据源DO
+ * The data source DO
  */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class DatasourceDO extends BaseDO {
     /**
-     * 数据库名称
+     * The data source name.
      */
     private String  name;
     /**
-     * 数据源类型 MySQL, Oracle
+     * The data source type. eg: MySQL, Oracle
      */
     private String  type;
     /**
-     * 状态, 0 - 可用; 1 - 不可用
+     * The data source statue , 0 - usable; 1 - disabled
      */
     private Integer status;
     /**
-     * 数据源地址
+     * The data source jdbc url.
      */
     @Column(name = "jdbc_url")
     private String  jdbcUrl;
     /**
-     * jdbc驱动
+     * The data source driver class.
      */
     @Column(name = "jdbc_driver")
     private String  jdbcDriver;
     /**
-     * 数据源用户名
+     * The data source login username.
      */
     private String  username;
     /**
-     * 数据源登录密码
+     * The data source login password.
      */
     private String  password;
     /**
-     * 同步状态 0 - 不同步; 1 - 同步
+     * Data source synchronization state. 0 - Out of sync; 1 - sync
      */
     private Integer sync;
     /**
-     * 同步周期表达式 '0 0 9 * * ?'
+     * Synchronization period expression '0 0 9 * * ?'
      */
     private String  cron;
     /**
-     * 连接池超时时间(ms)
+     * Connection pool timeout(ms)
      */
     private Integer timeout;
     /**
