@@ -54,8 +54,8 @@ public interface TableSchemaMapper {
      * @param tableNames List
      * @return int
      */
-    @UpdateProvider(type = TableSchemaSqlProvider.class, method = "deleteBy")
-    int deleteBy(@Param("dsId") Long dsId, @Param("tableNames") List<String> tableNames);
+    @UpdateProvider(type = TableSchemaSqlProvider.class, method = "dropTableBy")
+    int dropTableBy(@Param("dsId") Long dsId, @Param("tableNames") List<String> tableNames);
 
     /**
      * @param dsId Long

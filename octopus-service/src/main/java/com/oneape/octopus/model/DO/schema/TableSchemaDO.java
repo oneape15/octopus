@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 
 /**
+ * Table basic information object.
  * Created by oneape<oneape15@163.com>
  * Created 2020-05-28 09:55.
  * Modify:

@@ -68,8 +68,8 @@ public interface TableColumnMapper {
      * @param columns   List
      * @return int
      */
-    @UpdateProvider(type = TableColumnSqlProvider.class, method = "deleteBy")
-    int deleteBy(@Param("dsId") Long dsId, @Param("tableName") String tableName, @Param("columns") List<String> columns);
+    @UpdateProvider(type = TableColumnSqlProvider.class, method = "dropColumnBy")
+    int dropColumnBy(@Param("dsId") Long dsId, @Param("tableName") String tableName, @Param("columns") List<String> columns);
 
     /**
      * @param dsId      Long

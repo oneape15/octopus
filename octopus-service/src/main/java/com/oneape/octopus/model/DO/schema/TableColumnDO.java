@@ -16,7 +16,7 @@ import javax.persistence.Column;
 public class TableColumnDO extends BaseDO {
 
     @Column(name = "datasource_id")
-    private String datasourceId;
+    private Long   datasourceId;
     /**
      * the table name
      */
@@ -29,7 +29,7 @@ public class TableColumnDO extends BaseDO {
      */
     private String  alias;
     /**
-     *  eg. INTEGER, FLOAT, STRING, DECIMAL ...
+     * eg. INTEGER, FLOAT, STRING, DECIMAL ...
      */
     @Column(name = "data_type")
     private String  dataType;

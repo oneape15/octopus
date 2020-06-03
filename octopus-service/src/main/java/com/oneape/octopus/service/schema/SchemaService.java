@@ -26,6 +26,13 @@ public interface SchemaService {
      * @param tableName String
      * @return List
      */
+    int fetchAndSaveTableColumnInfo(Long dsId, String tableName);
+
+    /**
+     * @param dsId      Long
+     * @param tableName String
+     * @return List
+     */
     List<TableColumnDO> fetchTableColumnList(Long dsId, String tableName);
 
     /**

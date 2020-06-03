@@ -5,12 +5,14 @@ import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.datasource.DatasourceInfo;
 import com.oneape.octopus.datasource.DatasourceTypeHelper;
 import com.oneape.octopus.datasource.QueryFactory;
+import com.oneape.octopus.datasource.schema.FieldInfo;
 import com.oneape.octopus.datasource.schema.TableInfo;
 import com.oneape.octopus.mapper.schema.TableColumnMapper;
 import com.oneape.octopus.mapper.schema.TableSchemaMapper;
 import com.oneape.octopus.model.DO.schema.DatasourceDO;
 import com.oneape.octopus.model.DO.schema.TableColumnDO;
 import com.oneape.octopus.model.DO.schema.TableSchemaDO;
+import com.oneape.octopus.service.schema.DatasourceService;
 import com.oneape.octopus.service.schema.SchemaService;
 import com.oneape.octopus.service.uid.UIDGeneratorService;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +46,8 @@ public class SchemaServiceImpl implements SchemaService {
     private SqlSessionFactory   sqlSessionFactory;
     @Resource
     private UIDGeneratorService uidGeneratorService;
+    @Resource
+    private DatasourceService   datasourceService;
 
     /**
      * Pulls the specified data source information and saves it.
@@ -54,12 +58,7 @@ public class SchemaServiceImpl implements SchemaService {
     @Override
     public int fetchAndSaveDatabaseInfo(DatasourceDO ddo) {
         Preconditions.checkNotNull(ddo, "data source info is NULL");
-        DatasourceInfo dsi = new DatasourceInfo();
-        dsi.setId(ddo.getId());
-        dsi.setDatasourceType(DatasourceTypeHelper.byName(ddo.getType()));
-        dsi.setUsername(ddo.getUsername());
-        dsi.setPassword(ddo.getPassword());
-        dsi.setUrl(ddo.getJdbcUrl());
+        DatasourceInfo dsi = fromDatasourceDO(ddo);
 
         // Get the database name
         String schema = queryFactory.getSchema(dsi);
@@ -100,7 +99,76 @@ public class SchemaServiceImpl implements SchemaService {
         // Deletes a data table that no longer exists.
         existTableNames.removeAll(allTables);
         if (CollectionUtils.isNotEmpty(existTableNames)) {
-            tableSchemaMapper.deleteBy(ddo.getId(), existTableNames);
+            tableSchemaMapper.dropTableBy(ddo.getId(), existTableNames);
+        }
+
+        log.info("Pulls the specified data source information and saves it success!");
+        return 1;
+    }
+
+    // The assembly objects
+    private DatasourceInfo fromDatasourceDO(DatasourceDO ddo) {
+        DatasourceInfo dsi = new DatasourceInfo();
+        dsi.setId(ddo.getId());
+        dsi.setDatasourceType(DatasourceTypeHelper.byName(ddo.getType()));
+        dsi.setUsername(ddo.getUsername());
+        dsi.setPassword(ddo.getPassword());
+        dsi.setUrl(ddo.getJdbcUrl());
+
+        return dsi;
+    }
+
+    /**
+     * @param dsId      Long
+     * @param tableName String
+     * @return List
+     */
+    @Override
+    public int fetchAndSaveTableColumnInfo(Long dsId, String tableName) {
+        Preconditions.checkArgument(StringUtils.isNotBlank(tableName), "The table name is null.");
+        DatasourceDO ddo = Preconditions.checkNotNull(datasourceService.findById(dsId), "The data source does not exist。 dsId: " + dsId);
+
+        DatasourceInfo dsi = fromDatasourceDO(ddo);
+
+        // Get the database name
+        String schema = queryFactory.getSchema(dsi);
+        if (StringUtils.isBlank(schema)) {
+            throw new BizException("Failed to get database name~");
+        }
+
+        List<FieldInfo> fieldList = queryFactory.fieldOfTable(dsi, schema, tableName);
+        List<String> existColumnNames = tableColumnMapper.getTableColumnNameList(dsId, tableName);
+
+        List<TableColumnDO> needInsertList = new ArrayList<>();
+        List<String> allColumns = new ArrayList<>();
+        for (FieldInfo fi : fieldList) {
+            String columnName = fi.getName();
+
+            allColumns.add(columnName);
+            if (existColumnNames.contains(columnName)) {
+                continue;
+            }
+
+            TableColumnDO tcdo = new TableColumnDO();
+            tcdo.setDatasourceId(dsId);
+            tcdo.setTableName(tableName);
+            tcdo.setName(columnName);
+            tcdo.setDataType(fi.getDataType().name());
+            tcdo.setClassify(fi.getPrimaryKey() ? 1 : 0);
+            tcdo.setHeat(0L);
+            tcdo.setStatus(0);
+            tcdo.setComment(fi.getComment());
+
+            needInsertList.add(tcdo);
+        }
+
+        // save table column info to db.
+        batchInsertTableColumnInfo(needInsertList);
+
+        // Deletes the data table column that no longer exists.
+        existColumnNames.removeAll(allColumns);
+        if (CollectionUtils.isNotEmpty(existColumnNames)) {
+            tableColumnMapper.dropColumnBy(dsId, tableName, existColumnNames);
         }
 
         log.info("Pulls the specified data source information and saves it success!");
@@ -134,6 +202,8 @@ public class SchemaServiceImpl implements SchemaService {
      */
     @Override
     public int changeTableColumnInfo(TableColumnDO tcDo) {
+        Preconditions.checkNotNull(tcDo, "The column object is null.");
+        Preconditions.checkArgument(tcDo.getId() != null, "The  primary key of column is null.");
         return tableColumnMapper.update(tcDo);
     }
 
@@ -169,6 +239,15 @@ public class SchemaServiceImpl implements SchemaService {
         }
 
         return tableColumnMapper.updateTableColumnHeatValue(dsId, tableName, columns);
+    }
+
+    /**
+     * Batch insert table column information
+     *
+     * @param columnDOs List
+     */
+    private void batchInsertTableColumnInfo(List<TableColumnDO> columnDOs) {
+
     }
 
     /**

@@ -3,9 +3,7 @@ package com.oneape.octopus.mapper.schema.provider;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.enums.Archive;
 import com.oneape.octopus.mapper.BaseSqlProvider;
-import com.oneape.octopus.model.DO.schema.DatasourceDO;
 import com.oneape.octopus.model.DO.schema.TableColumnDO;
-import com.oneape.octopus.model.DO.schema.TableSchemaDO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
@@ -25,7 +23,7 @@ public class TableSchemaSqlProvider extends BaseSqlProvider<TableColumnDO> {
         return TABLE_NAME;
     }
 
-    public String deleteBy(@Param("dsId") Long dsId, @Param("tableNames") List<String> tableNames) {
+    public String dropTableBy(@Param("dsId") Long dsId, @Param("tableNames") List<String> tableNames) {
         Preconditions.checkArgument(CollectionUtils.isNotEmpty(tableNames), "The data table name cannot be empty.");
 
         StringBuilder sb = new StringBuilder(" table_name IN (");
@@ -40,8 +38,7 @@ public class TableSchemaSqlProvider extends BaseSqlProvider<TableColumnDO> {
         return new SQL() {
             {
                 UPDATE(getTableName());
-                SET(FIELD_ARCHIVE + "=" + Archive.ARCHIVE.value(),
-                        FIELD_MODIFIER + "= -1",
+                SET("status = 1",
                         FIELD_MODIFIED + "=" + DB_CURRENT_TIME);
                 WHERE(FIELD_ARCHIVE + "=" + Archive.NORMAL.value(),
                         "datasource_id = #{dsId}",
