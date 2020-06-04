@@ -145,7 +145,7 @@ public class ModelServiceImpl implements ModelService {
      * Add data to table.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int insert(ModelDO model) {
@@ -164,7 +164,7 @@ public class ModelServiceImpl implements ModelService {
      * Modify the data.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int edit(ModelDO model) {
@@ -186,7 +186,7 @@ public class ModelServiceImpl implements ModelService {
      * Delete by primary key Id.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     @Transactional

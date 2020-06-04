@@ -7,7 +7,7 @@ public class ResourceSqlProvider extends BaseSqlProvider<ResourceDO> {
     public static final String TABLE_NAME = "sys_resource";
 
     /**
-     * 获取表名
+     * Gets the table name.
      *
      * @return String
      */

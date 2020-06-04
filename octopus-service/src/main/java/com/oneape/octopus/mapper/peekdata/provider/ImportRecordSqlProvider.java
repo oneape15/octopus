@@ -7,7 +7,7 @@ public class ImportRecordSqlProvider extends BaseSqlProvider<ImportRecordDO> {
     public static final String TABLE_NAME = "pd_import_record";
 
     /**
-     * 获取表名
+     * Gets the table name.
      *
      * @return String
      */

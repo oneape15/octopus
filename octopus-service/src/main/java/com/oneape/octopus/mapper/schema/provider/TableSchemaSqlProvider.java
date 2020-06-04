@@ -1,7 +1,7 @@
 package com.oneape.octopus.mapper.schema.provider;
 
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.common.enums.Archive;
+import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.model.DO.schema.TableColumnDO;
 import org.apache.commons.collections4.CollectionUtils;
@@ -11,7 +11,7 @@ import org.apache.ibatis.jdbc.SQL;
 import java.util.List;
 
 public class TableSchemaSqlProvider extends BaseSqlProvider<TableColumnDO> {
-    public static final String TABLE_NAME = "r_table_schema";
+    public static final String TABLE_NAME = "table_schema";
 
     /**
      * get table name.

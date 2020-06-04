@@ -56,7 +56,7 @@ public class CommonInfoServiceImpl implements CommonInfoService {
      * Add data to table.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int insert(CommonInfoDO model) {
@@ -83,7 +83,7 @@ public class CommonInfoServiceImpl implements CommonInfoService {
      * Modify the data.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int edit(CommonInfoDO model) {
@@ -114,7 +114,7 @@ public class CommonInfoServiceImpl implements CommonInfoService {
      * Delete by primary key Id.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int deleteById(CommonInfoDO model) {

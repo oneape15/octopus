@@ -2,7 +2,7 @@ package com.oneape.octopus.mapper;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.SessionThreadLocal;
-import com.oneape.octopus.common.enums.Archive;
+import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.commons.dto.BeanProperties;
 import com.oneape.octopus.commons.value.BeanUtils;
 import com.oneape.octopus.model.DO.BaseDO;

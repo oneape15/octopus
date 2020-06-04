@@ -45,7 +45,7 @@ public class ModelTagServiceImpl implements ModelTagService {
      * Add data to table.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int insert(ModelTagDO model) {
@@ -67,7 +67,7 @@ public class ModelTagServiceImpl implements ModelTagService {
      * Modify the data.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int edit(ModelTagDO model) {
@@ -92,7 +92,7 @@ public class ModelTagServiceImpl implements ModelTagService {
      * Delete by primary key Id.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int deleteById(ModelTagDO model) {

@@ -55,7 +55,7 @@ public interface CommonInfoMapper {
     List<CommonInfoDO> list(@Param("model") CommonInfoDO model);
 
     /**
-     * 获取数量
+     * Get the common info size.
      *
      * @param model T
      * @return int

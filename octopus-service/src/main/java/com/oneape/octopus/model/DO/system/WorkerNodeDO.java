@@ -1,6 +1,6 @@
 package com.oneape.octopus.model.DO.system;
 
-import com.oneape.octopus.common.enums.WorkerNodeType;
+import com.oneape.octopus.model.enums.WorkerNodeType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

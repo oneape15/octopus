@@ -58,7 +58,7 @@ public interface UserMapper {
     List<UserDO> list(@Param("model") UserDO model);
 
     /**
-     * 根据登录名查询用户信息
+     * Query user information by login name.
      *
      * @param username String
      * @return UserDO

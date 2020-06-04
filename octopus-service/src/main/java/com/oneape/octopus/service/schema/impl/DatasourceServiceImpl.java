@@ -2,7 +2,7 @@ package com.oneape.octopus.service.schema.impl;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.BizException;
-import com.oneape.octopus.common.enums.Archive;
+import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.commons.security.PBEUtils;
 import com.oneape.octopus.datasource.DatasourceInfo;
 import com.oneape.octopus.datasource.DatasourceTypeHelper;
@@ -78,7 +78,7 @@ public class DatasourceServiceImpl implements DatasourceService {
      * Delete by primary key Id.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int deleteById(DatasourceDO model) {

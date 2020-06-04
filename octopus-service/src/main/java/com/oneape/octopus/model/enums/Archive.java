@@ -1,4 +1,4 @@
-package com.oneape.octopus.common.enums;
+package com.oneape.octopus.model.enums;
 
 public enum Archive {
     NORMAL(0), ARCHIVE(1);

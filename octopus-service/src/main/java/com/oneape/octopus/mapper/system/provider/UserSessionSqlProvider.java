@@ -8,7 +8,7 @@ public class UserSessionSqlProvider extends BaseSqlProvider<UserSessionDO> {
     public static final String TABLE_NAME = "sys_user_session";
 
     /**
-     * 获取表名
+     * Gets the table name.
      *
      * @return String
      */

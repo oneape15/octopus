@@ -7,7 +7,7 @@ public class CommonInfoSqlProvider extends BaseSqlProvider<CommonInfoDO> {
     public static final String TABLE_NAME = "sys_common_info";
 
     /**
-     * 获取表名
+     * Gets the table name.
      *
      * @return String
      */

@@ -53,7 +53,7 @@ public class ModelMetaServiceImpl implements ModelMetaService {
      *
      * @param modelId Long
      * @param metas   List
-     * @return int 0 - 失败; 1 - 成功;
+     * @return int 0 - fail; 1 - success.
      */
     @Override
     public int saveMetas(Long modelId, List<ModelMetaVO> metas) {
@@ -100,7 +100,7 @@ public class ModelMetaServiceImpl implements ModelMetaService {
      * Add data to table.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int insert(ModelMetaDO model) {
@@ -112,7 +112,7 @@ public class ModelMetaServiceImpl implements ModelMetaService {
      * Modify the data.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int edit(ModelMetaDO model) {
@@ -125,7 +125,7 @@ public class ModelMetaServiceImpl implements ModelMetaService {
      * Delete by primary key Id.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int deleteById(ModelMetaDO model) {
@@ -136,7 +136,7 @@ public class ModelMetaServiceImpl implements ModelMetaService {
      * 根据模型Id删除
      *
      * @param modelId Long
-     * @return int 0 - 失败; 1 - 成功;
+     * @return int 0 - fail; 1 - success.
      */
     @Override
     public int delByModelId(Long modelId) {

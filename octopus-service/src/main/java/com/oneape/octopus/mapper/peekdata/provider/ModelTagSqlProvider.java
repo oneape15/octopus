@@ -7,7 +7,7 @@ public class ModelTagSqlProvider extends BaseSqlProvider<ModelTagDO> {
     public static final String TABLE_NAME = "pd_model_tag";
 
     /**
-     * 获取表名
+     * Gets the table name.
      *
      * @return String
      */

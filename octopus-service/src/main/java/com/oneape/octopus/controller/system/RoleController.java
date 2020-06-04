@@ -3,7 +3,7 @@ package com.oneape.octopus.controller.system;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.common.StateCode;
-import com.oneape.octopus.common.enums.Archive;
+import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.controller.system.form.RoleForm;
 import com.oneape.octopus.model.DO.system.RoleDO;
 import com.oneape.octopus.model.VO.ApiResult;

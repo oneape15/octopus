@@ -36,13 +36,23 @@ public interface ReportColumnMapper {
     int delete(ReportColumnDO model);
 
     /**
-     * 根据报表Id删除
+     * Deleted data base on report Id.
      *
      * @param reportId Long
-     * @return int 1 - 成功；0 - 失败
+     * @return int 1 - success; 0 - fail.
      */
     @UpdateProvider(type = ReportColumnSqlProvider.class, method = "deleteByReportId")
     int deleteByReportId(@Param("reportId") Long reportId);
+
+    /**
+     * Remove unwanted columns
+     *
+     * @param reportId Long
+     * @param names    List
+     * @return int 1 - success; 0 - fail.
+     */
+    @UpdateProvider(type = ReportColumnSqlProvider.class, method = "deleteByNames")
+    int deleteByNames(@Param("reportId") Long reportId, @Param("names") List<String> names);
 
     /**
      * Find by primary key.

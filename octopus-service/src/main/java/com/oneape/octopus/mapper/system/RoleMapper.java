@@ -57,7 +57,7 @@ public interface RoleMapper {
     List<RoleDO> listOrLink(@Param("model") RoleDO model);
 
     /**
-     * 根据实体中不为null的属性通过"OR"关键字关联起来进行查询
+     * The query is associated with the "OR" keyword based on attributes that are not null in the entity.
      *
      * @param model T
      * @return List

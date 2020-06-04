@@ -7,7 +7,7 @@ public class PeekFieldSqlProvider extends BaseSqlProvider<PeekFieldDO> {
     public static final String TABLE_NAME = "pd_peek_field";
 
     /**
-     * 获取表名
+     * Gets the table name.
      *
      * @return String
      */

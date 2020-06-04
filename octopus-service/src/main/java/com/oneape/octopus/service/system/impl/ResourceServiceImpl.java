@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.GlobalConstant;
 import com.oneape.octopus.common.MaskUtils;
-import com.oneape.octopus.common.enums.FixOptionType;
+import com.oneape.octopus.model.enums.FixOptionType;
 import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.mapper.system.ResourceMapper;
 import com.oneape.octopus.mapper.system.RoleRlResourceMapper;
@@ -36,7 +36,7 @@ public class ResourceServiceImpl implements ResourceService {
      * Add data to table.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int insert(ResourceDO model) {
@@ -70,7 +70,7 @@ public class ResourceServiceImpl implements ResourceService {
      * Modify the data.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     @Transactional
@@ -139,7 +139,7 @@ public class ResourceServiceImpl implements ResourceService {
      * Delete by primary key Id.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int deleteById(ResourceDO model) {

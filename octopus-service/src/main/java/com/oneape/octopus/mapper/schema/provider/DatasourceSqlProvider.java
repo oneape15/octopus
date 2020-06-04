@@ -4,10 +4,10 @@ import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.model.DO.schema.DatasourceDO;
 
 public class DatasourceSqlProvider extends BaseSqlProvider<DatasourceDO> {
-    public static final String TABLE_NAME = "r_datasource";
+    public static final String TABLE_NAME = "datasource";
 
     /**
-     * 获取表名
+     * Gets the table name.
      *
      * @return String
      */

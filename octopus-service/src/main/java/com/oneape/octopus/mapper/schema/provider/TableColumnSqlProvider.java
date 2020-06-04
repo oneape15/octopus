@@ -1,10 +1,9 @@
 package com.oneape.octopus.mapper.schema.provider;
 
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.common.enums.Archive;
+import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.model.DO.schema.TableColumnDO;
-import com.oneape.octopus.model.DO.schema.TableSchemaDO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
@@ -12,10 +11,10 @@ import org.apache.ibatis.jdbc.SQL;
 import java.util.List;
 
 public class TableColumnSqlProvider extends BaseSqlProvider<TableColumnDO> {
-    public static final String TABLE_NAME = "r_table_column";
+    public static final String TABLE_NAME = "table_column";
 
     /**
-     * 获取表名
+     * Gets the table name.
      *
      * @return String
      */

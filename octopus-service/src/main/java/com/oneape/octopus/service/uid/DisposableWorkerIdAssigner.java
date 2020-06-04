@@ -1,6 +1,6 @@
 package com.oneape.octopus.service.uid;
 
-import com.oneape.octopus.common.enums.WorkerNodeType;
+import com.oneape.octopus.model.enums.WorkerNodeType;
 import com.oneape.octopus.commons.value.DockerUtils;
 import com.oneape.octopus.commons.value.NetUtils;
 import com.oneape.octopus.mapper.system.WorkerNodeMapper;

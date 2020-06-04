@@ -54,7 +54,7 @@ public interface RoleRlResourceMapper {
     List<RoleRlResourceDO> list(@Param("model") RoleRlResourceDO model);
 
     /**
-     * 根据角色Id列表，获取对应的资源id信息
+     * Get the corresponding resource Id information based on the role Id list.
      *
      * @param roleIds List
      * @return List

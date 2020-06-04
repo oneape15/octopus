@@ -8,89 +8,96 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 
+/**
+ * Report field information table DO.
+ */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ReportColumnDO extends BaseDO {
     /**
-     * 报表Id
+     * The report Id.
      */
     @Column(name = "report_id")
-    private Long reportId;
+    private Long    reportId;
     /**
-     * 是否为原生的列; 0 - 原生的; 1 - 加工过(分裂新生成的)
+     * The report column name.
      */
-    private Integer raw;
+    private String  name;
     /**
-     * 列名
+     * The report column alias name.
      */
-    private String name;
+    private String  alias;
     /**
-     * 显示名
-     */
-    @Column(name = "show_name")
-    private String showName;
-    /**
-     * 数据类型
+     * The report column data type.
      */
     @Column(name = "data_type")
-    private String dataType;
+    private String  dataType;
     /**
-     * 数据单位
+     * data unit
      */
-    private String unit;
+    private String  unit;
     /**
-     * 是否为隐藏列; 0 - 正常显示; 1 - 隐藏列
+     * Where does the unit symbol apply. 0 - the table head; 1 - each row item.
+     */
+    @Column(name = "unit_use_where")
+    private Integer unitUseWhere;
+    /**
+     * The default value when the data item is empty.
+     */
+    @Column(name = "default_value")
+    private String  defaultValue;
+    /**
+     * Is a hidden column; 0 - no; 1 - yes.
      */
     private Integer hidden;
     /**
-     * 下钻查询详细报表Id
+     * Type of resource to jump when drilling down a column.
+     * eg: 1 - report; 2 - dashboard; 3 - External links.
      */
-    @Column(name = "drill_report_id")
-    private Long drillReportId;
+    @Column(name = "drill_source_type")
+    private Integer drillSourceType;
     /**
-     * 下钻列时,需要的参数; kv1= column_name1; kv2 = column_name2;
+     * Drill down to the resource URI.
+     */
+    @Column(name = "drill_uri")
+    private String  drill_uri;
+    /**
+     * The parameters required when drilling down the column;
+     * eg: kv1=column_name1; kv2=column_name2;
      */
     @Column(name = "drill_params")
-    private String drillParams;
+    private String  drillParams;
     /**
-     * 是否为冻结列; 0 - 否; 1 - 冻结列
+     * When drilling down the column, open mode.
+     * 1 - new window; 2 - Current window; 3 - Popover page.
+     */
+    @Column(name = "drill_open_type")
+    private Integer drillOpenType;
+    /**
+     * Is a frozen column; 0 - no; 1 - yes
      */
     private Integer frozen;
     /**
-     * 支持排序
+     * Whether sorting is supported; 0 - no; 1 - yes
      */
     @Column(name = "support_sort")
     private Integer supportSort;
     /**
-     * 是否需要分裂; 0 - 否; 1 - 需要
-     */
-    private Integer split;
-    /**
-     * 分裂分隔字符串
-     */
-    @Column(name = "split_char")
-    private String splitChar;
-    /**
-     * 分裂后kv的分隔字符串
-     */
-    @Column(name = "split_kv_char")
-    private String splitKvChar;
-    /**
-     * 格式化宏
+     * Data formatting macro
      */
     @Column(name = "format_macro")
-    private String formatMacro;
+    private String  formatMacro;
     /**
-     * 排序Id
+     * Sort field
      */
     @SortId
     @Column(name = "sort_id")
-    private Long sortId;
+    private Long    sortId;
     /**
-     * 描述信息
+     * description
      */
-    private String comment;
+    private String  comment;
 
     public ReportColumnDO(Long reportId) {
         this.reportId = reportId;

@@ -1,6 +1,7 @@
 package com.oneape.octopus.model.DO.report;
 
 import com.oneape.octopus.annotation.SortId;
+import com.oneape.octopus.model.enums.ReportParamType;
 import com.oneape.octopus.model.DO.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,92 +9,92 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 
+/**
+ * Report query parameter information table DO.
+ */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ReportParamDO extends BaseDO {
     /**
-     * 报表Id
+     * The report Id.
      */
     @Column(name = "report_id")
-    private Long reportId;
+    private Long    reportId;
     /**
-     * 字段显示名
+     * The report param name.
      */
-    @Column(name = "show_name")
-    private String showName;
+    private String  name;
     /**
-     * 查询sql代入名
+     * The report param alias name.
      */
-    @Column(name = "param_name")
-    private String paramName;
+    private String  alias;
     /**
-     * 数据类型
+     * The report param data type.
      */
     @Column(name = "data_type")
-    private String dataType;
+    private String  dataType;
     /**
-     * 默认值
+     * default value
      */
     @Column(name = "val_default")
-    private String valDefault;
+    private String  valDefault;
     /**
-     * 最大值
+     * The maximum value
      */
     @Column(name = "val_max")
-    private String valMax;
+    private String  valMax;
     /**
-     * 最小值
+     * The minimum value.
      */
     @Column(name = "val_min")
-    private String valMin;
+    private String  valMin;
     /**
-     * 禁止使用值
+     * Prohibited value.
      */
     @Column(name = "val_forbidden")
-    private String valForbidden;
+    private String  valForbidden;
     /**
-     * 是否为必填字段 0 - 否; 1 - 必填
+     * Is a required field 0 - no; 1 - yes.
      */
     @Column(name = "must_fill_in")
     private Integer mustFillIn;
     /**
-     * 排序方式 ASC, DESC
+     * Parameters briefly describe information.
      */
-    @Column(name = "order_by_type")
-    private String orderByType;
+    private String  placeholder;
     /**
-     * 提示信息
-     */
-    private String placeholder;
-    /**
-     * 错误提示信息
+     * Prompt message when error occurs
      */
     @Column(name = "err_message")
-    private String errMessage;
+    private String  errMessage;
     /**
-     * 依赖关系, 取paramName值,多个以逗号分隔
+     * Dependency, taking the name value, multiple separated by commas.
      */
     @Column(name = "depend_on")
-    private String dependOn;
+    private String  dependOn;
     /**
-     * 字段类型; 1 - 内部字段; 2 - 多选字段; 4 - lov选择;
-     * 具体查看类: ReportParamType.java
-     * 例: 3 -> 内部字段 且多选字段; 6 -> lov选择 且 多选字段
+     * The parameter types; 0 - normal; 1 - inline; 2 - between; 4 - multi;
+     * {@link ReportParamType}
      */
     private Integer type;
-
     /**
-     * 当字段值内容依赖别一个sql查询结果时(LOV), 填入
+     * When the field value content depends on another SQL query result (LOV), fill in.
      */
     @Column(name = "lov_report_id")
-    private Long lovReportId;
+    private Long    lovReportId;
     /**
-     * 排序字段
+     * The query parameter LOV is the specified KV name.
+     * eg: kname,vname
+     */
+    @Column(name = "lov_kv_name")
+    private String  lovKvName;
+    /**
+     * Sort field.
      */
     @SortId
     @Column(name = "sort_id")
-    private Long sortId;
+    private Long    sortId;
 
     public ReportParamDO(Long reportId) {
         this.reportId = reportId;

@@ -1,7 +1,7 @@
 package com.oneape.octopus.mapper.system.provider;
 
 import com.google.common.base.Joiner;
-import com.oneape.octopus.common.enums.Archive;
+import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.model.DO.system.UserDO;
 import org.apache.ibatis.annotations.Param;
@@ -14,7 +14,7 @@ public class UserSqlProvider extends BaseSqlProvider<UserDO> {
     public static final String TABLE_NAME = "sys_user";
 
     /**
-     * 获取表名
+     * Gets the table name.
      *
      * @return String
      */
@@ -25,10 +25,10 @@ public class UserSqlProvider extends BaseSqlProvider<UserDO> {
 
 
     /**
-     * 根据用户Id删除用户
+     * Delete the user based on the user Id.
      *
      * @param userIds  List
-     * @param modifier Long 修改人id
+     * @param modifier Long
      * @return String
      */
     public String delByIds(@Param("userIds") List<Long> userIds, @Param("modifier") Long modifier) {

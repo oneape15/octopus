@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
 
-    private AccountService accountService;
+    private volatile AccountService accountService;
 
     private Cache<String, UserVO> cache = CacheBuilder.newBuilder()
             // 设置缓存的最大容量
@@ -41,7 +41,7 @@ public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
 
     private static final String KEY_TOKEN = "TOKEN_KEY_";
 
-    private static List<String> filterUris = new ArrayList<>();
+    private static List<String> filterUris       = new ArrayList<>();
     private static List<String> filterUriOfStart = new ArrayList<>();
 
     static {

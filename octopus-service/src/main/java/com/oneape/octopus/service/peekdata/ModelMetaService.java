@@ -20,7 +20,7 @@ public interface ModelMetaService extends BaseService<ModelMetaDO> {
      *
      * @param modelId Long
      * @param metas   List
-     * @return int 0 - 失败; 1 - 成功;
+     * @return int 0 - fail; 1 - success.
      */
     int saveMetas(Long modelId, List<ModelMetaVO> metas);
 
@@ -28,7 +28,7 @@ public interface ModelMetaService extends BaseService<ModelMetaDO> {
      * 根据模型Id删除
      *
      * @param modelId Long
-     * @return int 0 - 失败; 1 - 成功;
+     * @return int 0 - fail; 1 - success.
      */
     int delByModelId(Long modelId);
 }

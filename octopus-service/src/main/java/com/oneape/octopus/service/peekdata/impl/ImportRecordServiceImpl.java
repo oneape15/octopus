@@ -79,7 +79,7 @@ public class ImportRecordServiceImpl implements ImportRecordService {
      * Add data to table.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int insert(ImportRecordDO model) {
@@ -90,7 +90,7 @@ public class ImportRecordServiceImpl implements ImportRecordService {
      * Modify the data.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int edit(ImportRecordDO model) {
@@ -101,7 +101,7 @@ public class ImportRecordServiceImpl implements ImportRecordService {
      * Delete by primary key Id.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int deleteById(ImportRecordDO model) {

@@ -37,7 +37,7 @@ public class RoleServiceImpl implements RoleService {
      * Add data to table.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int insert(RoleDO model) {
@@ -59,7 +59,7 @@ public class RoleServiceImpl implements RoleService {
      * Modify the data.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int edit(RoleDO model) {
@@ -86,7 +86,7 @@ public class RoleServiceImpl implements RoleService {
      * Delete by primary key Id.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int deleteById(RoleDO model) {

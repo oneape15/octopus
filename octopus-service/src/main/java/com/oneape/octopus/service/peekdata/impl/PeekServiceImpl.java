@@ -81,7 +81,7 @@ public class PeekServiceImpl implements PeekService {
      * Add data to table.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int insert(PeekDO model) {
@@ -92,7 +92,7 @@ public class PeekServiceImpl implements PeekService {
      * Modify the data.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int edit(PeekDO model) {
@@ -163,7 +163,7 @@ public class PeekServiceImpl implements PeekService {
      * Delete by primary key Id.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     @Transactional

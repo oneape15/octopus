@@ -48,7 +48,7 @@ public class AccountServiceImpl implements AccountService {
      * Add data to table.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int insert(UserDO model) {
@@ -76,7 +76,7 @@ public class AccountServiceImpl implements AccountService {
      * Modify the data.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int edit(UserDO model) {
@@ -92,7 +92,7 @@ public class AccountServiceImpl implements AccountService {
      * Delete by primary key Id.
      *
      * @param model T
-     * @return int 1 - success; 0 - fail.；
+     * @return int 1 - success; 0 - fail.
      */
     @Override
     public int deleteById(UserDO model) {

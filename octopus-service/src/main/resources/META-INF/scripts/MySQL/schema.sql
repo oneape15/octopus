@@ -1,47 +1,51 @@
--- r_datasource 数据源信息表
-CREATE TABLE `r_datasource`
+-- datasource Data source information table.
+CREATE TABLE `datasource`
 (
   `id`          BIGINT(20)    NOT NULL
-  COMMENT '主键Id',
+  COMMENT 'primary key',
   `name`        VARCHAR(64)   NOT NULL
-  COMMENT '数据源名称',
+  COMMENT 'The data source name',
   `type`        VARCHAR(64)   NOT NULL
-  COMMENT '数据源类型, MySQL, Oracle',
+  COMMENT 'The data source type. eg: MySQL, Oracle',
   `status`      TINYINT(1)    NOT NULL DEFAULT 0
-  COMMENT '状态, 0 - 可用; 1 - 不可用',
+  COMMENT 'The data source statue , 0 - usable; 1 - disabled',
   `jdbc_driver` VARCHAR(256)  NOT NULL
-  COMMENT 'jdbc驱动',
+  COMMENT 'The data source driver class.',
   `jdbc_url`    VARCHAR(512)  NOT NULL
-  COMMENT 'jdbc URL',
+  COMMENT 'The data source jdbc url.',
   `username`    VARCHAR(64)   NOT NULL
-  COMMENT '登录用户名',
+  COMMENT 'The data source login username.',
   `password`    VARCHAR(64)   NULL     DEFAULT NULL
-  COMMENT '登录密码',
+  COMMENT 'The data source login password.',
+  `sync`        TINYINT(1)    NULL     DEFAULT 0
+  COMMENT 'Data source synchronization state. 0 - Out of sync; 1 - sync',
+  `cron`        VARCHAR(128)  NULL
+  COMMENT 'Synchronization period expression ''0 0 9 * * ?''',
   `timeout`     INT(11)       NULL     DEFAULT 60
-  COMMENT '连接池超时时间(ms)',
+  COMMENT 'Connection pool timeout(ms)',
   `test_sql`    VARCHAR(1024) NULL
-  COMMENT '检测SQL',
+  COMMENT 'The check status SQL',
   `comment`     VARCHAR(256)  NULL
-  COMMENT '描述',
+  COMMENT 'description',
   `archive`     TINYINT(1)    NOT NULL DEFAULT 0
-  COMMENT '0 - 正常数据; 1 - 已归档(删除)',
+  COMMENT '0 - normal data; 1 - have archive (soft delete)',
   `created`     BIGINT(20)    NOT NULL
-  COMMENT '创建时间',
+  COMMENT 'create time ',
   `creator`     BIGINT(20)    NOT NULL
-  COMMENT '创建人',
+  COMMENT 'Data record creator',
   `modified`    BIGINT(20)    NULL     DEFAULT NULL
-  COMMENT '最后一次更新时间',
+  COMMENT 'Last updated time',
   `modifier`    BIGINT(20)    NULL     DEFAULT NULL
-  COMMENT '最后一次修改人',
+  COMMENT 'Data record  modifier',
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
-  COMMENT '数据源信息表'
+  COMMENT 'Data source information table.'
   DEFAULT CHARACTER SET = utf8
   COLLATE = utf8_general_ci;
 
--- r_table_schema Table basic information table
-CREATE TABLE `r_table_schema`
+-- table_schema Table basic information table
+CREATE TABLE `table_schema`
 (
   `id`         BIGINT(20)   NOT NULL
   COMMENT 'primary key',
@@ -76,8 +80,8 @@ CREATE TABLE `r_table_schema`
   DEFAULT CHARACTER SET = utf8
   COLLATE = utf8_general_ci;
 
--- r_table_column Table field information table
-CREATE TABLE `r_table_column`
+-- table_column Table field information table
+CREATE TABLE `table_column`
 (
 
   `id`         BIGINT(20)   NOT NULL

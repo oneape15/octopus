@@ -1,4 +1,4 @@
-package com.oneape.octopus.common.enums;
+package com.oneape.octopus.model.enums;
 
 import com.oneape.octopus.model.VO.TreeNodeVO;
 import org.apache.commons.lang3.StringUtils;

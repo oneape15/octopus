@@ -7,7 +7,7 @@ public class PeekRuleSqlProvider extends BaseSqlProvider<PeekRuleDO> {
     public static final String TABLE_NAME = "pd_peek_rule";
 
     /**
-     * 获取表名
+     * Gets the table name.
      *
      * @return String
      */

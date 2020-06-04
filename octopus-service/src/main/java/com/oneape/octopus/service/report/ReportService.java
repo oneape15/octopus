@@ -1,117 +1,93 @@
 package com.oneape.octopus.service.report;
 
-import com.oneape.octopus.model.DO.report.ReportDO;
-import com.oneape.octopus.model.DO.report.ReportSqlDO;
-import com.oneape.octopus.model.VO.*;
+import com.oneape.octopus.model.DO.report.*;
+import com.oneape.octopus.model.DTO.ReportDTO;
 import com.oneape.octopus.service.BaseService;
 
 import java.util.List;
 
 public interface ReportService extends BaseService<ReportDO> {
-    /***
-     * 报表code长度
-     */
-    public static final int REPORT_CODE_LEN = 10;
 
     /**
-     * 根据报表Id获取全量信息
+     * Get the full amount of information based on the report Id.
      *
      * @param reportId Long
-     * @return ReportVO
+     * @return ReportDO
      */
-    ReportVO findById(Long reportId);
+    ReportDTO findById(Long reportId);
 
     /**
-     * 根据对象进行查询
+     * Query against an object.
      *
      * @param model ReportDO
      * @return List
      */
-    List<ReportVO> find(ReportDO model);
+    List<ReportDO> find(ReportDO model);
 
     /**
-     * 添加报表信息
+     * Save report information.
      *
-     * @param reportVO ReportVO
-     * @return int 0 - 失败; 1 - 成功;
+     * @param rDto ReportDTO
+     * @return int 0 - fail; 1 - success;
      */
-    int addReportInfo(ReportVO reportVO);
+    int saveReportInfo(ReportDTO rDto);
 
     /**
-     * 修改报表信息
-     *
-     * @param reportVO ReportVO
-     * @return int 0 - 失败; 1 - 成功;
-     */
-    int editReportInfo(ReportVO reportVO);
-
-    /**
-     * 保存报表查询参数信息
+     * Save the report query parameter information.
      *
      * @param reportId Long
      * @param params   List
-     * @return int 0 - 失败; 1 - 成功;
+     * @return int 0 - fail; 1 - success;
      */
-    int saveReportParams(Long reportId, List<ReportParamVO> params);
+    int saveReportParams(Long reportId, List<ReportParamDO> params);
 
     /**
-     * 保存报表列信息
+     * Save the report column information.
      *
      * @param reportId Long
      * @param columns  List
-     * @return int 0 - 失败; 1 - 成功;
+     * @return int 0 - fail; 1 - success;
      */
-    int saveReportColumns(Long reportId, List<ReportColumnVO> columns);
+    int saveReportColumns(Long reportId, List<ReportColumnDO> columns);
 
     /**
-     * 保存报表查询SQL
+     * Save the report query SQL
      *
-     * @param reportId  Long
-     * @param reportSql ReportSqlDO
-     * @return 0 - 失败; 1 - 成功;
+     * @param reportSql ReportDslDO
+     * @return 0 - fail; 1 - success;
      */
-    int saveReportSql(Long reportId, ReportSqlDO reportSql);
+    int saveReportDslSql(ReportDslDO reportSql);
 
     /**
-     * 根据报表Sql主键获取信息
+     * Save the help document information.
+     *
+     * @param hdDo HelpDocumentDO
+     * @return 0 - fail; 1 - success;
+     */
+    int saveHelpDocument(HelpDocumentDO hdDo);
+
+    /**
+     * Get DSL information based on the report Id.
      *
      * @param sqlId Long
-     * @return ReportSqlVO
+     * @return ReportDslDO
      */
-    ReportSqlVO getReportSql(Long sqlId);
+    ReportDslDO getReportSql(Long sqlId);
 
     /**
-     * 根据指定报表Id复制一张报表
-     *
-     * @param templateReportId Long
-     * @return int
-     */
-    int copyReport(Long templateReportId);
-
-    /**
-     * 获取报表树型结构(报表组与报表结合)
-     *
-     * @param lovReport null - 查询所有; 0 - 普通报表; 1 - 简单的报表(LOV);
-     * @param filterIds List 过滤掉的报表Id
-     * @param fixOption String 携带特定值, NULL, ALL
-     * @return List
-     */
-    List<TreeNodeVO> getReportTree(Integer lovReport, List<Long> filterIds, String fixOption);
-
-    /**
-     * 根据报表Id获取查询参数列表
+     * Get the list of query parameters based on the report Id.
      *
      * @param reportId Long
      * @return List
      */
-    List<ReportParamVO> getParamByReportId(Long reportId);
+    List<ReportParamDO> getParamByReportId(Long reportId);
 
     /**
-     * 根据报表Id获取字段列表
+     * Get the list of query columns based on the report Id.
      *
      * @param reportId Long
      * @return List
      */
-    List<ReportColumnVO> getColumnByReportId(Long reportId);
+    List<ReportColumnDO> getColumnByReportId(Long reportId);
 
 }

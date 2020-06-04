@@ -1,7 +1,7 @@
 package com.oneape.octopus.mapper.peekdata.provider;
 
 import com.google.common.base.Joiner;
-import com.oneape.octopus.common.enums.Archive;
+import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.model.DO.peekdata.ModelMetaDO;
 import org.apache.ibatis.annotations.Param;
@@ -13,7 +13,7 @@ public class ModelMetaSqlProvider extends BaseSqlProvider<ModelMetaDO> {
     public static final String TABLE_NAME = "pd_model_meta";
 
     /**
-     * 获取表名
+     * Gets the table name.
      *
      * @return String
      */

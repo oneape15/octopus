@@ -7,7 +7,7 @@ public class RoleSqlProvider extends BaseSqlProvider<RoleDO> {
     public static final String TABLE_NAME = "sys_role";
 
     /**
-     * 获取表名
+     * Gets the table name.
      *
      * @return String
      */

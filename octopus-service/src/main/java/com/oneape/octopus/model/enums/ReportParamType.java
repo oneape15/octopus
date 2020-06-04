@@ -1,13 +1,16 @@
-package com.oneape.octopus.common.enums;
+package com.oneape.octopus.model.enums;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The report param type.
+ */
 public enum ReportParamType {
-    INNER(1, "内部字段"),
-    MULTIPLE(2, "多选字段"),
-    LOV(4, "LOV字段"),
-    ORDER_BY(8, "排序字段");
+    NORMAL(0, "NORMAL"),
+    INNER(1, "INNER"),
+    BETWEEN(2, "BETWEEN"),
+    MULTI(4, "MULTI");
     private int    code;
     private String desc;
 
@@ -24,13 +27,13 @@ public enum ReportParamType {
         return desc;
     }
 
-    public boolean isSupport(int value){
+    public boolean isSupport(int value) {
         return code == (code & value);
     }
 
     /**
      * 判断value中是否包含某个类型
-     *r
+     *
      * @param value int
      * @param rft   ReportParamType
      * @return boolean true - 包含; false - 不包含

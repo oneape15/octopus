@@ -1,7 +1,7 @@
-package com.oneape.octopus.common.enums;
+package com.oneape.octopus.model.enums;
 
 /**
- * 报表类型
+ * Report Type
  */
 public enum ReportType {
     /**
@@ -11,11 +11,11 @@ public enum ReportType {
     /**
      * 线性图
      */
-    LINE("LIN","线性图"),
+    LINE("LIN", "线性图"),
     /**
      * 柱状图
      */
-    BAR("BAR","柱状图"),
+    BAR("BAR", "柱状图"),
     /**
      * 饼状图
      */
@@ -23,17 +23,16 @@ public enum ReportType {
     /**
      * 雷达图
      */
-    RADAR("RADAR","雷达图");
+    RADAR("RADAR", "雷达图");
 
 
     private String code;
-    private String  desc;
+    private String desc;
 
     ReportType(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }
-
 
 
     public String getCode() {

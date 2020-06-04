@@ -1,7 +1,7 @@
 package com.oneape.octopus.mapper.system.provider;
 
 import com.google.common.base.Joiner;
-import com.oneape.octopus.common.enums.Archive;
+import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.model.DO.system.RoleRlResourceDO;
 import org.apache.ibatis.annotations.Param;
@@ -13,7 +13,7 @@ public class RoleRlResourceSqlProvider extends BaseSqlProvider<RoleRlResourceDO>
     public static final String TABLE_NAME = "sys_role_rl_resource";
 
     /**
-     * 获取表名
+     * Gets the table name.
      *
      * @return String
      */
