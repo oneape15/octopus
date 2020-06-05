@@ -54,7 +54,7 @@ public class CommonInfoController {
         return ApiResult.ofData(new PageInfo<>(list));
     }
 
-    @GetMapping("/AllClassify")
+    @GetMapping("/allClassify")
     public ApiResult<List<String>> getAllClassify() {
         return ApiResult.ofData(commonInfoService.getAllClassify());
     }
