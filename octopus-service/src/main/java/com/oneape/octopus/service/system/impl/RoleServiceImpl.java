@@ -7,7 +7,6 @@ import com.oneape.octopus.mapper.system.RoleMapper;
 import com.oneape.octopus.mapper.system.RoleRlResourceMapper;
 import com.oneape.octopus.mapper.system.UserRlRoleMapper;
 import com.oneape.octopus.model.DO.system.RoleDO;
-import com.oneape.octopus.model.DO.system.UserRlRoleDO;
 import com.oneape.octopus.model.VO.RoleVO;
 import com.oneape.octopus.service.system.RoleService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,15 +39,13 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public int insert(RoleDO model) {
-        Preconditions.checkArgument(StringUtils.isNoneBlank(model.getName(), model.getCode()), "角色名称或编码为空");
+        Preconditions.checkNotNull(model, "The role information is null.");
+        Preconditions.checkArgument(StringUtils.isNoneBlank(model.getName(), model.getCode()), "The role name or code is empty.");
 
-        RoleDO tmp = new RoleDO();
-        // 判断code或name是否重复
-        tmp.setName(model.getName());
-        tmp.setCode(model.getCode());
-        List<RoleDO> roleDOS = roleMapper.listOrLink(tmp);
-        if (CollectionUtils.isNotEmpty(roleDOS)) {
-            throw new BizException("角色的名称或code已存在");
+        // Determine if the code or name is repeated.
+        int count = roleMapper.getSameNameOrCodeRole(model.getName(), model.getCode(), null);
+        if (count > 0) {
+            throw new BizException("The name or code for the role already exists.");
         }
 
         return roleMapper.insert(model);
@@ -63,20 +59,14 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public int edit(RoleDO model) {
-        Preconditions.checkNotNull(model.getId(), "主键为空");
-        Preconditions.checkArgument(StringUtils.isNoneBlank(model.getName(), model.getCode()), "角色名称或编码为空");
+        Preconditions.checkNotNull(model, "The role information is null.");
+        Preconditions.checkNotNull(model.getId(), "The role id is null.");
+        Preconditions.checkArgument(StringUtils.isNoneBlank(model.getName(), model.getCode()), "The role name or code is empty.");
 
-        RoleDO tmp = new RoleDO();
-        // 判断code或name是否重复
-        tmp.setName(model.getName());
-        tmp.setCode(model.getCode());
-        List<RoleDO> roleDOS = roleMapper.listOrLink(tmp);
-        roleDOS = roleDOS.stream().filter((r) -> !r.getId().equals(model.getId())).collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(roleDOS)) {
-            long size = roleDOS.stream().filter(roleDO -> model.getId().equals(roleDO.getId())).count();
-            if (size > 0) {
-                throw new BizException("角色的名称或code已存在");
-            }
+        // Determine if the code or name is repeated.
+        int count = roleMapper.getSameNameOrCodeRole(model.getName(), model.getCode(), model.getId());
+        if (count > 0) {
+            throw new BizException("The name or code for the role already exists.");
         }
 
         return roleMapper.update(model);
@@ -90,14 +80,11 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public int deleteById(RoleDO model) {
-        Preconditions.checkNotNull(model.getId(), "主键为空");
-        RoleDO rdo = roleMapper.findById(model.getId());
-        if (rdo == null) {
-            throw new BizException("角色信息不存在");
-        }
-        List<UserRlRoleDO> rlList = userRlRoleMapper.list(new UserRlRoleDO(null, rdo.getId()));
-        if (CollectionUtils.isNotEmpty(rlList)) {
-            throw new BizException("当前角色还在使用中，不能被删除~");
+        Preconditions.checkNotNull(model.getId(), "The role primary key is empty.");
+
+        int size = userRlRoleMapper.getUseSize(model.getId());
+        if (size > 0) {
+            throw new BizException("The current role is still in use and cannot be deleted.");
         }
         return roleMapper.delete(model);
     }
@@ -117,7 +104,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     /**
-     * 根据条件查询资源
+     * Query resources by condition.
      *
      * @param role RoleDO
      * @return List
@@ -139,7 +126,7 @@ public class RoleServiceImpl implements RoleService {
 
 
     /**
-     * 根据角色Id列表,获取资源
+     * Gets resource permissions based on the list of role ids.
      *
      * @param roleIds List
      * @return Map

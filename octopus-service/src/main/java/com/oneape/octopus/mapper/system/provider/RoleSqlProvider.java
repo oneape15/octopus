@@ -39,4 +39,20 @@ public class RoleSqlProvider extends BaseSqlProvider<RoleDO> {
             }
         }.toString();
     }
+
+    public String getSameNameOrCodeRole(@Param("name") String name, @Param("code") String code, @Param("filterId") Long filterId) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(FIELD_ARCHIVE).append("=").append(Archive.NORMAL.value())
+                .append(" AND ( name = #{name} OR code = #{code} )");
+        if (filterId != null) {
+            sb.append(" AND id !=#{filterId}");
+        }
+        return new SQL() {
+            {
+                SELECT("count(0)");
+                FROM(getTableName());
+                WHERE(sb.toString());
+            }
+        }.toString();
+    }
 }

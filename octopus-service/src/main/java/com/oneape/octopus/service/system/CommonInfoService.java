@@ -9,15 +9,15 @@ import java.util.List;
 public interface CommonInfoService extends BaseService<CommonInfoDO> {
 
     /**
-     * 根据对象进行查询
+     * Query against an object.
      *
      * @param commonInfo CommonInfoDO
      * @return List
      */
-    List<CommonInfoVO> find(CommonInfoDO commonInfo);
+    List<CommonInfoDO> find(CommonInfoDO commonInfo);
 
     /**
-     * 获取所有分类信息
+     * Get all classified information.
      *
      * @return List
      */

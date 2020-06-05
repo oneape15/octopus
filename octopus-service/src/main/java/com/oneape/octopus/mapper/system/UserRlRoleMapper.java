@@ -1,7 +1,9 @@
 package com.oneape.octopus.mapper.system;
 
+import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.mapper.system.provider.UserRlRoleSqlProvider;
 import com.oneape.octopus.model.DO.system.UserRlRoleDO;
+import com.oneape.octopus.model.enums.Archive;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -61,4 +63,16 @@ public interface UserRlRoleMapper {
      */
     @SelectProvider(type = UserRlRoleSqlProvider.class, method = "list")
     List<UserRlRoleDO> list(@Param("model") UserRlRoleDO model);
+
+    /**
+     * Get usage of the role.
+     *
+     * @param roleId Long
+     * @return int
+     */
+    @Select({
+            "SELECT COUNT(0) FROM " + UserRlRoleSqlProvider.TABLE_NAME +
+                    " WHERE " + BaseSqlProvider.FIELD_ARCHIVE + " = 0 AND role_id = #{roleId}"
+    })
+    int getUseSize(@Param("roleId") Long roleId);
 }

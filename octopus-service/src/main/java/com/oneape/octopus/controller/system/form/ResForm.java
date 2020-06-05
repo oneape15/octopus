@@ -13,29 +13,21 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ResForm extends BaseForm implements Serializable {
-    // 主键
-    @NotNull(message = "主键不能为空", groups = {EditCheck.class, KeyCheck.class})
-    private Long resId;
-    // 父节点Id
-    @NotNull(message = "父节点不能为空", groups = {EditCheck.class, AddCheck.class})
-    private Long parentId;
-    // 资源名称
-    @NotBlank(message = "资源名为空", groups = {EditCheck.class, AddCheck.class})
-    private String name;
-    // 资源图标
-    private String icon;
-    // 0 - 菜单; 1 - 资源项
-    @NotNull(message = "资源类型不能为空", groups = {EditCheck.class, AddCheck.class})
+    @NotNull(message = "The resource primary key is null.", groups = {EditCheck.class, KeyCheck.class})
+    private Long    resId;
+    // The parent node id.
+    @NotNull(message = "The parent node id is null.", groups = {EditCheck.class, AddCheck.class})
+    private Long    parentId;
+    @NotBlank(message = "The resource name is empty.", groups = {EditCheck.class, AddCheck.class})
+    private String  name;
+    // The resource icon
+    private String  icon;
+    @NotNull(message = "The resource type is null.", groups = {EditCheck.class, AddCheck.class})
     private Integer type;
-    // 资源路径
-    @NotBlank(message = "资源路径名为空", groups = {EditCheck.class, AddCheck.class})
-    private String path;
-    // 权限编码
-    private String authCode;
-    // 排序Id
-    private Long sortId;
-    // 描述
-    private String comment;
+    @NotBlank(message = "The resource path is empty.", groups = {EditCheck.class, AddCheck.class})
+    private String  path;
+    private Long    sortId;
+    private String  comment;
 
 
     public interface AddCheck {

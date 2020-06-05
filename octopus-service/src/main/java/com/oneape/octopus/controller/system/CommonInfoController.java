@@ -4,21 +4,16 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.controller.system.form.CommonInfoForm;
+import com.oneape.octopus.model.DO.system.CommonInfoDO;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.CommonInfoVO;
 import com.oneape.octopus.service.system.CommonInfoService;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
 
-/**
- * 基础信息
- */
 @RestController
 @RequestMapping("/commInfo")
 public class CommonInfoController {
@@ -29,39 +24,38 @@ public class CommonInfoController {
     public ApiResult<String> doAddCommonInfo(@RequestBody @Validated(value = CommonInfoForm.AddCheck.class) CommonInfoForm form) {
         int status = commonInfoService.insert(form.toDO());
         if (status > 0) {
-            return ApiResult.ofData("添加基础信息成功");
+            return ApiResult.ofData("Added base information successfully.");
         }
-        return ApiResult.ofError(StateCode.BizError, "添加基础信息失败");
+        return ApiResult.ofError(StateCode.BizError, "Added base information fail.");
     }
 
     @PostMapping("/edit")
     public ApiResult<String> doEditCommonInfo(@RequestBody @Validated(value = CommonInfoForm.EditCheck.class) CommonInfoForm form) {
         int status = commonInfoService.edit(form.toDO());
         if (status > 0) {
-            return ApiResult.ofData("修改基础信息成功");
+            return ApiResult.ofData("Edit base information successfully.");
         }
-        return ApiResult.ofError(StateCode.BizError, "修改基础信息失败");
+        return ApiResult.ofError(StateCode.BizError, "Edit base information fail.");
     }
 
     @PostMapping("/del")
     public ApiResult<String> doDelCommonInfo(@RequestBody @Validated(value = CommonInfoForm.KeyCheck.class) CommonInfoForm form) {
         int status = commonInfoService.deleteById(form.toDO());
         if (status > 0) {
-            return ApiResult.ofData("删除基础信息成功");
+            return ApiResult.ofData("Deleted base information successfully.");
         }
-        return ApiResult.ofError(StateCode.BizError, "删除基础信息失败");
+        return ApiResult.ofError(StateCode.BizError, "Deleted base information fail.");
     }
 
     @PostMapping("/list")
-    public ApiResult<PageInfo<CommonInfoVO>> doList(@RequestBody @Validated CommonInfoForm form) {
+    public ApiResult<PageInfo<CommonInfoDO>> doList(@RequestBody @Validated CommonInfoForm form) {
         PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
-        List<CommonInfoVO> vos = commonInfoService.find(form.toDO());
-        return ApiResult.ofData(new PageInfo<>(vos));
+        List<CommonInfoDO> list = commonInfoService.find(form.toDO());
+        return ApiResult.ofData(new PageInfo<>(list));
     }
 
-    @PostMapping("/getClassify")
-    public ApiResult<List<String>> getClassify(@RequestBody CommonInfoForm form) {
-        String classify = form.getClassify();
+    @GetMapping("/AllClassify")
+    public ApiResult<List<String>> getAllClassify() {
         return ApiResult.ofData(commonInfoService.getAllClassify());
     }
 }

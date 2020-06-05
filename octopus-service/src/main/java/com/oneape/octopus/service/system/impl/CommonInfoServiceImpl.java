@@ -24,26 +24,21 @@ public class CommonInfoServiceImpl implements CommonInfoService {
     private CommonInfoMapper commonInfoMapper;
 
     /**
-     * 根据对象进行查询
+     * Query against an object.
      *
      * @param commonInfo CommonInfoDO
      * @return List
      */
     @Override
-    public List<CommonInfoVO> find(CommonInfoDO commonInfo) {
-        Preconditions.checkNotNull(commonInfo, "对象为空");
-        List<CommonInfoDO> cidos = commonInfoMapper.list(commonInfo);
-
-        List<CommonInfoVO> dvo = new ArrayList<>();
-        if (CollectionUtils.isEmpty(cidos)) {
-            return dvo;
+    public List<CommonInfoDO> find(CommonInfoDO commonInfo) {
+        if (commonInfo == null) {
+            commonInfo = new CommonInfoDO();
         }
-        cidos.forEach(ddo -> dvo.add(CommonInfoVO.ofDO(ddo)));
-        return dvo;
+        return commonInfoMapper.list(commonInfo);
     }
 
     /**
-     * 获取所有分类信息
+     * Get all classified information.
      *
      * @return List
      */
@@ -60,20 +55,17 @@ public class CommonInfoServiceImpl implements CommonInfoService {
      */
     @Override
     public int insert(CommonInfoDO model) {
-        Preconditions.checkNotNull(model, "基础信息对象为空");
-        Preconditions.checkArgument(StringUtils.isNoneBlank(model.getClassify(), model.getName(), model.getCode()), "信息分类、名称或编码为空");
+        Preconditions.checkNotNull(model, "The Object is null.");
+        Preconditions.checkArgument(StringUtils.isNoneBlank(model.getClassify(), model.getKey(), model.getValue()),
+                "The classify, key or value is null.");
 
         if (model.getParentId() == null || model.getParentId() < GlobalConstant.DEFAULT_VALUE) {
             model.setParentId(GlobalConstant.DEFAULT_VALUE);
         }
 
-        CommonInfoDO tmp = new CommonInfoDO();
-        tmp.setParentId(model.getParentId());
-        tmp.setClassify(model.getClassify());
-        tmp.setCode(model.getCode());
-        List<CommonInfoDO> list = commonInfoMapper.list(tmp);
-        if (CollectionUtils.isNotEmpty(list)) {
-            throw new BizException("存在相同的编码");
+        int size = commonInfoMapper.getSameBy(model.getClassify(), model.getKey(), null);
+        if (size > 0) {
+            throw new BizException("The same key exists under the same classification.");
         }
 
         return commonInfoMapper.insert(model);
@@ -87,24 +79,18 @@ public class CommonInfoServiceImpl implements CommonInfoService {
      */
     @Override
     public int edit(CommonInfoDO model) {
-        Preconditions.checkNotNull(model, "基础信息对象为空");
-        Preconditions.checkArgument(StringUtils.isNoneBlank(model.getClassify(), model.getName(), model.getCode()), "信息分类、名称或编码为空");
-        Preconditions.checkNotNull(model.getId(), "主键为空");
+        Preconditions.checkNotNull(model, "The Object is null.");
+        Preconditions.checkNotNull(model.getId(), "The primary key is null.");
+        Preconditions.checkArgument(StringUtils.isNoneBlank(model.getClassify(), model.getKey(), model.getValue()),
+                "The classify, key or value is null.");
 
         if (model.getParentId() == null || model.getParentId() < GlobalConstant.DEFAULT_VALUE) {
             model.setParentId(GlobalConstant.DEFAULT_VALUE);
         }
 
-        CommonInfoDO tmp = new CommonInfoDO();
-        tmp.setParentId(model.getParentId());
-        tmp.setClassify(model.getClassify());
-        tmp.setCode(model.getCode());
-        List<CommonInfoDO> list = commonInfoMapper.list(tmp);
-        if (CollectionUtils.isNotEmpty(list)) {
-            long size = list.stream().filter(r -> !r.getId().equals(model.getId())).count();
-            if (size > 0) {
-                throw new BizException("存在相同的编码");
-            }
+        int size = commonInfoMapper.getSameBy(model.getClassify(), model.getKey(), model.getId());
+        if (size > 0) {
+            throw new BizException("The same key exists under the same classification.");
         }
 
         return commonInfoMapper.update(model);
@@ -118,13 +104,13 @@ public class CommonInfoServiceImpl implements CommonInfoService {
      */
     @Override
     public int deleteById(CommonInfoDO model) {
-        Preconditions.checkNotNull(model, "基础信息对象为空");
-        Preconditions.checkNotNull(model.getId(), "主键为空");
+        Preconditions.checkNotNull(model, "The Object is null.");
+        Preconditions.checkNotNull(model.getId(), "The primary key is null.");
         CommonInfoDO tmp = new CommonInfoDO();
         tmp.setParentId(model.getId());
         int childrenSize = commonInfoMapper.size(tmp);
         if (childrenSize > 0) {
-            throw new BizException("还存在子节点，不允许删除");
+            throw new BizException("There are also child nodes that are not allowed to be deleted.");
         }
         return commonInfoMapper.delete(model);
     }

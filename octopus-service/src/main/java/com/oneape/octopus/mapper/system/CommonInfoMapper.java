@@ -71,6 +71,9 @@ public interface CommonInfoMapper {
     })
     List<String> getAllClassify();
 
+    @SelectProvider(type = CommonInfoSqlProvider.class, method = "getSameBy")
+    int getSameBy(@Param("classify") String classify, @Param("key") String key, @Param("filterId") Long filterId);
+
     /**
      * The query is based on a property in the entity that is not null.
      *

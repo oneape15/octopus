@@ -13,21 +13,17 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class RoleForm extends BaseForm implements Serializable {
-    @NotNull(message = "主键不能为空", groups = {EditCheck.class, KeyCheck.class})
-    private Long id;
-    // 角色名称
-    @NotBlank(message = "角色名称不能为空", groups = {AddCheck.class, EditCheck.class})
-    private String name;
-    // 角色编码
-    @NotBlank(message = "角色编码不能为空", groups = {AddCheck.class, EditCheck.class})
-    private String code;
-    // 类型, 角色类型: 0 - 普通; 1 - 默认角色
-    @NotNull(message = "角色类型不能为空", groups = {AddCheck.class, EditCheck.class})
+    @NotNull(message = "The primary key is null.", groups = {EditCheck.class, KeyCheck.class})
+    private Long    id;
+    @NotBlank(message = "The role name is empty.", groups = {AddCheck.class, EditCheck.class})
+    private String  name;
+    @NotBlank(message = "The role code is empty.", groups = {AddCheck.class, EditCheck.class})
+    private String  code;
+    // Role type: 0-normal; 1 - Default role; 3 - System role.
+    @NotNull(message = "The role type is empty.", groups = {AddCheck.class, EditCheck.class})
     private Integer type;
-    // 部门
-    private String department;
-    // 描述
-    private String comment;
+    // The role description.
+    private String  comment;
 
     public interface AddCheck {
     }

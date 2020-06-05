@@ -13,21 +13,18 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class CommonInfoForm extends BaseForm implements Serializable {
-    // 主键
-    @NotNull(message = "主键不能为空", groups = {EditCheck.class, KeyCheck.class})
-    private Long commonInfoId;
-    // 父分类
-    private Long parentId;
-
-    // 基础信息分类名称
-    @NotBlank(message = "分类名称不能为空", groups = {AddCheck.class, EditCheck.class})
+    @NotNull(message = "The primary key is null.", groups = {EditCheck.class, KeyCheck.class})
+    private Long   id;
+    private Long   parentId;
+    // Basic information classification
+    @NotBlank(message = "The common information classify is empty.", groups = {AddCheck.class, EditCheck.class})
     private String classify;
-    // 编码信息
-    @NotBlank(message = "编码不能为空", groups = {AddCheck.class, EditCheck.class})
-    private String code;
-    // 名称
-    @NotBlank(message = "名称不能为空", groups = {AddCheck.class, EditCheck.class})
-    private String name;
+    // The common information key.
+    @NotBlank(message = "The common information key is empty.", groups = {AddCheck.class, EditCheck.class})
+    private String key;
+    // The common information value.
+    @NotBlank(message = "The common information value is empty.", groups = {AddCheck.class, EditCheck.class})
+    private String value;
 
     public interface AddCheck {
     }
@@ -41,7 +38,6 @@ public class CommonInfoForm extends BaseForm implements Serializable {
     public CommonInfoDO toDO() {
         CommonInfoDO cdo = new CommonInfoDO();
         BeanUtils.copyProperties(this, cdo);
-        cdo.setId(commonInfoId);
         return cdo;
     }
 }

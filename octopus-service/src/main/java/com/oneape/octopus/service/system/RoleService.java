@@ -18,7 +18,7 @@ public interface RoleService extends BaseService<RoleDO> {
     List<RoleDO> findRoleByUserId(Long userId);
 
     /**
-     * 根据条件查询资源
+     * Query resources by condition.
      *
      * @param role RoleDO
      * @return List
@@ -26,7 +26,7 @@ public interface RoleService extends BaseService<RoleDO> {
     List<RoleVO> find(RoleDO role);
 
     /**
-     * 根据角色Id列表,获取资源
+     * Gets resource permissions based on the list of role ids.
      *
      * @param roleIds List
      * @return Map

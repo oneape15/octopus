@@ -59,6 +59,9 @@ public interface RoleMapper {
     @SelectProvider(type = RoleSqlProvider.class, method = "listOrLink")
     List<RoleDO> listOrLink(@Param("model") RoleDO model);
 
+    @SelectProvider(type = RoleSqlProvider.class, method = "getSameNameOrCodeRole")
+    int getSameNameOrCodeRole(@Param("name") String name, @Param("code") String code, @Param("filterId") Long filterId);
+
     /**
      * The query is associated with the "OR" keyword based on attributes that are not null in the entity.
      *
