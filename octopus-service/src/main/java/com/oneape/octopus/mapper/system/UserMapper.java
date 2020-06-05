@@ -37,7 +37,13 @@ public interface UserMapper {
     int delete(UserDO model);
 
     @UpdateProvider(type = UserSqlProvider.class, method = "delByIds")
-    int delByIds(@Param("userIds") List<Long> userIds, @Param("modifier")Long modifier);
+    int delByIds(@Param("userIds") List<Long> userIds, @Param("modifier") Long modifier);
+
+    /**
+     * Same name detection
+     */
+    @SelectProvider(type = UserSqlProvider.class, method = "sameNameCheck")
+    int sameNameCheck(@Param("username") String username, @Param("filterId") Long filterId);
 
     /**
      * Find by primary key.

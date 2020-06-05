@@ -2,6 +2,7 @@ package com.oneape.octopus.mapper.system;
 
 import com.oneape.octopus.mapper.system.provider.ResourceSqlProvider;
 import com.oneape.octopus.model.DO.system.ResourceDO;
+import com.oneape.octopus.model.DTO.system.ResourceDTO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -52,6 +53,9 @@ public interface ResourceMapper {
      */
     @SelectProvider(type = ResourceSqlProvider.class, method = "list")
     List<ResourceDO> list(@Param("model") ResourceDO model);
+
+    @SelectProvider(type = ResourceSqlProvider.class, method = "listByRoleIds")
+    List<ResourceDTO> listByRoleIds(@Param("roleIds") List<Long> roleIds);
 
     /**
      * The query is based on a property in the entity that is not null.

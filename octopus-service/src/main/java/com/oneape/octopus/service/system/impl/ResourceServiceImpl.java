@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.GlobalConstant;
 import com.oneape.octopus.common.MaskUtils;
+import com.oneape.octopus.model.DTO.system.ResourceDTO;
 import com.oneape.octopus.model.enums.FixOptionType;
 import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.mapper.system.ResourceMapper;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 public class ResourceServiceImpl implements ResourceService {
 
     @Resource
-    private ResourceMapper resourceMapper;
+    private ResourceMapper       resourceMapper;
     @Resource
     private RoleRlResourceMapper roleRlResourceMapper;
 
@@ -275,5 +276,19 @@ public class ResourceServiceImpl implements ResourceService {
 
         list.forEach(r -> ret.put(r.getResourceId(), MaskUtils.getList(r.getMask())));
         return ret;
+    }
+
+    /**
+     * Gets the list of resources based on the role ID
+     *
+     * @param roleIds List
+     * @return List
+     */
+    @Override
+    public List<ResourceDTO> findByRoleIds(List<Long> roleIds) {
+        if (CollectionUtils.isEmpty(roleIds)) {
+            return new ArrayList<>();
+        }
+        return resourceMapper.listByRoleIds(roleIds);
     }
 }

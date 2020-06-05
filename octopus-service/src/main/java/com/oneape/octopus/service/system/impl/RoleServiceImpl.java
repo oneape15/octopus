@@ -103,6 +103,20 @@ public class RoleServiceImpl implements RoleService {
     }
 
     /**
+     * Get the user role list.
+     *
+     * @param userId Long
+     * @return List
+     */
+    @Override
+    public List<RoleDO> findRoleByUserId(Long userId) {
+        if (userId == null || userId < 1L) {
+            return new ArrayList<>();
+        }
+        return roleMapper.findRoleByUserId(userId);
+    }
+
+    /**
      * 根据条件查询资源
      *
      * @param role RoleDO
@@ -137,5 +151,16 @@ public class RoleServiceImpl implements RoleService {
         }
         roleRlResourceMapper.getResIdByRoleIds(roleIds);
         return null;
+    }
+
+    /**
+     * Delete the relationship between the user and the role.
+     *
+     * @param userId Long
+     * @return int 1 - success; 0 - fail.
+     */
+    @Override
+    public int deleteRelationshipWithUserId(Long userId) {
+        return userRlRoleMapper.deleteByUserId(userId);
     }
 }

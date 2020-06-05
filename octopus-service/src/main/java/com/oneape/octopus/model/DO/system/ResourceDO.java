@@ -9,52 +9,47 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 
 /**
- * 资源信息表
+ * Resource information table DO.
  */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ResourceDO extends BaseDO {
     /**
-     * 父节点
+     * The parent node id.
      */
     @Column(name = "parent_id")
-    private Long parentId;
+    private Long    parentId;
     /**
-     * 层级, 开始为1
+     * The resource level, the init value is 1.
      */
     private Integer level;
     /**
-     * 资源名称
+     * The resource name.
      */
-    private String name;
+    private String  name;
     /**
-     * 资源图标
+     * The resource icon
      */
-    private String icon;
+    private String  icon;
     /**
-     * 0 - 菜单; 1 - 资源项
+     * The resource type. 0 - menu; 1 - button.
      */
     private Integer type;
     /**
-     * 资源路径
+     * The resource path.
      */
-    private String path;
+    private String  path;
     /**
-     * 权限编码
-     */
-    @Column(name = "auth_code")
-    private String authCode;
-    /**
-     * 排序Id
+     * The resource sort field.
      */
     @SortId
     @Column(name = "sort_id")
-    private Long sortId;
+    private Long    sortId;
     /**
-     * 描述
+     * description
      */
-    private String comment;
+    private String  comment;
 
     public ResourceDO(Long parentId, String name) {
         this.parentId = parentId;

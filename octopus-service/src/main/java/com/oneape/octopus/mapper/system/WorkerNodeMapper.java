@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.*;
 @Mapper
 public interface WorkerNodeMapper {
 
-    String TB_WORKER_NODE = "uid_worker_node";
+    String TB_WORKER_NODE = "sys_worker_node";
 
     /**
      * Get {@link WorkerNodeDO} by node host and port

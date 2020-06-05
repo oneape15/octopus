@@ -1,246 +1,240 @@
--- 全局唯一生成器
-CREATE TABLE `uid_worker_node`
+-- UID generator
+CREATE TABLE `sys_worker_node`
 (
   id          BIGINT(20)  NOT NULL AUTO_INCREMENT
-  COMMENT '自增主键',
+  COMMENT 'Since the primary key',
   host_name   VARCHAR(64) NOT NULL
-  COMMENT '主机名',
+  COMMENT 'host name',
   port        VARCHAR(64) NOT NULL
-  COMMENT '端口',
+  COMMENT 'the host port',
   type        INT         NOT NULL
-  COMMENT '节点类型 ACTUAL 或 CONTAINER',
+  COMMENT 'node type ACTUAL or CONTAINER',
   launch_time BIGINT(20)  NOT NULL
-  COMMENT '触发时间',
+  COMMENT 'Node trigger time, default to current time',
   created     BIGINT(20)  NOT NULL
-  COMMENT '创建时间',
+  COMMENT 'create time',
   modified    BIGINT(20)  NOT NULL
-  COMMENT '修改时间',
+  COMMENT 'Last updated time',
   PRIMARY KEY (id)
 )
-  COMMENT 'UID生成器'
+  COMMENT 'UID generator'
   ENGINE InnoDB;
 
--- 基础信息表 sys_common_info
+-- Basic information table
 CREATE TABLE `sys_common_info`
 (
-  `id`        BIGINT(20)  NOT NULL
-  COMMENT '主键Id',
-  `parent_id` BIGINT(20)  NOT NULL DEFAULT 0
-  COMMENT '父类id',
-  `classify`  VARCHAR(32) NOT NULL
-  COMMENT '基础信息分类表',
-  `code`      VARCHAR(64) NOT NULL
-  COMMENT '编码信息',
-  `name`      VARCHAR(64) NOT NULL
-  COMMENT '数据源名称',
-  `archive`   TINYINT(1)  NOT NULL DEFAULT 0
-  COMMENT '0 - 正常数据; 1 - 已归档(删除)',
-  `created`   BIGINT(20)  NOT NULL
-  COMMENT '创建时间',
-  `creator`   BIGINT(20)  NOT NULL
-  COMMENT '创建人',
-  `modified`  BIGINT(20)  NULL     DEFAULT NULL
-  COMMENT '最后一次更新时间',
-  `modifier`  BIGINT(20)  NULL     DEFAULT NULL
-  COMMENT '最后一次修改人',
+  `id`        BIGINT(20)   NOT NULL
+  COMMENT 'primary key',
+  `parent_id` BIGINT(20)   NOT NULL DEFAULT 0
+  COMMENT 'The parent id',
+  `classify`  VARCHAR(32)  NOT NULL
+  COMMENT 'Basic information classification',
+  `key`       VARCHAR(128) NOT NULL
+  COMMENT 'The common information key',
+  `value`     VARCHAR(512) NOT NULL
+  COMMENT 'The common information value',
+  `archive`   TINYINT(1)   NOT NULL DEFAULT 0
+  COMMENT '0 - normal data; 1 - have archive (soft delete)',
+  `created`   BIGINT(20)   NOT NULL
+  COMMENT 'create time ',
+  `creator`   BIGINT(20)   NOT NULL
+  COMMENT 'Data record creator',
+  `modified`  BIGINT(20)   NULL     DEFAULT NULL
+  COMMENT 'Last updated time',
+  `modifier`  BIGINT(20)   NULL     DEFAULT NULL
+  COMMENT 'Data record  modifier',
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
-  COMMENT '基础信息表'
+  COMMENT 'Basic information table'
   DEFAULT CHARACTER SET = utf8
   COLLATE = utf8_general_ci;
 
--- sys_user 系统用户信息表
+--  System user information table.
 CREATE TABLE `sys_user`
 (
-  `id`         BIGINT(20)   NOT NULL,
-  `nickname`   VARCHAR(128) NULL
-  COMMENT '用户昵称',
-  `username`   VARCHAR(256) NOT NULL
-  COMMENT '登录用户名, 这里为登录邮箱地址',
-  `password`   VARCHAR(128) NOT NULL
-  COMMENT '登录密码',
-  `avatar`     VARCHAR(512) NULL
-  COMMENT '用户头像',
-  `department` VARCHAR(128) NULL
-  COMMENT '所在部门',
-  `position`   VARCHAR(64)  NULL
-  COMMENT '职位',
-  `signature`  VARCHAR(512) NULL
-  COMMENT '个性签名',
-  `phone`      VARCHAR(16)  NULL
-  COMMENT '手机号',
-  `email`      VARCHAR(128) NULL
-  COMMENT '邮箱号',
-  `address`    VARCHAR(512) NULL
-  COMMENT '地址',
-  `status`     TINYINT(1)   NOT NULL DEFAULT 0
-  COMMENT '账号状态 0 - 注册未激活; 1 - 正常; 2 - 锁定(不可用)',
-  `archive`    TINYINT(1)   NOT NULL DEFAULT 0
-  COMMENT '0 - 正常数据; 1 - 已归档(删除)',
-  `created`    BIGINT(20)   NOT NULL
-  COMMENT '创建时间',
-  `creator`    BIGINT(20)   NOT NULL
-  COMMENT '创建人',
-  `modified`   BIGINT(20)   NULL     DEFAULT NULL
-  COMMENT '最后一次更新时间',
-  `modifier`   BIGINT(20)   NULL     DEFAULT NULL
-  COMMENT '最后一次修改人',
+  `id`       BIGINT(20)   NOT NULL
+  COMMENT 'primary key',
+  `nickname` VARCHAR(128) NULL
+  COMMENT 'user nickname.',
+  `username` VARCHAR(256) NOT NULL
+  COMMENT 'The user login name.',
+  `password` VARCHAR(128) NOT NULL
+  COMMENT 'The user login password.',
+  `avatar`   VARCHAR(512) NULL
+  COMMENT 'avatar',
+  `phone`    VARCHAR(16)  NULL
+  COMMENT 'cell-phone number',
+  `email`    VARCHAR(128) NULL
+  COMMENT 'email address',
+  `status`   TINYINT(1)   NOT NULL DEFAULT 0
+  COMMENT 'Account status 0 - normal; 1 - lock.',
+  `archive`  TINYINT(1)   NOT NULL DEFAULT 0
+  COMMENT '0 - normal data; 1 - have archive (soft delete)',
+  `created`  BIGINT(20)   NOT NULL
+  COMMENT 'create time ',
+  `creator`  BIGINT(20)   NOT NULL
+  COMMENT 'Data record creator',
+  `modified` BIGINT(20)   NULL     DEFAULT NULL
+  COMMENT 'Last updated time',
+  `modifier` BIGINT(20)   NULL     DEFAULT NULL
+  COMMENT 'Data record  modifier',
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
-  COMMENT '系统用户信息表'
+  COMMENT 'System user information table'
   DEFAULT CHARACTER SET = utf8
   COLLATE = utf8_general_ci;
 
--- sys_user_session 用户会话信息表
+--  User session information table
 CREATE TABLE `sys_user_session`
 (
-  `id`         BIGINT(20)   NOT NULL,
+  `id`         BIGINT(20)   NOT NULL
+  COMMENT 'primary key',
   `user_id`    BIGINT(128)  NOT NULL
-  COMMENT '用户Id',
+  COMMENT 'user id',
   `token`      VARCHAR(128) NOT NULL
-  COMMENT '用户登录token',
+  COMMENT 'User login token',
   `timeout`    INT(11)      NOT NULL
-  COMMENT '有效时间',
+  COMMENT 'Token failure time',
   `login_time` BIGINT(20)   NULL
-  COMMENT '登录时间',
+  COMMENT 'Logon time',
   `archive`    TINYINT(1)   NOT NULL DEFAULT 0
-  COMMENT '0 - 正常数据; 1 - 已归档(删除)',
+  COMMENT '0 - normal data; 1 - have archive (soft delete)',
   `created`    BIGINT(20)   NOT NULL
-  COMMENT '创建时间',
+  COMMENT 'create time ',
   `creator`    BIGINT(20)   NOT NULL
-  COMMENT '创建人',
+  COMMENT 'Data record creator',
   `modified`   BIGINT(20)   NULL     DEFAULT NULL
-  COMMENT '最后一次更新时间',
+  COMMENT 'Last updated time',
   `modifier`   BIGINT(20)   NULL     DEFAULT NULL
-  COMMENT '最后一次修改人',
+  COMMENT 'Data record  modifier',
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
-  COMMENT '用户会话信息表'
+  COMMENT 'User session information table.'
   DEFAULT CHARACTER SET = utf8
   COLLATE = utf8_general_ci;
 
--- sys_role 角色信息表
+-- User role information table.
 CREATE TABLE `sys_role`
 (
-  `id`         BIGINT(20)   NOT NULL,
-  `name`       VARCHAR(128) NOT NULL
-  COMMENT '角色名称',
-  `code`       VARCHAR(128) NOT NULL
-  COMMENT '角色编码',
-  `type`       TINYINT(1)   NOT NULL
-  COMMENT '类型, 角色类型: 0 - 普通; 1 - 默认角色',
-  `department` VARCHAR(128) NULL
-  COMMENT '部门',
-  `comment`    VARCHAR(256) NULL
-  COMMENT '描述',
-  `archive`    TINYINT(1)   NOT NULL DEFAULT 0
-  COMMENT '0 - 正常数据; 1 - 已归档(删除)',
-  `created`    BIGINT(20)   NOT NULL
-  COMMENT '创建时间',
-  `creator`    BIGINT(20)   NOT NULL
-  COMMENT '创建人',
-  `modified`   BIGINT(20)   NULL     DEFAULT NULL
-  COMMENT '最后一次更新时间',
-  `modifier`   BIGINT(20)   NULL     DEFAULT NULL
-  COMMENT '最后一次修改人',
+  `id`       BIGINT(20)   NOT NULL
+  COMMENT 'primary key',
+  `name`     VARCHAR(128) NOT NULL
+  COMMENT 'The role name',
+  `code`     VARCHAR(128) NOT NULL
+  COMMENT 'The role code',
+  `type`     TINYINT(1)   NOT NULL
+  COMMENT 'Role type: 0-normal; 1 - Default role; 3 - System role.',
+  `comment`  VARCHAR(256) NULL
+  COMMENT 'description',
+  `archive`  TINYINT(1)   NOT NULL DEFAULT 0
+  COMMENT '0 - normal data; 1 - have archive (soft delete)',
+  `created`  BIGINT(20)   NOT NULL
+  COMMENT 'create time ',
+  `creator`  BIGINT(20)   NOT NULL
+  COMMENT 'Data record creator',
+  `modified` BIGINT(20)   NULL     DEFAULT NULL
+  COMMENT 'Last updated time',
+  `modifier` BIGINT(20)   NULL     DEFAULT NULL
+  COMMENT 'Data record  modifier',
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
-  COMMENT '角色信息表'
+  COMMENT 'User role information table.'
   DEFAULT CHARACTER SET = utf8
   COLLATE = utf8_general_ci;
 
--- sys_user_rl_role 用户与角色关联关系表
+-- User - role association table
 CREATE TABLE `sys_user_rl_role`
 (
-  `id`       BIGINT(20) NOT NULL,
+  `id`       BIGINT(20) NOT NULL
+  COMMENT 'primary key',
   `user_id`  BIGINT(20) NOT NULL
-  COMMENT '用户Id',
+  COMMENT 'The user id',
   `role_id`  BIGINT(20) NOT NULL
-  COMMENT '角色Id',
+  COMMENT 'The role id',
   `archive`  TINYINT(1) NOT NULL DEFAULT 0
-  COMMENT '0 - 正常数据; 1 - 已归档(删除)',
+  COMMENT '0 - normal data; 1 - have archive (soft delete)',
   `created`  BIGINT(20) NOT NULL
-  COMMENT '创建时间',
+  COMMENT 'create time ',
   `creator`  BIGINT(20) NOT NULL
-  COMMENT '创建人',
+  COMMENT 'Data record creator',
   `modified` BIGINT(20) NULL     DEFAULT NULL
-  COMMENT '最后一次更新时间',
+  COMMENT 'Last updated time',
   `modifier` BIGINT(20) NULL     DEFAULT NULL
-  COMMENT '最后一次修改人',
+  COMMENT 'Data record  modifier',
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
-  COMMENT '用户与角色关联关系表'
+  COMMENT 'User - role association table.'
   DEFAULT CHARACTER SET = utf8
   COLLATE = utf8_general_ci;
 
--- sys_resource 资源信息表
+-- Resource information table
 CREATE TABLE `sys_resource`
 (
-  `id`        BIGINT(20)   NOT NULL,
+  `id`        BIGINT(20)   NOT NULL
+  COMMENT 'primary key',
   `parent_id` BIGINT(20)   NOT NULL
-  COMMENT '父节点',
+  COMMENT 'The parent node id',
   `level`     INT(11)      NOT NULL
-  COMMENT '层级，开始为1',
+  COMMENT 'The resource level, the init value is 1.',
   `name`      VARCHAR(128) NOT NULL
-  COMMENT '资源名称',
+  COMMENT 'The resource name',
   `icon`      VARCHAR(512) NULL
-  COMMENT '资源图标',
+  COMMENT 'The resource icon',
   `type`      TINYINT(1)   NOT NULL
-  COMMENT '类型, 0 - 菜单; 1 - 资源项',
+  COMMENT 'The resource type. 0 - menu; 1 - button.',
   `path`      VARCHAR(512) NULL
-  COMMENT '资源路径',
-  `auth_code` VARCHAR(128) NULL
-  COMMENT '权限编码',
+  COMMENT 'The resource path',
   `sort_id`   BIGINT(20)   NOT NULL DEFAULT 0
-  COMMENT '排序Id',
+  COMMENT 'The resource sort field.',
   `comment`   VARCHAR(256) NULL
-  COMMENT '描述',
+  COMMENT 'description',
   `archive`   TINYINT(1)   NOT NULL DEFAULT 0
-  COMMENT '0 - 正常数据; 1 - 已归档(删除)',
+  COMMENT '0 - normal data; 1 - have archive (soft delete)',
   `created`   BIGINT(20)   NOT NULL
-  COMMENT '创建时间',
+  COMMENT 'create time ',
   `creator`   BIGINT(20)   NOT NULL
-  COMMENT '创建人',
+  COMMENT 'Data record creator',
   `modified`  BIGINT(20)   NULL     DEFAULT NULL
-  COMMENT '最后一次更新时间',
+  COMMENT 'Last updated time',
   `modifier`  BIGINT(20)   NULL     DEFAULT NULL
-  COMMENT '最后一次修改人',
+  COMMENT 'Data record  modifier',
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
-  COMMENT '资源信息表'
+  COMMENT 'Resource information table'
   DEFAULT CHARACTER SET = utf8
   COLLATE = utf8_general_ci;
 
--- sys_role_rl_resource 角色与资源关联关系表
+-- Role - resource association table
 CREATE TABLE `sys_role_rl_resource`
 (
-  `id`          BIGINT(20) NOT NULL,
+  `id`          BIGINT(20) NOT NULL
+  COMMENT 'primary key',
   `role_id`     BIGINT(20) NOT NULL
-  COMMENT '角色Id',
+  COMMENT 'The role id',
   `resource_id` BIGINT(20) NOT NULL
-  COMMENT '资源Id',
+  COMMENT 'The resource id',
   `mask`        INT(11)    NOT NULL DEFAULT 0
-  COMMENT '权限掩码 1 - 查看; 2 - 新增; 4 - 修改; 8 - 删除',
+  COMMENT 'Permissions mask 0 - blank; 1 - View; 2 - Add; 4 - Modification; 8 - Delete;',
   `archive`     TINYINT(1) NOT NULL DEFAULT 0
-  COMMENT '0 - 正常数据; 1 - 已归档(删除)',
+  COMMENT '0 - normal data; 1 - have archive (soft delete)',
   `created`     BIGINT(20) NOT NULL
-  COMMENT '创建时间',
+  COMMENT 'create time ',
   `creator`     BIGINT(20) NOT NULL
-  COMMENT '创建人',
+  COMMENT 'Data record creator',
   `modified`    BIGINT(20) NULL     DEFAULT NULL
-  COMMENT '最后一次更新时间',
+  COMMENT 'Last updated time',
   `modifier`    BIGINT(20) NULL     DEFAULT NULL
-  COMMENT '最后一次修改人',
+  COMMENT 'Data record  modifier',
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
-  COMMENT '角色与资源关联关系表'
+  COMMENT 'Role - resource association table.'
   DEFAULT CHARACTER SET = utf8
   COLLATE = utf8_general_ci;
 

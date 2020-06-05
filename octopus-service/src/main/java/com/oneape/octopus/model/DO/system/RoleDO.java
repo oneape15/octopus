@@ -10,20 +10,20 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class RoleDO extends BaseDO {
     /**
-     * 角色名称
+     * The role name
      */
-    private String name;
+    private String  name;
     /**
-     * 角色编码
+     * The role code
      */
-    private String code;
+    private String  code;
     /**
-     * 类型, 角色类型: 0 - 普通; 1 - 默认角色
+     * Role type: 0-normal; 1 - Default role; 3 - System role.
      */
     private Integer type;
     /**
-     * 描述
+     * description.
      */
-    private String comment;
+    private String  comment;
 
 }

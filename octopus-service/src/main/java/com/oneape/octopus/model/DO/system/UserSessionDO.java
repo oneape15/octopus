@@ -7,29 +7,32 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 
+/**
+ * User session information table DO.
+ */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class UserSessionDO extends BaseDO {
     /**
-     * 用户Id
+     * The user primary key.
      */
     @Column(name = "user_id", nullable = false)
-    private Long userId;
+    private Long    userId;
     /**
-     * 会话token
+     * User login token.
      */
     @Column(nullable = false)
-    private String token;
+    private String  token;
     /**
-     * 登录时间
+     * Logon time
      */
     @Column(name = "login_time", nullable = false)
-    private Long loginTime;
+    private Long    loginTime;
     /**
-     * token失效时间
+     * Token failure time.
      */
-    private Integer timeout = 30;
+    private Integer timeout;
 
     public UserSessionDO(Long userId, String token) {
         this.userId = userId;

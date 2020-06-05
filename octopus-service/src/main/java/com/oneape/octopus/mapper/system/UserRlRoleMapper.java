@@ -36,6 +36,15 @@ public interface UserRlRoleMapper {
     int delete(UserRlRoleDO model);
 
     /**
+     * Delete the relationship between user and role base on userId.
+     *
+     * @param userId Long
+     * @return int 1 - success; 0 - fail.
+     */
+    @UpdateProvider(type = UserRlRoleSqlProvider.class, method = "deleteByUserId")
+    int deleteByUserId(@Param("userId") Long userId);
+
+    /**
      * Find by primary key.
      *
      * @param id Long

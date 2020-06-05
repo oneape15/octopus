@@ -44,6 +44,9 @@ public interface RoleMapper {
     @SelectProvider(type = RoleSqlProvider.class, method = "findById")
     RoleDO findById(@Param("id") Long id);
 
+    @SelectProvider(type = RoleSqlProvider.class, method = "findRoleByUserId")
+    List<RoleDO> findRoleByUserId(@Param("userId") Long userId);
+
     /**
      * The query is based on a property in the entity that is not null.
      *

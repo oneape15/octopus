@@ -7,27 +7,26 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.Column;
 
 /**
- * 基础信息
+ * Basic information table DO.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class CommonInfoDO extends BaseDO {
     /**
-     * 父分类
+     * The parent id.
      */
     @Column(name = "parent_id")
-    private Long parentId;
-
+    private Long   parentId;
     /**
-     * 基础信息分类名称
+     * Basic information classification
      */
     private String classify;
     /**
-     * 编码信息
+     * The common information key.
      */
-    private String code;
+    private String key;
     /**
-     * 名称
+     * The common information value.
      */
-    private String name;
+    private String value;
 }

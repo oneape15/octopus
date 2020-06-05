@@ -15,24 +15,22 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class UserForm extends BaseForm implements Serializable {
-    @NotNull(message = "用户Id不能为空", groups = {KeyCheck.class, UpdateCheck.class})
+    @NotNull(message = "The user id is empty.", groups = {KeyCheck.class, UpdateCheck.class})
     private Long   id;
-    @NotBlank(message = "用户名不能为空", groups = {LoginCheck.class, RegCheck.class, AddCheck.class, UpdateCheck.class})
+    @NotBlank(message = "The username is empty.", groups = {LoginCheck.class, RegCheck.class, AddCheck.class, UpdateCheck.class})
     private String username;
-    @NotBlank(message = "密码不能为空", groups = {LoginCheck.class, RegCheck.class})
+    @NotBlank(message = "The password is empty.", groups = {LoginCheck.class, RegCheck.class})
     private String password;
-    @NotBlank(message = "用户邮箱不能为空", groups = {AddCheck.class, UpdateCheck.class})
+    @NotBlank(message = "The user email address is empty.", groups = {AddCheck.class, UpdateCheck.class})
     private String email;
 
-    private String phone; // 手机号
-    private String nickname; // 昵称
-    private String avatar;   // 头像
-    private String signature; // 个性签名
-    private String address; // 联系地址
-    private Integer status; // 账号状态
-    private Integer gender; // 性别 0 - 女; 1 - 男
+    private String  phone;
+    private String  nickname;
+    private String  avatar;
+    private Integer status;
+    private Integer gender;
 
-    @NotNull(message = "用户id列表不能为空", groups = {DelCheck.class})
+    @NotNull(message = "The userId List is empty.", groups = {DelCheck.class})
     private List<Long> userIds;
 
     public interface AddCheck {
@@ -51,13 +49,6 @@ public class UserForm extends BaseForm implements Serializable {
     }
 
     public interface KeyCheck {
-    }
-
-    public UserVO toVO() {
-        UserVO vo = new UserVO();
-        BeanUtils.copyProperties(this, vo);
-
-        return vo;
     }
 
     public UserDO toDO() {

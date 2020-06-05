@@ -5,50 +5,45 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+/**
+ * User information table DO.
+ */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class UserDO extends BaseDO {
 
     /**
-     * 登录名（唯一）
+     * login name
      */
-    private String username;
+    private String  username;
     /**
-     * 昵称
+     * The user nickname
      */
-    private String nickname;
+    private String  nickname;
     /**
-     * 密码
+     * The user login password.
      */
-    private transient String password;
+    private String  password;
     /**
-     * 头像
+     * avatar
      */
-    private String avatar;
+    private String  avatar;
     /**
-     * 个性签名
+     * cell-phone number
      */
-    private String signature;
+    private String  phone;
     /**
-     * 手机号
+     * email address.
      */
-    private String phone;
+    private String  email;
     /**
-     * 邮箱地址
-     */
-    private String email;
-    /**
-     * 联系地址
-     */
-    private String address;
-    /**
-     * 账号状态
+     * Account status 0 - normal; 1 - lock.
      */
     private Integer status;
 
     /**
-     * 性别 0 - 女; 1 - 男
+     * User's gender. 0 - female; 1 - man
      */
     private Integer gender;
 

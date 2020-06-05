@@ -10,6 +10,14 @@ import java.util.Map;
 public interface RoleService extends BaseService<RoleDO> {
 
     /**
+     * Get the user role list.
+     *
+     * @param userId Long
+     * @return List
+     */
+    List<RoleDO> findRoleByUserId(Long userId);
+
+    /**
      * 根据条件查询资源
      *
      * @param role RoleDO
@@ -24,4 +32,12 @@ public interface RoleService extends BaseService<RoleDO> {
      * @return Map
      */
     Map<Long, List<Integer>> getRoleRes(List<Long> roleIds);
+
+    /**
+     * Delete the relationship between the user and the role.
+     *
+     * @param userId Long
+     * @return int 1 - success; 0 - fail.
+     */
+    int deleteRelationshipWithUserId(Long userId);
 }

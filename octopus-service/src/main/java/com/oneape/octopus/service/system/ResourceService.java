@@ -1,6 +1,7 @@
 package com.oneape.octopus.service.system;
 
 import com.oneape.octopus.model.DO.system.ResourceDO;
+import com.oneape.octopus.model.DTO.system.ResourceDTO;
 import com.oneape.octopus.model.VO.ResourceVO;
 import com.oneape.octopus.model.VO.TreeNodeVO;
 import com.oneape.octopus.service.BaseService;
@@ -32,4 +33,12 @@ public interface ResourceService extends BaseService<ResourceDO> {
      * @return Map
      */
     Map<Long, List<Integer>> getByRoleId(Long roleId);
+
+    /**
+     * Gets the list of resources based on the role ID
+     *
+     * @param roleIds List
+     * @return List
+     */
+    List<ResourceDTO> findByRoleIds(List<Long> roleIds);
 }

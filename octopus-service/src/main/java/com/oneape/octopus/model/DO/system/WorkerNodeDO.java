@@ -7,12 +7,16 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * UID generator DO
+ */
 @Data
 @NoArgsConstructor
 public class WorkerNodeDO implements Serializable {
-    private Long id;
+    private Long   id;
     /**
-     * CONTAINER -> 主机名；ACTUAL -> IP地址
+     * CONTAINER -> host name；
+     * ACTUAL -> ip address.
      */
     private String hostName;
     /**
@@ -21,19 +25,19 @@ public class WorkerNodeDO implements Serializable {
     private String port;
 
     /**
-     * 工作节点类型 WorkerNodeType.CONTAINER WorkerNodeType.ACTUAL
+     * node type WorkerNodeType.CONTAINER WorkerNodeType.ACTUAL
      */
-    private int type;
+    private int  type;
     /**
-     * 创建时间
+     * create time
      */
     private Long created;
     /**
-     * 最后修改时间
+     * Last updated time
      */
     private Long modified;
     /**
-     * 节点触发时间， 默认为当前时间
+     * Node trigger time, default to current time
      */
     private Long launchTime = new Date().getTime();
 

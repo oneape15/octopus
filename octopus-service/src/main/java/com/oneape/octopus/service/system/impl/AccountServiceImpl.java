@@ -4,29 +4,29 @@ import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.*;
 import com.oneape.octopus.commons.security.MD5Utils;
 import com.oneape.octopus.commons.value.CodeBuilderUtils;
-import com.oneape.octopus.mapper.system.ResourceMapper;
 import com.oneape.octopus.mapper.system.UserMapper;
-import com.oneape.octopus.mapper.system.UserRlRoleMapper;
 import com.oneape.octopus.mapper.system.UserSessionMapper;
-import com.oneape.octopus.model.DO.system.ResourceDO;
+import com.oneape.octopus.model.DO.system.RoleDO;
 import com.oneape.octopus.model.DO.system.UserDO;
-import com.oneape.octopus.model.DO.system.UserRlRoleDO;
 import com.oneape.octopus.model.DO.system.UserSessionDO;
-import com.oneape.octopus.model.VO.MenuVO;
-import com.oneape.octopus.model.VO.UserVO;
+import com.oneape.octopus.model.DTO.system.ResourceDTO;
+import com.oneape.octopus.model.DTO.system.UserDTO;
 import com.oneape.octopus.service.system.AccountService;
 import com.oneape.octopus.service.system.MailService;
+import com.oneape.octopus.service.system.ResourceService;
+import com.oneape.octopus.service.system.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,14 +35,14 @@ public class AccountServiceImpl implements AccountService {
     @Resource
     private UserMapper        userMapper;
     @Resource
-    private UserRlRoleMapper  userRlRoleMapper;
-    @Resource
     private UserSessionMapper userSessionMapper;
-    @Resource
-    private ResourceMapper    resourceMapper;
 
     @Resource
-    private MailService mailService;
+    private RoleService     roleService;
+    @Resource
+    private ResourceService resourceService;
+    @Resource
+    private MailService     mailService;
 
     /**
      * Add data to table.
@@ -52,11 +52,9 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public int insert(UserDO model) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(model.getUsername()), "用户名为空");
-        List<UserDO> users = userMapper.list(new UserDO(model.getUsername()));
-        if (CollectionUtils.isNotEmpty(users)) {
-            throw new BizException("用户名已存在");
-        }
+        Preconditions.checkNotNull(model, "The user information is null.");
+        Preconditions.checkArgument(StringUtils.isNotBlank(model.getUsername()), "The username is empty.");
+        Preconditions.checkArgument(userMapper.sameNameCheck(model.getUsername(), null) == 0, "The username already exists.");
 
         String rawPwd = model.getPassword();
         if (StringUtils.isBlank(rawPwd)) {
@@ -80,8 +78,10 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public int edit(UserDO model) {
-        Preconditions.checkNotNull(model.getId(), "用户ID为空");
-        // 用户登录名不能修改
+        Preconditions.checkNotNull(model, "The user information is null.");
+        Preconditions.checkNotNull(model.getId(), "The user id is empty.");
+
+        // the username and password can't edit.
         model.setUsername(null);
         model.setPassword(null);
 
@@ -94,73 +94,110 @@ public class AccountServiceImpl implements AccountService {
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
+    @Transactional
     @Override
     public int deleteById(UserDO model) {
-        Preconditions.checkNotNull(model.getId(), "用户ID为空");
+        Preconditions.checkNotNull(model.getId(), "The user id is empty.");
 
         int status = userMapper.delete(new UserDO(model.getId()));
+        // Delete the relationship between the user and the role
         if (status > 0) {
-            // 删除角色关系
-            userRlRoleMapper.delete(new UserRlRoleDO(model.getId(), null));
+            roleService.deleteRelationshipWithUserId(model.getId());
         }
+
         return status;
     }
 
     /**
-     * 根据token获取用户信息
+     * Get user information according to token
      *
      * @param token String
-     * @return UserVO
+     * @return UserDTO
      */
     @Override
-    public UserVO getUserInfoByToken(String token) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(token), "会话Token为空");
-        // 根据token获取用户信息
+    public UserDTO getUserInfoByToken(String token) {
+        Preconditions.checkArgument(StringUtils.isNotBlank(token), "Session Token is null.");
+        // Get user information according to token
         UserSessionDO us = userSessionMapper.findByToken(token);
 
-        // 验证token
+        // Authentication token
         if (us == null) {
-            throw new UnauthorizedException("无效的Token");
+            throw new UnauthorizedException("Invalid Token");
         }
 
         Long loginTime = us.getLoginTime();
 
         int timeout = us.getTimeout();
         if (timeout <= 0) {
-            timeout = TOKEN_TIMEOUT; // 默认60分钟失效
+            // The default is 60 minutes
+            timeout = TOKEN_TIMEOUT;
         }
         if (loginTime == null || loginTime + timeout * ONE_MINUTE < System.currentTimeMillis()) {
-            throw new UnauthorizedException("登录令牌已失效, 请重新登录");
+            throw new UnauthorizedException("Login timeout, please login again");
         }
 
         UserDO udo = userMapper.findById(us.getUserId());
-        return UserVO.ofDO(udo);
+        if (udo == null) {
+            throw new UnauthorizedException("The user does not exist or is locked.");
+        }
+
+        // get user full information.
+        UserDTO dto = getFullInformationById(udo.getId());
+        dto.setToken(token);
+
+        return dto;
     }
 
     /**
-     * 获取当前用户
+     * Get the current user
      *
-     * @return UserVO
+     * @return UserDTO
      */
     @Override
-    public UserVO getCurrentUser() {
-        UserVO uvo = SessionThreadLocal.getSession();
-        if (uvo != null) {
-            // 获取资源操作权限
-            Map<String, List<Integer>> optPermission = getResOptPermission(uvo.getId());
-            uvo.setOptPermission(optPermission);
-        }
-        return uvo;
+    public UserDTO getCurrentUser() {
+        return SessionThreadLocal.getSession();
     }
 
     /**
-     * 获取当前用户Id
+     * Get full user information.
+     *
+     * @param userId Long
+     * @return UserDTO
+     */
+    @Override
+    public UserDTO getFullInformationById(Long userId) {
+        UserDO udo = userMapper.findById(userId);
+        if (udo == null) {
+            throw new UnauthorizedException("The user does not exist or is locked.");
+        }
+
+        UserDTO dto = new UserDTO();
+        BeanUtils.copyProperties(udo, dto);
+
+        // Get the own role.
+        List<RoleDO> roles = roleService.findRoleByUserId(userId);
+        dto.setRoles(roles);
+
+        List<Long> roleIds = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(roles)) {
+            roles.forEach(r -> roleIds.add(r.getId()));
+        }
+
+        // Gets the resource action permission.
+        Map<String, List<Integer>> optPermission = getResOptPermission(roleIds);
+        dto.setPermissions(optPermission);
+
+        return dto;
+    }
+
+    /**
+     * Get the current user id.
      *
      * @return Long
      */
     @Override
     public Long getCurrentUserId() {
-        UserVO user = SessionThreadLocal.getSession();
+        UserDTO user = SessionThreadLocal.getSession();
         if (user == null) {
             return GlobalConstant.SYS_USER;
         }
@@ -168,154 +205,105 @@ public class AccountServiceImpl implements AccountService {
     }
 
     /**
-     * 获取当前用户的前端菜单列表
-     *
-     * @return List
-     */
-    @Override
-    public List<MenuVO> getCurrentMenus() {
-        ResourceDO qrd = new ResourceDO();
-        qrd.setType(0); // 只查询类型为菜单的资料
-
-        // 设置排序方式
-        List<String> orders = new ArrayList<>();
-        orders.add("level");
-        orders.add("sort_id DESC");
-        List<ResourceDO> resources = resourceMapper.listWithOrder(qrd, orders);
-
-        Map<Integer, List<ResourceDO>> levelMap = new HashMap<>();
-        for (ResourceDO r : resources) {
-            if (!levelMap.containsKey(r.getLevel())) {
-                levelMap.put(r.getLevel(), new ArrayList<>());
-            }
-            levelMap.get(r.getLevel()).add(r);
-        }
-
-        List<Integer> levels = levelMap.keySet()
-                .stream()
-                .sorted(Comparator.reverseOrder())
-                .collect(Collectors.toList());
-
-        // 从下往上遍历
-        Map<Long, List<MenuVO>> preLevelMap = new LinkedHashMap<>();
-        for (Integer level : levels) {
-            Map<Long, List<MenuVO>> curLevelMap = new LinkedHashMap<>();
-            for (ResourceDO r : levelMap.get(level)) {
-                Long id = r.getId();
-                Long pId = r.getParentId();
-                MenuVO menu = new MenuVO(r.getName(), r.getPath(), r.getIcon());
-                if (preLevelMap.containsKey(id)) {
-                    menu.setChildren(preLevelMap.get(id));
-                }
-                if (!curLevelMap.containsKey(pId)) {
-                    curLevelMap.put(pId, new ArrayList<>());
-                }
-                curLevelMap.get(pId).add(menu);
-            }
-            preLevelMap = curLevelMap;
-        }
-
-        List<MenuVO> menus = new ArrayList<>();
-        preLevelMap.values().forEach(menus::addAll);
-
-        return menus;
-    }
-
-    /**
-     * 根据用户名查询用户信息
+     * Query user information by user name.
      *
      * @param username String
      * @return UserDO
      */
     @Override
-    public UserVO getByUsername(String username) {
+    public UserDO getByUsername(String username) {
         if (StringUtils.isBlank(username)) {
             return null;
         }
 
-        UserDO udo = userMapper.getByUsername(username);
-        return UserVO.ofDO(udo);
+        return userMapper.getByUsername(username);
     }
 
     /**
-     * 用户登录操作
+     * The user login option.
      *
      * @param username String
      * @param password String
-     * @return UserVO
+     * @return UserDTO
      */
     @Override
-    public UserVO login(String username, String password) {
-        UserVO uvo = getByUsername(username);
-        if (uvo == null || !StringUtils.equals(password, uvo.getPassword())) {
-            throw new BizException("用户名或密码错误~");
+    public UserDTO login(String username, String password) {
+        UserDO udo = getByUsername(username);
+        if (udo == null || !StringUtils.equals(password, udo.getPassword())) {
+            throw new BizException("Error username or password.");
         }
 
-        // 生成登录成功token
-        String token = createUserSessionToken(uvo.getId());
+        // crate a new token.
+        String token = createUserSessionToken(udo.getId());
         if (StringUtils.isBlank(token)) {
-            throw new BizException("登录令牌生成失败，请重试~");
+            throw new BizException("Login token generation failed. Please try again");
         }
-        uvo.setToken(token);
 
-        // 获取资源操作权限
-        Map<String, List<Integer>> optPermission = getResOptPermission(uvo.getId());
-        uvo.setOptPermission(optPermission);
-        return uvo;
+        // Get user full information.
+        UserDTO dto = getFullInformationById(udo.getId());
+        dto.setToken(token);
+
+        return dto;
     }
 
     /**
-     * 重置用户密码
+     * Reset user password.
      *
      * @param userId Long
      * @return int
      */
     @Override
     public int resetPwd(Long userId) {
-        Preconditions.checkNotNull(userId, "用户Id为空");
-        UserDO user = Preconditions.checkNotNull(userMapper.findById(userId), "用户信息不存在");
-        // 随机生成一个密码
+        Preconditions.checkNotNull(userId, "The user id is empty.");
+        UserDO user = Preconditions.checkNotNull(userMapper.findById(userId), "The user information is null.");
+
+        // Randomly generate a password.
         String pwd = CodeBuilderUtils.RandmonStr(6);
         String pwdMd5 = MD5Utils.saltUserPassword(user.getUsername(), pwd, null);
         user.setPassword(pwdMd5);
         int status = userMapper.update(user);
         if (status > 0) {
-            // 密码被修改了,必须发送一封邮件给相应的用户
 
+            // The password has been changed and an email must be sent to the appropriate user.
             try {
                 String template_name = "templates/email/user-reset-pwd.html";
                 String content = getFileContent(template_name);
 
-                // 这里不使用MessageFormat.format的原因,在于 style中会存在{dispaly:none}这种字符串存在
+                // The reason for not using {@link MessageFormat.format} here is that the string {display:none} exists in style.
                 content = StringUtils.replace(content, "{0}", user.getUsername());
                 content = StringUtils.replace(content, "{1}", "");
                 content = StringUtils.replace(content, "{2}", pwd);
 
-                mailService.sendSimpleMail(user.getEmail(), "OCTOPUS-数据平台密码重置", content);
+                mailService.sendSimpleMail(user.getEmail(), "OCTOPUS", content);
             } catch (Exception e) {
-                log.error("发送邮件失败~", e);
-                throw new BizException("发送邮件失败, 邮箱地址:" + user.getEmail());
+                log.error("Failed to send email~", e);
+                throw new BizException("Failed to send email:" + user.getEmail());
             }
         }
         return status;
     }
 
     /**
-     * 获取用户资源操作权限
+     * Gets user resource action permissions.
      *
-     * @param userId Long
+     * @param roleIds List
      * @return Map
      */
     @Override
-    public Map<String, List<Integer>> getResOptPermission(Long userId) {
-        List<ResourceDO> list = resourceMapper.list(new ResourceDO());
+    public Map<String, List<Integer>> getResOptPermission(List<Long> roleIds) {
+        List<ResourceDTO> list = resourceService.findByRoleIds(roleIds);
 
         Map<String, List<Integer>> ret = new HashMap<>();
 
-        List<Integer> masks = MaskUtils.getAllList();
         list.forEach(resource -> {
-            if (StringUtils.isNotBlank(resource.getPath())) {
-                ret.put(resource.getPath(), masks);
+            String key = resource.getPath();
+            if (StringUtils.isNotBlank(key)) {
+                Set<Integer> maskList = new HashSet<>();
+                maskList.addAll(MaskUtils.getList(resource.getMask()));
+                if (ret.containsKey(key)) {
+                    maskList.addAll(ret.get(key));
+                }
+                ret.put(key, new ArrayList<>(maskList));
             }
         });
 
@@ -323,38 +311,32 @@ public class AccountServiceImpl implements AccountService {
     }
 
     /**
-     * 创建用户
+     * Create a new User.
      *
-     * @param user UserVO
+     * @param user UserDO
      * @return int
      */
     @Override
-    public int addUser(UserVO user) {
-        UserDO tmp = user.toDO();
-        int status = insert(tmp);
+    public int addUser(UserDO user) {
+        int status = insert(user);
         if (status < GlobalConstant.SUCCESS) {
             return GlobalConstant.FAIL;
-        }
-
-        // 保存用户与角色信息
-        if (CollectionUtils.isNotEmpty(user.getRoleIds())) {
-            user.getRoleIds().forEach(rId -> userRlRoleMapper.insert(new UserRlRoleDO(user.getId(), rId)));
         }
 
         try {
             String template_name = "templates/email/sys-reg-success.html";
             String content = getFileContent(template_name);
 
-            // 这里不使用MessageFormat.format的原因,在于 style中会存在{dispaly:none}这种字符串存在
+            // The reason for not using {@link MessageFormat.format} here is that the string {display:none} exists in style.
             content = StringUtils.replace(content, "{0}", user.getNickname());
             content = StringUtils.replace(content, "{1}", "");
             content = StringUtils.replace(content, "{2}", user.getUsername());
-            content = StringUtils.replace(content, "{3}", tmp.getPassword());
+            content = StringUtils.replace(content, "{3}", user.getPassword());
 
-            mailService.sendSimpleMail(user.getEmail(), "OCTOPUS-数据平台密码重置", content);
+            mailService.sendSimpleMail(user.getEmail(), "OCTOPUS", content);
         } catch (Exception e) {
-            log.error("发送邮件失败~", e);
-            throw new BizException("发送邮件失败, 邮箱地址:" + user.getEmail());
+            log.error("Failed to send email~", e);
+            throw new BizException("Failed to send email:" + user.getEmail());
         }
         return status;
     }
@@ -377,7 +359,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     /**
-     * 创建会话token
+     * Create session Token
      *
      * @param userId Long
      * @return String
@@ -386,17 +368,18 @@ public class AccountServiceImpl implements AccountService {
         String randomStr = UUID.randomUUID().toString().replaceAll("-", "");
 
         String rawStr = randomStr + TOKEN_INFO_SPLIT + userId;
-        String token = "";
+        String token;
         try {
             token = MD5Utils.getMD5(rawStr);
         } catch (Exception e) {
-            //
-            log.error("生成token失败： {}", e.getMessage());
+            log.error("Create session Token fail.", e);
+            return null;
         }
 
         UserSessionDO us = new UserSessionDO(userId, token);
         us.setLoginTime(System.currentTimeMillis());
-        us.setTimeout(TOKEN_TIMEOUT * 2); // 二小时失效
+        // It expires in two hours
+        us.setTimeout(TOKEN_TIMEOUT * 2);
         int status = userSessionMapper.insert(us);
         if (status > 0) {
             return token;
@@ -405,23 +388,21 @@ public class AccountServiceImpl implements AccountService {
     }
 
     /**
-     * 获取用户列表
+     * Get user list.
      *
      * @param user UserDO
      * @return List
      */
     @Override
-    public List<UserVO> find(UserDO user) {
-        List<UserDO> users = userMapper.list(user);
-        List<UserVO> vos = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(users)) {
-            users.forEach(u -> vos.add(UserVO.ofDO(u)));
+    public List<UserDO> find(UserDO user) {
+        if (user == null) {
+            user = new UserDO();
         }
-        return vos;
+        return userMapper.list(user);
     }
 
     /**
-     * 删除用户列表
+     * Delete user list.
      *
      * @param userIds List
      * @return int
@@ -433,11 +414,11 @@ public class AccountServiceImpl implements AccountService {
         }
         Long curUserId = SessionThreadLocal.getUserId();
         if (curUserId == null) {
-            throw new BizException("无权限的操作");
+            throw new BizException("The operation without permission.");
         }
 
         if (userIds.contains(curUserId)) {
-            throw new BizException("不能将自己删除~");
+            throw new BizException("You cannot delete yourself~");
         }
         return userMapper.delByIds(userIds, curUserId);
     }

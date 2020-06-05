@@ -1,35 +1,34 @@
 package com.oneape.octopus.common;
 
-
 import com.oneape.octopus.commons.value.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 权限掩码操作工具类
+ * Permission mask manipulation tool class.
  */
 public class MaskUtils {
-    private static final Integer VIEW = 1;      // 1 - 查看;
-    private static final Integer ADD  = 1 << 1; // 2 - 新增;
-    private static final Integer EDIT = 1 << 2; // 4 - 修改;
-    private static final Integer DEL  = 1 << 3; // 8 - 删除;
+    private static final Integer VIEW = 1;      // 1 - VIEW;
+    private static final Integer ADD  = 1 << 1; // 2 - ADD;
+    private static final Integer EDIT = 1 << 2; // 4 - EDIT;
+    private static final Integer DEL  = 1 << 3; // 8 - DEL;
 
 
     public static List<Pair<Integer, String>> allMask() {
         List<Pair<Integer, String>> mask = new ArrayList<>();
-        mask.add(new Pair<>(VIEW, "查看"));
-        mask.add(new Pair<>(ADD, "新增"));
-        mask.add(new Pair<>(EDIT, "修改"));
-        mask.add(new Pair<>(DEL, "删除"));
+        mask.add(new Pair<>(VIEW, "VIEW"));
+        mask.add(new Pair<>(ADD, "ADD"));
+        mask.add(new Pair<>(EDIT, "EDIT"));
+        mask.add(new Pair<>(DEL, "DEL"));
         return mask;
     }
 
     /**
-     * 判断是否有查看权限
+     * Determine if you have access to VIEW
      *
      * @param code Integer
-     * @return boolean true - 有; false -无
+     * @return boolean
      */
     public static boolean hasView(Integer code) {
         if (code == null) return false;
@@ -37,10 +36,10 @@ public class MaskUtils {
     }
 
     /**
-     * 判断是否有新增权限
+     * Determine if you have access to ADD.
      *
      * @param code Integer
-     * @return boolean true - 有; false -无
+     * @return boolean
      */
     public static boolean hasAdd(Integer code) {
         if (code == null) return false;
@@ -48,10 +47,10 @@ public class MaskUtils {
     }
 
     /**
-     * 判断是否有修改权限
+     * Determine if you have access to EDIT.
      *
      * @param code Integer
-     * @return boolean true - 有; false -无
+     * @return boolean
      */
     public static boolean hasEdit(Integer code) {
         if (code == null) return false;
@@ -59,10 +58,10 @@ public class MaskUtils {
     }
 
     /**
-     * 判断是否有删除权限
+     * Determine if you have access to DEL.
      *
      * @param code Integer
-     * @return boolean true - 有; false -无
+     * @return boolean
      */
     public static boolean hasDel(Integer code) {
         if (code == null) return false;
@@ -70,7 +69,7 @@ public class MaskUtils {
     }
 
     /**
-     * 添加查看权限
+     * Add VIEW permissions
      *
      * @param code Integer
      * @return Integer
@@ -82,7 +81,7 @@ public class MaskUtils {
     }
 
     /**
-     * 添加新增权限
+     * Add ADD permissions
      *
      * @param code Integer
      * @return Integer
@@ -94,7 +93,7 @@ public class MaskUtils {
     }
 
     /**
-     * 添加修改权限
+     * Add EDIT permissions
      *
      * @param code Integer
      * @return Integer
@@ -106,16 +105,7 @@ public class MaskUtils {
     }
 
     /**
-     * 全掩码
-     *
-     * @return Integer
-     */
-    public static Integer fullMask() {
-        return VIEW | ADD | EDIT | DEL;
-    }
-
-    /**
-     * 添加删除权限
+     * Add DEL permissions
      *
      * @param code Integer
      * @return Integer
@@ -124,6 +114,15 @@ public class MaskUtils {
         if (code == null) code = 0;
 
         return code | DEL;
+    }
+
+    /**
+     * All mask.
+     *
+     * @return Integer
+     */
+    public static Integer fullMask() {
+        return VIEW | ADD | EDIT | DEL;
     }
 
     public static List<Integer> getList(Integer mask) {
@@ -146,7 +145,7 @@ public class MaskUtils {
     }
 
     /**
-     * 组装mask值
+     * Assemble the mask value.
      *
      * @param masks List
      * @return Integer

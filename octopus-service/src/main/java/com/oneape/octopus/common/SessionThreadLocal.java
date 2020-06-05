@@ -1,38 +1,39 @@
 package com.oneape.octopus.common;
 
+import com.oneape.octopus.model.DTO.system.UserDTO;
 import com.oneape.octopus.model.VO.UserVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public final class SessionThreadLocal {
 
-    private static ThreadLocal<UserVO> local = new ThreadLocal<>();
+    private static ThreadLocal<UserDTO> local = new ThreadLocal<>();
 
     /**
-     * 设置用户Session
+     * Set user Session.
      *
-     * @param session UserDO
+     * @param session UserDTO
      */
-    public static void setSession(UserVO session) {
+    public static void setSession(UserDTO session) {
         local.set(session);
     }
 
     /**
-     * 获取用户Session
+     * Get user Session.
      *
-     * @return UserDO
+     * @return UserDTO
      */
-    public static UserVO getSession() {
+    public static UserDTO getSession() {
         return local.get();
     }
 
     /**
-     * 获取用户id
+     * Get current user id.
      *
      * @return Long
      */
     public static Long getUserId() {
-        UserVO user = local.get();
+        UserDTO user = local.get();
         return user == null ? null : user.getId();
     }
 
@@ -42,8 +43,8 @@ public final class SessionThreadLocal {
     }
 
     /**
-     * 删除Session
-     * PS: 业务层面不要单独调用该方法
+     * Deleted the user Session.
+     * PS: Do not call this method on its own at the business level.
      */
     public static void removeSession() {
         local.remove();

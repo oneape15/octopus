@@ -1,6 +1,7 @@
 package com.oneape.octopus.service.system;
 
 import com.oneape.octopus.model.DO.system.UserDO;
+import com.oneape.octopus.model.DTO.system.UserDTO;
 import com.oneape.octopus.model.VO.MenuVO;
 import com.oneape.octopus.model.VO.UserVO;
 import com.oneape.octopus.service.BaseService;
@@ -10,61 +11,59 @@ import java.util.Map;
 
 public interface AccountService extends BaseService<UserDO> {
 
-    // 一分钟的毫秒数
-    static final long   ONE_MINUTE       = 60 * 1000;
-    // token 失效时间 一个小时(60分钟)
-    static final int    TOKEN_TIMEOUT    = 60;
-    // token原生信息分隔字符串
-    static final String TOKEN_INFO_SPLIT = "<@>";
+    long   ONE_MINUTE       = 60 * 1000;
+    int    TOKEN_TIMEOUT    = 60;
+    String TOKEN_INFO_SPLIT = "<@>";
 
     /**
-     * 根据token获取用户信息
+     * Get user information according to token
      *
      * @param token String
      * @return UserVO
      */
-    UserVO getUserInfoByToken(String token);
+    UserDTO getUserInfoByToken(String token);
 
     /**
-     * 获取当前用户
+     * Get the current user.
      *
-     * @return UserVO
+     * @return UserDTO
      */
-    UserVO getCurrentUser();
+    UserDTO getCurrentUser();
 
     /**
-     * 获取当前用户Id
+     * Get full user information.
+     *
+     * @param userId Long
+     * @return UserDTO
+     */
+    UserDTO getFullInformationById(Long userId);
+
+    /**
+     * Get the current user id.
      *
      * @return Long
      */
     Long getCurrentUserId();
 
     /**
-     * 获取当前用户的前端菜单列表
-     *
-     * @return List
-     */
-    List<MenuVO> getCurrentMenus();
-
-    /**
-     * 根据用户名查询用户信息
+     * Query user information by user name.
      *
      * @param username String
-     * @return UserVO
+     * @return UserDO
      */
-    UserVO getByUsername(String username);
+    UserDO getByUsername(String username);
 
     /**
-     * 用户登录操作
+     * The user login option.
      *
      * @param username String
      * @param password String
-     * @return UserVO
+     * @return UserDTO
      */
-    UserVO login(String username, String password);
+    UserDTO login(String username, String password);
 
     /**
-     * 重置用户密码
+     * Reset user password.
      *
      * @param userId Long
      * @return int
@@ -72,31 +71,31 @@ public interface AccountService extends BaseService<UserDO> {
     int resetPwd(Long userId);
 
     /**
-     * 获取用户资源操作权限
+     * Gets user resource action permissions
      *
-     * @param userId Long
+     * @param roleIds List
      * @return Map
      */
-    Map<String, List<Integer>> getResOptPermission(Long userId);
+    Map<String, List<Integer>> getResOptPermission(List<Long> roleIds);
 
     /**
-     * 创建用户
+     * Add new User
      *
-     * @param user UserVO
+     * @param user UserDO
      * @return int
      */
-    int addUser(UserVO user);
+    int addUser(UserDO user);
 
     /**
-     * 获取用户列表
+     * Get user list.
      *
      * @param user UserDO
      * @return List
      */
-    List<UserVO> find(UserDO user);
+    List<UserDO> find(UserDO user);
 
     /**
-     * 删除用户列表
+     * Delete user list.
      *
      * @param userIds List
      * @return int

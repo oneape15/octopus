@@ -7,22 +7,25 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 
+/**
+ * Role - resource association table DO.
+ */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class RoleRlResourceDO extends BaseDO {
     /**
-     * 角色id
+     * The role id.
      */
     @Column(name = "role_id")
-    private Long roleId;
+    private Long    roleId;
     /**
-     * 资源Id
+     * The resource id
      */
     @Column(name = "resource_id")
-    private Long resourceId;
+    private Long    resourceId;
     /**
-     * 权限掩码 1 - 查看; 2 - 新增; 4 - 修改; 8 - 删除
+     * Permissions mask 0 - blank; 1 - View; 2 - Add; 4 - Modification; 8 - Delete;
      */
     @Column(name = "mask")
     private Integer mask;
