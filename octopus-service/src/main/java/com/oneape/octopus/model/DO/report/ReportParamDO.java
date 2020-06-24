@@ -57,17 +57,11 @@ public class ReportParamDO extends BaseDO {
     /**
      * Is a required field 0 - no; 1 - yes.
      */
-    @Column(name = "must_fill_in")
-    private Integer mustFillIn;
+    private Integer required;
     /**
      * Parameters briefly describe information.
      */
     private String  placeholder;
-    /**
-     * Prompt message when error occurs
-     */
-    @Column(name = "err_message")
-    private String  errMessage;
     /**
      * Dependency, taking the name value, multiple separated by commas.
      */

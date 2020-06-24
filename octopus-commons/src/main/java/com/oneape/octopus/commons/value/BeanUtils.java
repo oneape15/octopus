@@ -45,7 +45,7 @@ public class BeanUtils {
                 Column column = field.getAnnotation(Column.class);
                 if (column != null) {
                     prop.setDbColumn(true);
-                    prop.setNullAble(column.nullable());
+                    prop.setNullable(column.nullable());
                     prop.setDbColumnName(StringUtils.stripToNull(column.name()));
                 }
 

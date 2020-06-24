@@ -115,12 +115,10 @@ CREATE TABLE `report_param`
   COMMENT 'The minimum value',
   `val_forbidden` VARCHAR(256) NULL
   COMMENT 'Prohibited value',
-  `must_fill_in`  TINYINT(1)   NULL     DEFAULT 0
+  `required`      TINYINT(1)   NULL     DEFAULT 0
   COMMENT 'Is a required field 0 - no; 1 - yes',
   `placeholder`   VARCHAR(64)  NULL
   COMMENT 'Parameters briefly describe information',
-  `err_message`   VARCHAR(128) NULL
-  COMMENT 'Prompt message when error occurs',
   `depend_on`     VARCHAR(512) NULL
   COMMENT 'Dependency, taking the name value, multiple separated by commas.',
   `type`          INT(11)      NOT NULL DEFAULT 0

@@ -71,4 +71,7 @@ public interface ReportParamMapper {
      */
     @SelectProvider(type = ReportParamSqlProvider.class, method = "list")
     List<ReportParamDO> list(@Param("model") ReportParamDO model);
+
+    @SelectProvider(type = ReportParamSqlProvider.class, method = "findByReportId")
+    List<ReportParamDO> findByReportId(@Param("reportId") Long reportId);
 }

@@ -3,6 +3,7 @@ package com.oneape.octopus.service.report.impl;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.GlobalConstant;
+import com.oneape.octopus.model.VO.report.ReportConfigVO;
 import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.mapper.report.*;
 import com.oneape.octopus.model.DO.report.*;
@@ -63,11 +64,11 @@ public class ReportServiceImpl implements ReportService {
         BeanUtils.copyProperties(report, dto);
 
         // Gets the report params
-        List<ReportParamDO> params = reportParamMapper.list(new ReportParamDO(reportId));
+        List<ReportParamDO> params = reportParamMapper.findByReportId(reportId);
         dto.setParams(params);
 
         // Gets the report columns
-        List<ReportColumnDO> columns = reportColumnMapper.list(new ReportColumnDO(reportId));
+        List<ReportColumnDO> columns = reportColumnMapper.findByReportId(reportId);
         dto.setColumns(columns);
 
         // Gets the report dsl information.
@@ -158,8 +159,8 @@ public class ReportServiceImpl implements ReportService {
      * @param rDto ReportDTO
      * @return int 0 - fail; 1 - success;
      */
-    @Transactional
     @Override
+    @Transactional
     public int saveReportInfo(ReportDTO rDto) {
         int optStatus;
         if (rDto.getId() != null && rDto.getId() > 0) {
@@ -179,6 +180,8 @@ public class ReportServiceImpl implements ReportService {
             if (dsl != null) {
                 dsl.setReportId(rDto.getId());
                 saveReportDslSql(dsl);
+            } else {
+                reportDslMapper.deleteByReportId(rDto.getId());
             }
 
             // save help document
@@ -187,6 +190,9 @@ public class ReportServiceImpl implements ReportService {
                 helpDoc.setBizType(0);
                 helpDoc.setBizId(rDto.getId());
                 saveHelpDocument(helpDoc);
+            } else {
+                // delete help document
+                helpDocumentMapper.deleteByBizInfo(0, rDto.getId());
             }
         }
         return optStatus;
@@ -449,5 +455,33 @@ public class ReportServiceImpl implements ReportService {
         ReportColumnDO query = new ReportColumnDO(reportId);
         query.setArchive(Archive.NORMAL.value());
         return reportColumnMapper.list(query);
+    }
+
+    /**
+     * Gets report base information for front-end page rendering.
+     *
+     * @param reportId Long
+     * @return ReportConfigVO
+     */
+    @Override
+    public ReportConfigVO getReportConfig(Long reportId) {
+        ReportDTO dto = Preconditions.checkNotNull(findById(reportId), "Report does not exist.");
+
+        // base information.
+        ReportConfigVO vo = ReportConfigVO.from(dto);
+
+        // the column information.
+        vo.setColumns(dto.getColumns());
+
+        // the Front-end query component.
+
+
+        // the report rich text.
+        if (dto.getHelpDoc() != null) {
+            vo.setHelpDoc(dto.getHelpDoc().getText());
+        }
+
+
+        return vo;
     }
 }

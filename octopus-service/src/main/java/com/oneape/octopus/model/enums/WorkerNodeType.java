@@ -1,9 +1,9 @@
 package com.oneape.octopus.model.enums;
 
 public enum WorkerNodeType {
-    // 容器模式, 如 Docker
+    // container. eg: Docker
     CONTAINER(1),
-    // 真实物理机
+    // Real physical machine.
     ACTUAL(2);
 
     /**

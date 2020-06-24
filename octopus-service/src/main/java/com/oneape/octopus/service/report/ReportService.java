@@ -2,6 +2,7 @@ package com.oneape.octopus.service.report;
 
 import com.oneape.octopus.model.DO.report.*;
 import com.oneape.octopus.model.DTO.ReportDTO;
+import com.oneape.octopus.model.VO.report.ReportConfigVO;
 import com.oneape.octopus.service.BaseService;
 
 import java.util.List;
@@ -89,5 +90,13 @@ public interface ReportService extends BaseService<ReportDO> {
      * @return List
      */
     List<ReportColumnDO> getColumnByReportId(Long reportId);
+
+    /**
+     * Gets report base information for front-end page rendering.
+     *
+     * @param reportId Long
+     * @return ReportConfigVO
+     */
+    ReportConfigVO getReportConfig(Long reportId);
 
 }

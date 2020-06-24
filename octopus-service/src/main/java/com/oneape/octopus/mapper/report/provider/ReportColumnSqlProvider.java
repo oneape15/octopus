@@ -53,4 +53,15 @@ public class ReportColumnSqlProvider extends BaseSqlProvider<ReportColumnDO> {
             }
         }.toString();
     }
+
+    public String findByReportId(@Param("reportId") Long reportId) {
+        return new SQL() {
+            {
+                SELECT("*");
+                FROM(getTableName());
+                WHERE(FIELD_ARCHIVE + " = " + Archive.NORMAL.value(), "report_id = #{reportId}");
+                ORDER_BY("sort_id ASC");
+            }
+        }.toString();
+    }
 }

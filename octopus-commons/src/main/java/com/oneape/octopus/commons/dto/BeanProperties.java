@@ -23,7 +23,7 @@ public class BeanProperties {
     /**
      * 是否可为空
      */
-    private Boolean nullAble;
+    private Boolean nullable;
     /**
      * 对应表字段名称
      */

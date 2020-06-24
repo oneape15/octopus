@@ -61,7 +61,7 @@ public class ReportColumnDO extends BaseDO {
      * Drill down to the resource URI.
      */
     @Column(name = "drill_uri")
-    private String  drill_uri;
+    private String  drillUri;
     /**
      * The parameters required when drilling down the column;
      * eg: kv1=column_name1; kv2=column_name2;

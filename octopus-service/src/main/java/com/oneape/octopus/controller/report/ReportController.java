@@ -10,7 +10,9 @@ import com.oneape.octopus.model.DO.report.ReportColumnDO;
 import com.oneape.octopus.model.DO.report.ReportDO;
 import com.oneape.octopus.model.DO.report.ReportDslDO;
 import com.oneape.octopus.model.DO.report.ReportParamDO;
+import com.oneape.octopus.model.DTO.ReportDTO;
 import com.oneape.octopus.model.VO.ApiResult;
+import com.oneape.octopus.model.VO.report.ReportConfigVO;
 import com.oneape.octopus.model.enums.ReportParamType;
 import com.oneape.octopus.model.enums.ReportType;
 import com.oneape.octopus.service.report.ReportService;
@@ -145,5 +147,14 @@ public class ReportController {
     @GetMapping("/design/sql/{sqlId}")
     public ApiResult<ReportDslDO> getReportSql(@PathVariable(name = "sqlId") Long sqlId) {
         return ApiResult.ofData(reportService.getReportSql(sqlId));
+    }
+
+    /**
+     * Gets report base information for front-end page rendering.
+     */
+    @GetMapping("/query/config/{reportId}")
+    public ApiResult<ReportConfigVO> getReportConfig(@PathVariable(name = "reportId") Long reportId) {
+        ReportConfigVO vo = reportService.getReportConfig(reportId);
+        return ApiResult.ofData(vo);
     }
 }
