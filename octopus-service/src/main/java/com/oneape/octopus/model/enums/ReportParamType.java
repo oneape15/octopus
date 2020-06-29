@@ -32,11 +32,11 @@ public enum ReportParamType {
     }
 
     /**
-     * 判断value中是否包含某个类型
+     * Determines whether the value contains the type。
      *
      * @param value int
      * @param rft   ReportParamType
-     * @return boolean true - 包含; false - 不包含
+     * @return boolean true - contains; false - not contains
      */
     public static boolean contains(int value, ReportParamType rft) {
         if (value <= 0 || rft == null) return false;
@@ -47,7 +47,7 @@ public enum ReportParamType {
     }
 
     /**
-     * 拆分成每一项
+     * Break it down into each of these terms.
      *
      * @param value int
      * @return List

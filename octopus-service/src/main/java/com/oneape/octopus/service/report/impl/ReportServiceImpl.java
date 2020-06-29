@@ -1,9 +1,14 @@
 package com.oneape.octopus.service.report.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.GlobalConstant;
+import com.oneape.octopus.commons.algorithm.Digraph;
+import com.oneape.octopus.commons.algorithm.DirectedCycle;
+import com.oneape.octopus.commons.value.OptStringUtils;
 import com.oneape.octopus.model.VO.report.ReportConfigVO;
+import com.oneape.octopus.model.VO.report.args.QueryArg;
 import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.mapper.report.*;
 import com.oneape.octopus.model.DO.report.*;
@@ -22,10 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -214,6 +216,9 @@ public class ReportServiceImpl implements ReportService {
             return GlobalConstant.SUCCESS;
         }
 
+        Map<String, List<String>> dependMap = new HashMap<>();
+        HashSet<String> allNodes = new HashSet<>();
+
         // Whether an argument with the same name exists.
         List<String> names = new ArrayList<>();
         for (ReportParamDO p : params) {
@@ -222,7 +227,21 @@ public class ReportServiceImpl implements ReportService {
             } else {
                 names.add(p.getName());
             }
+            if (StringUtils.isNotBlank(p.getDependOn())) {
+                List<String> dependList = OptStringUtils.split(p.getDependOn(), ";");
+                if (CollectionUtils.isNotEmpty(dependList)) {
+                    allNodes.addAll(dependList);
+                    dependMap.put(p.getName(), dependList);
+                }
+            }
         }
+
+        // Check whether parameter dependencies form loops.
+        Iterator<String> iter = checkLinkHasLoop(allNodes, dependMap);
+        if (iter != null) {
+            throw new BizException("Parameters are interdependent: " + JSON.toJSONString(iter));
+        }
+
 
         // Get the has exist params.
         List<ReportParamDO> oldParams = reportParamMapper.list(new ReportParamDO(reportId));
@@ -286,6 +305,27 @@ public class ReportServiceImpl implements ReportService {
         }
 
         return count;
+    }
+
+    /**
+     * Determine if there are rings in a linked list.
+     * eg: 5 --> 3 --> 7 ---> 2 --> 6 -- 8 --> 1 --> 2  , The linked is exist loop.
+     *
+     * @param linkMap Map
+     */
+    private Iterator<String> checkLinkHasLoop(HashSet<String> allNode, Map<String, List<String>> linkMap) {
+        Digraph<String> digraph = new Digraph<>(allNode.size());
+        linkMap.forEach((k, v) -> {
+            for (String tmp : v) {
+                digraph.addEdge(k, tmp);
+            }
+        });
+
+        DirectedCycle<String> directedCycle = new DirectedCycle<>(digraph);
+        if (directedCycle.hasCycle()) {
+            return directedCycle.cycle();
+        }
+        return null;
     }
 
     /**
@@ -474,14 +514,39 @@ public class ReportServiceImpl implements ReportService {
         vo.setColumns(dto.getColumns());
 
         // the Front-end query component.
-
+        vo.setArgs(getQueryArg(reportId, dto.getParams()));
 
         // the report rich text.
         if (dto.getHelpDoc() != null) {
             vo.setHelpDoc(dto.getHelpDoc().getText());
         }
 
-
         return vo;
+    }
+
+    /**
+     * Assemble report parameters into corresponding front-end components.
+     *
+     * @param reportId Long
+     * @param paramDOs List
+     * @return List
+     */
+    private List<QueryArg> getQueryArg(Long reportId, List<ReportParamDO> paramDOs) {
+        List<QueryArg> args = new ArrayList<>();
+        Map<String, ReportParamDO> mapOfParam = new HashMap<>();
+        for (ReportParamDO pdo : paramDOs) {
+            QueryArg arg = new QueryArg();
+            arg.setName(pdo.getName());
+            arg.setLabel(pdo.getAlias());
+            arg.setDataType(pdo.getDataType());
+            arg.setRequired(pdo.getRequired() == 1);
+            arg.setDependOnList(OptStringUtils.split(pdo.getDependOn(), ";"));
+
+
+            mapOfParam.put(pdo.getName(), pdo);
+            args.add(arg);
+        }
+
+        return args;
     }
 }

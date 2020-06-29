@@ -18,6 +18,8 @@ public class BaseComponent implements Serializable {
     private String        defaultValue;
     // Prompt information
     private String        placeholder;
+    // Whether a parameter is required.
+    private boolean       required;
 
     public BaseComponent(ComponentType type) {
         this.type = type;

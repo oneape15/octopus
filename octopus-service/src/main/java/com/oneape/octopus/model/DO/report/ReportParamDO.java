@@ -78,6 +78,11 @@ public class ReportParamDO extends BaseDO {
     @Column(name = "lov_report_id")
     private Long    lovReportId;
     /**
+     * The parameter component type.
+     */
+    @Column(name = "component_type")
+    private String  componentType;
+    /**
      * The query parameter LOV is the specified KV name.
      * eg: kname,vname
      */

@@ -1,0 +1,24 @@
+package com.oneape.octopus.commons.value;
+
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Created by oneape<oneape15@163.com>
+ * Created 2020-06-24 10:53.
+ * Modify:
+ */
+public final class OptStringUtils {
+
+    public static List<String> split(String str, String splitChar) {
+        List<String> list = new ArrayList<>();
+        String[] arr = StringUtils.split(str, splitChar);
+        if (arr != null && arr.length > 0) {
+            list = Arrays.asList(arr);
+        }
+        return list;
+    }
+}
