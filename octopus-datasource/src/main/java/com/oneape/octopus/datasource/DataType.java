@@ -8,8 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 public enum DataType {
     // 字符类型
     STRING,
-    // 二进制
-    BINARY,
     // 布尔类型
     BOOLEAN,
     // 整型
@@ -29,9 +27,7 @@ public enum DataType {
     // 时间戳
     TIMESTAMP,
     // 日期时间
-    DATETIME,
-    // 其他对象
-    OBJ;
+    DATETIME;
 
 
     public static DataType byName(String name) {

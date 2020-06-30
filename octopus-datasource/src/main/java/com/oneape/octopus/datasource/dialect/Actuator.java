@@ -188,7 +188,6 @@ public abstract class Actuator {
             case TIMESTAMP:
             case DATETIME:
             case STRING:
-            case BINARY:
             case TIME:
             case DATE:
                 ret = "'" + val.toString() + "'";

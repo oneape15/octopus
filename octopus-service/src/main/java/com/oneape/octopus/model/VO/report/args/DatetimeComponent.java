@@ -2,6 +2,7 @@ package com.oneape.octopus.model.VO.report.args;
 
 import com.oneape.octopus.model.enums.ComponentType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Created by oneape<oneape15@163.com>
@@ -9,6 +10,7 @@ import lombok.Data;
  * Modify:
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class DatetimeComponent extends InputComponent {
 
     /**

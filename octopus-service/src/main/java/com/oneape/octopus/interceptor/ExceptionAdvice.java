@@ -30,8 +30,8 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ApiResult<String> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
-        log.error("缺少请求参数:{}", e.getMessage(), e);
-        return ApiResult.ofError(StateCode.BadRequest, "缺少请求参数" + e.getMessage());
+        log.error("Missing request parameters:{}", e.getMessage(), e);
+        return ApiResult.ofError(StateCode.BadRequest, "Missing request parameters: " + e.getMessage());
     }
 
     /**
@@ -40,7 +40,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ApiResult<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        log.error("参数解析失败:{}", e.getMessage(), e);
+        log.error("Parameter resolution failed:{}", e.getMessage(), e);
         return ApiResult.ofError(StateCode.BadRequest);
     }
 
@@ -50,7 +50,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiResult<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        log.error("参数验证失败:{}", e.getMessage(), e);
+        log.error("Parameter validation fails:{}", e.getMessage(), e);
         String message = getErrorMessage(e.getBindingResult());
         return ApiResult.ofError(StateCode.BadRequest, message);
     }
@@ -61,7 +61,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BindException.class)
     public ApiResult<String> handleBindException(BindException e) {
-        log.error("参数绑定失败:{}", e.getMessage(), e);
+        log.error("Parameter binding failed:{}", e.getMessage(), e);
         String message = getErrorMessage(e.getBindingResult());
         return ApiResult.ofError(StateCode.BadRequest, message);
     }
@@ -80,7 +80,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
     public ApiResult<String> handleServiceException(ConstraintViolationException e) {
-        log.error("参数验证失败:{}", e.getMessage(), e);
+        log.error("Parameter validation fails:{}", e.getMessage(), e);
         Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
         ConstraintViolation<?> violation = violations.iterator().next();
         String message = violation.getMessage();
@@ -93,8 +93,8 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ValidationException.class)
     public ApiResult<String> handleValidationException(ValidationException e) {
-        log.error("参数验证失败:{}", e.getMessage(), e);
-        return ApiResult.ofError(StateCode.BadRequest, "参数验证失败");
+        log.error("Parameter validation fails:{}", e.getMessage(), e);
+        return ApiResult.ofError(StateCode.BadRequest, "Parameter validation fails");
     }
 
     /**
@@ -103,7 +103,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
     public ApiResult<String> handleUnauthorizedException(UnauthorizedException e) {
-        log.error("未授权的操作");
+        log.error("Unauthorized operation");
         return ApiResult.ofError(StateCode.Unauthorized);
     }
 
@@ -113,7 +113,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ApiResult<String> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-        log.warn("不支持当前请求方法:{}", e.getMessage());
+        log.warn("The current request method is not supported:{}", e.getMessage());
         return ApiResult.ofError(StateCode.MethodNotAllowed);
     }
 
@@ -125,10 +125,6 @@ public class ExceptionAdvice {
     public ApiResult<String> handleException(Exception e) {
         log.error(e.getMessage(), e);
         String errorMsg = e.getMessage();
-        // 错误消息为空 或者消息长度超过一定长度的认定为未捕获到的异常
-        if (StringUtils.isBlank(errorMsg) || StringUtils.length(errorMsg) > 50) {
-            errorMsg = StateCode.BizError.getMessage();
-        }
         return ApiResult.ofError(StateCode.BizError, errorMsg);
     }
 }

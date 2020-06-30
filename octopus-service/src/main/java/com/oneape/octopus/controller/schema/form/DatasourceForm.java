@@ -26,6 +26,7 @@ public class DatasourceForm extends BaseForm implements Serializable {
     private String  testSql;
     private String  password;
     private String  comment;
+    @NotBlank(message = "The data source type is empty.", groups = {AddCheck.class, EditCheck.class})
     private String  type;
 
     public interface AddCheck {

@@ -1,19 +1,19 @@
 package com.oneape.octopus.service.report.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.GlobalConstant;
 import com.oneape.octopus.commons.algorithm.Digraph;
 import com.oneape.octopus.commons.algorithm.DirectedCycle;
 import com.oneape.octopus.commons.value.OptStringUtils;
-import com.oneape.octopus.model.VO.report.ReportConfigVO;
-import com.oneape.octopus.model.VO.report.args.QueryArg;
-import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.mapper.report.*;
 import com.oneape.octopus.model.DO.report.*;
 import com.oneape.octopus.model.DTO.ReportDTO;
+import com.oneape.octopus.model.VO.report.ReportConfigVO;
+import com.oneape.octopus.model.VO.report.args.QueryArg;
+import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.service.report.ReportService;
+import com.oneape.octopus.service.schema.DatasourceService;
 import com.oneape.octopus.service.system.AccountService;
 import com.oneape.octopus.service.uid.UIDGeneratorService;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +49,20 @@ public class ReportServiceImpl implements ReportService {
     private UIDGeneratorService uidGeneratorService;
     @Resource
     private AccountService      accountService;
+    @Resource
+    private DatasourceService   datasourceService;
+
+    /**
+     * Whether the report Id is valid.
+     *
+     * @param reportId Long
+     * @return boolean true - valid. false - invalid.
+     */
+    @Override
+    public boolean checkReportId(Long reportId) {
+        int size = reportMapper.checkReportId(reportId);
+        return size > 0;
+    }
 
     /**
      * Get the full amount of information based on the report Id.
@@ -166,6 +180,10 @@ public class ReportServiceImpl implements ReportService {
     public int saveReportInfo(ReportDTO rDto) {
         int optStatus;
         if (rDto.getId() != null && rDto.getId() > 0) {
+            boolean valid = checkReportId(rDto.getId());
+            if (!valid) {
+                throw new BizException("Invalid report id");
+            }
             optStatus = edit(rDto);
         } else {
             optStatus = insert(rDto);
@@ -201,6 +219,15 @@ public class ReportServiceImpl implements ReportService {
     }
 
     /**
+     * check the report param whether a required field is empty.
+     *
+     * @param pdo ReportParamDO
+     */
+    private void checkParamMustFillField(ReportParamDO pdo) {
+
+    }
+
+    /**
      * Save the report query parameter information.
      *
      * @param reportId Long
@@ -222,6 +249,8 @@ public class ReportServiceImpl implements ReportService {
         // Whether an argument with the same name exists.
         List<String> names = new ArrayList<>();
         for (ReportParamDO p : params) {
+            checkParamMustFillField(p);
+
             if (names.contains(p.getName())) {
                 throw new BizException("There are multiple parameters named: " + p.getName());
             } else {
@@ -231,6 +260,7 @@ public class ReportServiceImpl implements ReportService {
                 List<String> dependList = OptStringUtils.split(p.getDependOn(), ";");
                 if (CollectionUtils.isNotEmpty(dependList)) {
                     allNodes.addAll(dependList);
+                    allNodes.add(p.getName());
                     dependMap.put(p.getName(), dependList);
                 }
             }
@@ -239,7 +269,17 @@ public class ReportServiceImpl implements ReportService {
         // Check whether parameter dependencies form loops.
         Iterator<String> iter = checkLinkHasLoop(allNodes, dependMap);
         if (iter != null) {
-            throw new BizException("Parameters are interdependent: " + JSON.toJSONString(iter));
+            String s = "[";
+            int index = 0;
+            while (iter.hasNext()) {
+                if (index++ > 0) {
+                    s += ",";
+                }
+                s += iter.next();
+            }
+            s += "]";
+
+            throw new BizException("Parameters are interdependent: " + s);
         }
 
 
@@ -291,7 +331,6 @@ public class ReportServiceImpl implements ReportService {
 
         // bath options
         SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH);
-        int count = 0;
         try {
             ReportParamMapper mapper = session.getMapper(ReportParamMapper.class);
             addParamList.forEach(p -> mapper.insert(p));
@@ -304,7 +343,7 @@ public class ReportServiceImpl implements ReportService {
             session.close();
         }
 
-        return count;
+        return 1;
     }
 
     /**
@@ -402,7 +441,6 @@ public class ReportServiceImpl implements ReportService {
 
         // bath options
         SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH);
-        int count = 0;
         try {
             ReportColumnMapper mapper = session.getMapper(ReportColumnMapper.class);
             addColumnList.forEach(p -> mapper.insert(p));
@@ -415,7 +453,7 @@ public class ReportServiceImpl implements ReportService {
             session.close();
         }
 
-        return count;
+        return 1;
     }
 
     /**
@@ -428,7 +466,8 @@ public class ReportServiceImpl implements ReportService {
     @Transactional
     public int saveReportDslSql(ReportDslDO reportDsl) {
         Preconditions.checkNotNull(reportDsl, "The DSL information is empty.");
-        Preconditions.checkNotNull(reportMapper.findById(reportDsl.getReportId()), "The report information is empty.");
+        Preconditions.checkNotNull(checkReportId(reportDsl.getReportId()), "The report information is empty.");
+        Preconditions.checkArgument(datasourceService.isExistDsId(reportDsl.getDatasourceId()), "The dsId is invalid.");
         int status;
         if (reportDsl.getId() == null || reportDslMapper.findById(reportDsl.getId()) == null) {
             status = reportDslMapper.insert(reportDsl);

@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.oneape.octopus.common.SessionThreadLocal;
 import com.oneape.octopus.common.UnauthorizedException;
 import com.oneape.octopus.config.ApplicationContextProvider;
+import com.oneape.octopus.model.DTO.system.UserDTO;
 import com.oneape.octopus.model.VO.UserVO;
 import com.oneape.octopus.service.system.AccountService;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,7 @@ public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
 
     private volatile AccountService accountService;
 
-    private Cache<String, UserVO> cache = CacheBuilder.newBuilder()
+    private Cache<String, UserDTO> cache = CacheBuilder.newBuilder()
             // 设置缓存的最大容量
             .maximumSize(100)
             // 设置缓存在写入一分钟后失效
@@ -84,7 +85,7 @@ public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
      * @param token String 唯一token
      * @return boolean true-成功; false-失败
      */
-    private UserVO getUserInfoByToken(String token) {
+    private UserDTO getUserInfoByToken(String token) {
         if (accountService == null) {
             synchronized (this) {
                 if (accountService == null) {
@@ -136,7 +137,7 @@ public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
         }
 
         //检测token的合法性
-        UserVO user = cache.getIfPresent(KEY_TOKEN + token);
+        UserDTO user = cache.getIfPresent(KEY_TOKEN + token);
         if (user == null) {
             user = getUserInfoByToken(token);
         }

@@ -194,7 +194,6 @@ public class MySQLActuator extends Actuator {
             case TEXT:
             case MEDIUMTEXT:
             case LONGTEXT:
-                return DataType.STRING;
             case TINYBLOB:
             case BLOB:
             case MEDIUMBLOB:
@@ -202,7 +201,7 @@ public class MySQLActuator extends Actuator {
             case BINARY:
             case GEOMETRY:
             case VARBINARY:
-                return DataType.BINARY;
+                return DataType.STRING;
             case TIME:
                 return DataType.TIME;
             case DATE:

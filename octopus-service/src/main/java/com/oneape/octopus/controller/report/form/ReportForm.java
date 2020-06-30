@@ -19,8 +19,10 @@ public class ReportForm extends BaseForm implements Serializable {
     private Long                 reportId;
     @NotBlank(message = "The Report name is empty.", groups = {AddCheck.class, EditCheck.class})
     private String               name;
-    @NotBlank(message = "The report type is empty.", groups = {AddCheck.class, EditCheck.class})
-    private String               reportType;
+    @NotNull(message = "The report type is empty.", groups = {AddCheck.class, EditCheck.class})
+    private Integer              reportType;
+    @NotNull(message = "The report visual type is empty.", groups = {AddCheck.class, EditCheck.class})
+    private Integer              visualType;
     private String               xAxis;
     private String               yAxis;
     private Integer              paramLabelLen;

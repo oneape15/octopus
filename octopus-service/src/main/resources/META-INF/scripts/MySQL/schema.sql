@@ -9,7 +9,7 @@ CREATE TABLE `datasource`
   COMMENT 'The data source type. eg: MySQL, Oracle',
   `status`      TINYINT(1)    NOT NULL DEFAULT 0
   COMMENT 'The data source statue , 0 - usable; 1 - disabled',
-  `jdbc_driver` VARCHAR(256)  NOT NULL
+  `jdbc_driver` VARCHAR(256)  NULL
   COMMENT 'The data source driver class.',
   `jdbc_url`    VARCHAR(512)  NOT NULL
   COMMENT 'The data source jdbc url.',

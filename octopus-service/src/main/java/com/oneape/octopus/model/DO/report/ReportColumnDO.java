@@ -29,6 +29,7 @@ public class ReportColumnDO extends BaseDO {
      */
     private String  alias;
     /**
+     * {@link com.oneape.octopus.datasource.DataType}
      * The report column data type.
      */
     @Column(name = "data_type")

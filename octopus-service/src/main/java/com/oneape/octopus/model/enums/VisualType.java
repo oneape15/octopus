@@ -1,27 +1,35 @@
 package com.oneape.octopus.model.enums;
 
 /**
- * Report Type
+ * The report visual Type
  */
-public enum ReportType {
+public enum VisualType {
     /**
-     * The data show.
+     * tabulation
      */
-    REPORT(1, "REPORT"),
+    TABLE(1, "TABLE"),
     /**
-     * Interface service type.
+     * linear graph
      */
-    INTERFACE(2, "INTERFACE"),
+    LINE(2, "LINE"),
     /**
-     * The list of value.
+     * bar graph
      */
-    LOV(4, "LOV");
+    BAR(4, "BAR"),
+    /**
+     * pie chart
+     */
+    PIE(8, "PIE"),
+    /**
+     * radar map
+     */
+    RADAR(16, "RADAR");
 
 
     private Integer code;
     private String  desc;
 
-    ReportType(Integer code, String desc) {
+    VisualType(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }

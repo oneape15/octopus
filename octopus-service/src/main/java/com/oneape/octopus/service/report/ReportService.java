@@ -10,6 +10,14 @@ import java.util.List;
 public interface ReportService extends BaseService<ReportDO> {
 
     /**
+     * Whether the report Id is valid.
+     *
+     * @param reportId Long
+     * @return boolean true - valid. false - invalid.
+     */
+    boolean checkReportId(Long reportId);
+
+    /**
      * Get the full amount of information based on the report Id.
      *
      * @param reportId Long

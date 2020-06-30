@@ -31,4 +31,12 @@ public interface DatasourceService extends BaseService<DatasourceDO> {
      * @return DatasourceInfo
      */
     DatasourceInfo getDatasourceInfoById(Long dsId);
+
+    /**
+     * Checks if the dsId is valid.
+     *
+     * @param dsId Long
+     * @return boolean true - valid ; false - invalid.
+     */
+    boolean isExistDsId(Long dsId);
 }

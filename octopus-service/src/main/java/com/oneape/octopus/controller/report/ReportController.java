@@ -10,11 +10,11 @@ import com.oneape.octopus.model.DO.report.ReportColumnDO;
 import com.oneape.octopus.model.DO.report.ReportDO;
 import com.oneape.octopus.model.DO.report.ReportDslDO;
 import com.oneape.octopus.model.DO.report.ReportParamDO;
-import com.oneape.octopus.model.DTO.ReportDTO;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.model.VO.report.ReportConfigVO;
 import com.oneape.octopus.model.enums.ReportParamType;
 import com.oneape.octopus.model.enums.ReportType;
+import com.oneape.octopus.model.enums.VisualType;
 import com.oneape.octopus.service.report.ReportService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -68,9 +68,22 @@ public class ReportController {
      * Get report type.
      */
     @GetMapping("/design/types")
-    public ApiResult<List<Pair<String, String>>> getReportTypes() {
-        List<Pair<String, String>> types = new ArrayList<>();
+    public ApiResult<List<Pair<Integer, String>>> getReportTypes() {
+        List<Pair<Integer, String>> types = new ArrayList<>();
         for (ReportType rt : ReportType.values()) {
+            types.add(new Pair<>(rt.getCode(), rt.getDesc()));
+        }
+        return ApiResult.ofData(types);
+    }
+
+
+    /**
+     * Get report visual type.
+     */
+    @GetMapping("/design/visualTypes")
+    public ApiResult<List<Pair<Integer, String>>> getReportVisualTypes() {
+        List<Pair<Integer, String>> types = new ArrayList<>();
+        for (VisualType rt : VisualType.values()) {
             types.add(new Pair<>(rt.getCode(), rt.getDesc()));
         }
         return ApiResult.ofData(types);
@@ -102,6 +115,10 @@ public class ReportController {
      */
     @PostMapping("/design/saveParams")
     public ApiResult<String> saveParams(@RequestBody @Validated(value = ReportForm.KeyCheck.class) ReportForm form) {
+        boolean valid = reportService.checkReportId(form.getReportId());
+        if (!valid) {
+            return ApiResult.ofError(StateCode.BizError, "Invalid report id: " + form.getReportId());
+        }
         int status = reportService.saveReportParams(form.getReportId(), form.getParams());
         if (status > 0) {
             return ApiResult.ofData("Report query parameters are saved successfully.");
@@ -112,7 +129,7 @@ public class ReportController {
     /**
      * Get report columns information base on reportId.
      */
-    @PostMapping("/design/columns/{reportId}")
+    @GetMapping("/design/columns/{reportId}")
     public ApiResult<List<ReportColumnDO>> getColumnByReportId(@PathVariable(name = "reportId") Long reportId) {
         return ApiResult.ofData(reportService.getColumnByReportId(reportId));
     }
@@ -122,6 +139,10 @@ public class ReportController {
      */
     @PostMapping("/design/saveColumns")
     public ApiResult<String> saveColumns(@RequestBody @Validated(value = ReportForm.KeyCheck.class) ReportForm form) {
+        boolean valid = reportService.checkReportId(form.getReportId());
+        if (!valid) {
+            return ApiResult.ofError(StateCode.BizError, "Invalid report id: " + form.getReportId());
+        }
         int status = reportService.saveReportColumns(form.getReportId(), form.getColumns());
         if (status > 0) {
             return ApiResult.ofData("Report query columns saved successfully.");

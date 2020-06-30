@@ -136,4 +136,15 @@ public class DatasourceServiceImpl implements DatasourceService {
 
         return dsi;
     }
+
+    /**
+     * Checks if the dsId is valid.
+     *
+     * @param dsId Long
+     * @return boolean true - valid ; false - invalid.
+     */
+    @Override
+    public boolean isExistDsId(Long dsId) {
+        return datasourceMapper.isExistDsId(dsId) > 0;
+    }
 }

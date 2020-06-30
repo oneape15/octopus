@@ -14,7 +14,7 @@ import java.sql.Statement;
 @Slf4j
 public class PostgreSQLActuator extends Actuator {
 
-    private static final String PAGE_KEY = "LIMIT";
+    private static final String PAGE_KEY   = "LIMIT";
     private static final String PAGE_KEY_2 = "OFFSET";
 
     public PostgreSQLActuator(Statement statement) {
@@ -224,7 +224,7 @@ public class PostgreSQLActuator extends Actuator {
             case "point":
             default:
                 log.warn("未匹配到相应的数据类型---> {}", type);
-                dt = DataType.OBJ;
+                dt = DataType.STRING;
         }
         return dt;
     }

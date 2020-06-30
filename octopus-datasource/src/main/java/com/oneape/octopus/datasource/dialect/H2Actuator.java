@@ -231,8 +231,6 @@ public class H2Actuator extends Actuator {
             case "longtext":
             case "ntext":
             case "nclob":
-                dt = DataType.BINARY;
-                break;
             case "varchar":
             case "varchar2":
             case "nvarchar":
@@ -242,11 +240,11 @@ public class H2Actuator extends Actuator {
             case "char":
             case "character":
             case "nchar":
+            case "other":
                 dt = DataType.STRING;
                 break;
-            case "other":
             default:
-                dt = DataType.OBJ;
+                dt = DataType.STRING;
                 break;
         }
         return dt;

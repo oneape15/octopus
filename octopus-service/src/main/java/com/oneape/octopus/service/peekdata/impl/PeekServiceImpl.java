@@ -13,6 +13,7 @@ import com.oneape.octopus.mapper.peekdata.PeekRuleMapper;
 import com.oneape.octopus.model.DO.peekdata.PeekDO;
 import com.oneape.octopus.model.DO.peekdata.PeekFieldDO;
 import com.oneape.octopus.model.DO.peekdata.PeekRuleDO;
+import com.oneape.octopus.model.DTO.system.UserDTO;
 import com.oneape.octopus.model.VO.*;
 import com.oneape.octopus.service.peekdata.ModelService;
 import com.oneape.octopus.service.peekdata.PeekService;
@@ -345,7 +346,7 @@ public class PeekServiceImpl implements PeekService {
 
         // 组装查询SQL
         String rawSql = assemblePeekDataSql(model, fields, rules);
-        UserVO user = accountService.getCurrentUser();
+        UserDTO user = accountService.getCurrentUser();
 
         ExportDataParam param = new ExportDataParam();
         param.setEmail(user.getEmail());

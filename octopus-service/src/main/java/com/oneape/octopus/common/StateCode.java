@@ -1,7 +1,7 @@
 package com.oneape.octopus.common;
 
 public enum StateCode {
-    OK(200, "请求已成功"),
+    OK(200, "The request was successful."),
     BadRequest(400, "语义有误，当前请求无法被服务器理解"),
     Unauthorized(401, "当前请求需要用户验证"),
     LoginError(401001, "登录失败"),

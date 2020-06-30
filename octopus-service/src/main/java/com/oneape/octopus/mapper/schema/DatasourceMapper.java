@@ -1,5 +1,6 @@
 package com.oneape.octopus.mapper.schema;
 
+import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.mapper.schema.provider.DatasourceSqlProvider;
 import com.oneape.octopus.model.DO.schema.DatasourceDO;
 import org.apache.ibatis.annotations.*;
@@ -56,4 +57,13 @@ public interface DatasourceMapper {
      */
     @SelectProvider(type = DatasourceSqlProvider.class, method = "list")
     List<DatasourceDO> list(@Param("model") DatasourceDO model);
+
+    /**
+     * Checks if the dsId is valid.
+     */
+    @Select({
+            "SELECT COUNT(0) FROM " + DatasourceSqlProvider.TABLE_NAME +
+                    " WHERE " + BaseSqlProvider.FIELD_ARCHIVE + " = 0  AND id = #{dsId}"
+    })
+    int isExistDsId(@Param("dsId") Long dsId);
 }

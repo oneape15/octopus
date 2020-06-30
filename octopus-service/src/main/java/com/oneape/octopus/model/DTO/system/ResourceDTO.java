@@ -2,6 +2,7 @@ package com.oneape.octopus.model.DTO.system;
 
 import com.oneape.octopus.model.DO.system.ResourceDO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * Modify:
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class ResourceDTO extends ResourceDO implements Serializable {
     private Integer mask;
 }

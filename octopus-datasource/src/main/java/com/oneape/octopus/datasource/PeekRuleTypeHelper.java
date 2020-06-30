@@ -91,8 +91,6 @@ public enum PeekRuleTypeHelper {
                 list.add(NO_LESS_THAN);
                 break;
             case BOOLEAN:
-            case BINARY:
-            case OBJ:
             default:
                 list.add(EQUALS);
                 break;
@@ -213,8 +211,6 @@ public enum PeekRuleTypeHelper {
                 }
                 break;
             case BOOLEAN:
-            case BINARY:
-            case OBJ:
             default:
                 section = " = " + value;
                 break;

@@ -12,4 +12,9 @@ public enum Archive {
     public int value() {
         return status;
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(status);
+    }
 }

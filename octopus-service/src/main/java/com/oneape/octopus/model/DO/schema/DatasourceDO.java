@@ -1,5 +1,6 @@
 package com.oneape.octopus.model.DO.schema;
 
+import com.oneape.octopus.datasource.DatasourceTypeHelper;
 import com.oneape.octopus.model.DO.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,6 +20,7 @@ public class DatasourceDO extends BaseDO {
      */
     private String  name;
     /**
+     * {@link DatasourceTypeHelper }
      * The data source type. eg: MySQL, Oracle
      */
     private String  type;

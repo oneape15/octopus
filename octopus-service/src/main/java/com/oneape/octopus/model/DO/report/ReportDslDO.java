@@ -14,6 +14,7 @@ public class ReportDslDO extends BaseDO {
     /**
      * the owner Id of report.
      */
+    @Column(name = "report_id")
     private Long    reportId;
     /**
      * dependency on the data source id

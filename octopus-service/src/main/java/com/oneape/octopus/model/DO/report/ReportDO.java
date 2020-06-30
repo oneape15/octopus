@@ -3,6 +3,7 @@ package com.oneape.octopus.model.DO.report;
 import com.oneape.octopus.annotation.SortId;
 import com.oneape.octopus.model.DO.BaseDO;
 import com.oneape.octopus.model.enums.ReportType;
+import com.oneape.octopus.model.enums.VisualType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -28,10 +29,16 @@ public class ReportDO extends BaseDO {
     private Integer timeBased;
     /**
      * {@link ReportType}
-     * report type , 1 - table; 2 - pie; 3 - bar , Multiple are separated by commas.
+     * report type , 1 - table; 2 - interface; 3 - lov ; eg.
      */
     @Column(name = "report_type", nullable = false)
-    private String  reportType;
+    private Integer  reportType;
+    /**
+     * {@link VisualType}
+     * the report visual type , 1 - table; 2 - line; 4 - bar; eg.
+     */
+    @Column(name = "visual_type", nullable = false)
+    private Integer visualType;
     /**
      * When the chart is displayed, the X-axis column name; Multiple with ";" separated.
      */

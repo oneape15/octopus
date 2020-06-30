@@ -7,8 +7,10 @@ CREATE TABLE `report`
   COMMENT 'report name.',
   `time_based`      TINYINT(1)   NULL
   COMMENT 'Timeliness of report data. 0 - real time, 1 - minutes, 2 - hours, 3 - days',
-  `report_type`     VARCHAR(128) NOT NULL
-  COMMENT 'report type , 1 - table; 2 - pie; 3 - bar , Multiple are separated by commas',
+  `report_type`     INT(11)      NOT NULL
+  COMMENT 'report type , 1 - table; 2 - interface; 3 - lov ; eg.',
+  `visual_type`     INT(11)      NOT NULL
+  COMMENT 'the report visual type , 1 - table; 2 - line; 4 - bar; eg.',
   `x_axis`          VARCHAR(64)  NULL
   COMMENT 'When the chart is displayed, the X-axis column name; Multiple with ";" separated',
   `y_axis`          VARCHAR(64)  NULL

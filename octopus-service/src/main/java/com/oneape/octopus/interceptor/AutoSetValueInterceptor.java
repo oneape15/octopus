@@ -15,6 +15,7 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.plugin.*;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -70,16 +71,21 @@ public class AutoSetValueInterceptor implements Interceptor {
                 if (field.getAnnotation(AutoUniqueId.class) != null) {
                     // set the unique id.
                     field.setAccessible(true);
-                    autoId = getUid();
+                    if (autoId == null) {
+                        autoId = getUid();
+                    }
                     field.set(param, autoId);
                 }
                 if (field.getAnnotation(SortId.class) != null) {
                     // set sort id value.
                     field.setAccessible(true);
+                    Object value = getFieldValueByName(field.getName(), param);
                     if (autoId == null) {
                         autoId = getUid();
                     }
-                    field.set(param, autoId);
+                    if (value == null) {
+                        field.set(param, autoId);
+                    }
                 }
                 // 设置创建者信息
                 if (field.getAnnotation(Creator.class) != null) {
@@ -122,6 +128,15 @@ public class AutoSetValueInterceptor implements Interceptor {
         Field[] fields = new Field[fieldList.size()];
         fieldList.toArray(fields);
         return fields;
+    }
+
+    private static Object getFieldValueByName(String name, Object object) throws Exception {
+        String getter = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
+        Method method;
+        Object value = null;
+        method = object.getClass().getMethod(getter, new Class[]{});
+        value = method.invoke(object);
+        return value;
     }
 
     @Override

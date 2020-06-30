@@ -1,7 +1,9 @@
 package com.oneape.octopus.mapper.report;
 
+import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.mapper.report.provider.ReportSqlProvider;
 import com.oneape.octopus.model.DO.report.ReportDO;
+import com.oneape.octopus.model.enums.Archive;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -11,6 +13,13 @@ import java.util.List;
  */
 @Mapper
 public interface ReportMapper {
+
+    @Select({
+            "SELECT COUNT(0) FROM " + ReportSqlProvider.TABLE_NAME +
+                    " WHERE " + BaseSqlProvider.FIELD_ARCHIVE + " = 0 AND id = #{reportId}"
+    })
+    int checkReportId(@Param("reportId") Long reportId);
+
     /**
      * Add data to table.
      *

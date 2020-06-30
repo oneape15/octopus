@@ -3,6 +3,7 @@ package com.oneape.octopus.model.VO.report.args;
 import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.model.enums.ComponentType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * Modify:
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class SelectorComponent extends BaseComponent {
     /**
      * Support to select more than one at a time.

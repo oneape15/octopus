@@ -3,6 +3,7 @@ package com.oneape.octopus.model.DTO.system;
 import com.oneape.octopus.model.DO.system.RoleDO;
 import com.oneape.octopus.model.DO.system.UserDO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Map;
  * Modify:
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class UserDTO extends UserDO implements Serializable {
 
     // Token when the user logs in successfully
