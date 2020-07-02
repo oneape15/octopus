@@ -232,7 +232,24 @@ public class SchemaServiceImpl implements SchemaService {
      * @param columnDOs List
      */
     private void batchInsertTableColumnInfo(List<TableColumnDO> columnDOs) {
-
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH);
+        int count = 0;
+        try {
+            TableColumnMapper mapper = session.getMapper(TableColumnMapper.class);
+            for (TableColumnDO stdo : columnDOs) {
+                stdo.setId(uidGeneratorService.getUid());
+                mapper.insert(stdo);
+                count++;
+            }
+            session.commit();
+        } catch (Exception e) {
+            log.error("Batch insert table column information exception", e);
+            session.rollback();
+            throw new BizException("Batch insert table column information exception");
+        } finally {
+            log.debug("Batch insert table column information: {} rows.", count);
+            session.close();
+        }
     }
 
     /**
@@ -254,6 +271,7 @@ public class SchemaServiceImpl implements SchemaService {
         } catch (Exception e) {
             log.error("Batch insert data table information exception", e);
             session.rollback();
+            throw new BizException("Batch insert data table information exception");
         } finally {
             log.debug("Batch insert data table information: {} rows.", count);
             session.close();

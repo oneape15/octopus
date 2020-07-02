@@ -17,7 +17,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import static com.oneape.octopus.commons.constant.OctopusConstant.PWD_MASK_TAG;
 
 /**
- * 数据源管理工厂类
+ * Data source management factory class.
  */
 @Slf4j
 public class DefaultDatasourceFactory implements DatasourceFactory {

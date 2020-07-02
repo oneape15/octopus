@@ -44,7 +44,7 @@ public interface TableSchemaMapper {
 
 
     @Select({
-            "SELECT table_name FROM " + TableSchemaSqlProvider.TABLE_NAME
+            "SELECT name FROM " + TableSchemaSqlProvider.TABLE_NAME
                     + " WHERE  " + BaseSqlProvider.FIELD_ARCHIVE + " = 0  AND datasource_id = #{dsId}"
     })
     List<String> getTableNameList(@Param("dsId") Long dsId);

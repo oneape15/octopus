@@ -47,31 +47,33 @@ CREATE TABLE `datasource`
 -- table_schema Table basic information table
 CREATE TABLE `table_schema`
 (
-  `id`         BIGINT(20)   NOT NULL
+  `id`            BIGINT(20)   NOT NULL
   COMMENT 'primary key',
-  `name`       VARCHAR(512) NOT NULL
+  `datasource_id` BIGINT(20)   NOT NULL
+  COMMENT 'the data source id.',
+  `name`          VARCHAR(512) NOT NULL
   COMMENT 'the table name',
-  `view_table` TINYINT(1)   NOT NULL DEFAULT 0
+  `view_table`    TINYINT(1)   NOT NULL DEFAULT 0
   COMMENT 'the table is view table, 0 - no; 1 - yes',
-  `sync_time`  BIGINT(20)   NULL
+  `sync_time`     BIGINT(20)   NULL
   COMMENT 'Latest synchronization table structure time',
-  `sync_cron`  VARCHAR(128) NULL
+  `sync_cron`     VARCHAR(128) NULL
   COMMENT 'Synchronous table structure expression. syncCron is null, then is never sync.',
-  `heat`       BIGINT(20)   NOT NULL DEFAULT 0
+  `heat`          BIGINT(20)   NOT NULL DEFAULT 0
   COMMENT 'The table use time',
-  `status`     TINYINT(1)   NOT NULL DEFAULT 0
+  `status`        TINYINT(1)   NOT NULL DEFAULT 0
   COMMENT 'The table status. 0 - normal, 1 - has drop',
-  `comment`    VARCHAR(256) NULL
+  `comment`       VARCHAR(256) NULL
   COMMENT 'description',
-  `archive`    TINYINT(1)   NOT NULL DEFAULT 0
+  `archive`       TINYINT(1)   NOT NULL DEFAULT 0
   COMMENT '0 - normal data; 1 - have archive (soft delete)',
-  `created`    BIGINT(20)   NOT NULL
+  `created`       BIGINT(20)   NOT NULL
   COMMENT 'create time ',
-  `creator`    BIGINT(20)   NOT NULL
+  `creator`       BIGINT(20)   NOT NULL
   COMMENT 'Data record creator',
-  `modified`   BIGINT(20)   NULL     DEFAULT NULL
+  `modified`      BIGINT(20)   NULL     DEFAULT NULL
   COMMENT 'Last updated time',
-  `modifier`   BIGINT(20)   NULL     DEFAULT NULL
+  `modifier`      BIGINT(20)   NULL     DEFAULT NULL
   COMMENT 'Data record  modifier',
   PRIMARY KEY (`id`)
 )
@@ -86,6 +88,8 @@ CREATE TABLE `table_column`
 
   `id`         BIGINT(20)   NOT NULL
   COMMENT 'primary key',
+  `datasource_id` BIGINT(20)   NOT NULL
+  COMMENT 'the data source id.',
   `table_name` VARCHAR(512) NOT NULL
   COMMENT 'the table name',
   `name`       VARCHAR(256) NOT NULL

@@ -34,6 +34,16 @@ public class SchemaController {
         return ApiResult.ofData("Pull data source Schema successfully!");
     }
 
+
+    @RequestMapping(value = "/reload/{dsId}/{tableName}", method = {RequestMethod.GET})
+    public ApiResult fetchTableInfo(@PathVariable(name = "dsId") Long dsId, @PathVariable(name = "tableName") String tableName) {
+        int status = schemaService.fetchAndSaveTableColumnInfo(dsId, tableName);
+        if (status <= 0) {
+            return ApiResult.ofMessage("Pull table Schema fail!");
+        }
+        return ApiResult.ofData("Pull table Schema successfully!");
+    }
+
     @RequestMapping(value = "/fetchTableList/{dsId}", method = {RequestMethod.GET})
     public ApiResult<List<TableSchemaDO>> fetchTableList(@PathVariable(name = "dsId") Long dsId) {
         List<TableSchemaDO> tableSchemaDOs = schemaService.fetchTableList(dsId);
