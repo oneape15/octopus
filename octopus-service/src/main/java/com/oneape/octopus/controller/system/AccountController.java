@@ -121,7 +121,7 @@ public class AccountController {
      */
     @PostMapping("/updateUser")
     public ApiResult<String> updateUser(@RequestBody @Validated(value = UserForm.AddCheck.class) UserForm form) {
-        int status = accountService.edit(form.toDO());
+        int status = accountService.save(form.toDO());
         if (status > 0) {
             return ApiResult.ofData("Modified user information successfully.");
         }

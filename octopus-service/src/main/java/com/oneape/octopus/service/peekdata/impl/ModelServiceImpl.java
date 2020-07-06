@@ -33,11 +33,11 @@ public class ModelServiceImpl implements ModelService {
     private ModelMapper modelMapper;
 
     @Resource
-    private ModelMetaService modelMetaService;
+    private ModelMetaService  modelMetaService;
     @Resource
     private DatasourceService datasourceService;
     @Resource
-    private QueryFactory queryFactory;
+    private QueryFactory      queryFactory;
 
     /**
      * 根据对象进行查询
@@ -64,7 +64,7 @@ public class ModelServiceImpl implements ModelService {
      */
     @Override
     public int addModelInfo(ModelDO model, List<ModelMetaVO> metas) {
-        int status = insert(model);
+        int status = save(model);
 
         if (status > 0) {
             modelMetaService.saveMetas(model.getId(), metas);
@@ -81,7 +81,7 @@ public class ModelServiceImpl implements ModelService {
      */
     @Override
     public int editModelInfo(ModelDO model, List<ModelMetaVO> metas) {
-        int status = edit(model);
+        int status = save(model);
         if (status > 0) {
             modelMetaService.saveMetas(model.getId(), metas);
         }
@@ -141,14 +141,17 @@ public class ModelServiceImpl implements ModelService {
         }
     }
 
+
     /**
-     * Add data to table.
+     * save data to table.
+     * <p>
+     * If the Model property ID is not null, the update operation is performed, or the insert operation is performed。
      *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
     @Override
-    public int insert(ModelDO model) {
+    public int save(ModelDO model) {
         Preconditions.checkNotNull(model, "添加模型对象为空");
         Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "模型名称为空");
         ModelDO tmp = new ModelDO();
@@ -157,29 +160,11 @@ public class ModelServiceImpl implements ModelService {
         if (CollectionUtils.isNotEmpty(list) && list.size() > 0) {
             throw new BizException(StateCode.BizError.getCode(), "存在相同名称的模型");
         }
-        return modelMapper.insert(model);
-    }
 
-    /**
-     * Modify the data.
-     *
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(ModelDO model) {
-        Preconditions.checkNotNull(model, "添加模型对象为空");
-        Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "模型名称为空");
-        ModelDO tmp = new ModelDO();
-        tmp.setName(model.getName());
-        List<ModelDO> list = modelMapper.list(tmp);
-        if (CollectionUtils.isNotEmpty(list) && list.size() > 0) {
-            long size = list.stream().filter(m -> !model.getId().equals(m.getId())).count();
-            if (size > 0) {
-                throw new BizException(StateCode.BizError.getCode(), "存在相同名称的模型");
-            }
+        if (model.getId() != null) {
+            return modelMapper.update(model);
         }
-        return modelMapper.update(model);
+        return modelMapper.insert(model);
     }
 
     /**

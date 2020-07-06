@@ -23,22 +23,13 @@ public class ResourceController {
     @Resource
     private ResourceService resourceService;
 
-    @PostMapping("/add")
-    public ApiResult<String> doAddRes(@RequestBody @Validated(value = ResForm.AddCheck.class) ResForm form) {
-        int status = resourceService.insert(form.toDO());
+    @PostMapping("/save")
+    public ApiResult<String> doSaveRes(@RequestBody @Validated(value = ResForm.AddCheck.class) ResForm form) {
+        int status = resourceService.save(form.toDO());
         if (status > 0) {
-            return ApiResult.ofData("Add resource successfully.");
+            return ApiResult.ofData("Save resource successfully.");
         }
-        return ApiResult.ofError(StateCode.BizError, "Add resource fail");
-    }
-
-    @PostMapping("/edit")
-    public ApiResult<String> doEditRes(@RequestBody @Validated(value = ResForm.EditCheck.class) ResForm form) {
-        int status = resourceService.edit(form.toDO());
-        if (status > 0) {
-            return ApiResult.ofData("Edit resource successfully.");
-        }
-        return ApiResult.ofError(StateCode.BizError, "Edit resource fail.");
+        return ApiResult.ofError(StateCode.BizError, "Save resource fail.");
     }
 
     @PostMapping("/del")

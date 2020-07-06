@@ -87,7 +87,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
             if (field.getValue() == null) {
                 continue;
             }
-            columns.add(field.getDbColumnName());
+            columns.add("`" + field.getDbColumnName() + "`");
             values.add("#{" + field.getName() + "}");
         }
 
@@ -128,7 +128,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
                     if (StringUtils.isBlank(columnName)) {
                         columnName = field.getName();
                     }
-                    sets.add(columnName + " = #{" + field.getName() + "}");
+                    sets.add("`" + columnName + "` = #{" + field.getName() + "}");
                 }
             }
         });
@@ -182,7 +182,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
                 if (StringUtils.isBlank(columnName)) {
                     columnName = field.getName();
                 }
-                whereSql.add(columnName + " = #{" + field.getName() + "}");
+                whereSql.add("`" + columnName + "` = #{" + field.getName() + "}");
             }
         });
 
@@ -230,7 +230,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
         fields.forEach(field -> {
             if (field.getValue() != null) {
                 String columnName = field.getDbColumnName();
-                wheres.add(columnName + " = #{model." + field.getName() + "}");
+                wheres.add("`" + columnName + "` = #{model." + field.getName() + "}");
             }
         });
 
@@ -258,7 +258,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
         fields.forEach(field -> {
             if (field.getValue() != null) {
                 String columnName = field.getDbColumnName();
-                wheres.add(columnName + " = #{" + field.getName() + "}");
+                wheres.add("`" + columnName + "` = #{" + field.getName() + "}");
             }
         });
 
@@ -302,7 +302,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
         fields.forEach(field -> {
             if (field.getValue() != null && !StringUtils.equals(FIELD_ARCHIVE, field.getName())) {
                 String columnName = field.getDbColumnName();
-                wheres.add(columnName + " = #{model." + field.getName() + "}");
+                wheres.add("`" + columnName + "` = #{model." + field.getName() + "}");
             }
         });
 
@@ -337,7 +337,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
             if (index > 0) {
                 subWheres.append(" OR ");
             }
-            subWheres.append(columnName).append(" = #{model.").append(field.getName()).append("}");
+            subWheres.append("`").append(columnName).append("` = #{model.").append(field.getName()).append("}");
             index++;
         }
 

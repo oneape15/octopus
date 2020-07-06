@@ -76,24 +76,15 @@ public class ImportRecordServiceImpl implements ImportRecordService {
     }
 
     /**
-     * Add data to table.
+     * save data to table.
+     * <p>
+     * If the Model property ID is not null, the update operation is performed, or the insert operation is performed。
      *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
     @Override
-    public int insert(ImportRecordDO model) {
-        return 0;
-    }
-
-    /**
-     * Modify the data.
-     *
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(ImportRecordDO model) {
+    public int save(ImportRecordDO model) {
         return 0;
     }
 

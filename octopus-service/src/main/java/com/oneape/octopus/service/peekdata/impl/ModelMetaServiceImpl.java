@@ -96,29 +96,23 @@ public class ModelMetaServiceImpl implements ModelMetaService {
         return count == metas.size() ? 1 : 0;
     }
 
+
     /**
-     * Add data to table.
+     * save data to table.
+     * <p>
+     * If the Model property ID is not null, the update operation is performed, or the insert operation is performed。
      *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
     @Override
-    public int insert(ModelMetaDO model) {
+    public int save(ModelMetaDO model) {
         Preconditions.checkNotNull(model, "新增数据对象为空");
+
+        if (model.getId() != null) {
+            return modelMetaMapper.update(model);
+        }
         return modelMetaMapper.insert(model);
-    }
-
-    /**
-     * Modify the data.
-     *
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(ModelMetaDO model) {
-        Preconditions.checkNotNull(model, "更新数据对象为空");
-
-        return modelMetaMapper.update(model);
     }
 
     /**

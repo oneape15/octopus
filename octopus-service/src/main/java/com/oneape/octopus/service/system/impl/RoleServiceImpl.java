@@ -2,12 +2,13 @@ package com.oneape.octopus.service.system.impl;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.BizException;
+import com.oneape.octopus.common.MaskUtils;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.mapper.system.RoleMapper;
 import com.oneape.octopus.mapper.system.RoleRlResourceMapper;
 import com.oneape.octopus.mapper.system.UserRlRoleMapper;
 import com.oneape.octopus.model.DO.system.RoleDO;
-import com.oneape.octopus.model.VO.RoleVO;
+import com.oneape.octopus.model.DO.system.RoleRlResourceDO;
 import com.oneape.octopus.service.system.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -15,10 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -32,35 +30,17 @@ public class RoleServiceImpl implements RoleService {
     private RoleRlResourceMapper roleRlResourceMapper;
 
     /**
-     * Add data to table.
+     * save data to table.
+     * <p>
+     * If the Model property ID is not null, the update operation is performed, or the insert operation is performed。
      *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
     @Override
-    public int insert(RoleDO model) {
+    public int save(RoleDO model) {
         Preconditions.checkNotNull(model, "The role information is null.");
         Preconditions.checkArgument(StringUtils.isNoneBlank(model.getName(), model.getCode()), "The role name or code is empty.");
-
-        // Determine if the code or name is repeated.
-        int count = roleMapper.getSameNameOrCodeRole(model.getName(), model.getCode(), null);
-        if (count > 0) {
-            throw new BizException("The name or code for the role already exists.");
-        }
-
-        return roleMapper.insert(model);
-    }
-
-    /**
-     * Modify the data.
-     *
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(RoleDO model) {
-        Preconditions.checkNotNull(model, "The role information is null.");
-        Preconditions.checkNotNull(model.getId(), "The role id is null.");
         Preconditions.checkArgument(StringUtils.isNoneBlank(model.getName(), model.getCode()), "The role name or code is empty.");
 
         // Determine if the code or name is repeated.
@@ -69,7 +49,10 @@ public class RoleServiceImpl implements RoleService {
             throw new BizException("The name or code for the role already exists.");
         }
 
-        return roleMapper.update(model);
+        if (model.getId() != null) {
+            return roleMapper.update(model);
+        }
+        return roleMapper.insert(model);
     }
 
     /**
@@ -110,7 +93,7 @@ public class RoleServiceImpl implements RoleService {
      * @return List
      */
     @Override
-    public List<RoleVO> find(RoleDO role) {
+    public List<RoleDO> find(RoleDO role) {
         List<String> orders = new ArrayList<>();
         orders.add(BaseSqlProvider.FIELD_CREATED + " DESC");
         List<RoleDO> list = roleMapper.listWithOrder(role, orders);
@@ -118,10 +101,7 @@ public class RoleServiceImpl implements RoleService {
             return new ArrayList<>();
         }
 
-        List<RoleVO> vos = new ArrayList<>();
-        list.forEach(rdo -> vos.add(RoleVO.ofDO(rdo)));
-
-        return vos;
+        return list;
     }
 
 
@@ -132,12 +112,23 @@ public class RoleServiceImpl implements RoleService {
      * @return Map
      */
     @Override
-    public Map<Long, List<Integer>> getRoleRes(List<Long> roleIds) {
+    public Map<Long, Set<Integer>> getRoleRes(List<Long> roleIds) {
         if (CollectionUtils.isEmpty(roleIds)) {
             return new HashMap<>();
         }
-        roleRlResourceMapper.getResIdByRoleIds(roleIds);
-        return null;
+        List<RoleRlResourceDO> list = roleRlResourceMapper.getResIdByRoleIds(roleIds);
+        Map<Long, Set<Integer>> retMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (RoleRlResourceDO rdo : list) {
+                Long resId = rdo.getResourceId();
+                if (!retMap.containsKey(resId)) {
+                    retMap.put(resId, new HashSet<>());
+                }
+                List<Integer> maskList = MaskUtils.getList(rdo.getMask());
+                retMap.get(resId).addAll(maskList);
+            }
+        }
+        return retMap;
     }
 
     /**

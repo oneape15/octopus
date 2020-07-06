@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -48,52 +49,37 @@ public class CommonInfoServiceImpl implements CommonInfoService {
     }
 
     /**
-     * Add data to table.
+     * save data to table.
+     * <p>
+     * If the Model property ID is not null, the update operation is performed, or the insert operation is performed。
      *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
+    @Transactional
     @Override
-    public int insert(CommonInfoDO model) {
+    public int save(CommonInfoDO model) {
         Preconditions.checkNotNull(model, "The Object is null.");
         Preconditions.checkArgument(StringUtils.isNoneBlank(model.getClassify(), model.getKey(), model.getValue()),
                 "The classify, key or value is null.");
 
         if (model.getParentId() == null || model.getParentId() < GlobalConstant.DEFAULT_VALUE) {
             model.setParentId(GlobalConstant.DEFAULT_VALUE);
+        } else {
+            Preconditions.checkNotNull(commonInfoMapper.findById(model.getParentId()), "The parent node information does not exist.");
         }
 
-        int size = commonInfoMapper.getSameBy(model.getClassify(), model.getKey(), null);
-        if (size > 0) {
-            throw new BizException("The same key exists under the same classification.");
+        Preconditions.checkArgument(
+                commonInfoMapper.getSameBy(model.getClassify(), model.getKey(), model.getId()) == 0,
+                "The same key exists under the same classification."
+        );
+
+        if (model.getId() != null) {
+            Preconditions.checkNotNull(commonInfoMapper.findById(model.getId()), "The node information does not exist.");
+            return commonInfoMapper.update(model);
         }
 
         return commonInfoMapper.insert(model);
-    }
-
-    /**
-     * Modify the data.
-     *
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(CommonInfoDO model) {
-        Preconditions.checkNotNull(model, "The Object is null.");
-        Preconditions.checkNotNull(model.getId(), "The primary key is null.");
-        Preconditions.checkArgument(StringUtils.isNoneBlank(model.getClassify(), model.getKey(), model.getValue()),
-                "The classify, key or value is null.");
-
-        if (model.getParentId() == null || model.getParentId() < GlobalConstant.DEFAULT_VALUE) {
-            model.setParentId(GlobalConstant.DEFAULT_VALUE);
-        }
-
-        int size = commonInfoMapper.getSameBy(model.getClassify(), model.getKey(), model.getId());
-        if (size > 0) {
-            throw new BizException("The same key exists under the same classification.");
-        }
-
-        return commonInfoMapper.update(model);
     }
 
     /**

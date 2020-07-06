@@ -79,25 +79,19 @@ public class PeekServiceImpl implements PeekService {
     }
 
     /**
-     * Add data to table.
+     * save data to table.
+     * <p>
+     * If the Model property ID is not null, the update operation is performed, or the insert operation is performed。
      *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
     @Override
-    public int insert(PeekDO model) {
+    public int save(PeekDO model) {
+        if (model.getId() != null) {
+            return peekMapper.update(model);
+        }
         return peekMapper.insert(model);
-    }
-
-    /**
-     * Modify the data.
-     *
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(PeekDO model) {
-        return peekMapper.update(model);
     }
 
     /**
@@ -141,7 +135,7 @@ public class PeekServiceImpl implements PeekService {
         int status = 0;
         if (isEdit) {
             // 修改
-            status = edit(model);
+            status = save(model);
             // 删除旧的字段和规则信息
             if (status > 0) {
                 peekFieldMapper.delete(new PeekFieldDO(model.getId()));
@@ -149,7 +143,7 @@ public class PeekServiceImpl implements PeekService {
             }
         } else {
             // 添加
-            status = insert(model);
+            status = save(model);
         }
 
         // 批量插入取数字段

@@ -2,15 +2,14 @@ package com.oneape.octopus.service.schema.impl;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.BizException;
-import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.commons.security.PBEUtils;
 import com.oneape.octopus.datasource.DatasourceInfo;
 import com.oneape.octopus.datasource.DatasourceTypeHelper;
 import com.oneape.octopus.mapper.schema.DatasourceMapper;
 import com.oneape.octopus.model.DO.schema.DatasourceDO;
+import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.service.schema.DatasourceService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -28,16 +27,18 @@ public class DatasourceServiceImpl implements DatasourceService {
     private DatasourceMapper datasourceMapper;
 
     /**
-     * Add data to table.
+     * save data to table.
+     * <p>
+     * If the Model property ID is not null, the update operation is performed, or the insert operation is performed。
      *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
     @Override
-    public int insert(DatasourceDO model) {
+    public int save(DatasourceDO model) {
         Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "The data source name is empty.");
-        List<DatasourceDO> list = datasourceMapper.list(new DatasourceDO(model.getName()));
-        if (CollectionUtils.isNotEmpty(list)) {
+        int hasSame = datasourceMapper.getSameBy(model.getName(), model.getId());
+        if (hasSame > 0) {
             throw new BizException("The same data source name exists.");
         }
 
@@ -46,32 +47,11 @@ public class DatasourceServiceImpl implements DatasourceService {
             model.setPassword(PWD_MASK_TAG + PBEUtils.encrypt(model.getPassword()));
         }
 
+        if (model.getId() != null) {
+            return datasourceMapper.update(model);
+        }
+
         return datasourceMapper.insert(model);
-    }
-
-    /**
-     * edited the data source information.
-     *
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(DatasourceDO model) {
-        Preconditions.checkNotNull(model.getId(), "The primary Key is empty.");
-        Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "The data source name is empty.");
-        List<DatasourceDO> list = datasourceMapper.list(new DatasourceDO(model.getName()));
-        if (CollectionUtils.isNotEmpty(list)) {
-            long size = list.stream().filter(ds -> !ds.getId().equals(model.getId())).count();
-            if (size > 0) {
-                throw new BizException("The same data source name exists.");
-            }
-        }
-
-        // Encrypt the password
-        if (StringUtils.isNotBlank(model.getPassword()) && StringUtils.startsWith(model.getPassword(), PWD_MASK_TAG)) {
-            model.setPassword(PWD_MASK_TAG + PBEUtils.encrypt(model.getPassword()));
-        }
-        return datasourceMapper.update(model);
     }
 
     /**

@@ -2,6 +2,7 @@ package com.oneape.octopus.mapper.schema;
 
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.mapper.schema.provider.DatasourceSqlProvider;
+import com.oneape.octopus.mapper.system.provider.CommonInfoSqlProvider;
 import com.oneape.octopus.model.DO.schema.DatasourceDO;
 import org.apache.ibatis.annotations.*;
 
@@ -57,6 +58,10 @@ public interface DatasourceMapper {
      */
     @SelectProvider(type = DatasourceSqlProvider.class, method = "list")
     List<DatasourceDO> list(@Param("model") DatasourceDO model);
+
+    @SelectProvider(type = DatasourceSqlProvider.class, method = "getSameBy")
+    int getSameBy(@Param("name") String name, @Param("filterId") Long filterId);
+
 
     /**
      * Checks if the dsId is valid.

@@ -45,17 +45,27 @@ public class AccountServiceImpl implements AccountService {
     private MailService     mailService;
 
     /**
-     * Add data to table.
+     * save data to table.
+     * <p>
+     * If the Model property ID is not null, the update operation is performed, or the insert operation is performed。
      *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
     @Override
-    public int insert(UserDO model) {
+    public int save(UserDO model) {
         Preconditions.checkNotNull(model, "The user information is null.");
         Preconditions.checkArgument(StringUtils.isNotBlank(model.getUsername()), "The username is empty.");
-        Preconditions.checkArgument(userMapper.sameNameCheck(model.getUsername(), null) == 0, "The username already exists.");
 
+        if (model.getId() != null) {
+            // the username and password can't edit.
+            model.setUsername(null);
+            model.setPassword(null);
+
+            return userMapper.update(model);
+        }
+
+        Preconditions.checkArgument(userMapper.sameNameCheck(model.getUsername(), null) == 0, "The username already exists.");
         String rawPwd = model.getPassword();
         if (StringUtils.isBlank(rawPwd)) {
             rawPwd = CodeBuilderUtils.RandmonStr(6);
@@ -68,24 +78,6 @@ public class AccountServiceImpl implements AccountService {
         }
 
         return status;
-    }
-
-    /**
-     * Modify the data.
-     *
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(UserDO model) {
-        Preconditions.checkNotNull(model, "The user information is null.");
-        Preconditions.checkNotNull(model.getId(), "The user id is empty.");
-
-        // the username and password can't edit.
-        model.setUsername(null);
-        model.setPassword(null);
-
-        return userMapper.update(model);
     }
 
     /**
@@ -318,7 +310,7 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public int addUser(UserDO user) {
-        int status = insert(user);
+        int status = save(user);
         if (status < GlobalConstant.SUCCESS) {
             return GlobalConstant.FAIL;
         }

@@ -57,6 +57,10 @@ public interface ResourceMapper {
     @SelectProvider(type = ResourceSqlProvider.class, method = "listByRoleIds")
     List<ResourceDTO> listByRoleIds(@Param("roleIds") List<Long> roleIds);
 
+
+    @SelectProvider(type = ResourceSqlProvider.class, method = "getSameBy")
+    int getSameBy(@Param("parentId") Long parentId, @Param("name") String name, @Param("filterId") Long filterId);
+
     /**
      * The query is based on a property in the entity that is not null.
      *

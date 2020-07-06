@@ -1,5 +1,6 @@
 package com.oneape.octopus.model.DO.system;
 
+import com.oneape.octopus.common.MaskUtils;
 import com.oneape.octopus.model.DO.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,6 +26,7 @@ public class RoleRlResourceDO extends BaseDO {
     @Column(name = "resource_id")
     private Long    resourceId;
     /**
+     * {@link MaskUtils}
      * Permissions mask 0 - blank; 1 - View; 2 - Add; 4 - Modification; 8 - Delete;
      */
     @Column(name = "mask")

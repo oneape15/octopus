@@ -32,22 +32,13 @@ public class DatasourceController {
     @Resource
     private DatasourceFactory datasourceFactory;
 
-    @PostMapping("/add")
-    public ApiResult<String> doAddDs(@RequestBody @Validated(value = DatasourceForm.AddCheck.class) DatasourceForm form) {
-        int status = datasourceService.insert(form.toDO());
+    @PostMapping("/save")
+    public ApiResult<String> doSaveDatasource(@RequestBody @Validated(value = DatasourceForm.AddCheck.class) DatasourceForm form) {
+        int status = datasourceService.save(form.toDO());
         if (status > 0) {
-            return ApiResult.ofData("Data source added successfully.");
+            return ApiResult.ofData("Data source save successfully.");
         }
-        return ApiResult.ofError(StateCode.BizError, "Data source added fail.");
-    }
-
-    @PostMapping("/edit")
-    public ApiResult<String> doEditDs(@RequestBody @Validated(value = DatasourceForm.EditCheck.class) DatasourceForm form) {
-        int status = datasourceService.edit(form.toDO());
-        if (status > 0) {
-            return ApiResult.ofData("Data source edited successfully.");
-        }
-        return ApiResult.ofError(StateCode.BizError, "Data source edited fail.");
+        return ApiResult.ofError(StateCode.BizError, "Data source save fail.");
     }
 
     @PostMapping("/del")

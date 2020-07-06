@@ -28,21 +28,12 @@ public class ModelTagController {
     private ModelTagService modelTagService;
 
     @PostMapping("/add")
-    public ApiResult<String> doAddTag(@RequestBody @Validated(value = TagForm.AddCheck.class) TagForm form) {
-        int status = modelTagService.insert(form.toDO());
+    public ApiResult<String> doSaveTag(@RequestBody @Validated(value = TagForm.AddCheck.class) TagForm form) {
+        int status = modelTagService.save(form.toDO());
         if (status > 0) {
             return ApiResult.ofData("添加标签成功");
         }
         return ApiResult.ofError(StateCode.BizError, "添加标签失败");
-    }
-
-    @PostMapping("/edit")
-    public ApiResult<String> doEditTag(@RequestBody @Validated(value = TagForm.EditCheck.class) TagForm form) {
-        int status = modelTagService.edit(form.toDO());
-        if (status > 0) {
-            return ApiResult.ofData("修改标签成功");
-        }
-        return ApiResult.ofError(StateCode.BizError, "修改标签失败");
     }
 
     @PostMapping("/del")

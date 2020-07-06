@@ -27,7 +27,7 @@ public class CommonInfoSqlProvider extends BaseSqlProvider<CommonInfoDO> {
         List<String> wheres = new ArrayList<>();
         wheres.add(FIELD_ARCHIVE + " = " + Archive.NORMAL.value());
         wheres.add("classify = #{classify}");
-        wheres.add("key = #{key}");
+        wheres.add("`key` = #{key}");
         if (filterId != null) {
             wheres.add("id != #{filterId}");
         }

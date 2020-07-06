@@ -28,107 +28,44 @@ public class ResourceServiceImpl implements ResourceService {
     @Resource
     private RoleRlResourceMapper roleRlResourceMapper;
 
+
     /**
-     * Add data to table.
+     * save data to table.
+     * <p>
+     * If the Model property ID is not null, the update operation is performed, or the insert operation is performed。
      *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
-    @Override
-    public int insert(ResourceDO model) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "资源名称为空");
-
-        Long parentId = model.getParentId();
-        if (parentId == null) {
-            parentId = GlobalConstant.DEFAULT_VALUE;
-        }
-        List<ResourceDO> resources = resourceMapper.list(new ResourceDO(parentId, model.getName()));
-        if (CollectionUtils.isNotEmpty(resources)) {
-            throw new BizException("存在相同名称的资源~");
-        }
-
-        // 设置level值
-        if (parentId <= GlobalConstant.DEFAULT_VALUE) {
-            model.setLevel(1);
-            model.setParentId(GlobalConstant.DEFAULT_VALUE);
-        } else {
-            ResourceDO resource = resourceMapper.findById(parentId);
-            if (resource == null) {
-                throw new BizException("上级资源不存在~");
-            }
-            model.setLevel(resource.getLevel() + 1);
-        }
-
-        return resourceMapper.insert(model);
-    }
-
-    /**
-     * Modify the data.
-     *
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
     @Transactional
-    public int edit(ResourceDO model) {
-        Preconditions.checkNotNull(model.getId(), "The primary Key is empty.");
-        ResourceDO old = resourceMapper.findById(model.getId());
-        if (old == null) {
-            throw new BizException("需要修改的资源不存在");
+    @Override
+    public int save(ResourceDO model) {
+        Preconditions.checkNotNull(model, "The resource  is empty.");
+        Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "The resource name is empty.");
+        if (model.getId() != null) {
+            Preconditions.checkNotNull(resourceMapper.findById(model.getId()), "The resource is not exist.");
         }
 
         Long parentId = model.getParentId();
         if (parentId == null) {
             parentId = GlobalConstant.DEFAULT_VALUE;
         }
-        if (parentId <= GlobalConstant.DEFAULT_VALUE) {
-            model.setLevel(1);
-            model.setParentId(GlobalConstant.DEFAULT_VALUE);
-        } else {
+        if (parentId > GlobalConstant.DEFAULT_VALUE) {
             ResourceDO resource = resourceMapper.findById(model.getParentId());
             if (resource == null) {
-                throw new BizException("上级资源不存在~");
+                throw new BizException("Superior resources do not exist.");
             }
-            model.setLevel(resource.getLevel() + 1);
 
-            List<ResourceDO> resources = resourceMapper.list(new ResourceDO(parentId, model.getName()));
-            if (CollectionUtils.isNotEmpty(resources)) {
-                long size = resources.stream().filter(tmp -> !model.getId().equals(tmp.getId())).count();
-                if (size > 0) {
-                    throw new BizException("存在相同名称的资源~");
-                }
-            }
+            Preconditions.checkArgument(
+                    resourceMapper.getSameBy(parentId, model.getName(), model.getId()) == 0,
+                    "A resource with the same name exists."
+            );
         }
 
-        int status = resourceMapper.update(model);
-
-        // 如果父节点变更更了，则需要把其子节点的level同步修改掉
-        if (status > 0 && !parentId.equals(old.getParentId())) {
-            editChildrenLevel(model.getId(), model.getLevel());
+        if (model.getId() != null) {
+            return resourceMapper.update(model);
         }
-        return status;
-    }
-
-    /**
-     * 修改对应节点下的子节点level值
-     *
-     * @param parentId    Long
-     * @param parentLevel Integer
-     */
-    private void editChildrenLevel(Long parentId, Integer parentLevel) {
-        List<ResourceDO> children = resourceMapper.list(new ResourceDO(parentId, null));
-        if (CollectionUtils.isEmpty(children)) {
-            return;
-        }
-        for (ResourceDO rdo : children) {
-            ResourceDO tmp = new ResourceDO();
-            tmp.setId(rdo.getId());
-            tmp.setLevel(parentLevel + 1);
-            int status = resourceMapper.update(tmp);
-            if (status > 0) {
-                editChildrenLevel(tmp.getId(), tmp.getLevel());
-            }
-        }
+        return resourceMapper.insert(model);
     }
 
     /**

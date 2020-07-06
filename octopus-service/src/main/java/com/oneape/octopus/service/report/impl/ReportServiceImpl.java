@@ -111,32 +111,26 @@ public class ReportServiceImpl implements ReportService {
     }
 
     /**
-     * Add data to table.
+     * save data to table.
+     * <p>
+     * If the Model property ID is not null, the update operation is performed, or the insert operation is performed。
      *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
     @Override
-    public int insert(ReportDO model) {
+    public int save(ReportDO model) {
         Preconditions.checkNotNull(model, "The report object is null.");
         Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "The report name is empty.");
+        if (model.getId() != null && model.getId() > 0) {
+            boolean valid = checkReportId(model.getId());
+            if (!valid) {
+                throw new BizException("Invalid report id");
+            }
+            return reportMapper.update(model);
+        }
 
         return reportMapper.insert(model);
-    }
-
-    /**
-     * Modify the data.
-     *
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(ReportDO model) {
-        Preconditions.checkNotNull(model, "The report object is null.");
-        Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "The report name is empty.");
-        Preconditions.checkNotNull(model.getId(), "The report primary key Id is empty.");
-
-        return reportMapper.update(model);
     }
 
     /**
@@ -178,16 +172,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     @Transactional
     public int saveReportInfo(ReportDTO rDto) {
-        int optStatus;
-        if (rDto.getId() != null && rDto.getId() > 0) {
-            boolean valid = checkReportId(rDto.getId());
-            if (!valid) {
-                throw new BizException("Invalid report id");
-            }
-            optStatus = edit(rDto);
-        } else {
-            optStatus = insert(rDto);
-        }
+        int optStatus = save(rDto);
 
         // save other information about report.
         if (optStatus > 0) {

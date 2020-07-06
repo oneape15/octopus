@@ -42,13 +42,15 @@ public class ModelTagServiceImpl implements ModelTagService {
     }
 
     /**
-     * Add data to table.
+     * save data to table.
+     * <p>
+     * If the Model property ID is not null, the update operation is performed, or the insert operation is performed。
      *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
     @Override
-    public int insert(ModelTagDO model) {
+    public int save(ModelTagDO model) {
         Preconditions.checkNotNull(model, "标签对象为空");
         Preconditions.checkArgument(StringUtils.isNoneBlank(model.getName(), model.getRule()), "标签名或规则为空");
 
@@ -60,32 +62,11 @@ public class ModelTagServiceImpl implements ModelTagService {
         if (CollectionUtils.isNotEmpty(list) && list.size() > 0) {
             throw new BizException(String.format("已经存在标签名称为:%s或匹配值为:%s的记录", model.getName(), model.getRule()));
         }
-        return modelTagMapper.insert(model);
-    }
 
-    /**
-     * Modify the data.
-     *
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(ModelTagDO model) {
-        Preconditions.checkNotNull(model, "标签对象为空");
-        Preconditions.checkArgument(model.getId() != null && model.getId() > 0, "主键为空");
-        Preconditions.checkArgument(StringUtils.isNoneBlank(model.getName(), model.getRule()), "标签名或规则为空");
-
-        ModelTagDO tmp = new ModelTagDO();
-        tmp.setName(model.getName());
-        tmp.setRule(model.getRule());
-        List<ModelTagDO> list = modelTagMapper.listOrLink(tmp);
-        if (CollectionUtils.isNotEmpty(list)) {
-            long size = list.stream().filter(mt -> !model.getId().equals(mt.getId())).count();
-            if (size > 0) {
-                throw new BizException(String.format("已经存在标签名称为:%s或匹配值为:%s的记录", model.getName(), model.getRule()));
-            }
+        if (model.getId() != null) {
+            return modelTagMapper.update(model);
         }
-        return modelTagMapper.update(model);
+        return modelTagMapper.insert(model);
     }
 
     /**

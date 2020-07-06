@@ -21,10 +21,6 @@ public class ResourceDO extends BaseDO {
     @Column(name = "parent_id")
     private Long    parentId;
     /**
-     * The resource level, the init value is 1.
-     */
-    private Integer level;
-    /**
      * The resource name.
      */
     private String  name;

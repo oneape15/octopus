@@ -6,7 +6,6 @@ import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.controller.system.form.CommonInfoForm;
 import com.oneape.octopus.model.DO.system.CommonInfoDO;
 import com.oneape.octopus.model.VO.ApiResult;
-import com.oneape.octopus.model.VO.CommonInfoVO;
 import com.oneape.octopus.service.system.CommonInfoService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,27 +19,18 @@ public class CommonInfoController {
     @Resource
     private CommonInfoService commonInfoService;
 
-    @PostMapping("/add")
-    public ApiResult<String> doAddCommonInfo(@RequestBody @Validated(value = CommonInfoForm.AddCheck.class) CommonInfoForm form) {
-        int status = commonInfoService.insert(form.toDO());
+    @PostMapping("/save")
+    public ApiResult<String> doSaveCommonInfo(@RequestBody @Validated(value = CommonInfoForm.InfoCheck.class) CommonInfoForm form) {
+        int status = commonInfoService.save(form.toDO());
         if (status > 0) {
-            return ApiResult.ofData("Added base information successfully.");
+            return ApiResult.ofData("Save base information successfully.");
         }
-        return ApiResult.ofError(StateCode.BizError, "Added base information fail.");
+        return ApiResult.ofError(StateCode.BizError, "Save base information fail.");
     }
 
-    @PostMapping("/edit")
-    public ApiResult<String> doEditCommonInfo(@RequestBody @Validated(value = CommonInfoForm.EditCheck.class) CommonInfoForm form) {
-        int status = commonInfoService.edit(form.toDO());
-        if (status > 0) {
-            return ApiResult.ofData("Edit base information successfully.");
-        }
-        return ApiResult.ofError(StateCode.BizError, "Edit base information fail.");
-    }
-
-    @PostMapping("/del")
-    public ApiResult<String> doDelCommonInfo(@RequestBody @Validated(value = CommonInfoForm.KeyCheck.class) CommonInfoForm form) {
-        int status = commonInfoService.deleteById(form.toDO());
+    @GetMapping("/del/{id}")
+    public ApiResult<String> doDelCommonInfo(@PathVariable(name = "id") Long id) {
+        int status = commonInfoService.deleteById(new CommonInfoDO(id));
         if (status > 0) {
             return ApiResult.ofData("Deleted base information successfully.");
         }
@@ -57,5 +47,14 @@ public class CommonInfoController {
     @GetMapping("/allClassify")
     public ApiResult<List<String>> getAllClassify() {
         return ApiResult.ofData(commonInfoService.getAllClassify());
+    }
+
+    /**
+     * Get the basic information list according to classify
+     */
+    @PostMapping("/getInfo")
+    public ApiResult getInfoByClassify(@RequestBody @Validated CommonInfoForm form) {
+        List<CommonInfoDO> list = commonInfoService.find(form.toDO());
+        return ApiResult.ofData(list);
     }
 }

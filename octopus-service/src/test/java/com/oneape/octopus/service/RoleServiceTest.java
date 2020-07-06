@@ -22,6 +22,6 @@ public class RoleServiceTest {
         RoleDO model = new RoleDO();
         model.setName("test1");
         model.setCode("xxxx");
-        roleService.insert(model);
+        roleService.save(model);
     }
 }

@@ -3,6 +3,7 @@ package com.oneape.octopus.model.DO.system;
 import com.oneape.octopus.model.DO.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 
@@ -10,6 +11,7 @@ import javax.persistence.Column;
  * Basic information table DO.
  */
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class CommonInfoDO extends BaseDO {
     /**
@@ -29,4 +31,9 @@ public class CommonInfoDO extends BaseDO {
      * The common information value.
      */
     private String value;
+
+
+    public CommonInfoDO(Long id) {
+        this.setId(id);
+    }
 }

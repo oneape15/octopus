@@ -7,6 +7,7 @@ import com.oneape.octopus.model.enums.Archive;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ResourceSqlProvider extends BaseSqlProvider<ResourceDO> {
@@ -32,6 +33,24 @@ public class ResourceSqlProvider extends BaseSqlProvider<ResourceDO> {
                         "rl." + FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
                         "rl.role_id IN (" + Joiner.on(",").join(roleIds) + ")");
                 ORDER_BY("level ASC", "sortId ASC");
+            }
+        }.toString();
+    }
+
+
+    public String getSameBy(@Param("parentId") Long parentId, @Param("name") String name, @Param("filterId") Long filterId) {
+        List<String> wheres = new ArrayList<>();
+        wheres.add(FIELD_ARCHIVE + " = " + Archive.NORMAL.value());
+        wheres.add("parent_id=#{parentId}");
+        wheres.add("name = #{name}");
+        if (filterId != null) {
+            wheres.add("id != #{filterId}");
+        }
+        return new SQL() {
+            {
+                SELECT("COUNT(0)");
+                FROM(getTableName());
+                WHERE(wheres.toArray(new String[wheres.size()]));
             }
         }.toString();
     }

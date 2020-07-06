@@ -1,14 +1,13 @@
 package com.oneape.octopus.service.system;
 
 import com.oneape.octopus.model.DO.system.RoleDO;
-import com.oneape.octopus.model.VO.RoleVO;
 import com.oneape.octopus.service.BaseService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface RoleService extends BaseService<RoleDO> {
-
     /**
      * Get the user role list.
      *
@@ -23,7 +22,7 @@ public interface RoleService extends BaseService<RoleDO> {
      * @param role RoleDO
      * @return List
      */
-    List<RoleVO> find(RoleDO role);
+    List<RoleDO> find(RoleDO role);
 
     /**
      * Gets resource permissions based on the list of role ids.
@@ -31,7 +30,7 @@ public interface RoleService extends BaseService<RoleDO> {
      * @param roleIds List
      * @return Map
      */
-    Map<Long, List<Integer>> getRoleRes(List<Long> roleIds);
+    Map<Long, Set<Integer>> getRoleRes(List<Long> roleIds);
 
     /**
      * Delete the relationship between the user and the role.

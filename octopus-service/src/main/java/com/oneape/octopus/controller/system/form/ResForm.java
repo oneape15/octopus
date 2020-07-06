@@ -14,7 +14,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 public class ResForm extends BaseForm implements Serializable {
     @NotNull(message = "The resource primary key is null.", groups = {EditCheck.class, KeyCheck.class})
-    private Long    resId;
+    private Long    id;
     // The parent node id.
     @NotNull(message = "The parent node id is null.", groups = {EditCheck.class, AddCheck.class})
     private Long    parentId;
@@ -42,7 +42,6 @@ public class ResForm extends BaseForm implements Serializable {
     public ResourceDO toDO() {
         ResourceDO rdo = new ResourceDO();
         BeanUtils.copyProperties(this, rdo);
-        rdo.setId(resId);
         return rdo;
     }
 }
