@@ -13,13 +13,13 @@ import java.io.Serializable;
 @Data
 public class BaseComponent implements Serializable {
     // The Component type.
-    private ComponentType type;
+    protected ComponentType type;
     // The default value.
-    private String        defaultValue;
+    protected String        valDefault;
     // Prompt information
-    private String        placeholder;
+    protected String        placeholder;
     // Whether a parameter is required.
-    private boolean       required;
+    protected boolean       required;
 
     public BaseComponent(ComponentType type) {
         this.type = type;

@@ -6,10 +6,10 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class DataUtils {
     /**
-     * 判断字符串是否为Integer
+     * Determines whether the string is Integer
      *
      * @param str String
-     * @return boolean true - 是数字字符串， false - 不是
+     * @return boolean true - number string， false - not number string.
      */
     public static boolean isInteger(String str) {
         if (StringUtils.isBlank(str)) {
@@ -23,12 +23,29 @@ public class DataUtils {
         return true;
     }
 
-    public static Long toLong(String obj, Long defaultVal) {
+    public static Long toLong(String val) {
+        return toLong(val, null);
+    }
+
+    public static Long toLong(String val, Long defaultVal) {
         try {
-            return Long.parseLong(obj);
+            return Long.parseLong(val);
         } catch (Exception e) {
-            log.debug("String2Long 失败, value: {}", obj);
-            return defaultVal;
+            log.error("String2Long error, value: {}", val);
         }
+        return defaultVal;
+    }
+
+    public static Integer toInt(String val) {
+        return toInt(val, null);
+    }
+
+    public static Integer toInt(String val, Integer defaultVal) {
+        try {
+            return Integer.parseInt(val);
+        } catch (NumberFormatException e) {
+            log.error("String2Integer error. value: {}", val);
+        }
+        return defaultVal;
     }
 }

@@ -1,6 +1,7 @@
 package com.oneape.octopus.model.DO.report;
 
 import com.oneape.octopus.annotation.SortId;
+import com.oneape.octopus.model.enums.ComponentType;
 import com.oneape.octopus.model.enums.ReportParamType;
 import com.oneape.octopus.model.DO.BaseDO;
 import lombok.Data;
@@ -79,6 +80,7 @@ public class ReportParamDO extends BaseDO {
     private Long    lovReportId;
     /**
      * The parameter component type.
+     * {@link ComponentType}
      */
     @Column(name = "component_type")
     private String  componentType;

@@ -13,13 +13,13 @@ import java.util.Map;
 @Data
 public class Result implements Serializable {
     // 查询总条数sql key
-    public static final String KEY_TOTAL_SQL = "total_sql";
+    public static final String KEY_TOTAL_SQL   = "total_sql";
     // 查询sql key
-    public static final String KEY_DETAIL_SQL = "detail_sql";
+    public static final String KEY_DETAIL_SQL  = "detail_sql";
     // 错误信息key
-    public static final String KEY_ERR_MSG = "err_msg";
+    public static final String KEY_ERR_MSG     = "err_msg";
     // 运行时间
-    public static final String KYE_RUN_TIME = "run_time";
+    public static final String KYE_RUN_TIME    = "run_time";
     // 导出文件路径
     public static final String KYE_EXPORT_FILE = "export_file";
 
@@ -32,15 +32,15 @@ public class Result implements Serializable {
     /**
      * 数据头信息
      */
-    private List<ColumnHead> columns;
+    private List<ColumnHead>          columns;
     /**
      * 数据行数
      */
-    private List<Object[]> rows;
+    private List<Map<String, Object>> rows;
     /**
      * 总数据条数
      */
-    private Integer totalSize;
+    private Integer                   totalSize;
     /**
      * 运行信息
      */

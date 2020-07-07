@@ -1,8 +1,12 @@
 package com.oneape.octopus.controller.report.form;
 
 import com.oneape.octopus.controller.BaseForm;
-import com.oneape.octopus.model.DO.report.*;
-import com.oneape.octopus.model.DTO.ReportDTO;
+import com.oneape.octopus.model.DO.report.HelpDocumentDO;
+import com.oneape.octopus.model.DO.report.ReportColumnDO;
+import com.oneape.octopus.model.DO.report.ReportDO;
+import com.oneape.octopus.model.DO.report.ReportDslDO;
+import com.oneape.octopus.model.DTO.report.ReportDTO;
+import com.oneape.octopus.model.DTO.report.ReportParamDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;
@@ -29,7 +33,7 @@ public class ReportForm extends BaseForm implements Serializable {
     private Integer              paramMediaLen;
     private Long                 sortId;
     private String               comment;
-    private List<ReportParamDO>  params;
+    private List<ReportParamDTO> params;
     private List<ReportColumnDO> columns;
     private ReportDslDO          dsl;
     private HelpDocumentDO       helpDoc;

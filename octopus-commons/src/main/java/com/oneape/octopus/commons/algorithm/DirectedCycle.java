@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.Stack;
 
 /**
+ * directed graph check cycle.
+ * <p>
  * Created by oneape<oneape15@163.com>
  * Created 2020-06-29 15:37.
  * Modify:

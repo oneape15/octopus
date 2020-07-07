@@ -1,6 +1,7 @@
 package com.oneape.octopus.model.VO.report.args;
 
 import com.oneape.octopus.commons.value.Pair;
+import com.oneape.octopus.commons.value.TitleValueDTO;
 import com.oneape.octopus.model.enums.ComponentType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,12 +20,11 @@ public class SelectorComponent extends BaseComponent {
      * Support to select more than one at a time.
      * 0 - single; 1 - multi;
      */
-    private int        multi;
+    private int                 multi;
     /**
      * KV list to be selected.
      */
-    private List<Pair> values;
-
+    private List<TitleValueDTO> values;
 
     public SelectorComponent() {
         super(ComponentType.SELECTOR);

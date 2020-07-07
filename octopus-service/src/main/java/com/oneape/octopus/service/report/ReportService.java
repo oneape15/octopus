@@ -1,11 +1,16 @@
 package com.oneape.octopus.service.report;
 
+import com.oneape.octopus.commons.value.Pair;
+import com.oneape.octopus.commons.value.TitleValueDTO;
+import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.model.DO.report.*;
-import com.oneape.octopus.model.DTO.ReportDTO;
+import com.oneape.octopus.model.DTO.report.ReportDTO;
+import com.oneape.octopus.model.DTO.report.ReportParamDTO;
 import com.oneape.octopus.model.VO.report.ReportConfigVO;
 import com.oneape.octopus.service.BaseService;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ReportService extends BaseService<ReportDO> {
 
@@ -48,7 +53,7 @@ public interface ReportService extends BaseService<ReportDO> {
      * @param params   List
      * @return int 0 - fail; 1 - success;
      */
-    int saveReportParams(Long reportId, List<ReportParamDO> params);
+    int saveReportParams(Long reportId, List<ReportParamDTO> params);
 
     /**
      * Save the report column information.
@@ -106,5 +111,16 @@ public interface ReportService extends BaseService<ReportDO> {
      * @return ReportConfigVO
      */
     ReportConfigVO getReportConfig(Long reportId);
+
+    /**
+     * Gets the contents of the Lov report
+     *
+     * @param isStatic    is static lov.
+     * @param lovReportId The love report id.
+     * @param param       query param
+     * @return List
+     */
+    List<TitleValueDTO> getLovData(boolean isStatic, Long lovReportId, Map<String, Object> param);
+
 
 }

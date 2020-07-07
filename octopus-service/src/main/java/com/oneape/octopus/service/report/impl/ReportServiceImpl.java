@@ -1,17 +1,31 @@
 package com.oneape.octopus.service.report.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.BizException;
+import com.oneape.octopus.common.DatetimeMacroUtils;
 import com.oneape.octopus.common.GlobalConstant;
 import com.oneape.octopus.commons.algorithm.Digraph;
+import com.oneape.octopus.commons.algorithm.DirectedAcyclicGraph;
 import com.oneape.octopus.commons.algorithm.DirectedCycle;
+import com.oneape.octopus.commons.value.DateUtils;
 import com.oneape.octopus.commons.value.OptStringUtils;
+import com.oneape.octopus.commons.value.Pair;
+import com.oneape.octopus.commons.value.TitleValueDTO;
+import com.oneape.octopus.datasource.DatasourceInfo;
+import com.oneape.octopus.datasource.ExecParam;
+import com.oneape.octopus.datasource.QueryFactory;
 import com.oneape.octopus.mapper.report.*;
 import com.oneape.octopus.model.DO.report.*;
-import com.oneape.octopus.model.DTO.ReportDTO;
+import com.oneape.octopus.model.DTO.report.ReportDTO;
+import com.oneape.octopus.model.DTO.report.ReportParamDTO;
 import com.oneape.octopus.model.VO.report.ReportConfigVO;
+import com.oneape.octopus.model.VO.report.args.ComponentFactory;
 import com.oneape.octopus.model.VO.report.args.QueryArg;
 import com.oneape.octopus.model.enums.Archive;
+import com.oneape.octopus.model.enums.ReportParamType;
+import com.oneape.octopus.parse.ParsingFactory;
 import com.oneape.octopus.service.report.ReportService;
 import com.oneape.octopus.service.schema.DatasourceService;
 import com.oneape.octopus.service.system.AccountService;
@@ -51,6 +65,10 @@ public class ReportServiceImpl implements ReportService {
     private AccountService      accountService;
     @Resource
     private DatasourceService   datasourceService;
+    @Resource
+    private QueryFactory        queryFactory;
+    @Resource
+    private ParsingFactory      parsingFactory;
 
     /**
      * Whether the report Id is valid.
@@ -81,7 +99,11 @@ public class ReportServiceImpl implements ReportService {
 
         // Gets the report params
         List<ReportParamDO> params = reportParamMapper.findByReportId(reportId);
-        dto.setParams(params);
+        List<ReportParamDTO> dtos = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(params)) {
+            params.forEach(reportParamDO -> dtos.add(new ReportParamDTO(reportParamDO)));
+        }
+        dto.setParams(dtos);
 
         // Gets the report columns
         List<ReportColumnDO> columns = reportColumnMapper.findByReportId(reportId);
@@ -225,7 +247,7 @@ public class ReportServiceImpl implements ReportService {
      */
     @Transactional
     @Override
-    public int saveReportParams(Long reportId, List<ReportParamDO> params) {
+    public int saveReportParams(Long reportId, List<ReportParamDTO> params) {
         if (CollectionUtils.isEmpty(params)) {
             // Delete the old query parameters.
             reportParamMapper.deleteByReportId(reportId);
@@ -530,23 +552,68 @@ public class ReportServiceImpl implements ReportService {
         return vo;
     }
 
-    private Digraph<String> buildDigraph(List<ReportParamDO> paramDOs) {
+    /**
+     * Gets the contents of the Lov report
+     *
+     * @param isStatic    is static lov.
+     * @param lovReportId The love report id.
+     * @param param       query param
+     * @return List
+     */
+    @Override
+    public List<TitleValueDTO> getLovData(boolean isStatic, Long lovReportId, Map<String, Object> param) {
+        List<TitleValueDTO> ret = new ArrayList<>();
+        ReportDslDO dslDO = Preconditions.checkNotNull(
+                reportDslMapper.findByReportId(lovReportId),
+                "The report dsl is null.");
+
+        if (isStatic) {
+            String dslText = dslDO.getText();
+            if (StringUtils.isBlank(dslText)) {
+                return ret;
+            }
+
+            return JSON.parseArray(dslText, TitleValueDTO.class);
+        }
+
+        DatasourceInfo dsInfo = datasourceService.getDatasourceInfoById(dslDO.getDatasourceId());
+        ExecParam execParam = new ExecParam();
+
+
+        queryFactory.execSql(dsInfo, execParam);
+        return null;
+    }
+
+    /**
+     * Build a directed graph of parameter dependencies.
+     *
+     * @param paramDOs List
+     * @return Digraph
+     */
+    private Digraph<String> buildDigraph(List<ReportParamDTO> paramDOs) {
+
+        // return a empty digraph.
+        if (CollectionUtils.isEmpty(paramDOs)) {
+            return new Digraph<>(0);
+        }
+
         Map<String, List<String>> dependMap = new HashMap<>();
         HashSet<String> allNodes = new HashSet<>();
 
         // Build a directed graph.
-        for (ReportParamDO p : paramDOs) {
-            if (StringUtils.isNotBlank(p.getDependOn())) {
-                List<String> dependList = OptStringUtils.split(p.getDependOn(), ";");
-                if (CollectionUtils.isNotEmpty(dependList)) {
-                    allNodes.addAll(dependList);
-                    allNodes.add(p.getName());
-                    dependMap.put(p.getName(), dependList);
-                }
+        for (ReportParamDTO p : paramDOs) {
+            if (StringUtils.isBlank(p.getDependOn())) {
+                continue;
+            }
+            List<String> dependList = p.getDependOnList();
+            if (CollectionUtils.isNotEmpty(dependList)) {
+                allNodes.addAll(dependList);
+                allNodes.add(p.getName());
+                dependMap.put(p.getName(), dependList);
             }
         }
 
-        Digraph<String> digraph = new Digraph<>(paramDOs.size());
+        Digraph<String> digraph = new Digraph<>(allNodes.size());
         dependMap.forEach((k, v) -> {
             for (String tmp : v) {
                 digraph.addEdge(k, tmp);
@@ -557,35 +624,187 @@ public class ReportServiceImpl implements ReportService {
     }
 
     /**
+     * Deal the report param valDefault, valMax, valMin attribute.
+     *
+     * @param pdo The report param object
+     */
+    private void dealReportParamDefaultValue(ReportParamDO pdo) {
+        final String parsePatterns = "yyyy-MM-dd HH:mm:ss";
+
+        // deal the default value
+        if (StringUtils.isNotBlank(pdo.getValDefault())) {
+            String defaultVal = StringUtils.trim(pdo.getValDefault());
+            if (ReportParamType.isMultiValue(pdo.getType())) {
+                // Removes single and double quotes from a string.
+                defaultVal = StringUtils.replace(defaultVal, "'", "");
+                defaultVal = StringUtils.replace(defaultVal, "\"", "");
+
+                // If it is an array string, remove the left and right brackets.
+                if (StringUtils.startsWith(defaultVal, "[") && StringUtils.endsWith(defaultVal, "]")) {
+                    defaultVal = StringUtils.substring(defaultVal, 1, defaultVal.length() - 1);
+                }
+
+                String[] arr = StringUtils.split(defaultVal, ",");
+
+                List<String> defaultList = new ArrayList<>();
+                for (String tmp : arr) {
+                    Date date = DatetimeMacroUtils.parserMacroValue(tmp, parsePatterns);
+                    if (date != null) {
+                        defaultList.add(DateUtils.formatDate(date, parsePatterns));
+                    }
+                }
+                pdo.setValDefault("[" + Joiner.on(",").join(defaultList) + "]");
+            } else {
+                Date date = DatetimeMacroUtils.parserMacroValue(pdo.getValDefault(), parsePatterns);
+                if (date != null) {
+                    pdo.setValDefault(DateUtils.formatDate(date, parsePatterns));
+                }
+            }
+        }
+
+        // deal the min value
+        if (StringUtils.isNotBlank(pdo.getValMin())) {
+            Date date = DatetimeMacroUtils.parserMacroValue(pdo.getValMin(), parsePatterns);
+            if (date != null) {
+                pdo.setValMin(DateUtils.formatDate(date, parsePatterns));
+            }
+        }
+
+        // deal the max value
+        if (StringUtils.isNotBlank(pdo.getValMax())) {
+            Date date = DatetimeMacroUtils.parserMacroValue(pdo.getValMax(), parsePatterns);
+            if (date != null) {
+                pdo.setValMax(DateUtils.formatDate(date, parsePatterns));
+            }
+        }
+    }
+
+    /**
      * Assemble report parameters into corresponding front-end components.
      *
      * @param reportId Long
      * @param paramDOs List
      * @return List
      */
-    private List<QueryArg> getQueryArg(Long reportId, List<ReportParamDO> paramDOs) {
+    private List<QueryArg> getQueryArg(Long reportId, List<ReportParamDTO> paramDOs) {
         List<QueryArg> args = new ArrayList<>();
         if (CollectionUtils.isEmpty(paramDOs)) return args;
 
+        // Build a directed graph of parameter dependencies.
         Digraph<String> digraph = buildDigraph(paramDOs);
+
         // Detects the presence of rings in a directed graph.
         DirectedCycle<String> directedCycle = new DirectedCycle<>(digraph);
         if (directedCycle.hasCycle()) {
             throw new BizException("Parameters are cycle depend.");
         }
 
-        Map<String, ReportParamDO> map = new LinkedHashMap<>();
-        paramDOs.forEach(pdo -> map.put(pdo.getName(), pdo));
+        // Get all link line
+        DirectedAcyclicGraph<String> dag = new DirectedAcyclicGraph<>(digraph);
+
+        Map<String, ReportParamDTO> map = new LinkedHashMap<>();
+        paramDOs.forEach(pdo -> {
+            // default, max, min value deal
+            dealReportParamDefaultValue(pdo);
+
+            // There are no dependent LOV parameters
+            if (ReportParamType.isLov(pdo.getType()) && StringUtils.isBlank(pdo.getDependOn())) {
+
+                // get the values
+                List<TitleValueDTO> values = getLovData(ReportParamType.isStaticLov(pdo.getType()), pdo.getLovReportId(), new HashMap<>());
+                if (StringUtils.isBlank(pdo.getValDefault()) && CollectionUtils.isNotEmpty(values)) {
+                    pdo.setValDefault(String.valueOf(values.get(0).getValue()));
+                }
+                pdo.setValues(values);
+            }
+
+            map.put(pdo.getName(), pdo);
+        });
+
+        final int maxLoop = 100;
+        int loop = 0;
+        Map<String, Boolean> runStateMap = new HashMap<>();
+
+        while (true) {
+            // Exceeding the maximum number of cycles.
+            if (maxLoop < ++loop) {
+                throw new RuntimeException("Exceeding the maximum number of cycles.");
+            }
+
+            List<String> todo = new ArrayList<>();
+            for (String paramName : dag.getVertex()) {
+                if (!runStateMap.containsKey(paramName) || !runStateMap.get(paramName)) {
+                    Set<String> prevs = dag.getPrevs(paramName);
+                    if (CollectionUtils.isEmpty(prevs)) {
+                        todo.add(paramName);
+                    } else {
+                        boolean toAdd = true;
+                        for (String prevVertex : prevs) {
+                            if (!runStateMap.containsKey(prevVertex) || !runStateMap.get(prevVertex)) {
+                                toAdd = false;
+                                break;
+                            }
+                        }
+                        if (toAdd) {
+                            todo.add(paramName);
+                        }
+                    }
+                }
+            }
+
+            // Break out of the loop if the task to run is empty.
+            if (CollectionUtils.isEmpty(todo)) {
+                break;
+            }
+
+            // run the task.
+            for (String paramName : todo) {
+                ReportParamDTO pdo = map.get(paramName);
+
+                // have fetch lov data
+                if (CollectionUtils.isNotEmpty(pdo.getValues())) {
+                    runStateMap.put(paramName, true);
+                    continue;
+                }
+
+                Map<String, Object> param = new HashMap<>();
+
+                // get the depend param info
+                if (StringUtils.isNotBlank(pdo.getDependOn())) {
+                    Map<String, String> lovKvMap = pdo.parseLovKvName();
+                    List<String> dependList = pdo.getDependOnList();
+                    for (String tmp : dependList) {
+                        ReportParamDTO dependParam = map.get(tmp);
+                        if (dependParam == null) continue;
+
+                        String key = dependParam.getName();
+                        if (lovKvMap.containsKey(key)) {
+                            key = lovKvMap.get(key);
+                        }
+
+                        param.put(key, pdo.getValDefault());
+                    }
+                }
+
+                List<TitleValueDTO> values = getLovData(ReportParamType.isStaticLov(pdo.getType()), pdo.getLovReportId(), param);
+                pdo.setValues(values);
+                if (CollectionUtils.isNotEmpty(values)) {
+                    pdo.setValDefault(String.valueOf(values.get(0).getValue()));
+                }
+                runStateMap.put(paramName, true);
+            }
+        }
 
 
-        for (ReportParamDO pdo : paramDOs) {
+        // Assemble the front-end data format.
+        for (ReportParamDTO pdo : map.values()) {
             QueryArg arg = new QueryArg();
             arg.setName(pdo.getName());
             arg.setLabel(pdo.getAlias());
             arg.setDataType(pdo.getDataType());
             arg.setRequired(pdo.getRequired() == 1);
-            arg.setDependOnList(OptStringUtils.split(pdo.getDependOn(), ";"));
-
+            arg.setDependOnList(pdo.getDependOnList());
+            arg.setComponent(ComponentFactory.build(pdo));
             args.add(arg);
         }
 

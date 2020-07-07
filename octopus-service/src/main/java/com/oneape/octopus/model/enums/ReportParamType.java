@@ -10,7 +10,10 @@ public enum ReportParamType {
     NORMAL(0, "NORMAL"),
     INNER(1, "INNER"),
     BETWEEN(2, "BETWEEN"),
-    MULTI(4, "MULTI");
+    MULTI(4, "MULTI"),
+    LOV(8, "LOV"),
+    STATIC_LOV(16, "STATIC_LOV");
+
     private int    code;
     private String desc;
 
@@ -67,7 +70,7 @@ public enum ReportParamType {
     }
 
     /**
-     * 对类型进行合并
+     * Merge the types
      *
      * @param types List
      * @return int
@@ -80,5 +83,27 @@ public enum ReportParamType {
             ret |= tmp;
         }
         return ret;
+    }
+
+    /**
+     * check the type contain lov.
+     *
+     * @param type param type
+     */
+    public static boolean isLov(Integer type) {
+        return (contains(type, LOV) || contains(type, STATIC_LOV));
+    }
+
+    public static boolean isStaticLov(Integer type) {
+        return contains(type, STATIC_LOV);
+    }
+
+    /**
+     * Determine if the parameter type is a multi-valued parameter
+     *
+     * @param type param type
+     */
+    public static boolean isMultiValue(Integer type) {
+        return (contains(type, BETWEEN) || contains(type, MULTI));
     }
 }
