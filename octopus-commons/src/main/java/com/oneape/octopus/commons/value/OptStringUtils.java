@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -20,5 +21,19 @@ public final class OptStringUtils {
             list = Arrays.asList(arr);
         }
         return list;
+    }
+
+    public static String iterator2String(Iterator<String> iter) {
+        String s = "[";
+        int index = 0;
+        while (iter.hasNext()) {
+            if (index++ > 0) {
+                s += ",";
+            }
+            s += iter.next();
+        }
+        s += "]";
+
+        return s;
     }
 }

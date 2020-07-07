@@ -1,6 +1,7 @@
 package com.oneape.octopus.service.system;
 
 import com.oneape.octopus.model.DO.system.RoleDO;
+import com.oneape.octopus.model.DO.system.RoleRlSchemaDO;
 import com.oneape.octopus.service.BaseService;
 
 import java.util.List;
@@ -39,4 +40,21 @@ public interface RoleService extends BaseService<RoleDO> {
      * @return int 1 - success; 0 - fail.
      */
     int deleteRelationshipWithUserId(Long userId);
+
+    /**
+     * Save the association between the role and the table.
+     *
+     * @param rrsdo RoleRlSchemaDO
+     * @return int 1 - success; 0 - fail.
+     */
+    int saveRoleRlSchema(RoleRlSchemaDO rrsdo);
+
+    /**
+     * Save role and data table information in bulk.
+     *
+     * @param roleId Long
+     * @param list   List<RoleRlSchemaDO>
+     * @return int 1 - success; 0 - fail.
+     */
+    int batchSaveRoleRlSchema(Long roleId, List<RoleRlSchemaDO> list);
 }

@@ -2,6 +2,7 @@ package com.oneape.octopus.controller.system.form;
 
 import com.oneape.octopus.controller.BaseForm;
 import com.oneape.octopus.model.DO.system.RoleDO;
+import com.oneape.octopus.model.DO.system.RoleRlSchemaDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;
@@ -9,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -24,6 +26,8 @@ public class RoleForm extends BaseForm implements Serializable {
     private Integer type;
     // The role description.
     private String  comment;
+
+    private List<RoleRlSchemaDO> schemaDOList;
 
     public interface AddCheck {
     }

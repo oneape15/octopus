@@ -73,4 +73,19 @@ public class RoleController {
     public ApiResult<List<RoleDO>> getAllRoles() {
         return ApiResult.ofData(roleService.find(new RoleDO()));
     }
+
+
+    /**
+     * Save the data permission information owned by the role
+     *
+     * @param form RoleForm
+     */
+    @PostMapping("/saveSchemaPermission")
+    public ApiResult saveSchemaPermission(@RequestBody @Validated(value = RoleForm.KeyCheck.class) RoleForm form) {
+        int status = roleService.batchSaveRoleRlSchema(form.getId(), form.getSchemaDOList());
+        if (status > 0) {
+            return ApiResult.ofData("Save role and data table information  successfully.");
+        }
+        return ApiResult.ofError(StateCode.BizError, "Save role and data table information fail.");
+    }
 }

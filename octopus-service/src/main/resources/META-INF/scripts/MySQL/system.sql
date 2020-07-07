@@ -238,3 +238,32 @@ CREATE TABLE `sys_role_rl_resource`
   DEFAULT CHARACTER SET = utf8
   COLLATE = utf8_general_ci;
 
+-- Role - datasource schema association table
+CREATE TABLE `sys_role_rl_schema`
+(
+  `id`          BIGINT(20)   NOT NULL
+  COMMENT 'primary key',
+  `role_id`     BIGINT(20)   NOT NULL
+  COMMENT 'The role id',
+  `ds_id`       BIGINT(20)   NOT NULL
+  COMMENT 'The datasource id',
+  `table_name`  VARCHAR(512) NOT NULL
+  COMMENT 'The table name',
+  `expire_time` BIGINT(20)   NOT NULL
+  COMMENT 'View expiration time.',
+  `archive`     TINYINT(1)   NOT NULL DEFAULT 0
+  COMMENT '0 - normal data; 1 - have archive (soft delete)',
+  `created`     BIGINT(20)   NOT NULL
+  COMMENT 'create time ',
+  `creator`     BIGINT(20)   NOT NULL
+  COMMENT 'Data record creator',
+  `modified`    BIGINT(20)   NULL     DEFAULT NULL
+  COMMENT 'Last updated time',
+  `modifier`    BIGINT(20)   NULL     DEFAULT NULL
+  COMMENT 'Data record  modifier',
+  PRIMARY KEY (`id`)
+)
+  ENGINE = InnoDB
+  COMMENT 'Role - datasource schema association table.'
+  DEFAULT CHARACTER SET = utf8
+  COLLATE = utf8_general_ci;

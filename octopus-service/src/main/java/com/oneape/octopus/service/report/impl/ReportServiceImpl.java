@@ -175,30 +175,32 @@ public class ReportServiceImpl implements ReportService {
         int optStatus = save(rDto);
 
         // save other information about report.
-        if (optStatus > 0) {
-            // save columns.
-            saveReportColumns(rDto.getId(), rDto.getColumns());
-            // save params.
-            saveReportParams(rDto.getId(), rDto.getParams());
-            // save dsl information.
-            ReportDslDO dsl = rDto.getDsl();
-            if (dsl != null) {
-                dsl.setReportId(rDto.getId());
-                saveReportDslSql(dsl);
-            } else {
-                reportDslMapper.deleteByReportId(rDto.getId());
-            }
+        if (optStatus <= 0) {
+            return optStatus;
+        }
 
-            // save help document
-            HelpDocumentDO helpDoc = rDto.getHelpDoc();
-            if (helpDoc != null) {
-                helpDoc.setBizType(0);
-                helpDoc.setBizId(rDto.getId());
-                saveHelpDocument(helpDoc);
-            } else {
-                // delete help document
-                helpDocumentMapper.deleteByBizInfo(0, rDto.getId());
-            }
+        // save columns.
+        saveReportColumns(rDto.getId(), rDto.getColumns());
+        // save params.
+        saveReportParams(rDto.getId(), rDto.getParams());
+        // save dsl information.
+        ReportDslDO dsl = rDto.getDsl();
+        if (dsl != null) {
+            dsl.setReportId(rDto.getId());
+            saveReportDslSql(dsl);
+        } else {
+            reportDslMapper.deleteByReportId(rDto.getId());
+        }
+
+        // save help document
+        HelpDocumentDO helpDoc = rDto.getHelpDoc();
+        if (helpDoc != null) {
+            helpDoc.setBizType(0);
+            helpDoc.setBizId(rDto.getId());
+            saveHelpDocument(helpDoc);
+        } else {
+            // delete help document
+            helpDocumentMapper.deleteByBizInfo(0, rDto.getId());
         }
         return optStatus;
     }
@@ -209,7 +211,9 @@ public class ReportServiceImpl implements ReportService {
      * @param pdo ReportParamDO
      */
     private void checkParamMustFillField(ReportParamDO pdo) {
-
+        Preconditions.checkArgument(StringUtils.isNotBlank(pdo.getName()), "The report param name is empty.");
+        Preconditions.checkArgument(StringUtils.isNotBlank(pdo.getDataType()), "The report param dataType is empty.");
+        Preconditions.checkArgument(pdo.getType() != null, "The report param type is empty.");
     }
 
     /**
@@ -228,9 +232,6 @@ public class ReportServiceImpl implements ReportService {
             return GlobalConstant.SUCCESS;
         }
 
-        Map<String, List<String>> dependMap = new HashMap<>();
-        HashSet<String> allNodes = new HashSet<>();
-
         // Whether an argument with the same name exists.
         List<String> names = new ArrayList<>();
         for (ReportParamDO p : params) {
@@ -241,32 +242,19 @@ public class ReportServiceImpl implements ReportService {
             } else {
                 names.add(p.getName());
             }
-            if (StringUtils.isNotBlank(p.getDependOn())) {
-                List<String> dependList = OptStringUtils.split(p.getDependOn(), ";");
-                if (CollectionUtils.isNotEmpty(dependList)) {
-                    allNodes.addAll(dependList);
-                    allNodes.add(p.getName());
-                    dependMap.put(p.getName(), dependList);
-                }
-            }
         }
 
         // Check whether parameter dependencies form loops.
-        Iterator<String> iter = checkLinkHasLoop(allNodes, dependMap);
-        if (iter != null) {
-            String s = "[";
-            int index = 0;
-            while (iter.hasNext()) {
-                if (index++ > 0) {
-                    s += ",";
-                }
-                s += iter.next();
-            }
-            s += "]";
+        //
+        // Determine if there are rings in a linked list.
+        //  5 --> 3 --> 7 ---> 2 --> 6 -- 8 --> 1 --> 2  , The linked is exist loop.
+        Digraph<String> digraph = buildDigraph(params);
 
+        DirectedCycle<String> directedCycle = new DirectedCycle<>(digraph);
+        if (directedCycle.hasCycle()) {
+            String s = OptStringUtils.iterator2String(directedCycle.cycle());
             throw new BizException("Parameters are interdependent: " + s);
         }
-
 
         // Get the has exist params.
         List<ReportParamDO> oldParams = reportParamMapper.list(new ReportParamDO(reportId));
@@ -324,6 +312,7 @@ public class ReportServiceImpl implements ReportService {
         } catch (Exception e) {
             log.error("Bulk insert report query parameter exception.", e);
             session.rollback();
+            throw new BizException("Bulk insert report query parameter exception.", e);
         } finally {
             session.close();
         }
@@ -332,24 +321,13 @@ public class ReportServiceImpl implements ReportService {
     }
 
     /**
-     * Determine if there are rings in a linked list.
-     * eg: 5 --> 3 --> 7 ---> 2 --> 6 -- 8 --> 1 --> 2  , The linked is exist loop.
+     * check the report column whether a required field is empty.
      *
-     * @param linkMap Map
+     * @param cdo ReportColumnDO
      */
-    private Iterator<String> checkLinkHasLoop(HashSet<String> allNode, Map<String, List<String>> linkMap) {
-        Digraph<String> digraph = new Digraph<>(allNode.size());
-        linkMap.forEach((k, v) -> {
-            for (String tmp : v) {
-                digraph.addEdge(k, tmp);
-            }
-        });
-
-        DirectedCycle<String> directedCycle = new DirectedCycle<>(digraph);
-        if (directedCycle.hasCycle()) {
-            return directedCycle.cycle();
-        }
-        return null;
+    private void checkColumnMustFillField(ReportColumnDO cdo) {
+        Preconditions.checkArgument(StringUtils.isNotBlank(cdo.getName()), "The report column name is empty.");
+        Preconditions.checkArgument(StringUtils.isNotBlank(cdo.getDataType()), "The report column dataType is empty.");
     }
 
     /**
@@ -371,6 +349,7 @@ public class ReportServiceImpl implements ReportService {
         // Whether an argument with the same name exists.
         List<String> names = new ArrayList<>();
         for (ReportColumnDO p : columns) {
+            checkColumnMustFillField(p);
             if (names.contains(p.getName())) {
                 throw new BizException("There are multiple column named: " + p.getName());
             } else {
@@ -405,14 +384,16 @@ public class ReportServiceImpl implements ReportService {
             // Reset the sort ID
             p.setSortId(++sortId);
 
+            Long id;
             if (map.containsKey(name)) {
-                p.setId(map.get(name).getId());
+                id = map.get(name).getId();
                 updateColumnList.add(p);
             } else {
+                id = uidGeneratorService.getUid();
                 p.setCreator(accountService.getCurrentUserId());
-                p.setId(uidGeneratorService.getUid());
                 addColumnList.add(p);
             }
+            p.setId(id);
         }
 
         // Remove unwanted parameters
@@ -434,6 +415,7 @@ public class ReportServiceImpl implements ReportService {
         } catch (Exception e) {
             log.error("Bulk insert report query column exception.", e);
             session.rollback();
+            throw new BizException("Bulk insert report query column exception.", e);
         } finally {
             session.close();
         }
@@ -548,6 +530,32 @@ public class ReportServiceImpl implements ReportService {
         return vo;
     }
 
+    private Digraph<String> buildDigraph(List<ReportParamDO> paramDOs) {
+        Map<String, List<String>> dependMap = new HashMap<>();
+        HashSet<String> allNodes = new HashSet<>();
+
+        // Build a directed graph.
+        for (ReportParamDO p : paramDOs) {
+            if (StringUtils.isNotBlank(p.getDependOn())) {
+                List<String> dependList = OptStringUtils.split(p.getDependOn(), ";");
+                if (CollectionUtils.isNotEmpty(dependList)) {
+                    allNodes.addAll(dependList);
+                    allNodes.add(p.getName());
+                    dependMap.put(p.getName(), dependList);
+                }
+            }
+        }
+
+        Digraph<String> digraph = new Digraph<>(paramDOs.size());
+        dependMap.forEach((k, v) -> {
+            for (String tmp : v) {
+                digraph.addEdge(k, tmp);
+            }
+        });
+
+        return digraph;
+    }
+
     /**
      * Assemble report parameters into corresponding front-end components.
      *
@@ -557,7 +565,19 @@ public class ReportServiceImpl implements ReportService {
      */
     private List<QueryArg> getQueryArg(Long reportId, List<ReportParamDO> paramDOs) {
         List<QueryArg> args = new ArrayList<>();
-        Map<String, ReportParamDO> mapOfParam = new HashMap<>();
+        if (CollectionUtils.isEmpty(paramDOs)) return args;
+
+        Digraph<String> digraph = buildDigraph(paramDOs);
+        // Detects the presence of rings in a directed graph.
+        DirectedCycle<String> directedCycle = new DirectedCycle<>(digraph);
+        if (directedCycle.hasCycle()) {
+            throw new BizException("Parameters are cycle depend.");
+        }
+
+        Map<String, ReportParamDO> map = new LinkedHashMap<>();
+        paramDOs.forEach(pdo -> map.put(pdo.getName(), pdo));
+
+
         for (ReportParamDO pdo : paramDOs) {
             QueryArg arg = new QueryArg();
             arg.setName(pdo.getName());
@@ -566,8 +586,6 @@ public class ReportServiceImpl implements ReportService {
             arg.setRequired(pdo.getRequired() == 1);
             arg.setDependOnList(OptStringUtils.split(pdo.getDependOn(), ";"));
 
-
-            mapOfParam.put(pdo.getName(), pdo);
             args.add(arg);
         }
 
