@@ -33,16 +33,13 @@ public class UserSqlProvider extends BaseSqlProvider<UserDO> {
      * @return String
      */
     public String delByIds(@Param("userIds") List<Long> userIds, @Param("modifier") Long modifier) {
-        return new SQL() {
-            {
-                UPDATE(getTableName());
-                SET(FIELD_ARCHIVE + " = " + Archive.ARCHIVE.value(),
+        return new SQL()
+                .UPDATE(getTableName())
+                .SET(FIELD_ARCHIVE + " = " + Archive.ARCHIVE.value(),
                         FIELD_MODIFIER + " = #{modifier}",
-                        FIELD_MODIFIED + " = unix_timestamp(now())");
-                WHERE(FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
-                        "id IN (" + Joiner.on(",").join(userIds) + ")");
-            }
-        }.toString();
+                        FIELD_MODIFIED + " = unix_timestamp(now())")
+                .WHERE(FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
+                        "id IN (" + Joiner.on(",").join(userIds) + ")").toString();
     }
 
     public String sameNameCheck(@Param("username") String username, @Param("filterId") Long filterId) {
@@ -52,12 +49,9 @@ public class UserSqlProvider extends BaseSqlProvider<UserDO> {
         if (filterId != null) {
             wheres.add("id != #{filterId}");
         }
-        return new SQL() {
-            {
-                SELECT("count(0)");
-                FROM(getTableName());
-                WHERE(wheres.toArray(new String[wheres.size()]));
-            }
-        }.toString();
+        return new SQL()
+                .SELECT("count(0)")
+                .FROM(getTableName())
+                .WHERE(wheres.toArray(new String[wheres.size()])).toString();
     }
 }

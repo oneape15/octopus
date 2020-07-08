@@ -21,23 +21,19 @@ public class RoleSqlProvider extends BaseSqlProvider<RoleDO> {
 
     public String findRoleByUserId(@Param("userId") Long userId) {
         // Get the role id by user id.
-        String subSql = new SQL() {
-            {
-                SELECT_DISTINCT("role_id");
-                FROM(UserRlRoleSqlProvider.TABLE_NAME);
-                WHERE(FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
-                        "user_id = #{userId}");
-            }
-        }.toString();
+        String subSql = new SQL()
+                .SELECT_DISTINCT("role_id")
+                .FROM(UserRlRoleSqlProvider.TABLE_NAME)
+                .WHERE(FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
+                        "user_id = #{userId}")
+                .toString();
 
-        return new SQL() {
-            {
-                SELECT("*");
-                FROM(getTableName());
-                WHERE(FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
-                        "id IN (" + subSql + ")");
-            }
-        }.toString();
+        return new SQL()
+                .SELECT("*")
+                .FROM(getTableName())
+                .WHERE(FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
+                        "id IN (" + subSql + ")")
+                .toString();
     }
 
     public String getSameNameOrCodeRole(@Param("name") String name, @Param("code") String code, @Param("filterId") Long filterId) {
@@ -47,12 +43,10 @@ public class RoleSqlProvider extends BaseSqlProvider<RoleDO> {
         if (filterId != null) {
             sb.append(" AND id !=#{filterId}");
         }
-        return new SQL() {
-            {
-                SELECT("count(0)");
-                FROM(getTableName());
-                WHERE(sb.toString());
-            }
-        }.toString();
+        return new SQL()
+                .SELECT("count(0)")
+                .FROM(getTableName())
+                .WHERE(sb.toString())
+                .toString();
     }
 }

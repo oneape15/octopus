@@ -1,6 +1,7 @@
 package com.oneape.octopus.model.DO.report;
 
 import com.oneape.octopus.annotation.SortId;
+import com.oneape.octopus.datasource.data.DataType;
 import com.oneape.octopus.model.DO.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,7 +30,7 @@ public class ReportColumnDO extends BaseDO {
      */
     private String  alias;
     /**
-     * {@link com.oneape.octopus.datasource.DataType}
+     * {@link DataType}
      * The report column data type.
      */
     @Column(name = "data_type")

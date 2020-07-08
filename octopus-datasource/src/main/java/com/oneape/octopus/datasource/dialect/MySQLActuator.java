@@ -2,7 +2,7 @@ package com.oneape.octopus.datasource.dialect;
 
 import com.mysql.cj.MysqlType;
 import com.oneape.octopus.commons.value.DataUtils;
-import com.oneape.octopus.datasource.DataType;
+import com.oneape.octopus.datasource.data.DataType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 

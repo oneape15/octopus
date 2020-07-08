@@ -2,10 +2,10 @@ package com.oneape.octopus.mapper;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.SessionThreadLocal;
-import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.commons.dto.BeanProperties;
 import com.oneape.octopus.commons.value.BeanUtils;
 import com.oneape.octopus.model.DO.BaseDO;
+import com.oneape.octopus.model.enums.Archive;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
@@ -92,13 +92,11 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
         }
 
         Preconditions.checkArgument(fields.size() != 0, "The insert data action field is empty.");
-        return new SQL() {
-            {
-                INSERT_INTO(getTableName());
-                INTO_COLUMNS(columns.toArray(new String[columns.size()]));
-                INTO_VALUES(values.toArray(new String[values.size()]));
-            }
-        }.toString();
+        return new SQL()
+                .INSERT_INTO(getTableName())
+                .INTO_COLUMNS(columns.toArray(new String[columns.size()]))
+                .INTO_VALUES(values.toArray(new String[values.size()]))
+                .toString();
     }
 
     /**
@@ -134,13 +132,11 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
         });
 
         Preconditions.checkArgument(!sets.isEmpty(), "The update data action field is empty.");
-        return new SQL() {
-            {
-                UPDATE(getTableName());
-                SET(sets.toArray(new String[sets.size()]));
-                WHERE(FIELD_PRIMARY_ID + " =  #{" + FIELD_PRIMARY_ID + "}");
-            }
-        }.toString();
+        return new SQL()
+                .UPDATE(getTableName())
+                .SET(sets.toArray(new String[sets.size()]))
+                .WHERE(FIELD_PRIMARY_ID + " =  #{" + FIELD_PRIMARY_ID + "}")
+                .toString();
     }
 
     /**
@@ -153,15 +149,13 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
         Preconditions.checkNotNull(model, "The data set entity is empty.");
         Preconditions.checkArgument(primaryKeyHasValue(model), "The primary key is empty.");
 
-        return new SQL() {
-            {
-                UPDATE(getTableName());
-                SET(FIELD_ARCHIVE + " = " + Archive.ARCHIVE.value(),
+        return new SQL()
+                .UPDATE(getTableName())
+                .SET(FIELD_ARCHIVE + " = " + Archive.ARCHIVE.value(),
                         FIELD_MODIFIED + " = " + DB_CURRENT_TIME,
-                        FIELD_MODIFIER + " = #{" + FIELD_MODIFIER + "}");
-                WHERE(FIELD_PRIMARY_ID + "= #{" + FIELD_PRIMARY_ID + "}");
-            }
-        }.toString();
+                        FIELD_MODIFIER + " = #{" + FIELD_MODIFIER + "}")
+                .WHERE(FIELD_PRIMARY_ID + "= #{" + FIELD_PRIMARY_ID + "}")
+                .toString();
     }
 
     /**
@@ -186,15 +180,13 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
             }
         });
 
-        return new SQL() {
-            {
-                UPDATE(getTableName());
-                SET(FIELD_ARCHIVE + " = " + Archive.ARCHIVE.value(),
+        return new SQL()
+                .UPDATE(getTableName())
+                .SET(FIELD_ARCHIVE + " = " + Archive.ARCHIVE.value(),
                         FIELD_MODIFIED + " = " + DB_CURRENT_TIME,
-                        FIELD_MODIFIER + " = #{" + FIELD_MODIFIER + "}");
-                WHERE(whereSql.toArray(new String[whereSql.size()]));
-            }
-        }.toString();
+                        FIELD_MODIFIER + " = #{" + FIELD_MODIFIER + "}")
+                .WHERE(whereSql.toArray(new String[whereSql.size()]))
+                .toString();
     }
 
 
@@ -205,13 +197,11 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      * @return String
      */
     public String findById(@Param(FIELD_PRIMARY_ID) Long id) {
-        return new SQL() {
-            {
-                SELECT("*");
-                FROM(getTableName());
-                WHERE(FIELD_PRIMARY_ID + "= #{" + FIELD_PRIMARY_ID + "}");
-            }
-        }.toString();
+        return new SQL()
+                .SELECT("*")
+                .FROM(getTableName())
+                .WHERE(FIELD_PRIMARY_ID + "= #{" + FIELD_PRIMARY_ID + "}")
+                .toString();
     }
 
     /**
@@ -234,13 +224,11 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
             }
         });
 
-        return new SQL() {
-            {
-                SELECT("*");
-                FROM(getTableName());
-                WHERE(wheres.toArray(new String[wheres.size()]));
-            }
-        }.toString();
+        return new SQL()
+                .SELECT("*")
+                .FROM(getTableName())
+                .WHERE(wheres.toArray(new String[wheres.size()]))
+                .toString();
     }
 
     /**
@@ -266,13 +254,11 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
             wheres.add(" 1 = 1 ");
         }
 
-        return new SQL() {
-            {
-                SELECT("COUNT(1)");
-                FROM(getTableName());
-                WHERE(wheres.toArray(new String[wheres.size()]));
-            }
-        }.toString();
+        return new SQL()
+                .SELECT("COUNT(1)")
+                .FROM(getTableName())
+                .WHERE(wheres.toArray(new String[wheres.size()]))
+                .toString();
     }
 
     /**
@@ -306,14 +292,12 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
             }
         });
 
-        return new SQL() {
-            {
-                SELECT("*");
-                FROM(getTableName());
-                WHERE(wheres.toArray(new String[wheres.size()]));
-                ORDER_BY(orders.toArray(new String[orders.size()]));
-            }
-        }.toString();
+        return new SQL()
+                .SELECT("*")
+                .FROM(getTableName())
+                .WHERE(wheres.toArray(new String[wheres.size()]))
+                .ORDER_BY(orders.toArray(new String[orders.size()]))
+                .toString();
     }
 
     /**
@@ -346,13 +330,11 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
             wheres.append(" AND (").append(subWheres).append(")");
         }
 
-        return new SQL() {
-            {
-                SELECT("*");
-                FROM(getTableName());
-                WHERE(wheres.toString());
-            }
-        }.toString();
+        return new SQL()
+                .SELECT("*")
+                .FROM(getTableName())
+                .WHERE(wheres.toString())
+                .toString();
     }
 
     /**

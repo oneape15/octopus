@@ -1,6 +1,7 @@
 package com.oneape.octopus.datasource;
 
 import com.alibaba.fastjson.JSON;
+import com.oneape.octopus.datasource.data.DataType;
 import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.datasource.data.Value;
 import com.oneape.octopus.datasource.schema.FieldInfo;

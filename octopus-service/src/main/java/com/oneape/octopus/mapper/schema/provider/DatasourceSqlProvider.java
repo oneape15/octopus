@@ -29,12 +29,10 @@ public class DatasourceSqlProvider extends BaseSqlProvider<DatasourceDO> {
         if (filterId != null) {
             wheres.add("id != #{filterId}");
         }
-        return new SQL() {
-            {
-                SELECT("COUNT(0)");
-                FROM(getTableName());
-                WHERE(wheres.toArray(new String[wheres.size()]));
-            }
-        }.toString();
+        return new SQL()
+                .SELECT("COUNT(0)")
+                .FROM(getTableName())
+                .WHERE(wheres.toArray(new String[wheres.size()]))
+                .toString();
     }
 }

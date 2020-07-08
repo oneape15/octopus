@@ -24,17 +24,15 @@ public class ResourceSqlProvider extends BaseSqlProvider<ResourceDO> {
     }
 
     public String listByRoleIds(@Param("roleIds") List<Long> roleIds) {
-        return new SQL() {
-            {
-                SELECT("res.*", "rl.mask AS mask");
-                FROM(getTableName() + " AS res");
-                INNER_JOIN(RoleRlResourceSqlProvider.TABLE_NAME + " AS rl ON rl.resource_id = res.id");
-                WHERE("res." + FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
+        return new SQL()
+                .SELECT("res.*", "rl.mask AS mask")
+                .FROM(getTableName() + " AS res")
+                .INNER_JOIN(RoleRlResourceSqlProvider.TABLE_NAME + " AS rl ON rl.resource_id = res.id")
+                .WHERE("res." + FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
                         "rl." + FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
-                        "rl.role_id IN (" + Joiner.on(",").join(roleIds) + ")");
-                ORDER_BY("level ASC", "sortId ASC");
-            }
-        }.toString();
+                        "rl.role_id IN (" + Joiner.on(",").join(roleIds) + ")")
+                .ORDER_BY("level ASC", "sortId ASC")
+                .toString();
     }
 
 
@@ -46,12 +44,10 @@ public class ResourceSqlProvider extends BaseSqlProvider<ResourceDO> {
         if (filterId != null) {
             wheres.add("id != #{filterId}");
         }
-        return new SQL() {
-            {
-                SELECT("COUNT(0)");
-                FROM(getTableName());
-                WHERE(wheres.toArray(new String[wheres.size()]));
-            }
-        }.toString();
+        return new SQL()
+                .SELECT("COUNT(0)")
+                .FROM(getTableName())
+                .WHERE(wheres.toArray(new String[wheres.size()]))
+                .toString();
     }
 }

@@ -58,4 +58,8 @@ public class Result implements Serializable {
         ERROR;
     }
 
+    public boolean isSuccess() {
+        return status == QueryStatus.SUCCESS;
+    }
+
 }

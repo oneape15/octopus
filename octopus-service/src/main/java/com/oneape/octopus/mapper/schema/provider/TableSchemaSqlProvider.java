@@ -1,9 +1,9 @@
 package com.oneape.octopus.mapper.schema.provider;
 
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.model.DO.schema.TableColumnDO;
+import com.oneape.octopus.model.enums.Archive;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
@@ -35,15 +35,13 @@ public class TableSchemaSqlProvider extends BaseSqlProvider<TableColumnDO> {
         }
         sb.append(" )");
 
-        return new SQL() {
-            {
-                UPDATE(getTableName());
-                SET("status = 1",
-                        FIELD_MODIFIED + "=" + DB_CURRENT_TIME);
-                WHERE(FIELD_ARCHIVE + "=" + Archive.NORMAL.value(),
+        return new SQL()
+                .UPDATE(getTableName())
+                .SET("status = 1",
+                        FIELD_MODIFIED + "=" + DB_CURRENT_TIME)
+                .WHERE(FIELD_ARCHIVE + "=" + Archive.NORMAL.value(),
                         "datasource_id = #{dsId}",
-                        sb.toString());
-            }
-        }.toString();
+                        sb.toString())
+                .toString();
     }
 }

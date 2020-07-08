@@ -1,9 +1,9 @@
 package com.oneape.octopus.mapper.peekdata.provider;
 
 import com.google.common.base.Joiner;
-import com.oneape.octopus.model.enums.Archive;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.model.DO.peekdata.ModelMetaDO;
+import com.oneape.octopus.model.enums.Archive;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
 
@@ -29,14 +29,12 @@ public class ModelMetaSqlProvider extends BaseSqlProvider<ModelMetaDO> {
      * @return String
      */
     public String deleteByModelId(@Param("modelId") Long modelId) {
-        return new SQL() {
-            {
-                UPDATE(getTableName());
-                SET(FIELD_ARCHIVE + " = " + Archive.ARCHIVE.value(),
-                        FIELD_MODIFIED + " = unix_timestamp(now())");
-                WHERE("model_id = #{modelId}");
-            }
-        }.toString();
+        return new SQL()
+                .UPDATE(getTableName())
+                .SET(FIELD_ARCHIVE + " = " + Archive.ARCHIVE.value(),
+                        FIELD_MODIFIED + " = unix_timestamp(now())")
+                .WHERE("model_id = #{modelId}")
+                .toString();
     }
 
     /**
@@ -46,13 +44,11 @@ public class ModelMetaSqlProvider extends BaseSqlProvider<ModelMetaDO> {
      * @return String
      */
     public String delByIds(@Param("ids") List<Long> ids) {
-        return new SQL() {
-            {
-                UPDATE(getTableName());
-                SET(FIELD_ARCHIVE + " = " + Archive.ARCHIVE.value(),
-                        FIELD_MODIFIED + " = unix_timestamp(now())");
-                WHERE("id IN (" + Joiner.on(",").join(ids) + ")");
-            }
-        }.toString();
+        return new SQL()
+                .UPDATE(getTableName())
+                .SET(FIELD_ARCHIVE + " = " + Archive.ARCHIVE.value(),
+                        FIELD_MODIFIED + " = unix_timestamp(now())")
+                .WHERE("id IN (" + Joiner.on(",").join(ids) + ")")
+                .toString();
     }
 }

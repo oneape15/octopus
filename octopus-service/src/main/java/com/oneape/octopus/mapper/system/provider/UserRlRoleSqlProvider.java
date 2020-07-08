@@ -20,14 +20,12 @@ public class UserRlRoleSqlProvider extends BaseSqlProvider<UserRlRoleDO> {
     }
 
     public String deleteByUserId(@Param("userId") Long userId) {
-        return new SQL() {
-            {
-                UPDATE(getTableName());
-                SET(FIELD_ARCHIVE + "=" + Archive.ARCHIVE.value(),
-                        FIELD_MODIFIED + "=" + DB_CURRENT_TIME);
-                WHERE(FIELD_ARCHIVE + "=" + Archive.NORMAL.value(),
-                        "user_id=#{userId}");
-            }
-        }.toString();
+        return new SQL()
+                .UPDATE(getTableName())
+                .SET(FIELD_ARCHIVE + "=" + Archive.ARCHIVE.value(),
+                        FIELD_MODIFIED + "=" + DB_CURRENT_TIME)
+                .WHERE(FIELD_ARCHIVE + "=" + Archive.NORMAL.value(),
+                        "user_id=#{userId}")
+                .toString();
     }
 }

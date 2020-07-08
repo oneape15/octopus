@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.datasource.*;
+import com.oneape.octopus.datasource.data.DataType;
 import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.mapper.peekdata.PeekFieldMapper;
 import com.oneape.octopus.mapper.peekdata.PeekMapper;

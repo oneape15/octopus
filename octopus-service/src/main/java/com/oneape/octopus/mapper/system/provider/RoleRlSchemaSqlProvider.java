@@ -4,7 +4,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.model.DO.system.RoleRlSchemaDO;
-import com.oneape.octopus.model.DO.system.UserRlRoleDO;
 import com.oneape.octopus.model.enums.Archive;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.ibatis.annotations.Param;
@@ -26,38 +25,32 @@ public class RoleRlSchemaSqlProvider extends BaseSqlProvider<RoleRlSchemaDO> {
     }
 
     public String deleteByRoleId(@Param("roleId") Long roleId) {
-        return new SQL() {
-            {
-                UPDATE(getTableName());
-                SET(FIELD_ARCHIVE + "=" + Archive.ARCHIVE.value(),
-                        FIELD_MODIFIED + "=" + DB_CURRENT_TIME);
-                WHERE(FIELD_ARCHIVE + "=" + Archive.NORMAL.value(),
-                        "role_id=#{roleId}");
-            }
-        }.toString();
+        return new SQL()
+                .UPDATE(getTableName())
+                .SET(FIELD_ARCHIVE + "=" + Archive.ARCHIVE.value(),
+                        FIELD_MODIFIED + "=" + DB_CURRENT_TIME)
+                .WHERE(FIELD_ARCHIVE + "=" + Archive.NORMAL.value(),
+                        "role_id=#{roleId}")
+                .toString();
     }
 
     public String findByRoleId(@Param("roleId") Long roleId) {
-        return new SQL() {
-            {
-                SELECT("*");
-                FROM(getTableName());
-                WHERE(FIELD_ARCHIVE + "=" + Archive.NORMAL.value(),
-                        "role_id=#{roleId}");
-            }
-        }.toString();
+        return new SQL()
+                .SELECT("*")
+                .FROM(getTableName())
+                .WHERE(FIELD_ARCHIVE + "=" + Archive.NORMAL.value(),
+                        "role_id=#{roleId}")
+                .toString();
     }
 
     public String deleteByIds(@Param("ids") List<Long> ids) {
         Preconditions.checkArgument(CollectionUtils.isNotEmpty(ids), "The id list is empty.");
-        return new SQL() {
-            {
-                UPDATE(getTableName());
-                SET(FIELD_ARCHIVE + "=" + Archive.ARCHIVE.value(),
-                        FIELD_MODIFIED + "=" + DB_CURRENT_TIME);
-                WHERE(FIELD_ARCHIVE + "=" + Archive.NORMAL.value(),
-                        "id IN (" + Joiner.on(",").join(ids) + ")");
-            }
-        }.toString();
+        return new SQL()
+                .UPDATE(getTableName())
+                .SET(FIELD_ARCHIVE + "=" + Archive.ARCHIVE.value(),
+                        FIELD_MODIFIED + "=" + DB_CURRENT_TIME)
+                .WHERE(FIELD_ARCHIVE + "=" + Archive.NORMAL.value(),
+                        "id IN (" + Joiner.on(",").join(ids) + ")")
+                .toString();
     }
 }

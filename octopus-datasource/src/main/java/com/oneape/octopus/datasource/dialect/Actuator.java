@@ -5,6 +5,7 @@ import com.oneape.octopus.commons.files.ZipUtils;
 import com.oneape.octopus.commons.value.CodeBuilderUtils;
 import com.oneape.octopus.datasource.*;
 import com.oneape.octopus.datasource.data.ColumnHead;
+import com.oneape.octopus.datasource.data.DataType;
 import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.datasource.data.Value;
 import com.oneape.octopus.datasource.schema.FieldInfo;
@@ -21,37 +22,39 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * SQL执行器
+ * The SQL actuators.
  */
 @Slf4j
 public abstract class Actuator {
-    private static final String FILE_PATH = "/Users/xiaodian/Desktop/";
+    private static final String FILE_PATH       = "/Users/xiaodian/Desktop/";
     private static final String CSV_FILE_SUFFIX = ".csv";
     private static final String ZIP_FILE_SUFFIX = ".zip";
 
     // 数据库字段名称
-    public static final String COL_SCHEMA = "schema_name";
+    public static final String COL_SCHEMA      = "schema_name";
     // 表字段名称
-    public static final String COL_TABLE = "table_name";
+    public static final String COL_TABLE       = "table_name";
     // 表类型字段名称
-    public static final String COL_TABLE_TYPE = "table_type";
+    public static final String COL_TABLE_TYPE  = "table_type";
     // 列字段名称
-    public static final String COL_COLUMN = "column_name";
+    public static final String COL_COLUMN      = "column_name";
     // 默认值字段名称
     public static final String COL_DEFAULT_VAL = "default_val";
     // 是否为空字段名称
-    public static final String COL_NULLABLE = "nullable";
+    public static final String COL_NULLABLE    = "nullable";
     // 数据类型字段名称
-    public static final String COL_DATA_TYPE = "data_type";
+    public static final String COL_DATA_TYPE   = "data_type";
     // 是否为主键名称
-    public static final String COL_PRI_KEY = "pri_key";
+    public static final String COL_PRI_KEY     = "pri_key";
     // 备注字段名称
-    public static final String COL_COMMENT = "comment";
+    public static final String COL_COMMENT     = "comment";
     // 总条数字段名称
-    public static final String COL_COUNT_SIZE = "count_size";
+    public static final String COL_COUNT_SIZE  = "count_size";
 
 
     protected Statement statement;
@@ -201,7 +204,7 @@ public abstract class Actuator {
     }
 
     /**
-     * 获取数据库名称
+     * Get the database name.
      *
      * @param url String
      * @return String
@@ -211,7 +214,7 @@ public abstract class Actuator {
             return null;
         }
 
-        // 去除url后面的参数
+        // Remove the parameters after the URL
         int index = StringUtils.lastIndexOf(url, "?");
         String tmp = url;
         if (index > -1) {
@@ -221,7 +224,7 @@ public abstract class Actuator {
     }
 
     /**
-     * 获取所有数据库名称
+     * Gets all database names
      *
      * @return List
      */
@@ -229,7 +232,7 @@ public abstract class Actuator {
         List<String> dbs = new ArrayList<>();
         String runSql = getAllDatabaseSql();
         if (StringUtils.isBlank(runSql)) {
-            throw new RuntimeException("运行SQL为空");
+            throw new RuntimeException("Running SQL is null.");
         }
         try (ResultSet rs = statement.executeQuery(runSql)) {
             while (rs.next()) {
@@ -538,17 +541,16 @@ public abstract class Actuator {
             result.setColumns(columnHeads);
             int columnSize = columnHeads.size();
 
-            List<Object[]> rows = new ArrayList<>();
+            List<Map<String, Object>> rows = new ArrayList<>();
             // 循环获取数据行
             while (rs.next()) {
-                Object[] row = new Object[columnSize];
+                Map<String, Object> row = new HashMap<>(columnSize);
                 for (int i = 0; i < columnSize; i++) {
                     Object obj = rs.getObject(i + 1);
                     if (process != null) {
-                        row[i] = process.process(new Cell(columnHeads.get(i), obj));
-                    } else {
-                        row[i] = obj;
+                        obj = process.process(new Cell(columnHeads.get(i), obj));
                     }
+                    row.put(columnHeads.get(i).getName(), obj);
                 }
                 rows.add(row);
             }
@@ -613,8 +615,7 @@ public abstract class Actuator {
             return heads;
         }
 
-        for (int i = 0; i < rsmd.getColumnCount(); i++) {
-            int index = i + 1;
+        for (int index = 1; index <= rsmd.getColumnCount(); index++) {
             String columnLabel = rsmd.getColumnLabel(index);
             String columnName = rsmd.getColumnName(index);
             ColumnHead head = new ColumnHead(columnName, columnLabel);

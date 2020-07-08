@@ -25,11 +25,9 @@ public class PeekSqlProvider extends BaseSqlProvider<PeekDO> {
      * @return String
      */
     public String incPeekTime(@Param("peekId") Long peekId) {
-        return new SQL() {
-            {
-                UPDATE(getTableName());
-                SET("peek_time = peek_time + 1");
-            }
-        }.toString();
+        return new SQL()
+                .UPDATE(getTableName())
+                .SET("peek_time = peek_time + 1")
+                .toString();
     }
 }

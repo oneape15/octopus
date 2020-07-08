@@ -1,6 +1,5 @@
 package com.oneape.octopus.datasource.data;
 
-import com.oneape.octopus.datasource.DataType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,13 +9,21 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class Value implements Serializable {
     /**
-     * 数据类型
+     * The data type
      */
     private DataType dataType;
     /**
-     * 具体值
+     * The specific value
      */
-    private Object value;
+    private Object   value;
+    /**
+     * Whether to scope query
+     */
+    private boolean  isRange;
+    /**
+     * Is it a multi-valued query
+     */
+    private boolean  isMulti;
 
     public Value(Object value, DataType dt) {
         this.value = value;

@@ -11,11 +11,12 @@ import com.oneape.octopus.commons.algorithm.DirectedAcyclicGraph;
 import com.oneape.octopus.commons.algorithm.DirectedCycle;
 import com.oneape.octopus.commons.value.DateUtils;
 import com.oneape.octopus.commons.value.OptStringUtils;
-import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.commons.value.TitleValueDTO;
 import com.oneape.octopus.datasource.DatasourceInfo;
 import com.oneape.octopus.datasource.ExecParam;
 import com.oneape.octopus.datasource.QueryFactory;
+import com.oneape.octopus.datasource.data.ColumnHead;
+import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.mapper.report.*;
 import com.oneape.octopus.model.DO.report.*;
 import com.oneape.octopus.model.DTO.report.ReportDTO;
@@ -566,22 +567,41 @@ public class ReportServiceImpl implements ReportService {
         ReportDslDO dslDO = Preconditions.checkNotNull(
                 reportDslMapper.findByReportId(lovReportId),
                 "The report dsl is null.");
+        String dslText = dslDO.getText();
+        if (StringUtils.isBlank(dslText)) {
+            return ret;
+        }
 
+        // The lov is static.
         if (isStatic) {
-            String dslText = dslDO.getText();
-            if (StringUtils.isBlank(dslText)) {
-                return ret;
-            }
-
             return JSON.parseArray(dslText, TitleValueDTO.class);
         }
 
+        // to query database.
         DatasourceInfo dsInfo = datasourceService.getDatasourceInfoById(dslDO.getDatasourceId());
         ExecParam execParam = new ExecParam();
 
+        Result result = queryFactory.execSql(dsInfo, execParam);
+        if (result != null && result.isSuccess()) {
+            List<Map<String, Object>> rows = result.getRows();
+            List<ColumnHead> headList = result.getColumns();
+            if (CollectionUtils.isEmpty(rows) || CollectionUtils.isEmpty(headList)) {
+                return ret;
+            }
 
-        queryFactory.execSql(dsInfo, execParam);
-        return null;
+            ColumnHead keyHead = headList.get(0);
+            ColumnHead titleHead = headList.get(0);
+            if (headList.size() > 1) {
+                titleHead = headList.get(1);
+            }
+
+            for (Map<String, Object> map : rows) {
+                Object keyObj = map.get(keyHead.getName());
+                Object valueObj = map.get(titleHead.getName());
+                ret.add(new TitleValueDTO<>(String.valueOf(keyObj), valueObj));
+            }
+        }
+        return ret;
     }
 
     /**
