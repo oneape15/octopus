@@ -75,16 +75,12 @@ public enum Operator {
     /**
      * The two parameters are compared according to the operator
      *
-     * @param opStr  The operator code
      * @param param1 the param 1
      * @param param2 The param 2
      * @return true - Conditions established; false - The condition does not hold
      */
-    public static boolean compare(final String opStr, Object param1, Object param2) {
-        Operator op = instance(opStr);
-        if (op == null) return false;
-
-        switch (op) {
+    public boolean compare(Object param1, Object param2) {
+        switch (this) {
             // Equal to
             case EQUALS:
                 return optEqual(param1, param2);
@@ -175,22 +171,19 @@ public enum Operator {
     }
 
     private static boolean optStartWith(Object param1, Object param2) {
-        if (param1 == null || param2 == null) return false;
-
-        return StringUtils.startsWith(String.valueOf(param1), String.valueOf(param2));
+        return !((param1 == null || param2 == null))
+                && StringUtils.startsWith(String.valueOf(param1), String.valueOf(param2));
     }
 
 
     private static boolean optEndWith(Object param1, Object param2) {
-        if (param1 == null || param2 == null) return false;
-
-        return StringUtils.endsWith(String.valueOf(param1), String.valueOf(param2));
+        return !((param1 == null || param2 == null))
+                && StringUtils.endsWith(String.valueOf(param1), String.valueOf(param2));
     }
 
     private static boolean optInclude(Object param1, Object param2) {
-        if (param1 == null || param2 == null) return false;
-
-        return StringUtils.contains(String.valueOf(param1), String.valueOf(param2));
+        return !((param1 == null || param2 == null))
+                && StringUtils.contains(String.valueOf(param1), String.valueOf(param2));
     }
 
     private static int toCompare(Object param1, Object param2) {
