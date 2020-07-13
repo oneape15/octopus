@@ -1,4 +1,4 @@
-package com.oneape.octopus.datasource.data;
+package com.oneape.octopus.commons.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

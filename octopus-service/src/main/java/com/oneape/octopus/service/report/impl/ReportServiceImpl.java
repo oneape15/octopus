@@ -9,9 +9,12 @@ import com.oneape.octopus.common.GlobalConstant;
 import com.oneape.octopus.commons.algorithm.Digraph;
 import com.oneape.octopus.commons.algorithm.DirectedAcyclicGraph;
 import com.oneape.octopus.commons.algorithm.DirectedCycle;
+import com.oneape.octopus.commons.dto.DataType;
+import com.oneape.octopus.commons.dto.Value;
 import com.oneape.octopus.commons.value.DateUtils;
 import com.oneape.octopus.commons.value.OptStringUtils;
 import com.oneape.octopus.commons.value.TitleValueDTO;
+import com.oneape.octopus.data.ParseResult;
 import com.oneape.octopus.datasource.DatasourceInfo;
 import com.oneape.octopus.datasource.ExecParam;
 import com.oneape.octopus.datasource.QueryFactory;
@@ -43,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -554,7 +558,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     /**
-     * Gets the contents of the Lov report
+     * Gets the contents of the Lov report. The max rows is 1000.
      *
      * @param isStatic    is static lov.
      * @param lovReportId The love report id.
@@ -577,11 +581,53 @@ public class ReportServiceImpl implements ReportService {
             return JSON.parseArray(dslText, TitleValueDTO.class);
         }
 
-        // to query database.
-        DatasourceInfo dsInfo = datasourceService.getDatasourceInfoById(dslDO.getDatasourceId());
-        ExecParam execParam = new ExecParam();
+        // Assemble the query parameter types
+        Map<String, Value> queryParamMap = new HashMap<>();
+        List<ReportParamDO> lovParams = getParamByReportId(lovReportId);
+        if (CollectionUtils.isNotEmpty(lovParams)) {
+            queryParamMap = lovParams
+                    .stream()
+                    // Convert the ReportParamDO to ReportParamDTO
+                    .map(ReportParamDTO::new)
+                    // default, max, min value deal
+                    .map(pdo -> {
+                        dealReportParamDefaultValue(pdo);
+                        return pdo;
+                    })
+                    // to map
+                    .collect(Collectors.toMap(ReportParamDTO::getName, pdo -> {
+                        Object defaultVal = pdo.getValDefault();
+                        if (param != null && param.containsKey(pdo.getName())) {
+                            defaultVal = param.get(pdo.getName());
+                        }
+                        DataType dt = DataType.byName(pdo.getDataType());
+                        if (dt == null) dt = DataType.STRING;
 
+                        Value value = new Value(defaultVal, dt);
+                        value.setMulti(ReportParamType.isMultiValue(pdo.getType()));
+                        value.setRange(ReportParamType.isRangeValue(pdo.getType()));
+                        return value;
+                    }));
+
+        }
+
+        // parse the dsl sql
+        ParseResult parseResult = parsingFactory.parse(dslText, queryParamMap);
+
+        // to query database.
+        DatasourceInfo dsInfo = Preconditions.checkNotNull(
+                datasourceService.getDatasourceInfoById(dslDO.getDatasourceId()),
+                "The datasource info is not exist.");
+        ExecParam execParam = new ExecParam();
+        execParam.setNeedTotalSize(false);
+        execParam.setLimitSize(1000);
+        execParam.setRawSql(parseResult.getRawSql());
+        execParam.setParams(parseResult.getValues());
+
+        // Execute SQL, query data.
         Result result = queryFactory.execSql(dsInfo, execParam);
+
+        // Processing query results
         if (result != null && result.isSuccess()) {
             List<Map<String, Object>> rows = result.getRows();
             List<ColumnHead> headList = result.getColumns();

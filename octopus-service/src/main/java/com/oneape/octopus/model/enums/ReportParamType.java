@@ -106,4 +106,13 @@ public enum ReportParamType {
     public static boolean isMultiValue(Integer type) {
         return (contains(type, BETWEEN) || contains(type, MULTI));
     }
+
+    /**
+     * Determine if the parameter type is a range-valued parameter
+     *
+     * @param type param type
+     */
+    public static boolean isRangeValue(Integer type) {
+        return contains(type, BETWEEN);
+    }
 }

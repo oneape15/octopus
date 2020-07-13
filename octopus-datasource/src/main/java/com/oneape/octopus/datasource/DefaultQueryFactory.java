@@ -238,7 +238,7 @@ public class DefaultQueryFactory implements QueryFactory {
     }
 
     /**
-     * 执行SQL操作
+     * Exec SQL operations
      *
      * @param dsi   DatasourceInfo
      * @param param ExecParam
@@ -250,7 +250,7 @@ public class DefaultQueryFactory implements QueryFactory {
     }
 
     /**
-     * 执行SQL操作
+     * Exec SQL operations
      *
      * @param dsi     DatasourceInfo
      * @param param   ExecParam
@@ -266,7 +266,7 @@ public class DefaultQueryFactory implements QueryFactory {
                 return actuator.execSql(param, process);
             }
         } catch (Exception e) {
-            log.error("执行SQL: {} 失败", JSON.toJSONString(param), e);
+            log.error("exec SQL: {}", JSON.toJSONString(param), e);
             return failResult(e);
         }
     }

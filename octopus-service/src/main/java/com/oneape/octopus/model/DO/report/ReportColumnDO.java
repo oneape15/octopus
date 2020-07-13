@@ -1,7 +1,7 @@
 package com.oneape.octopus.model.DO.report;
 
 import com.oneape.octopus.annotation.SortId;
-import com.oneape.octopus.datasource.data.DataType;
+import com.oneape.octopus.commons.dto.DataType;
 import com.oneape.octopus.model.DO.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

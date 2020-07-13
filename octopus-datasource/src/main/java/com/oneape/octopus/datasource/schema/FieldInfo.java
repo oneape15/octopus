@@ -1,6 +1,6 @@
 package com.oneape.octopus.datasource.schema;
 
-import com.oneape.octopus.datasource.data.DataType;
+import com.oneape.octopus.commons.dto.DataType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

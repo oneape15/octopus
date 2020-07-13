@@ -4,7 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.controller.schema.form.DatasourceForm;
-import com.oneape.octopus.datasource.data.DataType;
+import com.oneape.octopus.commons.dto.DataType;
 import com.oneape.octopus.datasource.DatasourceFactory;
 import com.oneape.octopus.datasource.DatasourceInfo;
 import com.oneape.octopus.datasource.DatasourceTypeHelper;

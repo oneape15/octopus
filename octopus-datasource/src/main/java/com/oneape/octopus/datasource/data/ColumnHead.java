@@ -1,5 +1,6 @@
 package com.oneape.octopus.datasource.data;
 
+import com.oneape.octopus.commons.dto.DataType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,11 +12,11 @@ public class ColumnHead implements Serializable {
     /**
      * 列名称
      */
-    private String name;
+    private String   name;
     /**
      * 列昵称
      */
-    private String label;
+    private String   label;
     /**
      * 数据类型
      */

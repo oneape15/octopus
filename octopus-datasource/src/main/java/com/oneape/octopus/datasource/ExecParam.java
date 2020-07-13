@@ -1,6 +1,6 @@
 package com.oneape.octopus.datasource;
 
-import com.oneape.octopus.datasource.data.Value;
+import com.oneape.octopus.commons.dto.Value;
 import lombok.Data;
 
 import java.io.Serializable;

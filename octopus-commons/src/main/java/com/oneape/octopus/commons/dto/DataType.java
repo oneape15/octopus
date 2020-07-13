@@ -1,4 +1,4 @@
-package com.oneape.octopus.datasource.data;
+package com.oneape.octopus.commons.dto;
 
 import org.apache.commons.lang3.StringUtils;
 
