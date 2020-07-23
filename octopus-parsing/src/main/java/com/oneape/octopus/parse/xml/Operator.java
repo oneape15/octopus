@@ -4,10 +4,7 @@ import com.google.common.base.Joiner;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Operation type enumeration class
@@ -120,11 +117,67 @@ public enum Operator {
     }
 
     private static boolean optEqual(Object param1, Object param2) {
-        return Objects.deepEquals(param1, param2);
+        if (param1 == param2) {
+            return true;
+        } else if (param1 == null || param2 == null) {
+            return false;
+        } else {
+            boolean eq;
+            if (param1 instanceof Object[] && param2 instanceof Object[]) {
+                eq = deepEquals((Object[]) param1, (Object[]) param2);
+            } else if (param1 instanceof byte[] && param2 instanceof byte[]) {
+                eq = Arrays.equals((byte[]) param1, (byte[]) param2);
+            } else if (param1 instanceof short[] && param2 instanceof short[]) {
+                eq = Arrays.equals((short[]) param1, (short[]) param2);
+            } else if (param1 instanceof int[] && param2 instanceof int[]) {
+                eq = Arrays.equals((int[]) param1, (int[]) param2);
+            } else if (param1 instanceof long[] && param2 instanceof long[]) {
+                eq = Arrays.equals((long[]) param1, (long[]) param2);
+            } else if (param1 instanceof char[] && param2 instanceof char[]) {
+                eq = Arrays.equals((char[]) param1, (char[]) param2);
+            } else if (param1 instanceof float[] && param2 instanceof float[]) {
+                eq = Arrays.equals((float[]) param1, (float[]) param2);
+            } else if (param1 instanceof double[] && param2 instanceof double[]) {
+                eq = Arrays.equals((double[]) param1, (double[]) param2);
+            } else if (param1 instanceof boolean[] && param2 instanceof boolean[]) {
+                eq = Arrays.equals((boolean[]) param1, (boolean[]) param2);
+            } else {
+                // change to String compare.
+                eq = StringUtils.equals(String.valueOf(param1), String.valueOf(param2));
+            }
+            return eq;
+        }
+    }
+
+    public static boolean deepEquals(Object[] a1, Object[] a2) {
+        if (a1 == a2)
+            return true;
+        if (a1 == null || a2 == null)
+            return false;
+        int length = a1.length;
+        if (a2.length != length)
+            return false;
+
+        for (int i = 0; i < length; i++) {
+            Object e1 = a1[i];
+            Object e2 = a2[i];
+
+            if (e1 == e2)
+                continue;
+            if (e1 == null)
+                return false;
+
+            // Figure out whether the two elements are equal
+            boolean eq = optEqual(e1, e2);
+
+            if (!eq)
+                return false;
+        }
+        return true;
     }
 
     private static boolean optNotEqual(Object param1, Object param2) {
-        return !(Objects.deepEquals(param1, param2));
+        return !optEqual(param1, param2);
     }
 
     /**

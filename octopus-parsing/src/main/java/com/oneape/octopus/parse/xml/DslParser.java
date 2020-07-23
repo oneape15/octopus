@@ -1,7 +1,8 @@
 package com.oneape.octopus.parse.xml;
 
+import com.oneape.octopus.commons.dto.Value;
+import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.data.SyntaxException;
-import jdk.internal.org.objectweb.asm.tree.analysis.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -9,9 +10,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Created by oneape<oneape15@163.com>
@@ -25,6 +24,9 @@ public class DslParser {
     // The node stack
     private       Stack<XmlNode>     stack;
     private final Map<String, Value> paramMap;
+
+    private String      rawSql;
+    private List<Value> args;
 
     public DslParser(String rawSql) {
         this(rawSql, null, true);
@@ -66,6 +68,7 @@ public class DslParser {
         }
 
         String neatDslString = clearDslSqlString(rawSql);
+        log.debug("The raw dsl String: {}", neatDslString);
         int dslLen = neatDslString.length();
         if (dslLen <= 0) {
             return;
@@ -254,12 +257,111 @@ public class DslParser {
     private void runExpression() {
         if (stack.isEmpty()) return;
 
-        Stack<XmlNode> tmpStack = new Stack<>();
-        for (XmlNode node : stack) {
+        Pair<Integer, XmlNode> valPair = testIfNode(stack, 0, true);
+        if (valPair == null || valPair.getRight() == null) {
+            throw new SyntaxException("Run expression Error, The result is null.");
+        }
+
+        String dslString = "";
+        XmlNode node = valPair.getRight();
+        if (node instanceof XmlTextNode) {
+            dslString = ((XmlTextNode) node).getContent();
+        } else {
+            throw new SyntaxException("Run expression Error, the result node type error. ");
+        }
+
+        log.debug("after test if , dsl String: {}", dslString);
+
+        List<Value> params = new ArrayList<>();
+        char[] chars = dslString.toCharArray();
+        int len = chars.length;
+
+        List<Character> list = new ArrayList<>(len);
+        for (int i = 0; i < len; ) {
+            if (chars[i] != '#') {
+                list.add(chars[i++]);
+                continue;
+            }
+            if (i + 1 < len && chars[i + 1] == '{') {
+                boolean hasFound = false;
+                int j = i + 1;
+                for (; j < len; ) {
+                    if (chars[j++] == '}') {
+                        hasFound = true;
+                        break;
+                    }
+                }
+                if (hasFound) {
+                    char[] valTag = new char[j - i];
+                    System.arraycopy(chars, i, valTag, 0, valTag.length);
+                    String tagName = new String(valTag);
+                    Value value = paramMap.get(tagName);
+                    if (value == null) {
+                        throw new SyntaxException("Run expression Error, " + tagName + " No input parameter");
+                    }
+                    list.add('?');
+                    params.add(value);
+                    i = j;
+                    continue;
+                }
+            }
+
+            // No match was found
+            list.add(chars[i++]);
+        }
+
+        char[] tmp = new char[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            tmp[i] = list.get(i);
+        }
+
+        this.rawSql = new String(tmp);
+        this.args = params;
+    }
+
+    /**
+     * Test the if node
+     */
+    private Pair<Integer, XmlNode> testIfNode(Stack<XmlNode> stack, int fromIndex, boolean ifTest) {
+        Stack<XmlNode> retStack = new Stack<>();
+        int curIndex = fromIndex;
+        for (int i = fromIndex; i < stack.size(); ) {
+            XmlNode node = stack.get(i);
+            if (node.getNodeName() == NodeName.IF) {
+                Pair<Integer, XmlNode> tmp = testIfNode(stack, i + 1, testNode((XmlTestNode) node));
+                retStack.push(tmp.getRight());
+                i = tmp.getLeft();
+                continue;
+            }
+            if (node.getNodeName() == NodeName.FI) {
+                curIndex = i + 1;
+                break;
+            }
+            i++;
+            retStack.push(node);
+        }
+
+        String text = "";
+        boolean testStatus = ifTest;
+        for (XmlNode node : retStack) {
             if (node.getNodeName() == NodeName.TEXT) {
-                tmpStack.push(node);
+                if (testStatus) {
+                    text += " " + ((XmlTextNode) node).getContent();
+                }
+            } else if (node.getNodeName() == NodeName.ELSEIF) {
+                testStatus = testNode((XmlTestNode) node);
+            } else if (node.getNodeName() == NodeName.ELSE) {
+                testStatus = !ifTest;
             }
         }
+        return new Pair<>(curIndex, new XmlTextNode(text));
+    }
+
+    private boolean testNode(XmlTestNode testNode) {
+        Object val1 = paramMap.containsKey(testNode.getExp1()) ? paramMap.get(testNode.getExp1()).getValue() : testNode.getExp1();
+        Object val2 = paramMap.containsKey(testNode.getExp2()) ? paramMap.get(testNode.getExp2()).getValue() : testNode.getExp2();
+
+        return testNode.getOp().compare(val1, val2);
     }
 
     /**
@@ -274,7 +376,7 @@ public class DslParser {
         if (chars == null
                 || startPos >= endPos
                 || chars.length <= startPos
-                || chars.length <= endPos
+                || chars.length < endPos
                 ) {
             return null;
         }
@@ -395,4 +497,11 @@ public class DslParser {
     }
 
 
+    public String getRawSql() {
+        return rawSql;
+    }
+
+    public List<Value> getArgs() {
+        return args;
+    }
 }
