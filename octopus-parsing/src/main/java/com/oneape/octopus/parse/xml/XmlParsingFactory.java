@@ -26,10 +26,16 @@ public class XmlParsingFactory implements ParsingFactory {
     @Override
     public ParseResult parse(String dslSql, Map<String, Value> params) throws SyntaxException {
         // check the dsl sql.
-        detection(dslSql);
+        DslParser dslParser = new DslParser(dslSql, params);
+        if (!dslParser.isGrammarStatus()) {
+            throw new SyntaxException("There is an error in the DSL syntax.");
+        }
 
+        ParseResult pr = new ParseResult();
+        pr.setRawSql(dslParser.getRawSql());
+        pr.setValues(dslParser.getArgs());
 
-        return null;
+        return pr;
     }
 
 
@@ -44,7 +50,9 @@ public class XmlParsingFactory implements ParsingFactory {
     public boolean detection(String dslSql) throws SyntaxException {
         if (StringUtils.isBlank(dslSql)) return true;
 
+        // Just check the grammar
         DslParser dslParser = new DslParser(dslSql);
-        return false;
+
+        return dslParser.isGrammarStatus();
     }
 }

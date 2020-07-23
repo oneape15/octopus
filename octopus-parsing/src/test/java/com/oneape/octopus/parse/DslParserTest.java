@@ -17,8 +17,8 @@ public class DslParserTest {
     private static final String dslSql = "SELECT * FROM \n" +
             "tb_user\n" +
             "WHERE 1 = 1 \n" +
-            "<if test=\"#{useType} eq 1\">\n" +
-            "   AND useType = 1 AND sex = #{sex}\n" +
+            "<if test=\"#{useType} nb\">\n" +
+            "   AND useType = 1 AND sex IN( #{sex}) AND user_type #{useType}\n" +
             "  <elseif test = \"#{useType} eq 2\">\n" +
             "  AND useType = 2\n" +
             "  <else>\n" +
@@ -28,13 +28,17 @@ public class DslParserTest {
             "       AND userType > 3\n" +
             "    <fi>\n" +
             "<fi>\n" +
-            "order by sex";
+            "order by sex; ";
 
 
     public static void main(String[] args) {
         Map<String, Value> map = new HashMap<>();
-        map.put("#{useType}", new Value(1, DataType.INTEGER));
-        map.put("#{sex}", new Value(1, DataType.INTEGER));
+        Value val1 = new Value(new Integer[]{1, 3}, DataType.INTEGER);
+        val1.setRange(true);
+        map.put("#{useType}", val1);
+        Value val2 = new Value(new Integer[]{1, 3, 4, 6, 8}, DataType.INTEGER);
+        val2.setMulti(true);
+        map.put("#{sex}", val2);
 
         DslParser dp = new DslParser(dslSql, map);
 

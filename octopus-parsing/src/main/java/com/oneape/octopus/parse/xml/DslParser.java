@@ -27,6 +27,8 @@ public class DslParser {
 
     private String      rawSql;
     private List<Value> args;
+    // The dsl grammar is right ?
+    private boolean grammarStatus = false;
 
     public DslParser(String rawSql) {
         this(rawSql, null, true);
@@ -248,6 +250,7 @@ public class DslParser {
                 throw new SyntaxException("The node <" + nodeName + "> has not start.");
             }
         }
+        this.grammarStatus = true;
     }
 
     /**
@@ -262,7 +265,7 @@ public class DslParser {
             throw new SyntaxException("Run expression Error, The result is null.");
         }
 
-        String dslString = "";
+        String dslString;
         XmlNode node = valPair.getRight();
         if (node instanceof XmlTextNode) {
             dslString = ((XmlTextNode) node).getContent();
@@ -299,8 +302,50 @@ public class DslParser {
                     if (value == null) {
                         throw new SyntaxException("Run expression Error, " + tagName + " No input parameter");
                     }
-                    list.add('?');
-                    params.add(value);
+
+                    // Determines whether it is a set
+                    if (value.isMulti() || value.isRange()) {
+                        Object valObj = value.getValue();
+                        if (valObj == null) {
+                            throw new RuntimeException("The range parameter: " + tagName + " cannot be null.");
+                        }
+                        List<Object> arrVal = new ArrayList<>();
+                        if (valObj.getClass().isArray()) {
+                            if (valObj instanceof List) {
+                                arrVal.addAll((List) valObj);
+                            } else {
+                                Object[] arr = (Object[]) valObj;
+                                for (Object o : arr) {
+                                    arrVal.add(o);
+                                }
+                            }
+                        } else {
+                            arrVal.add(valObj);
+                        }
+
+                        if (value.isMulti()) {
+                            for (int index = 0; index < arrVal.size(); index++) {
+                                params.add(new Value(arrVal.get(index), value.getDataType()));
+                                if (index > 0) {
+                                    list.add(',');
+                                }
+                                list.add('?');
+                            }
+                        } else {
+                            Object minVal = arrVal.get(0);
+                            Object maxVal = arrVal.size() == 1 ? arrVal.get(0) : arrVal.get(1);
+                            params.add(new Value(minVal, value.getDataType()));
+                            params.add(new Value(maxVal, value.getDataType()));
+                            char[] tmps = " BETWEEN ? AND ? ".toCharArray();
+                            for (char tmp : tmps) {
+                                list.add(tmp);
+                            }
+                        }
+
+                    } else {
+                        list.add('?');
+                        params.add(value);
+                    }
                     i = j;
                     continue;
                 }
@@ -315,7 +360,13 @@ public class DslParser {
             tmp[i] = list.get(i);
         }
 
-        this.rawSql = new String(tmp);
+        this.rawSql = StringUtils.trimToEmpty(new String(tmp));
+
+        // If you end with ";" End, then remove.
+        if (StringUtils.endsWith(this.rawSql, ";")) {
+            this.rawSql = StringUtils.substring(this.rawSql, 0, this.rawSql.length() - 1);
+        }
+
         this.args = params;
     }
 
@@ -503,5 +554,9 @@ public class DslParser {
 
     public List<Value> getArgs() {
         return args;
+    }
+
+    public boolean isGrammarStatus() {
+        return grammarStatus;
     }
 }

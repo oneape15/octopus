@@ -176,9 +176,6 @@ public abstract class Actuator {
             case INTEGER:
                 ret = Integer.toString((Integer) val);
                 break;
-            case BOOLEAN:
-                ret = Boolean.toString((Boolean) val);
-                break;
             case DOUBLE:
                 ret = Double.toString((Double) val);
                 break;
@@ -187,6 +184,9 @@ public abstract class Actuator {
                 break;
             case LONG:
                 ret = Long.toString((Long) val);
+                break;
+            case BOOLEAN:
+                ret = Boolean.toString((Boolean) val);
                 break;
             case TIMESTAMP:
             case DATETIME:
