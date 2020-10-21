@@ -6,7 +6,6 @@ import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.controller.peekdata.form.TagForm;
 import com.oneape.octopus.model.DO.peekdata.ModelTagDO;
 import com.oneape.octopus.model.VO.ApiResult;
-import com.oneape.octopus.model.VO.ModelTagVO;
 import com.oneape.octopus.service.peekdata.ModelTagService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +37,7 @@ public class ModelTagController {
 
     @PostMapping("/del")
     public ApiResult<String> doDelTag(@RequestBody @Validated(value = TagForm.KeyCheck.class) TagForm form) {
-        int status = modelTagService.deleteById(form.toDO());
+        int status = modelTagService.deleteById(form.getTagId());
         if (status > 0) {
             return ApiResult.ofData("删除标签成功");
         }
@@ -46,9 +45,9 @@ public class ModelTagController {
     }
 
     @PostMapping("/list")
-    public ApiResult<PageInfo<ModelTagVO>> doList(@RequestBody @Validated TagForm form) {
+    public ApiResult<PageInfo<ModelTagDO>> doList(@RequestBody @Validated TagForm form) {
         PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
-        List<ModelTagVO> vos = modelTagService.find(form.toDO());
+        List<ModelTagDO> vos = modelTagService.find(form.toDO());
         return ApiResult.ofData(new PageInfo<>(vos));
     }
 
@@ -58,7 +57,7 @@ public class ModelTagController {
      * @return List
      */
     @PostMapping("/listAll")
-    public ApiResult<List<ModelTagVO>> doAllList() {
+    public ApiResult<List<ModelTagDO>> doAllList() {
         return ApiResult.ofData(modelTagService.find(new ModelTagDO()));
     }
 }

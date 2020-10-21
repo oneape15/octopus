@@ -1,9 +1,8 @@
-package com.oneape.octopus.mapper.report;
+package com.oneape.octopus.mapper.serve;
 
 import com.oneape.octopus.mapper.BaseSqlProvider;
-import com.oneape.octopus.mapper.report.provider.ReportSqlProvider;
-import com.oneape.octopus.model.DO.report.ReportDO;
-import com.oneape.octopus.model.enums.Archive;
+import com.oneape.octopus.mapper.serve.provider.ServeInfoSqlProvider;
+import com.oneape.octopus.model.DO.serve.ServeInfoDO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -12,10 +11,10 @@ import java.util.List;
  * The report Mapper.
  */
 @Mapper
-public interface ReportMapper {
+public interface ServeInfoMapper {
 
     @Select({
-            "SELECT COUNT(0) FROM " + ReportSqlProvider.TABLE_NAME +
+            "SELECT COUNT(0) FROM " + ServeInfoSqlProvider.TABLE_NAME +
                     " WHERE " + BaseSqlProvider.FIELD_ARCHIVE + " = 0 AND id = #{reportId}"
     })
     int checkReportId(@Param("reportId") Long reportId);
@@ -26,8 +25,8 @@ public interface ReportMapper {
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
-    @InsertProvider(type = ReportSqlProvider.class, method = "insert")
-    int insert(ReportDO model);
+    @InsertProvider(type = ServeInfoSqlProvider.class, method = "insert")
+    int insert(ServeInfoDO model);
 
     /**
      * Update data by primary key.
@@ -35,8 +34,8 @@ public interface ReportMapper {
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
-    @UpdateProvider(type = ReportSqlProvider.class, method = "updateById")
-    int update(ReportDO model);
+    @UpdateProvider(type = ServeInfoSqlProvider.class, method = "updateById")
+    int update(ServeInfoDO model);
 
     /**
      * Delete data by primary key (soft delete, update archive state).
@@ -44,8 +43,8 @@ public interface ReportMapper {
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
-    @UpdateProvider(type = ReportSqlProvider.class, method = "deleteById")
-    int delete(ReportDO model);
+    @UpdateProvider(type = ServeInfoSqlProvider.class, method = "deleteById")
+    int delete(ServeInfoDO model);
 
     /**
      * Find by primary key.
@@ -53,8 +52,8 @@ public interface ReportMapper {
      * @param id Long
      * @return T
      */
-    @SelectProvider(type = ReportSqlProvider.class, method = "findById")
-    ReportDO findById(@Param("id") Long id);
+    @SelectProvider(type = ServeInfoSqlProvider.class, method = "findById")
+    ServeInfoDO findById(@Param("id") Long id);
 
     /**
      * The query is based on a property in the entity that is not null.
@@ -62,6 +61,6 @@ public interface ReportMapper {
      * @param model T
      * @return List
      */
-    @SelectProvider(type = ReportSqlProvider.class, method = "list")
-    List<ReportDO> list(@Param("model") ReportDO model);
+    @SelectProvider(type = ServeInfoSqlProvider.class, method = "list")
+    List<ServeInfoDO> list(@Param("model") ServeInfoDO model);
 }

@@ -1,6 +1,6 @@
 package com.oneape.octopus.model.VO.report.args;
 
-import com.oneape.octopus.model.DTO.report.ReportParamDTO;
+import com.oneape.octopus.model.DTO.serve.ServeParamDTO;
 import com.oneape.octopus.model.enums.ComponentType;
 
 /**
@@ -10,7 +10,7 @@ import com.oneape.octopus.model.enums.ComponentType;
  */
 public class ComponentFactory {
 
-    public static BaseComponent build(ReportParamDTO dto) {
+    public static BaseComponent build(ServeParamDTO dto) {
         BaseComponent component = null;
 
         ComponentType ct = ComponentType.getByName(dto.getComponentType());
@@ -49,7 +49,7 @@ public class ComponentFactory {
         return component;
     }
 
-    public static InputComponent buildInput(ReportParamDTO dto) {
+    public static InputComponent buildInput(ServeParamDTO dto) {
         InputComponent com = new InputComponent();
         com.setValMin(dto.getValMin());
         com.setValMax(dto.getValMax());
@@ -58,35 +58,35 @@ public class ComponentFactory {
         return com;
     }
 
-    public static SwitchComponent buildSwitch(ReportParamDTO dto) {
+    public static SwitchComponent buildSwitch(ServeParamDTO dto) {
         SwitchComponent com = new SwitchComponent();
         com.setValDefault(dto.getValDefault());
-        com.setValues(dto.getValues());
+//        com.setValues(dto.getValues());
         return com;
     }
 
-    public static RadioComponent buildRadio(ReportParamDTO dto) {
+    public static RadioComponent buildRadio(ServeParamDTO dto) {
         RadioComponent com = new RadioComponent();
         com.setValDefault(dto.getValDefault());
-        com.setValues(dto.getValues());
+//        com.setValues(dto.getValues());
         return com;
     }
 
-    public static CheckboxComponent buildCheckbox(ReportParamDTO dto) {
+    public static CheckboxComponent buildCheckbox(ServeParamDTO dto) {
         CheckboxComponent com = new CheckboxComponent();
         com.setValDefault(dto.getValDefault());
-        com.setValues(dto.getValues());
+//        com.setValues(dto.getValues());
         return com;
     }
 
-    public static SelectorComponent buildSelector(ReportParamDTO dto) {
+    public static SelectorComponent buildSelector(ServeParamDTO dto) {
         SelectorComponent com = new SelectorComponent();
         com.setValDefault(dto.getValDefault());
-        com.setValues(dto.getValues());
+//        com.setValues(dto.getValues());
         return com;
     }
 
-    public static DatetimeComponent buildDatetime(ReportParamDTO dto) {
+    public static DatetimeComponent buildDatetime(ServeParamDTO dto) {
         DatetimeComponent com = new DatetimeComponent();
         com.setValDefault(dto.getValDefault());
 
@@ -94,7 +94,7 @@ public class ComponentFactory {
     }
 
 
-    public static DateRangeComponent buildDateRange(ReportParamDTO dto) {
+    public static DateRangeComponent buildDateRange(ServeParamDTO dto) {
         DateRangeComponent com = new DateRangeComponent();
         com.setValDefault(dto.getValDefault());
         return com;

@@ -11,14 +11,6 @@ import java.util.List;
 public interface ModelService extends BaseService<ModelDO> {
 
     /**
-     * 根据对象进行查询
-     *
-     * @param model ModelDO
-     * @return List
-     */
-    List<ModelVO> find(ModelDO model);
-
-    /**
      * 添加模型信息
      *
      * @param model ModelDO
@@ -44,7 +36,7 @@ public interface ModelService extends BaseService<ModelDO> {
      * @param tableName String
      * @return List
      */
-    List<ModelMetaVO> getTableColumns(Long modelId, Long dsId, String tableName);
+    List<ModelMetaDO> getTableColumns(Long modelId, Long dsId, String tableName);
 
     /**
      * 根据Id获取模型信息
@@ -60,7 +52,7 @@ public interface ModelService extends BaseService<ModelDO> {
      * @param mm ModelMetaDO
      * @return List
      */
-    List<ModelMetaVO> listModelMeta(ModelMetaDO mm);
+    List<ModelMetaDO> listModelMeta(ModelMetaDO mm);
 
     /**
      * 修改模型状态

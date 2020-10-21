@@ -43,7 +43,7 @@ public class DatasourceController {
 
     @PostMapping("/del")
     public ApiResult<String> doDelDs(@RequestBody @Validated(value = DatasourceForm.KeyCheck.class) DatasourceForm form) {
-        int status = datasourceService.deleteById(form.toDO());
+        int status = datasourceService.deleteById(form.getId());
         if (status > 0) {
             return ApiResult.ofData("Data source deleted successfully.");
         }

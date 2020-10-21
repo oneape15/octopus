@@ -1,6 +1,6 @@
 package com.oneape.octopus.model.VO;
 
-import com.oneape.octopus.model.DO.report.ReportDslDO;
+import com.oneape.octopus.model.DTO.serve.ServeSqlDTO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
@@ -26,13 +26,13 @@ public class ReportSqlVO implements Serializable {
     // 描述信息
     private String comment;
 
-    public ReportDslDO toDO() {
-        ReportDslDO rdo = new ReportDslDO();
+    public ServeSqlDTO toDO() {
+        ServeSqlDTO rdo = new ServeSqlDTO();
         BeanUtils.copyProperties(this, rdo);
         return rdo;
     }
 
-    public static ReportSqlVO ofDO(ReportDslDO rdo) {
+    public static ReportSqlVO ofDO(ServeSqlDTO rdo) {
         if (rdo == null) return null;
 
         ReportSqlVO vo = new ReportSqlVO();

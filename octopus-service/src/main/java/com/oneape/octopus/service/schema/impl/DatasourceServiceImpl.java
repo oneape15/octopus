@@ -55,15 +55,24 @@ public class DatasourceServiceImpl implements DatasourceService {
     }
 
     /**
-     * Delete by primary key Id.
-     *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
     @Override
-    public int deleteById(DatasourceDO model) {
-        Preconditions.checkNotNull(model.getId(), "The primary Key is empty.");
-        return datasourceMapper.delete(model);
+    public int edit(DatasourceDO model) {
+        return datasourceMapper.update(model);
+    }
+
+    /**
+     * Delete by primary key Id.
+     *
+     * @param id Long
+     * @return int 1 - success; 0 - fail.
+     */
+    @Override
+    public int deleteById(Long id) {
+        Preconditions.checkNotNull(id, "The primary Key is empty.");
+        return datasourceMapper.delete(new DatasourceDO(id));
     }
 
     /**

@@ -47,6 +47,10 @@ public class ResourceDO extends BaseDO {
      */
     private String  comment;
 
+    public ResourceDO(Long id) {
+        this.setId(id);
+    }
+
     public ResourceDO(Long parentId, String name) {
         this.parentId = parentId;
         this.name = name;

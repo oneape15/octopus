@@ -1,6 +1,6 @@
 package com.oneape.octopus.model.VO;
 
-import com.oneape.octopus.model.DO.report.ReportColumnDO;
+import com.oneape.octopus.model.DTO.serve.ServeColumnDTO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
@@ -47,14 +47,14 @@ public class ReportColumnVO implements Serializable {
     // 描述信息
     private String  comment;
 
-    public static ReportColumnVO ofDO(ReportColumnDO cdo) {
+    public static ReportColumnVO ofDO(ServeColumnDTO cdo) {
         ReportColumnVO vo = new ReportColumnVO();
         BeanUtils.copyProperties(cdo, vo);
         return vo;
     }
 
-    public ReportColumnDO toDO() {
-        ReportColumnDO cdo = new ReportColumnDO();
+    public ServeColumnDTO toDO() {
+        ServeColumnDTO cdo = new ServeColumnDTO();
         BeanUtils.copyProperties(this, cdo);
         return cdo;
     }

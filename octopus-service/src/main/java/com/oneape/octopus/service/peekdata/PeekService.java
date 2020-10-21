@@ -6,21 +6,12 @@ import com.oneape.octopus.model.DO.peekdata.PeekDO;
 import com.oneape.octopus.model.VO.ModelVO;
 import com.oneape.octopus.model.VO.PeekFieldVO;
 import com.oneape.octopus.model.VO.PeekRuleVO;
-import com.oneape.octopus.model.VO.PeekVO;
 import com.oneape.octopus.service.BaseService;
 
 import java.util.List;
 import java.util.Map;
 
 public interface PeekService extends BaseService<PeekDO> {
-
-    /**
-     * 根据对象进行查询
-     *
-     * @param model PeekDO
-     * @return List
-     */
-    List<PeekVO> find(PeekDO model);
 
     /**
      * 保存取数实例信息
@@ -66,12 +57,4 @@ public interface PeekService extends BaseService<PeekDO> {
      * @return 1 - 任务发送成功; 0 - 任务发送失败;
      */
     int peekData(Long peekId);
-
-    /**
-     * 根据Id查询取数详细信息
-     *
-     * @param peekId Long
-     * @return PeekVO
-     */
-    PeekVO getById(Long peekId);
 }

@@ -89,13 +89,44 @@ public class ImportRecordServiceImpl implements ImportRecordService {
     }
 
     /**
-     * Delete by primary key Id.
-     *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
     @Override
-    public int deleteById(ImportRecordDO model) {
+    public int edit(ImportRecordDO model) {
         return 0;
+    }
+
+    /**
+     * Delete by primary key Id.
+     *
+     * @param id Long
+     * @return int 1 - success; 0 - fail.
+     */
+    @Override
+    public int deleteById(Long id) {
+        return 0;
+    }
+
+    /**
+     * Get the model information by the primary key.
+     *
+     * @param id Long
+     * @return T
+     */
+    @Override
+    public ImportRecordDO findById(Long id) {
+        return null;
+    }
+
+    /**
+     * Query against an object.
+     *
+     * @param model T
+     * @return List
+     */
+    @Override
+    public List<ImportRecordDO> find(ImportRecordDO model) {
+        return null;
     }
 }

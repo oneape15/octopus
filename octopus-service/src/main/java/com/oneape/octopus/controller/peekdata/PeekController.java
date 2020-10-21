@@ -7,8 +7,8 @@ import com.oneape.octopus.common.StateCode;
 import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.controller.peekdata.form.PeekForm;
 import com.oneape.octopus.datasource.data.Result;
+import com.oneape.octopus.model.DO.peekdata.PeekDO;
 import com.oneape.octopus.model.VO.ApiResult;
-import com.oneape.octopus.model.VO.PeekVO;
 import com.oneape.octopus.service.peekdata.PeekService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -51,7 +51,7 @@ public class PeekController {
 
     @PostMapping("/del")
     public ApiResult<String> doDelPeek(@RequestBody @Validated(value = PeekForm.KeyCheck.class) PeekForm form) {
-        int status = peekService.deleteById(form.toDO());
+        int status = peekService.deleteById(form.getPeekId());
         if (status == GlobalConstant.SUCCESS) {
             return ApiResult.ofData("删除取数实例成功");
         } else {
@@ -60,9 +60,9 @@ public class PeekController {
     }
 
     @PostMapping("/list")
-    public ApiResult<PageInfo<PeekVO>> doList(@RequestBody @Validated PeekForm form) {
+    public ApiResult<PageInfo<PeekDO>> doList(@RequestBody @Validated PeekForm form) {
         PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
-        List<PeekVO> vos = peekService.find(form.toDO());
+        List<PeekDO> vos = peekService.find(form.toDO());
         return ApiResult.ofData(new PageInfo<>(vos));
     }
 
@@ -99,7 +99,7 @@ public class PeekController {
      * 获取取数详细信息
      */
     @PostMapping("/getById")
-    public ApiResult<PeekVO> getById(@RequestBody @Validated(value = PeekForm.KeyCheck.class) PeekForm form) {
-        return ApiResult.ofData(peekService.getById(form.getPeekId()));
+    public ApiResult<PeekDO> getById(@RequestBody @Validated(value = PeekForm.KeyCheck.class) PeekForm form) {
+        return ApiResult.ofData(peekService.findById(form.getPeekId()));
     }
 }

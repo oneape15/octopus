@@ -1,6 +1,7 @@
-package com.oneape.octopus.service.report.impl;
+package com.oneape.octopus.service.serve.impl;
 
-import com.oneape.octopus.model.DO.report.ReportParamDO;
+import com.oneape.octopus.model.DTO.serve.ServeParamDTO;
+import com.oneape.octopus.model.DTO.serve.ServeParamDTO;
 
 /**
  * Created by oneape<oneape15@163.com>
@@ -9,10 +10,10 @@ import com.oneape.octopus.model.DO.report.ReportParamDO;
  */
 public class LovTask {
 
-    private ReportParamDO pdo;
+    private ServeParamDTO pdo;
     private Runnable      runnable;
 
-    public LovTask(ReportParamDO pdo, Runnable runnable) {
+    public LovTask(ServeParamDTO pdo, Runnable runnable) {
         this.pdo = pdo;
         this.runnable = runnable;
     }

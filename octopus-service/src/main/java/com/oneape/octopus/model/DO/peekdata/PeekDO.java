@@ -15,11 +15,11 @@ public class PeekDO extends BaseDO {
      * 模型Id
      */
     @Column(name = "model_id")
-    private Long modelId;
+    private Long    modelId;
     /**
      * 取数实例名称
      */
-    private String name;
+    private String  name;
     /**
      * 取数次数
      */
@@ -29,6 +29,10 @@ public class PeekDO extends BaseDO {
     public PeekDO(Long modelId, String name) {
         this.modelId = modelId;
         this.name = name;
+    }
+
+    public PeekDO(Long id) {
+        this.setId(id);
     }
 
     public PeekDO(Long id, Long modelId, String name) {

@@ -3,26 +3,28 @@ package com.oneape.octopus.model.DO.peekdata;
 import com.oneape.octopus.model.DO.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ModelDO extends BaseDO {
     /**
      * 模型名称
      */
-    private String name;
+    private String  name;
     /**
      * 数据源Id
      */
     @Column(name = "datasource_id")
-    private Long datasourceId;
+    private Long    datasourceId;
     /**
      * 具体表名
      */
     @Column(name = "table_name")
-    private String tableName;
+    private String  tableName;
     /**
      * 模型状态 0 - 使用中; 1 - 已停用
      */
@@ -30,5 +32,9 @@ public class ModelDO extends BaseDO {
     /**
      * 描述
      */
-    private String comment;
+    private String  comment;
+
+    public ModelDO(Long id) {
+        this.setId(id);
+    }
 }

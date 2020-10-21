@@ -81,20 +81,40 @@ public class AccountServiceImpl implements AccountService {
     }
 
     /**
+     * @param model T
+     * @return int 1 - success; 0 - fail.
+     */
+    @Override
+    public int edit(UserDO model) {
+        return userMapper.update(model);
+    }
+
+    /**
+     * Get the model information by the primary key.
+     *
+     * @param id Long
+     * @return T
+     */
+    @Override
+    public UserDO findById(Long id) {
+        return userMapper.findById(id);
+    }
+
+    /**
      * Delete by primary key Id.
      *
-     * @param model T
+     * @param id Long
      * @return int 1 - success; 0 - fail.
      */
     @Transactional
     @Override
-    public int deleteById(UserDO model) {
-        Preconditions.checkNotNull(model.getId(), "The user id is empty.");
+    public int deleteById(Long id) {
+        Preconditions.checkNotNull(id, "The user id is empty.");
 
-        int status = userMapper.delete(new UserDO(model.getId()));
+        int status = userMapper.delete(new UserDO(id));
         // Delete the relationship between the user and the role
         if (status > 0) {
-            roleService.deleteRelationshipWithUserId(model.getId());
+            roleService.deleteRelationshipWithUserId(id);
         }
 
         return status;

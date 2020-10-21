@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.mapper.peekdata.ModelTagMapper;
 import com.oneape.octopus.model.DO.peekdata.ModelTagDO;
-import com.oneape.octopus.model.VO.ModelTagVO;
 import com.oneape.octopus.service.peekdata.ModelTagService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -12,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -22,23 +20,14 @@ public class ModelTagServiceImpl implements ModelTagService {
     private ModelTagMapper modelTagMapper;
 
     /**
-     * 根据对象进行查询
+     * Query against an object.
      *
      * @param modelTag ModelTagDO
      * @return List
      */
     @Override
-    public List<ModelTagVO> find(ModelTagDO modelTag) {
-        List<ModelTagDO> list = modelTagMapper.listOrLink(modelTag);
-
-        List<ModelTagVO> vos = new ArrayList<>();
-        if (CollectionUtils.isEmpty(list)) {
-            return vos;
-        }
-
-        list.forEach(mt -> vos.add(ModelTagVO.ofDO(mt)));
-
-        return vos;
+    public List<ModelTagDO> find(ModelTagDO modelTag) {
+        return modelTagMapper.listOrLink(modelTag);
     }
 
     /**
@@ -70,15 +59,34 @@ public class ModelTagServiceImpl implements ModelTagService {
     }
 
     /**
-     * Delete by primary key Id.
-     *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
     @Override
-    public int deleteById(ModelTagDO model) {
-        Preconditions.checkNotNull(model, "标签对象为空");
-        Preconditions.checkArgument(model.getId() != null && model.getId() > 0, "主键为空");
-        return modelTagMapper.delete(model);
+    public int edit(ModelTagDO model) {
+        return modelTagMapper.update(model);
+    }
+
+    /**
+     * Get the model information by the primary key.
+     *
+     * @param id Long
+     * @return T
+     */
+    @Override
+    public ModelTagDO findById(Long id) {
+        return modelTagMapper.findById(id);
+    }
+
+    /**
+     * Delete by primary key Id.
+     *
+     * @param id Long
+     * @return int 1 - success; 0 - fail.
+     */
+    @Override
+    public int deleteById(Long id) {
+        Preconditions.checkArgument(id != null && id > 0, "主键为空");
+        return modelTagMapper.delete(new ModelTagDO(id));
     }
 }

@@ -1,4 +1,4 @@
-package com.oneape.octopus.model.DO.report;
+package com.oneape.octopus.model.DO.serve;
 
 import com.oneape.octopus.annotation.SortId;
 import com.oneape.octopus.model.DO.BaseDO;
@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 
 /**
- * Report information table DO.
+ * Serve information table DO.
  */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ReportDO extends BaseDO {
+public class ServeInfoDO extends BaseDO {
     /**
      * report name.
      */
@@ -32,7 +32,7 @@ public class ReportDO extends BaseDO {
      * report type , 1 - table; 2 - interface; 3 - lov ; eg.
      */
     @Column(name = "report_type", nullable = false)
-    private Integer  reportType;
+    private Integer reportType;
     /**
      * {@link VisualType}
      * the report visual type , 1 - table; 2 - line; 4 - bar; eg.
@@ -66,15 +66,25 @@ public class ReportDO extends BaseDO {
     @Column(name = "sort_id")
     private Long    sortId;
     /**
+     * The serve config text information.
+     */
+    @Column(name = "config_text")
+    private String  configText;
+    /**
      * description
      */
     private String  comment;
 
-    public ReportDO(String name) {
+    public ServeInfoDO(String name) {
         this.name = name;
     }
 
-    public ReportDO(Long id, String name) {
+
+    public ServeInfoDO(Long id) {
+        this.setId(id);
+    }
+
+    public ServeInfoDO(Long id, String name) {
         setId(id);
         this.name = name;
     }

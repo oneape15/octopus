@@ -7,7 +7,6 @@ import com.oneape.octopus.controller.peekdata.form.ModelForm;
 import com.oneape.octopus.model.DO.peekdata.ModelDO;
 import com.oneape.octopus.model.DO.peekdata.ModelMetaDO;
 import com.oneape.octopus.model.VO.ApiResult;
-import com.oneape.octopus.model.VO.ModelMetaVO;
 import com.oneape.octopus.model.VO.ModelVO;
 import com.oneape.octopus.service.peekdata.ModelService;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +49,7 @@ public class ModelController {
 
     @PostMapping("/del")
     public ApiResult<String> doDelModel(@RequestBody @Validated(value = ModelForm.KeyCheck.class) ModelForm form) {
-        int status = modelService.deleteById(form.toDO());
+        int status = modelService.deleteById(form.getModelId());
         if (status > 0) {
             return ApiResult.ofData("删除模型成功");
         }
@@ -69,7 +68,7 @@ public class ModelController {
      * 获取指定模型的元素列表
      */
     @PostMapping("/listModelMetas")
-    public ApiResult<List<ModelMetaVO>> listModelMeta(@RequestBody @Validated(value = ModelForm.KeyCheck.class) ModelForm form) {
+    public ApiResult<List<ModelMetaDO>> listModelMeta(@RequestBody @Validated(value = ModelForm.KeyCheck.class) ModelForm form) {
         ModelMetaDO mmdo = new ModelMetaDO();
         mmdo.setDisplay(1); // 只返回显示的字段列表
         mmdo.setModelId(form.getModelId());
@@ -80,9 +79,9 @@ public class ModelController {
      * 分页查询
      */
     @PostMapping("/list")
-    public ApiResult<PageInfo<ModelVO>> doList(@RequestBody @Validated ModelForm form) {
+    public ApiResult<PageInfo<ModelDO>> doList(@RequestBody @Validated ModelForm form) {
         PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
-        List<ModelVO> vos = modelService.find(form.toDO());
+        List<ModelDO> vos = modelService.find(form.toDO());
         return ApiResult.ofData(new PageInfo<>(vos));
     }
 
@@ -90,8 +89,8 @@ public class ModelController {
      * 获取所有模型
      */
     @PostMapping("/getAllModels")
-    public ApiResult<List<ModelVO>> getAllModels() {
-        List<ModelVO> list = modelService.find(new ModelDO());
+    public ApiResult<List<ModelDO>> getAllModels() {
+        List<ModelDO> list = modelService.find(new ModelDO());
         return ApiResult.ofData(list);
     }
 
@@ -111,18 +110,18 @@ public class ModelController {
      * 获取指定模型的字段列表
      */
     @PostMapping("/columns")
-    public ApiResult<List<ModelMetaVO>> getColumns(@RequestBody @Validated(value = ModelForm.ColumnCheck.class) ModelForm form) {
+    public ApiResult<List<ModelMetaDO>> getColumns(@RequestBody @Validated(value = ModelForm.ColumnCheck.class) ModelForm form) {
         Long modelId = form.getModelId();
         if (modelId == null) {
             modelId = -1L;
         }
-        List<ModelMetaVO> metas = modelService.getTableColumns(modelId, form.getDatasourceId(), form.getTableName());
+        List<ModelMetaDO> metas = modelService.getTableColumns(modelId, form.getDatasourceId(), form.getTableName());
         return ApiResult.ofData(metas);
     }
 
     @PostMapping("/schemas")
-    public ApiResult<List<ModelMetaVO>> getSchemas(@RequestBody @Validated(value = ModelForm.ColumnCheck.class) ModelForm form) {
-        List<ModelMetaVO> metas = modelService.getTableColumns(null, form.getDatasourceId(), form.getTableName());
+    public ApiResult<List<ModelMetaDO>> getSchemas(@RequestBody @Validated(value = ModelForm.ColumnCheck.class) ModelForm form) {
+        List<ModelMetaDO> metas = modelService.getTableColumns(null, form.getDatasourceId(), form.getTableName());
         return ApiResult.ofData(metas);
     }
 }

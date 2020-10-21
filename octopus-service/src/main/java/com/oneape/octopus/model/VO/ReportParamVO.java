@@ -1,6 +1,7 @@
 package com.oneape.octopus.model.VO;
 
-import com.oneape.octopus.model.DO.report.ReportParamDO;
+import com.oneape.octopus.model.DTO.serve.ServeParamDTO;
+import com.oneape.octopus.model.DTO.serve.ServeParamDTO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
@@ -42,14 +43,14 @@ public class ReportParamVO implements Serializable {
     // 排序字段
     private Long sortId;
 
-    public static ReportParamVO ofDO(ReportParamDO pdo) {
+    public static ReportParamVO ofDO(ServeParamDTO pdo) {
         ReportParamVO vo = new ReportParamVO();
         BeanUtils.copyProperties(pdo, vo);
         return vo;
     }
 
-    public ReportParamDO toDO() {
-        ReportParamDO pdo = new ReportParamDO();
+    public ServeParamDTO toDO() {
+        ServeParamDTO pdo = new ServeParamDTO();
         BeanUtils.copyProperties(this, pdo);
         return pdo;
     }

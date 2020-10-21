@@ -2,8 +2,6 @@ package com.oneape.octopus.service.system;
 
 import com.oneape.octopus.model.DO.system.UserDO;
 import com.oneape.octopus.model.DTO.system.UserDTO;
-import com.oneape.octopus.model.VO.MenuVO;
-import com.oneape.octopus.model.VO.UserVO;
 import com.oneape.octopus.service.BaseService;
 
 import java.util.List;
@@ -85,14 +83,6 @@ public interface AccountService extends BaseService<UserDO> {
      * @return int
      */
     int addUser(UserDO user);
-
-    /**
-     * Get user list.
-     *
-     * @param user UserDO
-     * @return List
-     */
-    List<UserDO> find(UserDO user);
 
     /**
      * Delete user list.

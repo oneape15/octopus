@@ -5,16 +5,13 @@ import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.GlobalConstant;
 import com.oneape.octopus.mapper.system.CommonInfoMapper;
 import com.oneape.octopus.model.DO.system.CommonInfoDO;
-import com.oneape.octopus.model.VO.CommonInfoVO;
 import com.oneape.octopus.service.system.CommonInfoService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -23,30 +20,6 @@ public class CommonInfoServiceImpl implements CommonInfoService {
 
     @Resource
     private CommonInfoMapper commonInfoMapper;
-
-    /**
-     * Query against an object.
-     *
-     * @param commonInfo CommonInfoDO
-     * @return List
-     */
-    @Override
-    public List<CommonInfoDO> find(CommonInfoDO commonInfo) {
-        if (commonInfo == null) {
-            commonInfo = new CommonInfoDO();
-        }
-        return commonInfoMapper.list(commonInfo);
-    }
-
-    /**
-     * Get all classified information.
-     *
-     * @return List
-     */
-    @Override
-    public List<String> getAllClassify() {
-        return commonInfoMapper.getAllClassify();
-    }
 
     /**
      * save data to table.
@@ -83,21 +56,65 @@ public class CommonInfoServiceImpl implements CommonInfoService {
     }
 
     /**
-     * Delete by primary key Id.
-     *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
     @Override
-    public int deleteById(CommonInfoDO model) {
-        Preconditions.checkNotNull(model, "The Object is null.");
-        Preconditions.checkNotNull(model.getId(), "The primary key is null.");
+    public int edit(CommonInfoDO model) {
+        return commonInfoMapper.update(model);
+    }
+
+    /**
+     * Get the model information by the primary key.
+     *
+     * @param id Long
+     * @return T
+     */
+    @Override
+    public CommonInfoDO findById(Long id) {
+        return commonInfoMapper.findById(id);
+    }
+
+    /**
+     * Query against an object.
+     *
+     * @param commonInfo CommonInfoDO
+     * @return List
+     */
+    @Override
+    public List<CommonInfoDO> find(CommonInfoDO commonInfo) {
+        if (commonInfo == null) {
+            commonInfo = new CommonInfoDO();
+        }
+        return commonInfoMapper.list(commonInfo);
+    }
+
+    /**
+     * Delete by primary key Id.
+     *
+     * @param id Long
+     * @return int 1 - success; 0 - fail.
+     */
+    @Override
+    public int deleteById(Long id) {
+        Preconditions.checkNotNull(id, "The primary key is null.");
         CommonInfoDO tmp = new CommonInfoDO();
-        tmp.setParentId(model.getId());
+        tmp.setParentId(id);
         int childrenSize = commonInfoMapper.size(tmp);
         if (childrenSize > 0) {
             throw new BizException("There are also child nodes that are not allowed to be deleted.");
         }
-        return commonInfoMapper.delete(model);
+        return commonInfoMapper.delete(new CommonInfoDO(id));
+    }
+
+
+    /**
+     * Get all classified information.
+     *
+     * @return List
+     */
+    @Override
+    public List<String> getAllClassify() {
+        return commonInfoMapper.getAllClassify();
     }
 }

@@ -46,13 +46,28 @@ public class ModelServiceImpl implements ModelService {
      * @return List
      */
     @Override
-    public List<ModelVO> find(ModelDO model) {
-        List<ModelDO> models = modelMapper.list(model);
-        List<ModelVO> vos = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(models)) {
-            models.forEach(m -> vos.add(ModelVO.ofDO(m)));
-        }
-        return vos;
+    public List<ModelDO> find(ModelDO model) {
+        return modelMapper.list(model);
+    }
+
+    /**
+     * @param model T
+     * @return int 1 - success; 0 - fail.
+     */
+    @Override
+    public int edit(ModelDO model) {
+        return modelMapper.update(model);
+    }
+
+    /**
+     * Get the model information by the primary key.
+     *
+     * @param id Long
+     * @return T
+     */
+    @Override
+    public ModelDO findById(Long id) {
+        return modelMapper.findById(id);
     }
 
     /**
@@ -97,7 +112,7 @@ public class ModelServiceImpl implements ModelService {
      * @return List
      */
     @Override
-    public List<ModelMetaVO> getTableColumns(Long modelId, Long dsId, String tableName) {
+    public List<ModelMetaDO> getTableColumns(Long modelId, Long dsId, String tableName) {
         if (modelId == null || modelId <= 0) {
             DatasourceDO datasourceDO = Preconditions.checkNotNull(datasourceService.findById(dsId),
                     "数据源信息不存在");
@@ -111,10 +126,10 @@ public class ModelServiceImpl implements ModelService {
             String schema = queryFactory.getSchema(dsi);
             List<FieldInfo> fields = queryFactory.fieldOfTable(dsi, schema, tableName);
 
-            final List<ModelMetaVO> metas = new ArrayList<>();
+            final List<ModelMetaDO> metas = new ArrayList<>();
             if (CollectionUtils.isNotEmpty(fields)) {
                 fields.forEach(f -> {
-                    ModelMetaVO vo = new ModelMetaVO();
+                    ModelMetaDO vo = new ModelMetaDO();
                     vo.setId(-1L);
                     vo.setModelId(-1L);
                     vo.setTagId(-1L);
@@ -170,16 +185,16 @@ public class ModelServiceImpl implements ModelService {
     /**
      * Delete by primary key Id.
      *
-     * @param model T
+     * @param id Long
      * @return int 1 - success; 0 - fail.
      */
     @Override
     @Transactional
-    public int deleteById(ModelDO model) {
-        Preconditions.checkNotNull(model, "添加模型对象为空");
-        int status = modelMapper.delete(model);
+    public int deleteById(Long id) {
+        Preconditions.checkNotNull(id, "添加模型Id对象为空");
+        int status = modelMapper.delete(new ModelDO(id));
         if (status > 0) {
-            modelMetaService.delByModelId(model.getId());
+            modelMetaService.delByModelId(id);
         }
         return status;
     }
@@ -211,7 +226,7 @@ public class ModelServiceImpl implements ModelService {
      * @return List
      */
     @Override
-    public List<ModelMetaVO> listModelMeta(ModelMetaDO mm) {
+    public List<ModelMetaDO> listModelMeta(ModelMetaDO mm) {
         return modelMetaService.find(mm);
     }
 

@@ -71,4 +71,8 @@ public class DatasourceDO extends BaseDO {
     public DatasourceDO(String name) {
         this.name = name;
     }
+
+    public DatasourceDO(Long id) {
+        this.setId(id);
+    }
 }

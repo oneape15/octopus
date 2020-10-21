@@ -30,7 +30,7 @@ public class CommonInfoController {
 
     @GetMapping("/del/{id}")
     public ApiResult<String> doDelCommonInfo(@PathVariable(name = "id") Long id) {
-        int status = commonInfoService.deleteById(new CommonInfoDO(id));
+        int status = commonInfoService.deleteById(id);
         if (status > 0) {
             return ApiResult.ofData("Deleted base information successfully.");
         }

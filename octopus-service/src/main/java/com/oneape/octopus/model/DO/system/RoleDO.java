@@ -26,4 +26,8 @@ public class RoleDO extends BaseDO {
      */
     private String  comment;
 
+    public RoleDO(Long id) {
+        this.setId(id);
+    }
+
 }

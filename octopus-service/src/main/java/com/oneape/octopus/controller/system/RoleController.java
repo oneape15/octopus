@@ -38,7 +38,7 @@ public class RoleController {
 
     @PostMapping("/del")
     public ApiResult<String> doDelRole(@RequestBody @Validated(value = RoleForm.KeyCheck.class) RoleForm form) {
-        int status = roleService.deleteById(form.toDO());
+        int status = roleService.deleteById(form.getId());
         if (status > 0) {
             return ApiResult.ofData("Deleted role successfully.");
         }

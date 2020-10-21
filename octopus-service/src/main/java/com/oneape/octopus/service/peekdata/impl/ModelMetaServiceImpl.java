@@ -32,21 +32,6 @@ public class ModelMetaServiceImpl implements ModelMetaService {
     @Resource
     private AccountService      accountService;
 
-    /**
-     * 根据对象进行查询
-     *
-     * @param model ModelMetaDO
-     * @return List
-     */
-    @Override
-    public List<ModelMetaVO> find(ModelMetaDO model) {
-        List<ModelMetaVO> vos = new ArrayList<>();
-        List<ModelMetaDO> list = modelMetaMapper.list(model);
-        if (CollectionUtils.isNotEmpty(list)) {
-            list.forEach(m -> vos.add(ModelMetaVO.ofDO(m)));
-        }
-        return vos;
-    }
 
     /**
      * 保存模型元素信息
@@ -116,14 +101,47 @@ public class ModelMetaServiceImpl implements ModelMetaService {
     }
 
     /**
-     * Delete by primary key Id.
-     *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
     @Override
-    public int deleteById(ModelMetaDO model) {
-        return modelMetaMapper.delete(model);
+    public int edit(ModelMetaDO model) {
+        return 0;
+    }
+
+    /**
+     * Delete by primary key Id.
+     *
+     * @param id Long
+     * @return int 1 - success; 0 - fail.
+     */
+    @Override
+    public int deleteById(Long id) {
+        ModelMetaDO mdo = new ModelMetaDO();
+        mdo.setId(id);
+        return modelMetaMapper.delete(mdo);
+    }
+
+    /**
+     * Get the model information by the primary key.
+     *
+     * @param id Long
+     * @return T
+     */
+    @Override
+    public ModelMetaDO findById(Long id) {
+        return modelMetaMapper.findById(id);
+    }
+
+    /**
+     * Query against an object.
+     *
+     * @param model T
+     * @return List
+     */
+    @Override
+    public List<ModelMetaDO> find(ModelMetaDO model) {
+        return modelMetaMapper.list(model);
     }
 
     /**

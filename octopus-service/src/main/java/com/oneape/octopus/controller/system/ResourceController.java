@@ -34,7 +34,7 @@ public class ResourceController {
 
     @PostMapping("/del")
     public ApiResult<String> doDelRes(@RequestBody @Validated(value = ResForm.KeyCheck.class) ResForm form) {
-        int status = resourceService.deleteById(form.toDO());
+        int status = resourceService.deleteById(form.getId());
         if (status > 0) {
             return ApiResult.ofData("Deleted resource successfully");
         }

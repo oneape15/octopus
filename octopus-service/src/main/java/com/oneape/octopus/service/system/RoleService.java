@@ -18,14 +18,6 @@ public interface RoleService extends BaseService<RoleDO> {
     List<RoleDO> findRoleByUserId(Long userId);
 
     /**
-     * Query resources by condition.
-     *
-     * @param role RoleDO
-     * @return List
-     */
-    List<RoleDO> find(RoleDO role);
-
-    /**
      * Gets resource permissions based on the list of role ids.
      *
      * @param roleIds List

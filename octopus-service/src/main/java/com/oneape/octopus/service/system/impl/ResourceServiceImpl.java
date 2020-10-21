@@ -69,18 +69,49 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     /**
-     * Delete by primary key Id.
-     *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
     @Override
-    public int deleteById(ResourceDO model) {
-        Preconditions.checkNotNull(model.getId(), "The primary Key is empty.");
+    public int edit(ResourceDO model) {
+        return resourceMapper.update(model);
+    }
 
-        int status = resourceMapper.delete(model);
+    /**
+     * Get the model information by the primary key.
+     *
+     * @param id Long
+     * @return T
+     */
+    @Override
+    public ResourceDO findById(Long id) {
+        return resourceMapper.findById(id);
+    }
+
+    /**
+     * Query against an object.
+     *
+     * @param model T
+     * @return List
+     */
+    @Override
+    public List<ResourceDO> find(ResourceDO model) {
+        return resourceMapper.list(model);
+    }
+
+    /**
+     * Delete by primary key Id.
+     *
+     * @param id Long
+     * @return int 1 - success; 0 - fail.
+     */
+    @Override
+    public int deleteById(Long id) {
+        Preconditions.checkNotNull(id, "The primary Key is empty.");
+
+        int status = resourceMapper.delete(new ResourceDO(id));
         if (status > GlobalConstant.FAIL) {
-            roleRlResourceMapper.delete(new RoleRlResourceDO(null, model.getId()));
+            roleRlResourceMapper.delete(new RoleRlResourceDO(null, id));
         }
         return status;
     }

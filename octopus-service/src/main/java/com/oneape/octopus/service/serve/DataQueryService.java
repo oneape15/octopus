@@ -1,4 +1,4 @@
-package com.oneape.octopus.service.report;
+package com.oneape.octopus.service.serve;
 
 /**
  * The service of data query.

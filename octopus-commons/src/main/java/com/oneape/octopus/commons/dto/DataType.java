@@ -3,7 +3,7 @@ package com.oneape.octopus.commons.dto;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * 数据类型
+ * The field data type
  */
 public enum DataType {
     STRING,
@@ -17,7 +17,6 @@ public enum DataType {
     TIME,
     TIMESTAMP,
     DATETIME;
-
 
     public static DataType byName(String name) {
         if (StringUtils.isBlank(name)) {

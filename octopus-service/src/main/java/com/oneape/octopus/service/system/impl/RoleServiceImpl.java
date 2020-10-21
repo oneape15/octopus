@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.common.MaskUtils;
 import com.oneape.octopus.mapper.BaseSqlProvider;
-import com.oneape.octopus.mapper.report.ReportParamMapper;
 import com.oneape.octopus.mapper.system.RoleMapper;
 import com.oneape.octopus.mapper.system.RoleRlResourceMapper;
 import com.oneape.octopus.mapper.system.RoleRlSchemaMapper;
@@ -74,20 +73,40 @@ public class RoleServiceImpl implements RoleService {
     }
 
     /**
-     * Delete by primary key Id.
-     *
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
     @Override
-    public int deleteById(RoleDO model) {
-        Preconditions.checkNotNull(model.getId(), "The role primary key is empty.");
+    public int edit(RoleDO model) {
+        return 0;
+    }
 
-        int size = userRlRoleMapper.getUseSize(model.getId());
+    /**
+     * Get the model information by the primary key.
+     *
+     * @param id Long
+     * @return T
+     */
+    @Override
+    public RoleDO findById(Long id) {
+        return null;
+    }
+
+    /**
+     * Delete by primary key Id.
+     *
+     * @param id Long
+     * @return int 1 - success; 0 - fail.
+     */
+    @Override
+    public int deleteById(Long id) {
+        Preconditions.checkNotNull(id, "The role primary key is empty.");
+
+        int size = userRlRoleMapper.getUseSize(id);
         if (size > 0) {
             throw new BizException("The current role is still in use and cannot be deleted.");
         }
-        return roleMapper.delete(model);
+        return roleMapper.delete(new RoleDO(id));
     }
 
     /**

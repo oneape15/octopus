@@ -1,7 +1,7 @@
 package com.oneape.octopus.model.VO.report;
 
-import com.oneape.octopus.model.DO.report.ReportColumnDO;
-import com.oneape.octopus.model.DO.report.ReportDO;
+import com.oneape.octopus.model.DTO.serve.ServeColumnDTO;
+import com.oneape.octopus.model.DO.serve.ServeInfoDO;
 import com.oneape.octopus.model.VO.report.args.QueryArg;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
@@ -36,14 +36,14 @@ public class ReportConfigVO {
     // Query the parameter form information.
     private List<QueryArg>       args;
     // the report show column information.
-    private List<ReportColumnDO> columns;
+    private List<ServeColumnDTO> columns;
     // the rich text about report.
     private String               helpDoc;
 
 
-    public static ReportConfigVO from(ReportDO reportDO) {
+    public static ReportConfigVO from(ServeInfoDO serveInfoDO) {
         ReportConfigVO vo = new ReportConfigVO();
-        BeanUtils.copyProperties(reportDO, vo);
+        BeanUtils.copyProperties(serveInfoDO, vo);
 
         return vo;
     }

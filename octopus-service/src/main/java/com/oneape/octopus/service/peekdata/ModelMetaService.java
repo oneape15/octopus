@@ -7,13 +7,6 @@ import com.oneape.octopus.service.BaseService;
 import java.util.List;
 
 public interface ModelMetaService extends BaseService<ModelMetaDO> {
-    /**
-     * 根据对象进行查询
-     *
-     * @param model ModelMetaDO
-     * @return List
-     */
-    List<ModelMetaVO> find(ModelMetaDO model);
 
     /**
      * 保存模型元素信息

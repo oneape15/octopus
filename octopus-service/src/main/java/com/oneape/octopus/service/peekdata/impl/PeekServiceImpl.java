@@ -4,18 +4,21 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.BizException;
+import com.oneape.octopus.commons.dto.DataType;
 import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.datasource.*;
-import com.oneape.octopus.commons.dto.DataType;
 import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.mapper.peekdata.PeekFieldMapper;
 import com.oneape.octopus.mapper.peekdata.PeekMapper;
 import com.oneape.octopus.mapper.peekdata.PeekRuleMapper;
+import com.oneape.octopus.model.DO.peekdata.ModelMetaDO;
 import com.oneape.octopus.model.DO.peekdata.PeekDO;
 import com.oneape.octopus.model.DO.peekdata.PeekFieldDO;
 import com.oneape.octopus.model.DO.peekdata.PeekRuleDO;
 import com.oneape.octopus.model.DTO.system.UserDTO;
-import com.oneape.octopus.model.VO.*;
+import com.oneape.octopus.model.VO.ModelVO;
+import com.oneape.octopus.model.VO.PeekFieldVO;
+import com.oneape.octopus.model.VO.PeekRuleVO;
 import com.oneape.octopus.service.peekdata.ModelService;
 import com.oneape.octopus.service.peekdata.PeekService;
 import com.oneape.octopus.service.schema.DatasourceService;
@@ -70,13 +73,8 @@ public class PeekServiceImpl implements PeekService {
      * @return List
      */
     @Override
-    public List<PeekVO> find(PeekDO model) {
-        List<PeekVO> vos = new ArrayList<>();
-        List<PeekDO> pdos = peekMapper.list(model);
-        if (CollectionUtils.isNotEmpty(pdos)) {
-            pdos.forEach(p -> vos.add(PeekVO.ofDO(p)));
-        }
-        return vos;
+    public List<PeekDO> find(PeekDO model) {
+        return peekMapper.list(model);
     }
 
     /**
@@ -93,6 +91,26 @@ public class PeekServiceImpl implements PeekService {
             return peekMapper.update(model);
         }
         return peekMapper.insert(model);
+    }
+
+    /**
+     * @param model T
+     * @return int 1 - success; 0 - fail.
+     */
+    @Override
+    public int edit(PeekDO model) {
+        return 0;
+    }
+
+    /**
+     * Get the model information by the primary key.
+     *
+     * @param id Long
+     * @return T
+     */
+    @Override
+    public PeekDO findById(Long id) {
+        return peekMapper.findById(id);
     }
 
     /**
@@ -158,17 +176,17 @@ public class PeekServiceImpl implements PeekService {
     /**
      * Delete by primary key Id.
      *
-     * @param model T
+     * @param id Long
      * @return int 1 - success; 0 - fail.
      */
     @Override
     @Transactional
-    public int deleteById(PeekDO model) {
-        Preconditions.checkNotNull(model, "取数实例为空");
-        int status = peekMapper.delete(model);
+    public int deleteById(Long id) {
+        Preconditions.checkNotNull(id, "取数实例为空");
+        int status = peekMapper.delete(new PeekDO(id));
         if (status > 0) {
-            peekFieldMapper.delete(new PeekFieldDO(model.getId()));
-            peekRuleMapper.delete(new PeekRuleDO(model.getId()));
+            peekFieldMapper.delete(new PeekFieldDO(id));
+            peekRuleMapper.delete(new PeekRuleDO(id));
         }
         return status;
     }
@@ -240,13 +258,13 @@ public class PeekServiceImpl implements PeekService {
         if (CollectionUtils.isEmpty(fields)) {
             throw new BizException("取数字列表段为空");
         }
-        List<ModelMetaVO> modelMetas = model.getFields();
+        List<ModelMetaDO> modelMetas = model.getFields();
         if (CollectionUtils.isEmpty(modelMetas)) {
             throw new BizException("模型元素字段为空");
         }
-        Map<Long, ModelMetaVO> modelMetaMap = modelMetas
+        Map<Long, ModelMetaDO> modelMetaMap = modelMetas
                 .stream()
-                .collect(Collectors.toMap(ModelMetaVO::getId, Function.identity()));
+                .collect(Collectors.toMap(ModelMetaDO::getId, Function.identity()));
 
         /*
          *返回字段分组
@@ -256,7 +274,7 @@ public class PeekServiceImpl implements PeekService {
         // 维度字段
         List<String> dimensionFields = new ArrayList<>();
         fields.forEach(field -> {
-            ModelMetaVO vo = modelMetaMap.get(field.getMetaId());
+            ModelMetaDO vo = modelMetaMap.get(field.getMetaId());
             if (vo != null) {
                 AggregationOperatorHelper aggHelper = AggregationOperatorHelper.byCode(field.getAggExpression());
                 if (aggHelper == null) {
@@ -282,7 +300,7 @@ public class PeekServiceImpl implements PeekService {
         List<String> whereSections = new ArrayList<>();
         DataType dataType;
         PeekRuleTypeHelper ruleTypeHelper;
-        ModelMetaVO meta;
+        ModelMetaDO meta;
         for (PeekRuleVO peekRule : rules) {
             meta = modelMetaMap.get(peekRule.getMetaId());
             if (meta == null) continue;
@@ -356,37 +374,6 @@ public class PeekServiceImpl implements PeekService {
             peekMapper.incPeekTime(peekId);
         }
         return status;
-    }
-
-    /**
-     * 根据Id查询取数详细信息
-     *
-     * @param peekId Long
-     * @return PeekVO
-     */
-    @Override
-    public PeekVO getById(Long peekId) {
-        PeekDO peek = Preconditions.checkNotNull(peekMapper.findById(peekId),
-                "取数实例信息为空");
-        PeekVO vo = PeekVO.ofDO(peek);
-
-        // 返回字段列表
-        List<PeekFieldDO> fieldDOs = peekFieldMapper.list(new PeekFieldDO(peekId));
-        List<PeekFieldVO> fields = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(fieldDOs)) {
-            fieldDOs.forEach(d -> fields.add(PeekFieldVO.ofDO(d)));
-        }
-        vo.setFields(fields);
-
-        // 规则列表
-        List<PeekRuleDO> ruleDOs = peekRuleMapper.list(new PeekRuleDO(peekId));
-        List<PeekRuleVO> rules = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(ruleDOs)) {
-            ruleDOs.forEach(r -> rules.add(PeekRuleVO.ofDO(r)));
-        }
-        vo.setRules(rules);
-
-        return vo;
     }
 
     /**
