@@ -16,10 +16,10 @@
     </parent>
 
     <modules>
-        <module>octopus-datasource</module>
+        <module>octopus-admin</module>
+        <module>octopus-querys</module>
         <module>octopus-parsing</module>
         <module>octopus-commons</module>
-        <module>octopus-service</module>
     </modules>
 
     <properties>
@@ -49,7 +49,7 @@
         <druid.version>1.1.22</druid.version>
 
         <octopus-commons.version>1.0-SNAPSHOT</octopus-commons.version>
-        <octopus-datasource.version>1.0-SNAPSHOT</octopus-datasource.version>
+        <octopus-querys.version>1.0-SNAPSHOT</octopus-querys.version>
         <octopus-parsing.version>1.0-SNAPSHOT</octopus-parsing.version>
     </properties>
 
@@ -65,8 +65,8 @@
             </dependency>
             <dependency>
                 <groupId>com.oneape</groupId>
-                <artifactId>octopus-datasource</artifactId>
-                <version>${octopus-datasource.version}</version>
+                <artifactId>octopus-querys</artifactId>
+                <version>${octopus-querys.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.oneape</groupId>
