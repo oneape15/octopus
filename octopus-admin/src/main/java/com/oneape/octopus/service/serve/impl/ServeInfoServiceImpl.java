@@ -8,6 +8,7 @@ import com.oneape.octopus.commons.value.OptStringUtils;
 import com.oneape.octopus.mapper.serve.ServeInfoMapper;
 import com.oneape.octopus.model.domain.serve.ServeInfoDO;
 import com.oneape.octopus.model.dto.serve.ServeParamDTO;
+import com.oneape.octopus.model.enums.ServeType;
 import com.oneape.octopus.service.serve.ServeInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -36,6 +37,12 @@ public class ServeInfoServiceImpl implements ServeInfoService {
     public int save(ServeInfoDO model) {
         Preconditions.checkNotNull(model, "The serve object is null.");
         Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "The serve name is empty.");
+        Preconditions.checkNotNull(StringUtils.isNotBlank(model.getServeType()), "The serve type is null.");
+        ServeType st = ServeType.getByCode(model.getServeType());
+        if (st == null) {
+            throw new BizException("Invalid serve type.");
+        }
+
         if (model.getId() != null && model.getId() > 0) {
             boolean valid = checkReportId(model.getId());
             if (!valid) {

@@ -9,7 +9,7 @@ CREATE TABLE `serve_info`
   COMMENT 'The serve icon url',
   `time_based`  TINYINT(1)   NULL
   COMMENT 'Timeliness of serve data. 0 - real time, 1 - minutes, 2 - hours, 3 - days',
-  `serve_type`  INT(11)      NOT NULL
+  `serve_type`  VARCHAR(32)  NOT NULL
   COMMENT 'serve type , 1 - table; 2 - interface; eg.',
   `visual_type` INT(11)      NOT NULL
   COMMENT 'the serve visual type , 1 - table; 2 - line; 4 - bar; eg.',

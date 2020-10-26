@@ -60,6 +60,16 @@ public class ServeController {
         return ApiResult.ofData(new PageInfo<>(vos));
     }
 
+
+    /**
+     * Paging query serve information.
+     */
+    @GetMapping("/design/get/{id}")
+    public ApiResult<ServeInfoDO> getById(@PathVariable(name = "id") Long id) {
+        ServeInfoDO vo = reportService.findById(id);
+        return ApiResult.ofData(vo);
+    }
+
     /**
      * Get serve type.
      */

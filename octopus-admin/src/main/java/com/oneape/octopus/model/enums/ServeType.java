@@ -1,5 +1,7 @@
 package com.oneape.octopus.model.enums;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Serve Type
  */
@@ -29,5 +31,17 @@ public enum ServeType {
 
     public String getDesc() {
         return desc;
+    }
+
+    public static ServeType getByCode(String code) {
+        if (StringUtils.isBlank(code)) {
+            return null;
+        }
+        for (ServeType st : values()) {
+            if (StringUtils.equalsIgnoreCase(st.getCode(), code)) {
+                return st;
+            }
+        }
+        return null;
     }
 }

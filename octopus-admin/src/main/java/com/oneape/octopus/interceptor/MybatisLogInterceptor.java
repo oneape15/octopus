@@ -1,5 +1,6 @@
 package com.oneape.octopus.interceptor;
 
+import com.oneape.octopus.commons.value.BeanUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.binding.MapperMethod;
@@ -198,19 +199,20 @@ public class MybatisLogInterceptor implements Interceptor {
     private String handleCommonParameter(String sql, List<ParameterMapping> parameterMappingList, Class<?> parameterObjectClass,
                                          Object parameterObject) throws Exception {
         for (ParameterMapping parameterMapping : parameterMappingList) {
-            String propertyValue;
+            String propertyValue = "";
             // 基本数据类型或者基本数据类型的包装类，直接toString即可获取其真正的参数值，其余直接取paramterMapping中的property属性即可
             if (isPrimitiveOrPrimitiveWrapper(parameterObjectClass)) {
                 propertyValue = parameterObject.toString();
             } else {
                 String propertyName = parameterMapping.getProperty();
 
-                Field field = parameterObjectClass.getDeclaredField(propertyName);
-                // 要获取Field中的属性值，这里必须将私有属性的accessible设置为true
-                field.setAccessible(true);
-                propertyValue = String.valueOf(field.get(parameterObject));
+                Map<String, Object> map = BeanUtils.objectToMap(parameterObject);
+                Object tmp = map.get(propertyName);
+
                 if (parameterMapping.getJavaType().isAssignableFrom(String.class)) {
-                    propertyValue = wrapperValue(propertyValue);
+                    propertyValue = wrapperValue(tmp.toString());
+                } else {
+                    propertyValue = String.valueOf(tmp);
                 }
             }
 
