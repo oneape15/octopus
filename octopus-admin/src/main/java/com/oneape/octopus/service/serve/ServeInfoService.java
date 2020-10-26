@@ -9,12 +9,12 @@ import java.util.List;
 public interface ServeInfoService extends BaseService<ServeInfoDO> {
 
     /**
-     * Whether the report Id is valid.
+     * Whether the serveId Id is valid.
      *
-     * @param reportId Long
+     * @param serveId Long
      * @return boolean true - valid. false - invalid.
      */
-    boolean checkReportId(Long reportId);
+    boolean checkReportId(Long serveId);
 
     /**
      * Judge the correctness of the serve query parameter information.

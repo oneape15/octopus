@@ -6,6 +6,7 @@ import com.oneape.octopus.model.domain.serve.ServeInfoDO;
 import com.oneape.octopus.model.dto.serve.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotBlank;
@@ -53,7 +54,10 @@ public class ServeForm extends BaseForm implements Serializable {
         config.setSql(sql);
         config.setRichText(richText);
         config.setVisualInfo(visualInfo);
-        rdo.setConfigText(JSON.toJSONString(config));
+        String text = JSON.toJSONString(config);
+        if (!StringUtils.equalsIgnoreCase(text, "{}")) {
+            rdo.setConfigText(text);
+        }
 
         return rdo;
     }

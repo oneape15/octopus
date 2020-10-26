@@ -51,16 +51,6 @@ public interface RoleRlSchemaMapper {
     int deleteByRoleId(@Param("roleId") Long roleId);
 
     /**
-     * Delete data by role id and datasource id.
-     *
-     * @param roleId       Long
-     * @param datasourceId Long
-     * @return int 1 - success; 0 - fail.
-     */
-    @UpdateProvider(type = RoleRlSchemaSqlProvider.class, method = "deleteBy")
-    int deleteBy(@Param("roleId") Long roleId, @Param("datasourceId") Long datasourceId);
-
-    /**
      * Delete data by id list
      *
      * @param ids List

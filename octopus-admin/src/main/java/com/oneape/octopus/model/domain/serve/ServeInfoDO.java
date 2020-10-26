@@ -19,10 +19,14 @@ import javax.persistence.Column;
 @EqualsAndHashCode(callSuper = true)
 public class ServeInfoDO extends BaseDO {
     /**
-     * report name.
+     * serveId name.
      */
     @Column(name = "name", nullable = false)
     private String  name;
+    /**
+     * The serve icon url.
+     */
+    private String  icon;
     /**
      * Timeliness of report data. 0 - real time, 1 - minutes, 2 - hours, 3 - days, 4 - months;
      */
@@ -36,7 +40,7 @@ public class ServeInfoDO extends BaseDO {
     private String  serveType;
     /**
      * {@link VisualType}
-     * the report visual type , 1 - table; 2 - line; 4 - bar; eg.
+     * the serveId visual type , 1 - table; 2 - line; 4 - bar; eg.
      */
     @Column(name = "visual_type", nullable = false)
     private Integer visualType;

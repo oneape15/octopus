@@ -34,12 +34,12 @@ public class ServeInfoServiceImpl implements ServeInfoService {
      */
     @Override
     public int save(ServeInfoDO model) {
-        Preconditions.checkNotNull(model, "The report object is null.");
-        Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "The report name is empty.");
+        Preconditions.checkNotNull(model, "The serve object is null.");
+        Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "The serve name is empty.");
         if (model.getId() != null && model.getId() > 0) {
             boolean valid = checkReportId(model.getId());
             if (!valid) {
-                throw new BizException("Invalid report id");
+                throw new BizException("The serve id is invalid.");
             }
             return serveInfoMapper.update(model);
         }
@@ -65,7 +65,7 @@ public class ServeInfoServiceImpl implements ServeInfoService {
     @Override
     @Transactional
     public int deleteById(Long id) {
-        Preconditions.checkNotNull(id, "The report primary key Id is empty.");
+        Preconditions.checkNotNull(id, "The serve primary key Id is empty.");
 
         return serveInfoMapper.delete(new ServeInfoDO(id));
     }
@@ -78,6 +78,7 @@ public class ServeInfoServiceImpl implements ServeInfoService {
      */
     @Override
     public ServeInfoDO findById(Long id) {
+        Preconditions.checkArgument(id != null && id > 0, "The serve id is invalid.");
         return serveInfoMapper.findById(id);
     }
 
@@ -89,19 +90,19 @@ public class ServeInfoServiceImpl implements ServeInfoService {
      */
     @Override
     public List<ServeInfoDO> find(ServeInfoDO model) {
-        Preconditions.checkNotNull(model, "The report object is null.");
+        Preconditions.checkNotNull(model, "The serve object is null.");
         return serveInfoMapper.list(model);
     }
 
     /**
-     * Whether the report Id is valid.
+     * Whether the serveId Id is valid.
      *
-     * @param reportId Long
+     * @param serveId Long
      * @return boolean true - valid. false - invalid.
      */
     @Override
-    public boolean checkReportId(Long reportId) {
-        int size = serveInfoMapper.checkReportId(reportId);
+    public boolean checkReportId(Long serveId) {
+        int size = serveInfoMapper.checkServeId(serveId);
         return size > 0;
     }
 
@@ -119,9 +120,9 @@ public class ServeInfoServiceImpl implements ServeInfoService {
         // Whether an argument with the same name exists.
         List<String> names = new ArrayList<>();
         for (ServeParamDTO p : params) {
-            Preconditions.checkArgument(StringUtils.isNotBlank(p.getName()), "The report param name is empty.");
-            Preconditions.checkArgument(StringUtils.isNotBlank(p.getDataType()), "The report param dataType is empty.");
-            Preconditions.checkArgument(p.getType() != null, "The report param type is empty.");
+            Preconditions.checkArgument(StringUtils.isNotBlank(p.getName()), "The serve param name is empty.");
+            Preconditions.checkArgument(StringUtils.isNotBlank(p.getDataType()), "The serve param dataType is empty.");
+            Preconditions.checkArgument(p.getType() != null, "The serve param type is empty.");
 
             if (names.contains(p.getName())) {
                 throw new BizException("There are multiple parameters named: " + p.getName());
@@ -166,10 +167,7 @@ public class ServeInfoServiceImpl implements ServeInfoService {
             }
             String[] arr = StringUtils.split(p.getDependOn(), ";");
             if (arr != null && arr.length > 0) {
-                List<String> dependList = new ArrayList<>();
-                for (String s : arr) {
-                    dependList.add(s);
-                }
+                List<String> dependList = new ArrayList<>(Arrays.asList(arr));
                 allNodes.addAll(dependList);
                 allNodes.add(p.getName());
                 dependMap.put(p.getName(), dependList);

@@ -13,12 +13,6 @@ import java.util.List;
 @Mapper
 public interface ServeInfoMapper {
 
-    @Select({
-            "SELECT COUNT(0) FROM " + ServeInfoSqlProvider.TABLE_NAME +
-                    " WHERE " + BaseSqlProvider.FIELD_ARCHIVE + " = 0 AND id = #{reportId}"
-    })
-    int checkReportId(@Param("reportId") Long reportId);
-
     /**
      * Add data to table.
      *
@@ -61,6 +55,12 @@ public interface ServeInfoMapper {
      * @param model T
      * @return List
      */
-    @SelectProvider(type = ServeInfoSqlProvider.class, method = "list")
+    @SelectProvider(type = ServeInfoSqlProvider.class, method = "listWithOutTextField")
     List<ServeInfoDO> list(@Param("model") ServeInfoDO model);
+
+    @Select({
+            "SELECT COUNT(0) FROM " + ServeInfoSqlProvider.TABLE_NAME +
+                    " WHERE " + BaseSqlProvider.FIELD_ARCHIVE + " = 0 AND id = #{serveId}"
+    })
+    int checkServeId(@Param("serveId") Long serveId);
 }

@@ -61,6 +61,7 @@
     <logger name="sun.rmi" level="warn"/>
     <logger name="javax.management" level="warn"/>
     <logger name="springfox.documentation" level="warn"/>
+    <logger name="org.apache.ibatis" level="warn"/>
 
     <!--通过 LoggerFactory.getLogger("mytest") 可以获取到这个logger-->
     <!--由于这个logger自动继承了root的appender，root中已经有stdout的appender了，自己这边又引入了stdout的appender-->
