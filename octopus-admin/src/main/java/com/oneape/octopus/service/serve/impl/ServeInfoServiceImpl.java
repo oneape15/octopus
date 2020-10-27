@@ -1,5 +1,6 @@
 package com.oneape.octopus.service.serve.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.BizException;
 import com.oneape.octopus.commons.algorithm.Digraph;
@@ -7,7 +8,10 @@ import com.oneape.octopus.commons.algorithm.DirectedCycle;
 import com.oneape.octopus.commons.value.OptStringUtils;
 import com.oneape.octopus.mapper.serve.ServeInfoMapper;
 import com.oneape.octopus.model.domain.serve.ServeInfoDO;
+import com.oneape.octopus.model.dto.serve.ServeColumnDTO;
+import com.oneape.octopus.model.dto.serve.ServeConfigTextDTO;
 import com.oneape.octopus.model.dto.serve.ServeParamDTO;
+import com.oneape.octopus.model.dto.serve.ServeSqlDTO;
 import com.oneape.octopus.model.enums.ServeType;
 import com.oneape.octopus.service.serve.ServeInfoService;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +37,7 @@ public class ServeInfoServiceImpl implements ServeInfoService {
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
+    @Transactional
     @Override
     public int save(ServeInfoDO model) {
         Preconditions.checkNotNull(model, "The serve object is null.");
@@ -43,11 +48,28 @@ public class ServeInfoServiceImpl implements ServeInfoService {
             throw new BizException("Invalid serve type.");
         }
 
+        // whether is updating.
+        boolean isUpdate = false;
         if (model.getId() != null && model.getId() > 0) {
             boolean valid = checkReportId(model.getId());
             if (!valid) {
                 throw new BizException("The serve id is invalid.");
             }
+            isUpdate = true;
+        }
+
+        Preconditions.checkArgument(serveInfoMapper.hasSameName(model.getName(), isUpdate ? model.getId() : null) <= 0, "Name already exists.");
+
+        // Checks if the configuration is correct
+        if (StringUtils.isNotBlank(model.getConfigText())
+                && !StringUtils.equals(model.getConfigText(), "{}")) {
+            ServeConfigTextDTO configTextDTO = JSON.parseObject(model.getConfigText(), ServeConfigTextDTO.class);
+            checkServeConfigInfo(configTextDTO);
+        } else {
+            model.setConfigText(null);
+        }
+
+        if (isUpdate) {
             return serveInfoMapper.update(model);
         }
 
@@ -114,12 +136,37 @@ public class ServeInfoServiceImpl implements ServeInfoService {
     }
 
     /**
+     * Checks if the configuration is correct.
+     *
+     * @param textDTO ServeConfigTextDTO
+     */
+    private void checkServeConfigInfo(ServeConfigTextDTO textDTO) {
+        if (textDTO == null) {
+            return;
+        }
+
+        // check the params.
+        if (CollectionUtils.isNotEmpty(textDTO.getParams())) {
+            checkServeParams(textDTO.getParams());
+        }
+
+        // check the columns.
+        if (CollectionUtils.isNotEmpty(textDTO.getColumns())) {
+            checkServeColumn(textDTO.getColumns());
+        }
+
+        // check the sql config.
+        if (textDTO.getSql() != null) {
+            checkServeSql(textDTO.getSql());
+        }
+    }
+
+    /**
      * Judge the correctness of the serve query parameter information.
      *
      * @param params List
      */
-    @Override
-    public void checkServeParams(List<ServeParamDTO> params) {
+    private void checkServeParams(List<ServeParamDTO> params) {
         if (CollectionUtils.isEmpty(params)) {
             return;
         }
@@ -189,6 +236,14 @@ public class ServeInfoServiceImpl implements ServeInfoService {
         });
 
         return digraph;
+    }
+
+    private void checkServeColumn(List<ServeColumnDTO> columns) {
+
+    }
+
+    private void checkServeSql(ServeSqlDTO sqlDTO) {
+
     }
 
 }

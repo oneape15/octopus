@@ -47,4 +47,19 @@ public class ServeInfoSqlProvider extends BaseSqlProvider<ServeInfoDO> {
                 .toString();
     }
 
+    public String hasSameName(@Param("name") String name, @Param("filterId") Long filterId) {
+        List<String> wheres = new ArrayList<>();
+        wheres.add("name = #{name}");
+        wheres.add(FIELD_ARCHIVE + " = " + Archive.NORMAL.value());
+        if (filterId != null) {
+            wheres.add("id != #{filterId}");
+        }
+
+        return new SQL()
+                .SELECT("COUNT(0)")
+                .FROM(getTableName())
+                .WHERE(wheres.toArray(new String[wheres.size()]))
+                .toString();
+    }
+
 }

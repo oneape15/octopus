@@ -12,13 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RichTextDTO {
     /**
-     * Business types. 0 - report; 1 - dashboard; 2 - interface;
+     * The rich text show type , html, text, markdown eg.
      */
-    private String bizType;
-    /**
-     * the business primary key
-     */
-    private Long   bizId;
+    private String showType;
     /**
      * the rich text content.
      */

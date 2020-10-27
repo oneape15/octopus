@@ -41,7 +41,7 @@ public interface ServeInfoMapper {
     int delete(ServeInfoDO model);
 
     /**
-     * Find by primary key.
+     * Finding by primary key.
      *
      * @param id Long
      * @return T
@@ -57,6 +57,16 @@ public interface ServeInfoMapper {
      */
     @SelectProvider(type = ServeInfoSqlProvider.class, method = "listWithOutTextField")
     List<ServeInfoDO> list(@Param("model") ServeInfoDO model);
+
+    /**
+     * Finding the same name.
+     *
+     * @param name     String
+     * @param filterId Long
+     * @return int
+     */
+    @SelectProvider(type = ServeInfoSqlProvider.class, method = "hasSameName")
+    int hasSameName(@Param("name") String name, @Param("filterId") Long filterId);
 
     @Select({
             "SELECT COUNT(0) FROM " + ServeInfoSqlProvider.TABLE_NAME +
