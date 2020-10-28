@@ -2,13 +2,13 @@ package com.oneape.octopus.controller.peekdata;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.oneape.octopus.common.GlobalConstant;
-import com.oneape.octopus.common.StateCode;
+import com.oneape.octopus.commons.cause.StateCode;
+import com.oneape.octopus.commons.constant.OctopusConstant;
 import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.controller.peekdata.form.PeekForm;
 import com.oneape.octopus.datasource.data.Result;
-import com.oneape.octopus.model.domain.peekdata.PeekDO;
 import com.oneape.octopus.model.VO.ApiResult;
+import com.oneape.octopus.model.domain.peekdata.PeekDO;
 import com.oneape.octopus.service.peekdata.PeekService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -32,7 +32,7 @@ public class PeekController {
     @PostMapping("/add")
     public ApiResult<String> doAddPeek(@RequestBody @Validated(value = PeekForm.AddCheck.class) PeekForm form) {
         int status = peekService.savePeekInfo(form.toDO(), form.getFields(), form.getRules());
-        if (status == GlobalConstant.SUCCESS) {
+        if (OctopusConstant.isSuccess(status)) {
             return ApiResult.ofData("添加取数实例成功");
         } else {
             return ApiResult.ofError(StateCode.BizError, "添加取数实例失败");
@@ -42,7 +42,7 @@ public class PeekController {
     @PostMapping("/edit")
     public ApiResult<String> doEditPeek(@RequestBody @Validated(value = PeekForm.EditCheck.class) PeekForm form) {
         int status = peekService.savePeekInfo(form.toDO(), form.getFields(), form.getRules());
-        if (status == GlobalConstant.SUCCESS) {
+        if (OctopusConstant.isSuccess(status)) {
             return ApiResult.ofData("修改取数实例成功");
         } else {
             return ApiResult.ofError(StateCode.BizError, "修改取数实例失败");
@@ -52,7 +52,7 @@ public class PeekController {
     @PostMapping("/del")
     public ApiResult<String> doDelPeek(@RequestBody @Validated(value = PeekForm.KeyCheck.class) PeekForm form) {
         int status = peekService.deleteById(form.getPeekId());
-        if (status == GlobalConstant.SUCCESS) {
+        if (OctopusConstant.isSuccess(status)) {
             return ApiResult.ofData("删除取数实例成功");
         } else {
             return ApiResult.ofError(StateCode.BizError, "删除取数实例失败");
@@ -88,7 +88,7 @@ public class PeekController {
     @PostMapping("/peekData")
     public ApiResult<String> peekData(@RequestBody @Validated(value = PeekForm.KeyCheck.class) PeekForm form) {
         int status = peekService.peekData(form.getPeekId());
-        if (status == GlobalConstant.SUCCESS) {
+        if (OctopusConstant.isSuccess(status)) {
             return ApiResult.ofData("取数成功");
         } else {
             return ApiResult.ofError(StateCode.BizError, "取数失败");

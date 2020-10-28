@@ -2,8 +2,8 @@ package com.oneape.octopus.mapper;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.common.SessionThreadLocal;
-import com.oneape.octopus.commons.dto.BeanProperties;
-import com.oneape.octopus.commons.value.BeanUtils;
+import com.oneape.octopus.commons.dto.EntityAttribute;
+import com.oneape.octopus.commons.value.EntityColumnUtils;
 import com.oneape.octopus.model.domain.BaseDO;
 import com.oneape.octopus.model.enums.Archive;
 import org.apache.commons.collections4.CollectionUtils;
@@ -61,12 +61,12 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
     public String insert(T model) {
         Preconditions.checkNotNull(model, "The insert data set entity is empty.");
 
-        List<BeanProperties> fields = BeanUtils.getFields(model);
+        List<EntityAttribute> fields = EntityColumnUtils.getFields(model);
 
         List<String> columns = new ArrayList<>();
         List<String> values = new ArrayList<>();
 
-        for (BeanProperties field : fields) {
+        for (EntityAttribute field : fields) {
             // Fields for special processing.
             if (StringUtils.equals(field.getName(), FIELD_PRIMARY_ID)) {
                 columns.add(FIELD_PRIMARY_ID);
@@ -107,7 +107,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      */
     public String updateById(T model) {
         Preconditions.checkNotNull(model, "The update data set entity is empty.");
-        List<BeanProperties> fields = BeanUtils.getFields(model);
+        List<EntityAttribute> fields = EntityColumnUtils.getFields(model);
 
         Preconditions.checkArgument(primaryKeyHasValue(fields), "The primary key is empty.");
 
@@ -166,7 +166,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      */
     public String delete(T model) {
         Preconditions.checkNotNull(model, "The delete data set entity is empty.");
-        List<BeanProperties> fields = BeanUtils.getFields(model);
+        List<EntityAttribute> fields = EntityColumnUtils.getFields(model);
 
         List<String> whereSql = new ArrayList<>();
 
@@ -212,7 +212,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      */
     public String list(@Param("model") T model) {
         Preconditions.checkNotNull(model, "The query data set entity is empty.");
-        List<BeanProperties> fields = BeanUtils.getFields(model);
+        List<EntityAttribute> fields = EntityColumnUtils.getFields(model);
 
         List<String> wheres = new ArrayList<>();
 
@@ -239,7 +239,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      */
     public String size(T model) {
         Preconditions.checkNotNull(model, "The query data set entity is empty.");
-        List<BeanProperties> fields = BeanUtils.getFields(model);
+        List<EntityAttribute> fields = EntityColumnUtils.getFields(model);
 
         List<String> wheres = new ArrayList<>();
 
@@ -270,7 +270,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      */
     public String listWithOrder(@Param("model") T model, @Param("orderFields") List<String> orderFields) {
         Preconditions.checkNotNull(model, "The query data set entity is empty.");
-        List<BeanProperties> fields = BeanUtils.getFields(model);
+        List<EntityAttribute> fields = EntityColumnUtils.getFields(model);
 
         List<String> wheres = new ArrayList<>();
         List<String> orders = new ArrayList<>();
@@ -308,12 +308,12 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      */
     public String listOrLink(@Param("model") T model) {
         Preconditions.checkNotNull(model, "The query data set entity is empty.");
-        List<BeanProperties> fields = BeanUtils.getFields(model);
+        List<EntityAttribute> fields = EntityColumnUtils.getFields(model);
 
 
         int index = 0;
         StringBuilder subWheres = new StringBuilder();
-        for (BeanProperties field : fields) {
+        for (EntityAttribute field : fields) {
             if (field.getValue() == null) {
                 continue;
             }
@@ -344,7 +344,7 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      * @return boolean
      */
     private boolean primaryKeyHasValue(T model) {
-        List<BeanProperties> fields = BeanUtils.getFields(model);
+        List<EntityAttribute> fields = EntityColumnUtils.getFields(model);
         return primaryKeyHasValue(fields);
     }
 
@@ -354,12 +354,12 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
      * @param fields List
      * @return boolean
      */
-    private boolean primaryKeyHasValue(List<BeanProperties> fields) {
+    private boolean primaryKeyHasValue(List<EntityAttribute> fields) {
         if (CollectionUtils.isEmpty(fields)) {
             return false;
         }
 
-        for (BeanProperties field : fields) {
+        for (EntityAttribute field : fields) {
             if (StringUtils.equals(field.getName(), FIELD_PRIMARY_ID) && field.getValue() != null) {
                 return true;
             }

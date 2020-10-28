@@ -1,11 +1,10 @@
 package com.oneape.octopus.model.domain.peekdata;
 
+import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.model.domain.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
 
 @Data
 @NoArgsConstructor
@@ -18,12 +17,12 @@ public class ModelDO extends BaseDO {
     /**
      * 数据源Id
      */
-    @Column(name = "datasource_id")
+    @EntityColumn(name = "datasource_id")
     private Long    datasourceId;
     /**
      * 具体表名
      */
-    @Column(name = "table_name")
+    @EntityColumn(name = "table_name")
     private String  tableName;
     /**
      * 模型状态 0 - 使用中; 1 - 已停用

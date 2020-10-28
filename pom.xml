@@ -17,9 +17,10 @@
 
     <modules>
         <module>octopus-admin</module>
-        <module>octopus-querys</module>
+        <module>octopus-query</module>
         <module>octopus-parsing</module>
         <module>octopus-commons</module>
+        <module>octopus-wharf</module>
     </modules>
 
     <properties>
@@ -49,7 +50,7 @@
         <druid.version>1.1.22</druid.version>
 
         <octopus-commons.version>1.0-SNAPSHOT</octopus-commons.version>
-        <octopus-querys.version>1.0-SNAPSHOT</octopus-querys.version>
+        <octopus-query.version>1.0-SNAPSHOT</octopus-query.version>
         <octopus-parsing.version>1.0-SNAPSHOT</octopus-parsing.version>
     </properties>
 
@@ -65,8 +66,8 @@
             </dependency>
             <dependency>
                 <groupId>com.oneape</groupId>
-                <artifactId>octopus-querys</artifactId>
-                <version>${octopus-querys.version}</version>
+                <artifactId>octopus-query</artifactId>
+                <version>${octopus-query.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.oneape</groupId>
@@ -177,7 +178,6 @@
                 <version>${druid.version}</version>
             </dependency>
 
-
             <!-- https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter -->
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
@@ -191,7 +191,7 @@
                 <version>${pagehelper-spring-boot-starter.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-            <!--支持mysql 5.6, 5.7, 8.0 版本-->
+            <!--support mysql 5.6, 5.7, 8.0 version-->
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>

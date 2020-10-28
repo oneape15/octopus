@@ -1,6 +1,6 @@
 package com.oneape.octopus.interceptor;
 
-import com.oneape.octopus.commons.value.BeanUtils;
+import com.oneape.octopus.commons.value.EntityColumnUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.binding.MapperMethod;
@@ -206,7 +206,7 @@ public class MybatisLogInterceptor implements Interceptor {
             } else {
                 String propertyName = parameterMapping.getProperty();
 
-                Map<String, Object> map = BeanUtils.objectToMap(parameterObject);
+                Map<String, Object> map = EntityColumnUtils.objectToMap(parameterObject);
                 Object tmp = map.get(propertyName);
 
                 if (parameterMapping.getJavaType().isAssignableFrom(String.class)) {

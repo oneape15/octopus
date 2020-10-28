@@ -1,8 +1,8 @@
 package com.oneape.octopus.mapper.serve.provider;
 
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.commons.dto.BeanProperties;
-import com.oneape.octopus.commons.value.BeanUtils;
+import com.oneape.octopus.commons.dto.EntityAttribute;
+import com.oneape.octopus.commons.value.EntityColumnUtils;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.model.domain.serve.ServeInfoDO;
 import com.oneape.octopus.model.enums.Archive;
@@ -27,7 +27,7 @@ public class ServeInfoSqlProvider extends BaseSqlProvider<ServeInfoDO> {
 
     public String listWithOutTextField(@Param("model") ServeInfoDO model) {
         Preconditions.checkNotNull(model, "The Serve Object is empty.");
-        List<BeanProperties> fields = BeanUtils.getFields(model);
+        List<EntityAttribute> fields = EntityColumnUtils.getFields(model);
 
         List<String> wheres = new ArrayList<>();
 

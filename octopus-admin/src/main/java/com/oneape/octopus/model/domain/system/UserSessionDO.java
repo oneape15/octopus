@@ -1,11 +1,10 @@
 package com.oneape.octopus.model.domain.system;
 
+import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.model.domain.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
 
 /**
  * User session information table DO.
@@ -17,17 +16,17 @@ public class UserSessionDO extends BaseDO {
     /**
      * The user primary key.
      */
-    @Column(name = "user_id", nullable = false)
+    @EntityColumn(name = "user_id", nullable = false)
     private Long    userId;
     /**
      * User login token.
      */
-    @Column(nullable = false)
+    @EntityColumn(nullable = false)
     private String  token;
     /**
      * Logon time
      */
-    @Column(name = "login_time", nullable = false)
+    @EntityColumn(name = "login_time", nullable = false)
     private Long    loginTime;
     /**
      * Token failure time.

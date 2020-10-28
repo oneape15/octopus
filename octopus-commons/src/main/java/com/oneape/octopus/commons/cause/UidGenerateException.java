@@ -1,4 +1,4 @@
-package com.oneape.octopus.common;
+package com.oneape.octopus.commons.cause;
 
 public class UidGenerateException extends RuntimeException {
 

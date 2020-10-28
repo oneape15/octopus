@@ -1,10 +1,9 @@
 package com.oneape.octopus.model.domain.schema;
 
+import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.model.domain.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import javax.persistence.Column;
 
 /**
  * Created by oneape<oneape15@163.com>
@@ -15,12 +14,12 @@ import javax.persistence.Column;
 @EqualsAndHashCode(callSuper = true)
 public class TableColumnDO extends BaseDO {
 
-    @Column(name = "datasource_id")
+    @EntityColumn(name = "datasource_id")
     private Long   datasourceId;
     /**
      * the table name
      */
-    @Column(name = "table_name")
+    @EntityColumn(name = "table_name")
     private String tableName;
 
     private String  name;
@@ -31,7 +30,7 @@ public class TableColumnDO extends BaseDO {
     /**
      * eg. INTEGER, FLOAT, STRING, DECIMAL ...
      */
-    @Column(name = "data_type")
+    @EntityColumn(name = "data_type")
     private String  dataType;
     /**
      * 0 - normal column ; 1 - primary key; 2 - foreign key

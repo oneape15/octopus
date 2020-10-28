@@ -1,11 +1,10 @@
 package com.oneape.octopus.model.domain.serve;
 
+import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.model.domain.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
 
 /**
  * Created by oneape<oneape15@163.com>
@@ -19,26 +18,26 @@ public class ServeVersionDO extends BaseDO {
     /**
      * The unique code.
      */
-    @Column(name = "version_code", nullable = false)
+    @EntityColumn(name = "version_code", nullable = false)
     private String versionCode;
 
     /**
      * Description version information.
      */
-    @Column(name = "version_log", nullable = false)
+    @EntityColumn(name = "version_log", nullable = false)
     private String versionLog;
 
     /**
      * The version type
      * {@see VersionType}
      */
-    @Column(name = "version_type", nullable = false)
+    @EntityColumn(name = "version_type", nullable = false)
     private String versionType;
 
     /**
      * save the serve config information.
      */
-    @Column(name = "serve_config")
+    @EntityColumn(name = "serve_config", bigColumn = true)
     private String serveConfig;
 
 }

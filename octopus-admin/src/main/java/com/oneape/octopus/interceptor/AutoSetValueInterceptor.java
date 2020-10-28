@@ -4,7 +4,7 @@ import com.oneape.octopus.annotation.AutoUniqueId;
 import com.oneape.octopus.annotation.Creator;
 import com.oneape.octopus.annotation.Modifier;
 import com.oneape.octopus.annotation.SortId;
-import com.oneape.octopus.common.GlobalConstant;
+import com.oneape.octopus.commons.constant.OctopusConstant;
 import com.oneape.octopus.config.ApplicationContextProvider;
 import com.oneape.octopus.service.system.AccountService;
 import com.oneape.octopus.service.uid.UIDGeneratorService;
@@ -39,7 +39,7 @@ public class AutoSetValueInterceptor implements Interceptor {
         if (accountService != null) {
             return accountService.getCurrentUserId();
         }
-        return GlobalConstant.SYS_USER;
+        return OctopusConstant.SYS_USER;
     }
 
     private synchronized Long getUid() {

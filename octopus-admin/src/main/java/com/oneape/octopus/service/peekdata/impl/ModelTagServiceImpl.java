@@ -1,7 +1,7 @@
 package com.oneape.octopus.service.peekdata.impl;
 
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.common.BizException;
+import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.mapper.peekdata.ModelTagMapper;
 import com.oneape.octopus.model.domain.peekdata.ModelTagDO;
 import com.oneape.octopus.service.peekdata.ModelTagService;

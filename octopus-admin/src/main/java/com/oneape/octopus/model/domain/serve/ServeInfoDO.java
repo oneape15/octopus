@@ -1,6 +1,7 @@
 package com.oneape.octopus.model.domain.serve;
 
 import com.oneape.octopus.annotation.SortId;
+import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.model.domain.BaseDO;
 import com.oneape.octopus.model.dto.serve.ServeConfigTextDTO;
 import com.oneape.octopus.model.enums.ServeType;
@@ -8,8 +9,6 @@ import com.oneape.octopus.model.enums.VisualType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
 
 /**
  * Serve information table DO.
@@ -21,7 +20,7 @@ public class ServeInfoDO extends BaseDO {
     /**
      * serveId name.
      */
-    @Column(name = "name", nullable = false)
+    @EntityColumn(name = "name", nullable = false)
     private String  name;
     /**
      * The serve icon url.
@@ -30,31 +29,31 @@ public class ServeInfoDO extends BaseDO {
     /**
      * Timeliness of report data. 0 - real time, 1 - minutes, 2 - hours, 3 - days, 4 - months;
      */
-    @Column(name = "time_based")
+    @EntityColumn(name = "time_based")
     private Integer timeBased;
     /**
      * {@link ServeType}
      * serve type , report;  interface; eg.
      */
-    @Column(name = "serve_type", nullable = false)
+    @EntityColumn(name = "serve_type", nullable = false)
     private String  serveType;
     /**
      * {@link VisualType}
      * the serveId visual type , 1 - table; 2 - line; 4 - bar; eg.
      */
-    @Column(name = "visual_type", nullable = false)
+    @EntityColumn(name = "visual_type", nullable = false)
     private Integer visualType;
     /**
      * Sort field
      */
     @SortId
-    @Column(name = "sort_id")
+    @EntityColumn(name = "sort_id")
     private Long    sortId;
     /**
      * {@link ServeConfigTextDTO }
      * The serve config text information.
      */
-    @Column(name = "config_text")
+    @EntityColumn(name = "config_text", bigColumn = true)
     private String  configText;
     /**
      * description

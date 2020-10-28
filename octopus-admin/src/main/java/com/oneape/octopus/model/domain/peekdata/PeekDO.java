@@ -1,11 +1,10 @@
 package com.oneape.octopus.model.domain.peekdata;
 
+import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.model.domain.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
 
 @Data
 @NoArgsConstructor
@@ -14,7 +13,7 @@ public class PeekDO extends BaseDO {
     /**
      * 模型Id
      */
-    @Column(name = "model_id")
+    @EntityColumn(name = "model_id")
     private Long    modelId;
     /**
      * 取数实例名称
@@ -23,7 +22,7 @@ public class PeekDO extends BaseDO {
     /**
      * 取数次数
      */
-    @Column(name = "peek_time")
+    @EntityColumn(name = "peek_time")
     private Integer peekTime;
 
     public PeekDO(Long modelId, String name) {

@@ -2,7 +2,7 @@ package com.oneape.octopus.controller.system;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.oneape.octopus.common.StateCode;
+import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.controller.system.form.CommonInfoForm;
 import com.oneape.octopus.model.domain.system.CommonInfoDO;
 import com.oneape.octopus.model.VO.ApiResult;

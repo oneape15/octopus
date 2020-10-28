@@ -1,6 +1,6 @@
 package com.oneape.octopus.datasource.dialect;
 
-import com.oneape.octopus.commons.files.CSVHelper;
+import com.oneape.octopus.commons.files.EasyCsv;
 import com.oneape.octopus.commons.files.ZipUtils;
 import com.oneape.octopus.commons.value.CodeBuilderUtils;
 import com.oneape.octopus.datasource.*;
@@ -410,10 +410,12 @@ public abstract class Actuator {
                 "_" + System.currentTimeMillis() +
                 "_" + CodeBuilderUtils.RandmonStr(16);
         String fullFileName = FILE_PATH + fileName + CSV_FILE_SUFFIX;
-
-        boolean initStatus = CSVHelper.initCSVFile(fullFileName);
-        if (!initStatus) {
-            throw new RuntimeException("初始化CSV文件失败~");
+        EasyCsv easyCsv = null;
+        try {
+            easyCsv = new EasyCsv(fullFileName);
+        } catch (Exception e) {
+            //
+            return result;
         }
 
         StopWatch watch = new StopWatch();
@@ -425,7 +427,7 @@ public abstract class Actuator {
             // 写入表格头
             List<Object> headString = new ArrayList<>(columnHeads.size());
             columnHeads.forEach(ch -> headString.add(ch.getLabel()));
-            CSVHelper.writeRow(headString);
+            easyCsv.writeRow(headString);
 
             result.setColumns(columnHeads);
             int columnSize = columnHeads.size();
@@ -445,7 +447,7 @@ public abstract class Actuator {
                     row.add(obj);
                 }
                 // 写一行数据
-                CSVHelper.writeRow(row);
+                easyCsv.writeRow(row);
 
                 // 超过最大行数判断
                 if (param.getLimitSize() > 0 && totalSize > param.getLimitSize()) {
@@ -455,7 +457,7 @@ public abstract class Actuator {
                 // 每100条刷新到磁盘
                 if (index >= 100) {
                     index = 0;
-                    CSVHelper.flush();
+                    easyCsv.flush();
                     // 大循环空出时间，给高优先级的线程使用
                     Thread.sleep(1);
                 }
@@ -465,7 +467,7 @@ public abstract class Actuator {
             return result;
         } finally {
             // csv操作流关闭
-            CSVHelper.finish();
+            easyCsv.finish();
             watch.stop();
             result.getRunInfo().put(Result.KYE_RUN_TIME, watch.getTime() + "");
         }

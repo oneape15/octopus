@@ -1,9 +1,9 @@
 package com.oneape.octopus.service.system.impl;
 
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.common.BizException;
-import com.oneape.octopus.common.GlobalConstant;
 import com.oneape.octopus.common.MaskUtils;
+import com.oneape.octopus.commons.cause.BizException;
+import com.oneape.octopus.commons.constant.OctopusConstant;
 import com.oneape.octopus.mapper.system.ResourceMapper;
 import com.oneape.octopus.mapper.system.RoleRlResourceMapper;
 import com.oneape.octopus.model.domain.system.ResourceDO;
@@ -48,9 +48,9 @@ public class ResourceServiceImpl implements ResourceService {
 
         Long parentId = model.getParentId();
         if (parentId == null) {
-            parentId = GlobalConstant.DEFAULT_VALUE;
+            parentId = OctopusConstant.DEFAULT_VALUE;
         }
-        if (parentId > GlobalConstant.DEFAULT_VALUE) {
+        if (parentId > OctopusConstant.DEFAULT_VALUE) {
             ResourceDO resource = resourceMapper.findById(model.getParentId());
             if (resource == null) {
                 throw new BizException("Superior resources do not exist.");
@@ -110,7 +110,7 @@ public class ResourceServiceImpl implements ResourceService {
         Preconditions.checkNotNull(id, "The primary Key is empty.");
 
         int status = resourceMapper.delete(new ResourceDO(id));
-        if (status > GlobalConstant.FAIL) {
+        if (status > OctopusConstant.FAIL) {
             roleRlResourceMapper.delete(new RoleRlResourceDO(null, id));
         }
         return status;

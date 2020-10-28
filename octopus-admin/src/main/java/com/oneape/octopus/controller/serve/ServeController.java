@@ -2,7 +2,7 @@ package com.oneape.octopus.controller.serve;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.oneape.octopus.common.StateCode;
+import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.controller.serve.form.ServeForm;
 import com.oneape.octopus.model.domain.serve.ServeInfoDO;

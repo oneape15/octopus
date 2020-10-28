@@ -2,7 +2,7 @@ package com.oneape.octopus.controller.peekdata;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.oneape.octopus.common.StateCode;
+import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.controller.peekdata.form.TagForm;
 import com.oneape.octopus.model.domain.peekdata.ModelTagDO;
 import com.oneape.octopus.model.VO.ApiResult;

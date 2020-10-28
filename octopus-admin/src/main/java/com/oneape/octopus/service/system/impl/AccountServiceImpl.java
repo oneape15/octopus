@@ -1,7 +1,11 @@
 package com.oneape.octopus.service.system.impl;
 
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.common.*;
+import com.oneape.octopus.common.MaskUtils;
+import com.oneape.octopus.common.SessionThreadLocal;
+import com.oneape.octopus.commons.cause.BizException;
+import com.oneape.octopus.commons.cause.UnauthorizedException;
+import com.oneape.octopus.commons.constant.OctopusConstant;
 import com.oneape.octopus.commons.security.MD5Utils;
 import com.oneape.octopus.commons.value.CodeBuilderUtils;
 import com.oneape.octopus.mapper.system.UserMapper;
@@ -211,7 +215,7 @@ public class AccountServiceImpl implements AccountService {
     public Long getCurrentUserId() {
         UserDTO user = SessionThreadLocal.getSession();
         if (user == null) {
-            return GlobalConstant.SYS_USER;
+            return OctopusConstant.SYS_USER;
         }
         return user.getId();
     }
@@ -331,8 +335,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public int addUser(UserDO user) {
         int status = save(user);
-        if (status < GlobalConstant.SUCCESS) {
-            return GlobalConstant.FAIL;
+        if (status < OctopusConstant.SUCCESS) {
+            return OctopusConstant.FAIL;
         }
 
         try {

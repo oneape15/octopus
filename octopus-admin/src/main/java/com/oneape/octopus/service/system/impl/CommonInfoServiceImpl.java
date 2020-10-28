@@ -1,8 +1,8 @@
 package com.oneape.octopus.service.system.impl;
 
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.common.BizException;
-import com.oneape.octopus.common.GlobalConstant;
+import com.oneape.octopus.commons.cause.BizException;
+import com.oneape.octopus.commons.constant.OctopusConstant;
 import com.oneape.octopus.mapper.system.CommonInfoMapper;
 import com.oneape.octopus.model.domain.system.CommonInfoDO;
 import com.oneape.octopus.service.system.CommonInfoService;
@@ -36,8 +36,8 @@ public class CommonInfoServiceImpl implements CommonInfoService {
         Preconditions.checkArgument(StringUtils.isNoneBlank(model.getClassify(), model.getKey(), model.getValue()),
                 "The classify, key or value is null.");
 
-        if (model.getParentId() == null || model.getParentId() < GlobalConstant.DEFAULT_VALUE) {
-            model.setParentId(GlobalConstant.DEFAULT_VALUE);
+        if (model.getParentId() == null || model.getParentId() < OctopusConstant.DEFAULT_VALUE) {
+            model.setParentId(OctopusConstant.DEFAULT_VALUE);
         } else {
             Preconditions.checkNotNull(commonInfoMapper.findById(model.getParentId()), "The parent node information does not exist.");
         }

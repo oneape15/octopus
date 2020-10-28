@@ -1,8 +1,8 @@
 package com.oneape.octopus.service.peekdata.impl;
 
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.common.BizException;
-import com.oneape.octopus.common.StateCode;
+import com.oneape.octopus.commons.cause.BizException;
+import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.datasource.DatasourceInfo;
 import com.oneape.octopus.datasource.DatasourceTypeHelper;
 import com.oneape.octopus.datasource.QueryFactory;

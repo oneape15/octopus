@@ -1,12 +1,11 @@
 package com.oneape.octopus.model.domain.serve;
 
 import com.oneape.octopus.annotation.SortId;
+import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.model.domain.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
 
 /**
  * Created by oneape<oneape15@163.com>
@@ -33,6 +32,6 @@ public class ServeGroupDO extends BaseDO {
      * Group sort key.
      */
     @SortId
-    @Column(name = "sort_id")
+    @EntityColumn(name = "sort_id")
     private Long   sortId;
 }

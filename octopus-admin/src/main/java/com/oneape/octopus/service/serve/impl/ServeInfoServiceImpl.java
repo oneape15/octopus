@@ -2,7 +2,7 @@ package com.oneape.octopus.service.serve.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.common.BizException;
+import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.algorithm.Digraph;
 import com.oneape.octopus.commons.algorithm.DirectedCycle;
 import com.oneape.octopus.commons.value.OptStringUtils;

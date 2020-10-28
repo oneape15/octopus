@@ -1,12 +1,11 @@
 package com.oneape.octopus.model.domain.schema;
 
+import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.datasource.DatasourceTypeHelper;
 import com.oneape.octopus.model.domain.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
 
 /**
  * The data source DO
@@ -31,12 +30,12 @@ public class DatasourceDO extends BaseDO {
     /**
      * The data source jdbc url.
      */
-    @Column(name = "jdbc_url")
+    @EntityColumn(name = "jdbc_url")
     private String  jdbcUrl;
     /**
      * The data source driver class.
      */
-    @Column(name = "jdbc_driver")
+    @EntityColumn(name = "jdbc_driver")
     private String  jdbcDriver;
     /**
      * The data source login username.
@@ -61,7 +60,7 @@ public class DatasourceDO extends BaseDO {
     /**
      * the sql of check datasource valid
      */
-    @Column(name = "test_sql")
+    @EntityColumn(name = "test_sql")
     private String  testSql;
     /**
      * Data source description information

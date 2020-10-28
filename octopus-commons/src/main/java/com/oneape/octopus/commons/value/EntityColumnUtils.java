@@ -1,36 +1,38 @@
 package com.oneape.octopus.commons.value;
 
-import com.oneape.octopus.commons.dto.BeanProperties;
+import com.oneape.octopus.commons.dto.EntityAttribute;
+import com.oneape.octopus.commons.enums.EntityColumn;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.Column;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-public class BeanUtils {
+public class EntityColumnUtils {
 
     /**
-     * 获取对象的属性信息
+     * Gets property information for the object.
      *
      * @param o Object
      * @return List
      */
-    public static List<BeanProperties> getFields(Object o) {
-        List<BeanProperties> props = new ArrayList<>();
+    public static List<EntityAttribute> getFields(Object o) {
+        List<EntityAttribute> props = new ArrayList<>();
         if (o == null) {
             return props;
         }
 
         List<Field> fields;
         Class clazz = o.getClass();
-        // 当父类为null的时候说明到达了最上层的父类(Object类）
+        // When the parent class is null, the uppermost parent class (Object class) has been reached.
         while (clazz != null) {
             fields = Arrays.asList(clazz.getDeclaredFields());
+            for (Field field : fields) {
+                EntityAttribute prop = new EntityAttribute();
 
-            fields.forEach(field -> {
-                BeanProperties prop = new BeanProperties();
-
+                if (StringUtils.startsWith(field.getName(), "$")) {
+                    continue;
+                }
                 prop.setName(field.getName());
                 prop.setType(field.getType().getName());
                 Object value = null;
@@ -42,21 +44,25 @@ public class BeanUtils {
                 }
                 prop.setValue(value);
 
-                Column column = field.getAnnotation(Column.class);
+                EntityColumn column = field.getAnnotation(EntityColumn.class);
                 if (column != null) {
-                    prop.setDbColumn(true);
+                    prop.setDbColumn(column.dbColumn());
                     prop.setNullable(column.nullable());
-                    prop.setDbColumnName(StringUtils.stripToNull(column.name()));
+                    prop.setColumnName(StringUtils.stripToNull(column.name()));
+                    prop.setLength(column.length());
+                    prop.setPrecision(column.precision());
+                    prop.setScale(column.scale());
+
                 }
 
-                // 如果没有设置db_column则使用name值
-                if (StringUtils.isBlank(prop.getDbColumnName())) {
-                    prop.setDbColumnName(prop.getName());
+                // If 'db_column' is not set, the 'name' value is used
+                if (StringUtils.isBlank(prop.getColumnName())) {
+                    prop.setColumnName(prop.getName());
                 }
                 props.add(prop);
-            });
+            }
 
-            // 得到父类， 然后赋给自己
+            // loop
             clazz = clazz.getSuperclass();
         }
 
@@ -64,7 +70,7 @@ public class BeanUtils {
     }
 
     /**
-     * Map转换成相应对象
+     * Map is converted to the corresponding object.
      *
      * @param map       Map
      * @param beanClass Class
@@ -76,16 +82,15 @@ public class BeanUtils {
 
         Object obj = beanClass.newInstance();
 
-        //获取关联的所有类，本类以及所有父类
         Class oo = obj.getClass();
-        List<Class> clazzs = new ArrayList<>();
+        List<Class> clazzList = new ArrayList<>();
         while (true) {
-            clazzs.add(oo);
+            clazzList.add(oo);
             oo = oo.getSuperclass();
             if (oo == null || oo == Object.class) break;
         }
 
-        for (Class clz : clazzs) {
+        for (Class clz : clazzList) {
             Field[] fields = clz.getDeclaredFields();
             for (Field field : fields) {
                 int mod = field.getModifiers();
@@ -93,7 +98,7 @@ public class BeanUtils {
                     continue;
                 }
 
-                // 设置对应属性的值
+                // Sets the value of the corresponding property.
                 field.setAccessible(true);
                 field.set(obj, map.get(field.getName()));
             }
@@ -103,7 +108,7 @@ public class BeanUtils {
     }
 
     /**
-     * 对象转换成Map
+     * Object into a Map.
      *
      * @param obj Object
      * @return Map
@@ -112,22 +117,21 @@ public class BeanUtils {
     public static Map<String, Object> objectToMap(Object obj) throws Exception {
         if (obj == null) return null;
 
-        // 获取关联的所有类, 本类及所有父类
         Class oo = obj.getClass();
-        List<Class> clazzs = new ArrayList<>();
+        List<Class> clazzList = new ArrayList<>();
         while (true) {
-            clazzs.add(oo);
+            clazzList.add(oo);
             oo = oo.getSuperclass();
             if (oo == null || oo == Object.class) break;
         }
         Map<String, Object> map = new HashMap<>();
 
-        for (Class clz : clazzs) {
+        for (Class clz : clazzList) {
             Field[] declaredFields = clz.getDeclaredFields();
             for (Field field : declaredFields) {
                 int mod = field.getModifiers();
 
-                //过滤 static 和 final 类型
+                // Filter static and final types.
                 if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
                     continue;
                 }

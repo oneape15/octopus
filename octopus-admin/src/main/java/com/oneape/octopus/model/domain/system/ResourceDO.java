@@ -1,12 +1,11 @@
 package com.oneape.octopus.model.domain.system;
 
 import com.oneape.octopus.annotation.SortId;
+import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.model.domain.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
 
 /**
  * Resource information table DO.
@@ -18,7 +17,7 @@ public class ResourceDO extends BaseDO {
     /**
      * The parent node id.
      */
-    @Column(name = "parent_id")
+    @EntityColumn(name = "parent_id")
     private Long    parentId;
     /**
      * The resource name.
@@ -40,7 +39,7 @@ public class ResourceDO extends BaseDO {
      * The resource sort field.
      */
     @SortId
-    @Column(name = "sort_id")
+    @EntityColumn(name = "sort_id")
     private Long    sortId;
     /**
      * description

@@ -1,6 +1,6 @@
 package com.oneape.octopus.service.uid;
 
-import com.oneape.octopus.common.UidGenerateException;
+import com.oneape.octopus.commons.cause.UidGenerateException;
 import com.oneape.octopus.commons.value.DateUtils;
 import com.oneape.octopus.model.dto.Id;
 import lombok.extern.slf4j.Slf4j;

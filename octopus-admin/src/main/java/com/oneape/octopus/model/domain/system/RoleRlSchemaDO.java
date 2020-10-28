@@ -1,9 +1,8 @@
 package com.oneape.octopus.model.domain.system;
 
+import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.model.domain.BaseDO;
 import lombok.Data;
-
-import javax.persistence.Column;
 
 /**
  * Created by oneape<oneape15@163.com>
@@ -12,12 +11,12 @@ import javax.persistence.Column;
  */
 @Data
 public class RoleRlSchemaDO extends BaseDO {
-    @Column(name = "role_id")
+    @EntityColumn(name = "role_id")
     private Long   roleId;
-    @Column(name = "datasource_id")
+    @EntityColumn(name = "datasource_id")
     private Long   datasourceId;
-    @Column(name = "table_name")
+    @EntityColumn(name = "table_name")
     private String tableName;
-    @Column(name = "expire_time")
+    @EntityColumn(name = "expire_time")
     private Long   expireTime;
 }

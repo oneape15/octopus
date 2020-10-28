@@ -3,7 +3,7 @@ package com.oneape.octopus.interceptor;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.oneape.octopus.common.SessionThreadLocal;
-import com.oneape.octopus.common.UnauthorizedException;
+import com.oneape.octopus.commons.cause.UnauthorizedException;
 import com.oneape.octopus.config.ApplicationContextProvider;
 import com.oneape.octopus.model.dto.system.UserDTO;
 import com.oneape.octopus.service.system.AccountService;

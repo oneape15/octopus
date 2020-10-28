@@ -1,11 +1,10 @@
 package com.oneape.octopus.model.domain.system;
 
+import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.model.domain.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
 
 /**
  * Basic information table DO.
@@ -17,7 +16,7 @@ public class CommonInfoDO extends BaseDO {
     /**
      * The parent id.
      */
-    @Column(name = "parent_id")
+    @EntityColumn(name = "parent_id")
     private Long   parentId;
     /**
      * Basic information classification

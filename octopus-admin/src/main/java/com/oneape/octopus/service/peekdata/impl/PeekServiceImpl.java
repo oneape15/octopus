@@ -3,7 +3,7 @@ package com.oneape.octopus.service.peekdata.impl;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.common.BizException;
+import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.dto.DataType;
 import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.datasource.*;

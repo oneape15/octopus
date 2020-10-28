@@ -1,8 +1,5 @@
-package com.oneape.octopus.common;
+package com.oneape.octopus.commons.value;
 
-import com.google.common.base.Preconditions;
-import com.oneape.octopus.commons.value.DataUtils;
-import com.oneape.octopus.commons.value.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -95,8 +92,13 @@ public final class DatetimeMacroUtils {
      */
     public static Date parserMacroValue(String macroStr,
                                         String parsePatterns) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(macroStr), "datetime macro string is null.");
-        Preconditions.checkArgument(StringUtils.isNotBlank(parsePatterns), "date format patterns is null.");
+        if (StringUtils.isNotBlank(macroStr)) {
+            throw new RuntimeException("datetime macro string is null.");
+        }
+
+        if (StringUtils.isBlank(parsePatterns)) {
+            throw new RuntimeException("date format patterns is null.");
+        }
 
         // Delimit the string by space
         String[] macro = StringUtils.split(StringUtils.upperCase(StringUtils.trimToEmpty(macroStr)), " ");

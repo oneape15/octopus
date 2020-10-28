@@ -2,7 +2,7 @@ package com.oneape.octopus.controller.schema;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.oneape.octopus.common.StateCode;
+import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.controller.schema.form.DatasourceForm;
 import com.oneape.octopus.commons.dto.DataType;
 import com.oneape.octopus.datasource.DatasourceFactory;

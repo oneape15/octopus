@@ -1,7 +1,7 @@
 package com.oneape.octopus.service.system.impl;
 
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.common.BizException;
+import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.common.MaskUtils;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.mapper.system.RoleMapper;

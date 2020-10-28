@@ -1,7 +1,7 @@
 package com.oneape.octopus.model.VO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.oneape.octopus.common.StateCode;
+import com.oneape.octopus.commons.cause.StateCode;
 import lombok.Data;
 
 import java.io.Serializable;

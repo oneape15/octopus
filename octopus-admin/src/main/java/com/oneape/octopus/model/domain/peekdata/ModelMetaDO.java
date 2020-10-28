@@ -1,11 +1,10 @@
 package com.oneape.octopus.model.domain.peekdata;
 
+import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.model.domain.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
 
 @Data
 @NoArgsConstructor
@@ -14,27 +13,27 @@ public class ModelMetaDO extends BaseDO {
     /**
      * 模型Id
      */
-    @Column(name = "model_id")
-    private Long modelId;
+    @EntityColumn(name = "model_id")
+    private Long    modelId;
     /**
      * 元素名称(表字段名称)
      */
-    private String name;
+    private String  name;
     /**
      * 显示名称
      */
-    @Column(name = "show_name")
-    private String showName;
+    @EntityColumn(name = "show_name")
+    private String  showName;
     /**
      * 数据类型
      */
-    @Column(name = "data_type")
-    private String dataType;
+    @EntityColumn(name = "data_type")
+    private String  dataType;
     /**
      * 原始数据类型
      */
-    @Column(name = "origin_data_type")
-    private String originDataType;
+    @EntityColumn(name = "origin_data_type")
+    private String  originDataType;
     /**
      * 是否显示, 1-显示; 0 - 不显示
      */
@@ -42,12 +41,12 @@ public class ModelMetaDO extends BaseDO {
     /**
      * 标签id
      */
-    @Column(name = "tag_id")
-    private Long tagId;
+    @EntityColumn(name = "tag_id")
+    private Long    tagId;
     /**
      * 字段详细描述
      */
-    private String comment;
+    private String  comment;
 
     public ModelMetaDO(Long modelId) {
         this.modelId = modelId;

@@ -1,4 +1,4 @@
-package com.oneape.octopus.common;
+package com.oneape.octopus.commons.cause;
 
 public enum StateCode {
     OK(200, "The request was successful."),

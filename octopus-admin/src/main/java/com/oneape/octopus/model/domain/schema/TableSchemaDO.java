@@ -1,11 +1,10 @@
 package com.oneape.octopus.model.domain.schema;
 
+import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.model.domain.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
 
 /**
  * Table basic information object.
@@ -21,28 +20,28 @@ public class TableSchemaDO extends BaseDO {
     /**
      * the datasource primary key
      */
-    @Column(name = "datasource_id", nullable = false)
+    @EntityColumn(name = "datasource_id", nullable = false)
     private Long    datasourceId;
     /**
      * db table name
      */
-    @Column(nullable = false)
+    @EntityColumn(nullable = false)
     private String  name;
     /**
      * the table is view table, 0 - no; 1 - yes
      */
-    @Column(name = "view_table")
+    @EntityColumn(name = "view_table")
     private Integer viewTable;
     /**
      * Latest synchronization table structure time
      */
-    @Column(name = "sync_time")
+    @EntityColumn(name = "sync_time")
     private Long    syncTime;
     /**
      * Synchronous table structure expression.
      * if syncCron is null, then is never sync.
      */
-    @Column(name = "sync_cron")
+    @EntityColumn(name = "sync_cron")
     private String  syncCron;
     /**
      * the table use time;
