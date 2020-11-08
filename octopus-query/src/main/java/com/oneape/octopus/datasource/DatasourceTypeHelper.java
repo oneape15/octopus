@@ -3,7 +3,7 @@ package com.oneape.octopus.datasource;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * 数据源类型
+ * The Data source type helper class.
  */
 public enum DatasourceTypeHelper {
     Firebird("org.firebirdsql.ds.FBSimpleDataSource", ""),
@@ -15,7 +15,7 @@ public enum DatasourceTypeHelper {
     MySQL("com.mysql.cj.jdbc.Driver", "jdbc:mysql://{host}:{port}/{dbName}"),
     Oracle("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@{host}:{port}:{dbName}"),
     PostgreSQL("org.postgresql.Driver", "jdbc:postgresql://{host}:{port}/{dbName}"),
-    OdpsSQL("com.aliyun.odps.jdbc.OdpsDriver","jdbc:odps:{host}?project={dbName}"),
+    OdpsSQL("com.aliyun.odps.jdbc.OdpsDriver", "jdbc:odps:{host}?project={dbName}"),
     SQLite("org.sqlite.SQLiteDataSource", "");
 
     /**

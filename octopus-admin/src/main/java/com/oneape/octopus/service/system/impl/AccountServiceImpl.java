@@ -1,20 +1,20 @@
 package com.oneape.octopus.service.system.impl;
 
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.common.MaskUtils;
-import com.oneape.octopus.common.SessionThreadLocal;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.cause.UnauthorizedException;
 import com.oneape.octopus.commons.constant.OctopusConstant;
 import com.oneape.octopus.commons.security.MD5Utils;
 import com.oneape.octopus.commons.value.CodeBuilderUtils;
+import com.oneape.octopus.commons.value.MaskUtils;
+import com.oneape.octopus.controller.SessionThreadLocal;
+import com.oneape.octopus.domain.system.RoleDO;
+import com.oneape.octopus.domain.system.UserDO;
+import com.oneape.octopus.domain.system.UserSessionDO;
+import com.oneape.octopus.dto.system.ResourceDTO;
+import com.oneape.octopus.dto.system.UserDTO;
 import com.oneape.octopus.mapper.system.UserMapper;
 import com.oneape.octopus.mapper.system.UserSessionMapper;
-import com.oneape.octopus.model.domain.system.RoleDO;
-import com.oneape.octopus.model.domain.system.UserDO;
-import com.oneape.octopus.model.domain.system.UserSessionDO;
-import com.oneape.octopus.model.dto.system.ResourceDTO;
-import com.oneape.octopus.model.dto.system.UserDTO;
 import com.oneape.octopus.service.system.AccountService;
 import com.oneape.octopus.service.system.MailService;
 import com.oneape.octopus.service.system.ResourceService;
@@ -242,6 +242,7 @@ public class AccountServiceImpl implements AccountService {
      * @param password String
      * @return UserDTO
      */
+    @Transactional
     @Override
     public UserDTO login(String username, String password) {
         UserDO udo = getByUsername(username);
@@ -437,5 +438,23 @@ public class AccountServiceImpl implements AccountService {
             throw new BizException("You cannot delete yourself~");
         }
         return userMapper.delByIds(userIds, curUserId);
+    }
+
+    /**
+     * Change the user status
+     *
+     * @param userId Long userId
+     * @param status Integer
+     * @return 1 - success; 0 - fail.
+     */
+    @Override
+    public int changeUserStatus(Long userId, Integer status) {
+        Preconditions.checkNotNull(userMapper.findById(userId), "The user is not exist.");
+
+        UserDO userDO = new UserDO();
+        userDO.setStatus(status);
+        userDO.setId(userId);
+
+        return userMapper.update(userDO);
     }
 }

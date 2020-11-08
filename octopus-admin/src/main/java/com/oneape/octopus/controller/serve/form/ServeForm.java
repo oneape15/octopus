@@ -2,8 +2,8 @@ package com.oneape.octopus.controller.serve.form;
 
 import com.alibaba.fastjson.JSON;
 import com.oneape.octopus.controller.BaseForm;
-import com.oneape.octopus.model.domain.serve.ServeInfoDO;
-import com.oneape.octopus.model.dto.serve.*;
+import com.oneape.octopus.domain.serve.ServeInfoDO;
+import com.oneape.octopus.dto.serve.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;

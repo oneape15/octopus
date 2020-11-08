@@ -1,6 +1,6 @@
 package com.oneape.octopus.service;
 
-import com.oneape.octopus.model.domain.BaseDO;
+import com.oneape.octopus.domain.BaseDO;
 
 import java.util.List;
 

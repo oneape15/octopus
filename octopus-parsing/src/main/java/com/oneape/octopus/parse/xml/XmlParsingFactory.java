@@ -38,6 +38,16 @@ public class XmlParsingFactory implements ParsingFactory {
         return pr;
     }
 
+    /**
+     * Remove the SQL comment information.
+     *
+     * @param dslSql The dsl language text.
+     * @return String
+     */
+    @Override
+    public String clearCommaInfo(String dslSql) {
+        return DslParser.clearDslSqlString(dslSql);
+    }
 
     /**
      * Validate the DSL syntax

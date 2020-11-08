@@ -2,7 +2,7 @@ package com.oneape.octopus.service.peekdata;
 
 import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.datasource.data.Result;
-import com.oneape.octopus.model.domain.peekdata.PeekDO;
+import com.oneape.octopus.domain.peekdata.PeekDO;
 import com.oneape.octopus.model.VO.ModelVO;
 import com.oneape.octopus.model.VO.PeekFieldVO;
 import com.oneape.octopus.model.VO.PeekRuleVO;

@@ -1,6 +1,6 @@
 package com.oneape.octopus.model.VO;
 
-import com.oneape.octopus.model.domain.serve.ServeInfoDO;
+import com.oneape.octopus.domain.serve.ServeInfoDO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 

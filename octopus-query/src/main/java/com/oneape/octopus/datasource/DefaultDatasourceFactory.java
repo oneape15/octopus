@@ -22,7 +22,6 @@ import static com.oneape.octopus.commons.constant.OctopusConstant.PWD_MASK_TAG;
 @Slf4j
 public class DefaultDatasourceFactory implements DatasourceFactory {
 
-
     private static ConcurrentHashMap<String, HikariDataSource> datasourceMap = new ConcurrentHashMap<>();
 
     private static final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();

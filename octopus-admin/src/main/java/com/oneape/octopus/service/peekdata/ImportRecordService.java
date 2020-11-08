@@ -1,7 +1,7 @@
 package com.oneape.octopus.service.peekdata;
 
 import com.oneape.octopus.datasource.data.Result;
-import com.oneape.octopus.model.domain.peekdata.ImportRecordDO;
+import com.oneape.octopus.domain.peekdata.ImportRecordDO;
 import com.oneape.octopus.model.VO.ImportRecordVO;
 import com.oneape.octopus.service.BaseService;
 import org.springframework.web.multipart.MultipartFile;

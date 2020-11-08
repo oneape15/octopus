@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.oneape.octopus.commons.dto.DataType;
 import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.commons.dto.Value;
-import com.oneape.octopus.datasource.schema.FieldInfo;
-import com.oneape.octopus.datasource.schema.TableInfo;
+import com.oneape.octopus.datasource.schema.SchemaTableField;
+import com.oneape.octopus.datasource.schema.SchemaTable;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -57,23 +57,23 @@ public class QueryFactoryTest {
 
     @Test
     public void h2TablesTest() {
-        List<TableInfo> tableInfos = queryFactory.allTables(dsiOfH2);
+        List<SchemaTable> schemaTables = queryFactory.allTables(dsiOfH2);
 
-        Assert.assertNotNull(tableInfos);
-        Assert.assertTrue(tableInfos.size() > 0);
-        log.info("表信息如下： {}", JSON.toJSONString(tableInfos));
+        Assert.assertNotNull(schemaTables);
+        Assert.assertTrue(schemaTables.size() > 0);
+        log.info("表信息如下： {}", JSON.toJSONString(schemaTables));
     }
 
     @Test
     public void h2FieldsTest() {
-        List<FieldInfo> fields = queryFactory.allFields(dsiOfH2);
+        List<SchemaTableField> fields = queryFactory.allFields(dsiOfH2);
         Assert.assertNotNull(fields);
         log.info("数据库字段信息如下：{}", JSON.toJSONString(fields));
     }
 
     @Test
     public void h2FieldsBySchemaTest() {
-        List<FieldInfo> fields = queryFactory.allFields(dsiOfH2, "TEST");
+        List<SchemaTableField> fields = queryFactory.allFields(dsiOfH2, "TEST");
         Assert.assertNotNull(fields);
         log.info("数据库字段信息如下：{}", JSON.toJSONString(fields));
     }
@@ -87,25 +87,25 @@ public class QueryFactoryTest {
 
     @Test
     public void allTablesTest() {
-        List<TableInfo> tableInfos = queryFactory.allTables(dsi);
+        List<SchemaTable> schemaTables = queryFactory.allTables(dsi);
 
-        Assert.assertNotNull(tableInfos);
-        Assert.assertTrue(tableInfos.size() > 0);
-        log.info("表信息如下： {}", JSON.toJSONString(tableInfos));
+        Assert.assertNotNull(schemaTables);
+        Assert.assertTrue(schemaTables.size() > 0);
+        log.info("表信息如下： {}", JSON.toJSONString(schemaTables));
     }
 
     @Test
     public void tablesTest() {
-        List<TableInfo> tableInfos = queryFactory.allTables(dsi, schema);
+        List<SchemaTable> schemaTables = queryFactory.allTables(dsi, schema);
 
-        Assert.assertNotNull(tableInfos);
-        Assert.assertTrue(tableInfos.size() > 0);
-        log.info("表信息如下： {}", JSON.toJSONString(tableInfos));
+        Assert.assertNotNull(schemaTables);
+        Assert.assertTrue(schemaTables.size() > 0);
+        log.info("表信息如下： {}", JSON.toJSONString(schemaTables));
     }
 
     @Test
     public void allFieldsTest() {
-        List<FieldInfo> fields = queryFactory.allFields(dsi);
+        List<SchemaTableField> fields = queryFactory.allFields(dsi);
         Assert.assertNotNull(fields);
         log.info("数据库字段信息如下：{}", JSON.toJSONString(fields));
     }
@@ -113,7 +113,7 @@ public class QueryFactoryTest {
     @Test
     public void tableFieldsTest() {
         String tableName = "r_datasource";
-        List<FieldInfo> fields = queryFactory.fieldOfTable(dsi, schema, tableName);
+        List<SchemaTableField> fields = queryFactory.fieldOfTable(dsi, schema, tableName);
         Assert.assertNotNull(fields);
         log.info("表：{}字段信息如下：{}", tableName, JSON.toJSONString(fields));
     }
@@ -121,7 +121,7 @@ public class QueryFactoryTest {
     @Test
     public void tableFieldsOfPgSqlTest() {
         String tableName = "agent_department";
-        List<FieldInfo> fields = queryFactory.fieldOfTable(dsiOfPgSql, "dx2", tableName);
+        List<SchemaTableField> fields = queryFactory.fieldOfTable(dsiOfPgSql, "dx2", tableName);
         Assert.assertNotNull(fields);
         log.info("表：{}字段信息如下：{}", tableName, JSON.toJSONString(fields));
     }

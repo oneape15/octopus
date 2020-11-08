@@ -1,6 +1,6 @@
 package com.oneape.octopus.service.uid;
 
-import com.oneape.octopus.model.dto.Id;
+import com.oneape.octopus.dto.Id;
 
 public interface UIDGeneratorService {
 

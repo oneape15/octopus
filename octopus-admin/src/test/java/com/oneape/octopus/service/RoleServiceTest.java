@@ -1,7 +1,7 @@
 package com.oneape.octopus.service;
 
 import com.oneape.octopus.Application;
-import com.oneape.octopus.model.domain.system.RoleDO;
+import com.oneape.octopus.domain.system.RoleDO;
 import com.oneape.octopus.service.system.RoleService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

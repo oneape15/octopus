@@ -1,6 +1,6 @@
 package com.oneape.octopus.service.serve.impl;
 
-import com.oneape.octopus.model.dto.serve.ServeParamDTO;
+import com.oneape.octopus.dto.serve.ServeParamDTO;
 
 /**
  * Created by oneape<oneape15@163.com>

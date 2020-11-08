@@ -4,7 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.controller.system.form.CommonInfoForm;
-import com.oneape.octopus.model.domain.system.CommonInfoDO;
+import com.oneape.octopus.domain.system.CommonInfoDO;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.service.system.CommonInfoService;
 import org.springframework.validation.annotation.Validated;

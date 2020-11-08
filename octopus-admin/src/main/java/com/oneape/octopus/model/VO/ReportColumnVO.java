@@ -1,6 +1,6 @@
 package com.oneape.octopus.model.VO;
 
-import com.oneape.octopus.model.dto.serve.ServeColumnDTO;
+import com.oneape.octopus.dto.serve.ServeColumnDTO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 

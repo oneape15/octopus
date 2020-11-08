@@ -5,8 +5,8 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.datasource.dialect.Actuator;
-import com.oneape.octopus.datasource.schema.FieldInfo;
-import com.oneape.octopus.datasource.schema.TableInfo;
+import com.oneape.octopus.datasource.schema.SchemaTableField;
+import com.oneape.octopus.datasource.schema.SchemaTable;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -19,18 +19,18 @@ import java.util.concurrent.TimeUnit;
 public class DefaultQueryFactory implements QueryFactory {
 
     private DatasourceFactory datasourceFactory;
-    // 表信息缓存
+    // Table information cache
     private static final String KEY_TABLE = "table_";
-    // 字段信息缓存
+    // Table field information cache
     private static final String KEY_FIELD = "field_";
 
-    private Cache<String, List<TableInfo>> tableCache = CacheBuilder
+    private Cache<String, List<SchemaTable>> tableCache = CacheBuilder
             .newBuilder()
             .expireAfterWrite(15, TimeUnit.MINUTES)
             .maximumSize(4 * 1024 * 1024)
             .build();
 
-    private Cache<String, List<FieldInfo>> fieldCache = CacheBuilder
+    private Cache<String, List<SchemaTableField>> fieldCache = CacheBuilder
             .newBuilder()
             .expireAfterWrite(15, TimeUnit.MINUTES)
             .maximumSize(10 * 1024 * 1024)
@@ -58,7 +58,7 @@ public class DefaultQueryFactory implements QueryFactory {
     }
 
     /**
-     * 获取所有数据库名称
+     * Gets all database names.
      *
      * @param dsi DatasourceInfo
      * @return List
@@ -78,17 +78,17 @@ public class DefaultQueryFactory implements QueryFactory {
     }
 
     /**
-     * 获取所有表信息
+     * Gets the database of all table names .
      *
      * @param dsi DatasourceInfo
      * @return List
      */
     @Override
-    public List<TableInfo> allTables(DatasourceInfo dsi) {
+    public List<SchemaTable> allTables(DatasourceInfo dsi) {
         try {
             String cacheKey = KEY_TABLE + datasourceFactory.getDatasourceKey(dsi) + "_ALL";
 
-            List<TableInfo> tables = tableCache.getIfPresent(cacheKey);
+            List<SchemaTable> tables = tableCache.getIfPresent(cacheKey);
             if (CollectionUtils.isNotEmpty(tables)) {
                 return tables;
             }
@@ -104,7 +104,7 @@ public class DefaultQueryFactory implements QueryFactory {
             return tables;
         } catch (Exception e) {
             log.error("Failed to get table information~", e);
-            throw new RuntimeException("获取数据库全部表信息失败", e);
+            throw new RuntimeException("Failed to get table information.", e);
         }
     }
 
@@ -112,15 +112,15 @@ public class DefaultQueryFactory implements QueryFactory {
      * 获取所有表信息
      *
      * @param dsi    DatasourceInfo
-     * @param schema String 数据库名称
+     * @param schema String The database name
      * @return List
      */
     @Override
-    public List<TableInfo> allTables(DatasourceInfo dsi, String schema) {
+    public List<SchemaTable> allTables(DatasourceInfo dsi, String schema) {
         try {
             String cacheKey = KEY_TABLE + datasourceFactory.getDatasourceKey(dsi) + "_" + schema;
 
-            List<TableInfo> tables = tableCache.getIfPresent(cacheKey);
+            List<SchemaTable> tables = tableCache.getIfPresent(cacheKey);
             if (CollectionUtils.isNotEmpty(tables)) {
                 return tables;
             }
@@ -147,10 +147,10 @@ public class DefaultQueryFactory implements QueryFactory {
      * @return List
      */
     @Override
-    public List<FieldInfo> allFields(DatasourceInfo dsi) {
+    public List<SchemaTableField> allFields(DatasourceInfo dsi) {
         try {
             String cacheKey = KEY_FIELD + datasourceFactory.getDatasourceKey(dsi) + "_ALL_ALL";
-            List<FieldInfo> fields = fieldCache.getIfPresent(cacheKey);
+            List<SchemaTableField> fields = fieldCache.getIfPresent(cacheKey);
             if (CollectionUtils.isNotEmpty(fields)) {
                 return fields;
             }
@@ -180,10 +180,10 @@ public class DefaultQueryFactory implements QueryFactory {
      * @return List
      */
     @Override
-    public List<FieldInfo> allFields(DatasourceInfo dsi, String schema) {
+    public List<SchemaTableField> allFields(DatasourceInfo dsi, String schema) {
         try {
             String cacheKey = KEY_FIELD + datasourceFactory.getDatasourceKey(dsi) + "_" + schema + "_ALL";
-            List<FieldInfo> fields = fieldCache.getIfPresent(cacheKey);
+            List<SchemaTableField> fields = fieldCache.getIfPresent(cacheKey);
             if (CollectionUtils.isNotEmpty(fields)) {
                 return fields;
             }
@@ -213,10 +213,10 @@ public class DefaultQueryFactory implements QueryFactory {
      * @return List
      */
     @Override
-    public List<FieldInfo> fieldOfTable(DatasourceInfo dsi, String schema, String tableName) {
+    public List<SchemaTableField> fieldOfTable(DatasourceInfo dsi, String schema, String tableName) {
         try {
             String cacheKey = KEY_FIELD + datasourceFactory.getDatasourceKey(dsi) + "_" + schema + "_" + tableName;
-            List<FieldInfo> fields = fieldCache.getIfPresent(cacheKey);
+            List<SchemaTableField> fields = fieldCache.getIfPresent(cacheKey);
             if (CollectionUtils.isNotEmpty(fields)) {
                 return fields;
             }

@@ -1,6 +1,6 @@
 package com.oneape.octopus.controller.schema.form;
 
-import com.oneape.octopus.model.domain.schema.TableColumnDO;
+import com.oneape.octopus.domain.schema.TableColumnDO;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;

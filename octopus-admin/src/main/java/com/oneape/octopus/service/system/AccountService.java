@@ -1,7 +1,7 @@
 package com.oneape.octopus.service.system;
 
-import com.oneape.octopus.model.domain.system.UserDO;
-import com.oneape.octopus.model.dto.system.UserDTO;
+import com.oneape.octopus.domain.system.UserDO;
+import com.oneape.octopus.dto.system.UserDTO;
 import com.oneape.octopus.service.BaseService;
 
 import java.util.List;
@@ -91,4 +91,13 @@ public interface AccountService extends BaseService<UserDO> {
      * @return int
      */
     int removeUsers(List<Long> userIds);
+
+    /**
+     * Change the user status
+     *
+     * @param userId Long userId
+     * @param status Integer
+     * @return 1 - success; 0 - fail.
+     */
+    int changeUserStatus(Long userId, Integer status);
 }

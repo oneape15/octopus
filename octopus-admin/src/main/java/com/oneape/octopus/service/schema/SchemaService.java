@@ -1,7 +1,7 @@
 package com.oneape.octopus.service.schema;
 
-import com.oneape.octopus.model.domain.schema.TableColumnDO;
-import com.oneape.octopus.model.domain.schema.TableSchemaDO;
+import com.oneape.octopus.domain.schema.TableColumnDO;
+import com.oneape.octopus.domain.schema.TableSchemaDO;
 
 import java.util.List;
 

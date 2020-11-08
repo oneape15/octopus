@@ -1,6 +1,6 @@
 package com.oneape.octopus.controller.system;
 
-import com.oneape.octopus.common.MaskUtils;
+import com.oneape.octopus.commons.value.MaskUtils;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.controller.system.form.ResForm;

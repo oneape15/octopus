@@ -1,7 +1,7 @@
 package com.oneape.octopus.service.system;
 
-import com.oneape.octopus.model.domain.system.RoleDO;
-import com.oneape.octopus.model.domain.system.RoleRlSchemaDO;
+import com.oneape.octopus.domain.system.RoleDO;
+import com.oneape.octopus.domain.system.RoleRlSchemaDO;
 import com.oneape.octopus.service.BaseService;
 
 import java.util.List;

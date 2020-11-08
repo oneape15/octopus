@@ -2,7 +2,7 @@ package com.oneape.octopus.service.uid;
 
 import com.oneape.octopus.commons.cause.UidGenerateException;
 import com.oneape.octopus.commons.value.DateUtils;
-import com.oneape.octopus.model.dto.Id;
+import com.oneape.octopus.dto.Id;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;

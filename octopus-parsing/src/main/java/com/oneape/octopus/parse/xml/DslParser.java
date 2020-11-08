@@ -4,6 +4,7 @@ import com.oneape.octopus.commons.dto.Value;
 import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.data.SyntaxException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
@@ -19,7 +20,10 @@ import java.util.*;
  */
 @Slf4j
 public class DslParser {
-    private final static String LINE_COMMENT = "-- ";
+    private final static String LINE_COMMENT       = "--";
+    private static final String SEQ_COMMA_START    = "/*";
+    private static final String SEQ_COMMA_END      = "*/";
+    private static final int    SEQ_COMMA_CHAR_LEN = SEQ_COMMA_END.length();
 
     // The node stack
     private       Stack<XmlNode>     stack;
@@ -255,7 +259,8 @@ public class DslParser {
 
     /**
      * Run expression.
-     * Replace the placeholder "#{xxx}" with "?"
+     * 1. Replace the placeholder "#{xxx}" with "?"
+     * 2. Replace the placeholder "@{xxx}" with the real value.
      */
     private void runExpression() {
         if (stack.isEmpty()) return;
@@ -281,10 +286,14 @@ public class DslParser {
 
         List<Character> list = new ArrayList<>(len);
         for (int i = 0; i < len; ) {
-            if (chars[i] != '#') {
+            if (chars[i] != '#' && chars[i] != '@') {
                 list.add(chars[i++]);
                 continue;
             }
+
+            // Is the use real value tag ?
+            boolean isUseRealValue = chars[i] == '@';
+
             if (i + 1 < len && chars[i + 1] == '{') {
                 boolean hasFound = false;
                 int j = i + 1;
@@ -295,19 +304,20 @@ public class DslParser {
                     }
                 }
                 if (hasFound) {
-                    char[] valTag = new char[j - i];
-                    System.arraycopy(chars, i, valTag, 0, valTag.length);
+                    // Only the string of fields between ("#{", "@{") and "}" is needed
+                    char[] valTag = new char[j - i - 3];
+                    System.arraycopy(chars, i + 2, valTag, 0, valTag.length);
                     String tagName = new String(valTag);
                     Value value = paramMap.get(tagName);
                     if (value == null) {
-                        throw new SyntaxException("Run expression Error, " + tagName + " No input parameter");
+                        throw new SyntaxException("Run expression Error, [" + tagName + "] No input parameter");
                     }
 
                     // Determines whether it is a set
                     if (value.isMulti() || value.isRange()) {
                         Object valObj = value.getValue();
                         if (valObj == null) {
-                            throw new RuntimeException("The range parameter: " + tagName + " cannot be null.");
+                            throw new RuntimeException("The range parameter: [" + tagName + "] cannot be null.");
                         }
                         List<Object> arrVal = new ArrayList<>();
                         if (valObj.getClass().isArray()) {
@@ -315,36 +325,52 @@ public class DslParser {
                                 arrVal.addAll((List) valObj);
                             } else {
                                 Object[] arr = (Object[]) valObj;
-                                for (Object o : arr) {
-                                    arrVal.add(o);
-                                }
+                                arrVal.addAll(Arrays.asList(arr));
                             }
                         } else {
                             arrVal.add(valObj);
                         }
 
                         if (value.isMulti()) {
+                            // Erase the last equal.
+                            eraseTheLastEqual(list);
+
+                            addChar2List(list, false, " IN ( ", null);
                             for (int index = 0; index < arrVal.size(); index++) {
-                                params.add(new Value(arrVal.get(index), value.getDataType()));
+                                Object tmp = arrVal.get(index);
+                                if (!isUseRealValue) {
+                                    params.add(new Value(tmp, value.getDataType()));
+                                }
                                 if (index > 0) {
                                     list.add(',');
                                 }
-                                list.add('?');
+                                addChar2List(list, isUseRealValue, "?", tmp != null ? tmp.toString() : "");
                             }
+                            addChar2List(list, false, " ) ", null);
                         } else {
                             Object minVal = arrVal.get(0);
                             Object maxVal = arrVal.size() == 1 ? arrVal.get(0) : arrVal.get(1);
-                            params.add(new Value(minVal, value.getDataType()));
-                            params.add(new Value(maxVal, value.getDataType()));
-                            char[] tmps = " BETWEEN ? AND ? ".toCharArray();
-                            for (char tmp : tmps) {
-                                list.add(tmp);
+                            if (!isUseRealValue) {
+                                params.add(new Value(minVal, value.getDataType()));
+                                params.add(new Value(maxVal, value.getDataType()));
                             }
+
+                            // Erase the last equal.
+                            eraseTheLastEqual(list);
+
+                            addChar2List(list,
+                                    isUseRealValue,
+                                    " BETWEEN ? AND ? ",
+                                    " BETWEEN " + minVal + " AND " + maxVal + " "
+                            );
                         }
 
                     } else {
-                        list.add('?');
-                        params.add(value);
+                        // normal param
+                        if (!isUseRealValue) {
+                            params.add(value);
+                        }
+                        addChar2List(list, isUseRealValue, "?", value.getValue() != null ? value.getValue().toString() : "");
                     }
                     i = j;
                     continue;
@@ -362,12 +388,60 @@ public class DslParser {
 
         this.rawSql = StringUtils.trimToEmpty(new String(tmp));
 
-        // If you end with ";" End, then remove.
-        if (StringUtils.endsWith(this.rawSql, ";")) {
+        // If you end with English semicolon or Chinese semicolon, then remove.
+        if (StringUtils.endsWith(this.rawSql, ";") || StringUtils.endsWith(this.rawSql, "；")) {
             this.rawSql = StringUtils.substring(this.rawSql, 0, this.rawSql.length() - 1);
         }
 
         this.args = params;
+    }
+
+    /**
+     * Add the value to the list.
+     *
+     * @param characters     List
+     * @param isUseRealValue boolean
+     * @param replaceValue   String
+     * @param realValue      String
+     */
+    private void addChar2List(List<Character> characters, Boolean isUseRealValue, String replaceValue, String realValue) {
+        char[] arr;
+        if (isUseRealValue) {
+            if (StringUtils.isBlank(realValue)) return;
+
+            arr = realValue.toCharArray();
+        } else {
+            if (StringUtils.isBlank(replaceValue)) return;
+            arr = replaceValue.toCharArray();
+        }
+
+        for (char tmp : arr) {
+            characters.add(tmp);
+        }
+    }
+
+    /**
+     * Erase the last equal.
+     *
+     * @param characters List
+     */
+    private void eraseTheLastEqual(List<Character> characters) {
+        if (CollectionUtils.isEmpty(characters)) return;
+
+        int index = characters.size() - 1;
+        for (; index > -1; index--) {
+            if (characters.get(index) == ' ') {
+                continue;
+            }
+            if (characters.get(index) == '=') {
+                break;
+            }
+
+            // If it is another character, it pops out.
+            return;
+        }
+        // remove the equal char.
+        characters.remove(index);
     }
 
     /**
@@ -519,14 +593,15 @@ public class DslParser {
      * @param rawSql The dsl sql text
      * @return String
      */
-    private String clearDslSqlString(String rawSql) {
+    public static String clearDslSqlString(String rawSql) {
         // Remove comments and line breaks and non-characters
         Charset charset = Charset.forName("utf8");
-        StringBuilder sb = new StringBuilder();
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(rawSql.getBytes(charset)), charset));
+
             String line;
             int index = 0;
+            StringBuilder sb = new StringBuilder();
             while ((line = br.readLine()) != null) {
                 line = StringUtils.trimToEmpty(line);
 
@@ -535,16 +610,46 @@ public class DslParser {
                     continue;
                 }
 
+                // Delete the segment comment block that in one line.
+                int startIndex = StringUtils.indexOf(line, SEQ_COMMA_START);
+                int endIndex = StringUtils.indexOf(line, SEQ_COMMA_END);
+                if (startIndex > -1 && endIndex > 0 && startIndex < endIndex) {
+                    line = StringUtils.substring(line, 0, startIndex) + StringUtils.substring(line, endIndex + SEQ_COMMA_CHAR_LEN);
+                }
+
                 if (index++ > 0) sb.append(" ");
 
                 sb.append(line);
             }
+
+            // Delete the segment comment block.
+            return removeSegmentComment(sb.toString());
         } catch (Exception e) {
             log.error("read the raw sql error", e);
             throw new SyntaxException("read the raw sql error.", e);
         }
+    }
 
-        return sb.toString();
+    /**
+     * Delete the segment comment block.
+     *
+     * @param sql String
+     * @return String
+     */
+    private static String removeSegmentComment(String sql) {
+        if (StringUtils.isBlank(sql) || !StringUtils.contains(sql, SEQ_COMMA_START)) {
+            return sql;
+        }
+
+        int start = StringUtils.indexOf(sql, SEQ_COMMA_START);
+        int end = StringUtils.indexOf(sql, SEQ_COMMA_END);
+
+        if (start > 0 && end > 0 && start < end) {
+            String tmp = StringUtils.substring(sql, 0, start) + StringUtils.substring(sql, end + SEQ_COMMA_CHAR_LEN);
+            return removeSegmentComment(tmp);
+        }
+
+        return sql;
     }
 
 

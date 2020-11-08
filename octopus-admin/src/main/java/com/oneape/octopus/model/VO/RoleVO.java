@@ -1,6 +1,6 @@
 package com.oneape.octopus.model.VO;
 
-import com.oneape.octopus.model.domain.system.RoleDO;
+import com.oneape.octopus.domain.system.RoleDO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 

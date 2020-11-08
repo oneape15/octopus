@@ -1,6 +1,6 @@
 package com.oneape.octopus.service.peekdata;
 
-import com.oneape.octopus.model.domain.peekdata.ModelMetaDO;
+import com.oneape.octopus.domain.peekdata.ModelMetaDO;
 import com.oneape.octopus.model.VO.ModelMetaVO;
 import com.oneape.octopus.service.BaseService;
 

@@ -5,6 +5,7 @@ import com.oneape.octopus.datasource.DefaultDatasourceFactory;
 import com.oneape.octopus.datasource.DefaultQueryFactory;
 import com.oneape.octopus.datasource.QueryFactory;
 import com.oneape.octopus.parse.ParsingFactory;
+import com.oneape.octopus.parse.xml.XmlParsingFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,6 @@ public class OctopusConfig {
     @Bean
     public ParsingFactory parsingFactory() {
         log.info("-----init octopus parsingFactory----");
-        return null;
+        return new XmlParsingFactory();
     }
 }

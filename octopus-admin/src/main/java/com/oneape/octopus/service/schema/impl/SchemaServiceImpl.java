@@ -4,12 +4,12 @@ import com.google.common.base.Preconditions;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.datasource.DatasourceInfo;
 import com.oneape.octopus.datasource.QueryFactory;
-import com.oneape.octopus.datasource.schema.FieldInfo;
-import com.oneape.octopus.datasource.schema.TableInfo;
+import com.oneape.octopus.datasource.schema.SchemaTableField;
+import com.oneape.octopus.datasource.schema.SchemaTable;
 import com.oneape.octopus.mapper.schema.TableColumnMapper;
 import com.oneape.octopus.mapper.schema.TableSchemaMapper;
-import com.oneape.octopus.model.domain.schema.TableColumnDO;
-import com.oneape.octopus.model.domain.schema.TableSchemaDO;
+import com.oneape.octopus.domain.schema.TableColumnDO;
+import com.oneape.octopus.domain.schema.TableSchemaDO;
 import com.oneape.octopus.service.schema.DatasourceService;
 import com.oneape.octopus.service.schema.SchemaService;
 import com.oneape.octopus.service.uid.UIDGeneratorService;
@@ -63,8 +63,8 @@ public class SchemaServiceImpl implements SchemaService {
             throw new BizException("Failed to get database name~");
         }
 
-        List<TableInfo> tableInfoList = queryFactory.allTables(dsi, schema);
-        if (CollectionUtils.isEmpty(tableInfoList)) {
+        List<SchemaTable> schemaTableList = queryFactory.allTables(dsi, schema);
+        if (CollectionUtils.isEmpty(schemaTableList)) {
             log.info("database name: {}, There is no data table", schema);
             return 1;
         }
@@ -73,7 +73,7 @@ public class SchemaServiceImpl implements SchemaService {
 
         List<TableSchemaDO> needInsertList = new ArrayList<>();
         List<String> allTables = new ArrayList<>();
-        for (TableInfo ti : tableInfoList) {
+        for (SchemaTable ti : schemaTableList) {
             String tableName = ti.getName();
 
             allTables.add(tableName);
@@ -119,12 +119,12 @@ public class SchemaServiceImpl implements SchemaService {
             throw new BizException("Failed to get database name~");
         }
 
-        List<FieldInfo> fieldList = queryFactory.fieldOfTable(dsi, schema, tableName);
+        List<SchemaTableField> fieldList = queryFactory.fieldOfTable(dsi, schema, tableName);
         List<String> existColumnNames = tableColumnMapper.getTableColumnNameList(dsId, tableName);
 
         List<TableColumnDO> needInsertList = new ArrayList<>();
         List<String> allColumns = new ArrayList<>();
-        for (FieldInfo fi : fieldList) {
+        for (SchemaTableField fi : fieldList) {
             String columnName = fi.getName();
 
             allColumns.add(columnName);

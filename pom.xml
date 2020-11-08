@@ -21,6 +21,7 @@
         <module>octopus-parsing</module>
         <module>octopus-commons</module>
         <module>octopus-wharf</module>
+        <module>octopus-dao</module>
     </modules>
 
     <properties>
@@ -30,6 +31,7 @@
         <lombok.version>1.18.10</lombok.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
+        <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <commons-csv.version>1.7</commons-csv.version>
         <antlr4-runtime.version>4.7.2</antlr4-runtime.version>
         <HikariCP.version>3.4.1</HikariCP.version>
@@ -50,6 +52,7 @@
         <druid.version>1.1.22</druid.version>
 
         <octopus-commons.version>1.0-SNAPSHOT</octopus-commons.version>
+        <octopus-dao.version>1.0-SNAPSHOT</octopus-dao.version>
         <octopus-query.version>1.0-SNAPSHOT</octopus-query.version>
         <octopus-parsing.version>1.0-SNAPSHOT</octopus-parsing.version>
     </properties>
@@ -63,6 +66,11 @@
                 <groupId>com.oneape</groupId>
                 <artifactId>octopus-commons</artifactId>
                 <version>${octopus-commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.oneape</groupId>
+                <artifactId>octopus-dao</artifactId>
+                <version>${octopus-dao.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.oneape</groupId>
@@ -153,6 +161,13 @@
                 <artifactId>commons-collections4</artifactId>
                 <version>${commons-collections4.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils.version}</version>
+            </dependency>
+
             <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
             <dependency>
                 <groupId>org.apache.commons</groupId>

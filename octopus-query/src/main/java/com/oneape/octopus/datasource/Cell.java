@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * 某一单元格数据
+ * Data for a cell.
  */
 @Data
 @NoArgsConstructor

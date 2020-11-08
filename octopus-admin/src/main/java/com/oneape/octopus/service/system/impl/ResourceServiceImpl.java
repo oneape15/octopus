@@ -1,14 +1,14 @@
 package com.oneape.octopus.service.system.impl;
 
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.common.MaskUtils;
+import com.oneape.octopus.commons.value.MaskUtils;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.constant.OctopusConstant;
 import com.oneape.octopus.mapper.system.ResourceMapper;
 import com.oneape.octopus.mapper.system.RoleRlResourceMapper;
-import com.oneape.octopus.model.domain.system.ResourceDO;
-import com.oneape.octopus.model.domain.system.RoleRlResourceDO;
-import com.oneape.octopus.model.dto.system.ResourceDTO;
+import com.oneape.octopus.domain.system.ResourceDO;
+import com.oneape.octopus.domain.system.RoleRlResourceDO;
+import com.oneape.octopus.dto.system.ResourceDTO;
 import com.oneape.octopus.service.system.ResourceService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

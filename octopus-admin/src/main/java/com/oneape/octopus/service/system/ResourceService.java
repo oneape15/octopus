@@ -1,7 +1,7 @@
 package com.oneape.octopus.service.system;
 
-import com.oneape.octopus.model.domain.system.ResourceDO;
-import com.oneape.octopus.model.dto.system.ResourceDTO;
+import com.oneape.octopus.domain.system.ResourceDO;
+import com.oneape.octopus.dto.system.ResourceDTO;
 import com.oneape.octopus.service.BaseService;
 
 import java.util.List;

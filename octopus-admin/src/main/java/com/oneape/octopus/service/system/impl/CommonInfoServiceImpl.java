@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.constant.OctopusConstant;
 import com.oneape.octopus.mapper.system.CommonInfoMapper;
-import com.oneape.octopus.model.domain.system.CommonInfoDO;
+import com.oneape.octopus.domain.system.CommonInfoDO;
 import com.oneape.octopus.service.system.CommonInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

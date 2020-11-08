@@ -5,8 +5,8 @@ import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.cause.UnauthorizedException;
 import com.oneape.octopus.controller.system.form.UserForm;
-import com.oneape.octopus.model.domain.system.UserDO;
-import com.oneape.octopus.model.dto.system.UserDTO;
+import com.oneape.octopus.domain.system.UserDO;
+import com.oneape.octopus.dto.system.UserDTO;
 import com.oneape.octopus.model.VO.ApiResult;
 import com.oneape.octopus.service.system.AccountService;
 import org.springframework.validation.annotation.Validated;
@@ -126,6 +126,24 @@ public class AccountController {
             return ApiResult.ofData("Modified user information successfully.");
         }
         return ApiResult.ofError(StateCode.BizError, "Modified user information fail.");
+    }
+
+    @PostMapping("/lockUser/{userId}")
+    public ApiResult lockUser(@PathVariable(name = "userId") Long userId) {
+        int status = accountService.changeUserStatus(userId, 1);
+        if (status > 0) {
+            return ApiResult.ofData("Successfully lock the user.");
+        }
+        return ApiResult.ofError(StateCode.BizError, "Failed to lock user.");
+    }
+
+    @PostMapping("/unlockUser/{userId}")
+    public ApiResult unlockUser(@PathVariable(name = "userId") Long userId) {
+        int status = accountService.changeUserStatus(userId, 0);
+        if (status > 0) {
+            return ApiResult.ofData("Successfully unlock the user.");
+        }
+        return ApiResult.ofError(StateCode.BizError, "Failed to unlock user.");
     }
 
 }

@@ -8,7 +8,7 @@ import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.controller.peekdata.form.PeekForm;
 import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.model.VO.ApiResult;
-import com.oneape.octopus.model.domain.peekdata.PeekDO;
+import com.oneape.octopus.domain.peekdata.PeekDO;
 import com.oneape.octopus.service.peekdata.PeekService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;

@@ -6,11 +6,11 @@ import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.datasource.DatasourceInfo;
 import com.oneape.octopus.datasource.DatasourceTypeHelper;
 import com.oneape.octopus.datasource.QueryFactory;
-import com.oneape.octopus.datasource.schema.FieldInfo;
+import com.oneape.octopus.datasource.schema.SchemaTableField;
 import com.oneape.octopus.mapper.peekdata.ModelMapper;
-import com.oneape.octopus.model.domain.peekdata.ModelDO;
-import com.oneape.octopus.model.domain.peekdata.ModelMetaDO;
-import com.oneape.octopus.model.domain.schema.DatasourceDO;
+import com.oneape.octopus.domain.peekdata.ModelDO;
+import com.oneape.octopus.domain.peekdata.ModelMetaDO;
+import com.oneape.octopus.domain.schema.DatasourceDO;
 import com.oneape.octopus.model.VO.ModelMetaVO;
 import com.oneape.octopus.model.VO.ModelVO;
 import com.oneape.octopus.service.peekdata.ModelMetaService;
@@ -124,7 +124,7 @@ public class ModelServiceImpl implements ModelService {
             dsi.setDatasourceType(DatasourceTypeHelper.byName(datasourceDO.getType()));
 
             String schema = queryFactory.getSchema(dsi);
-            List<FieldInfo> fields = queryFactory.fieldOfTable(dsi, schema, tableName);
+            List<SchemaTableField> fields = queryFactory.fieldOfTable(dsi, schema, tableName);
 
             final List<ModelMetaDO> metas = new ArrayList<>();
             if (CollectionUtils.isNotEmpty(fields)) {

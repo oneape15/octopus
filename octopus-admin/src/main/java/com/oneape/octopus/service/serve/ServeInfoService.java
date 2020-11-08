@@ -1,6 +1,6 @@
 package com.oneape.octopus.service.serve;
 
-import com.oneape.octopus.model.domain.serve.ServeInfoDO;
+import com.oneape.octopus.domain.serve.ServeInfoDO;
 import com.oneape.octopus.service.BaseService;
 
 public interface ServeInfoService extends BaseService<ServeInfoDO> {

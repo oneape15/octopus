@@ -1,8 +1,7 @@
 package com.oneape.octopus.model.VO.report.args;
 
-import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.commons.value.TitleValueDTO;
-import com.oneape.octopus.model.enums.ComponentType;
+import com.oneape.octopus.commons.enums.ComponentType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -1,6 +1,6 @@
 package com.oneape.octopus.model.VO;
 
-import com.oneape.octopus.model.domain.peekdata.ModelMetaDO;
+import com.oneape.octopus.domain.peekdata.ModelMetaDO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 

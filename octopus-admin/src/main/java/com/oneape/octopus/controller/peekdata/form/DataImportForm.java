@@ -1,7 +1,7 @@
 package com.oneape.octopus.controller.peekdata.form;
 
 import com.oneape.octopus.controller.BaseForm;
-import com.oneape.octopus.model.domain.peekdata.ImportRecordDO;
+import com.oneape.octopus.domain.peekdata.ImportRecordDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;

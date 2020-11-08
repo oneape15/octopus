@@ -8,8 +8,8 @@ import com.oneape.octopus.datasource.data.ColumnHead;
 import com.oneape.octopus.commons.dto.DataType;
 import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.commons.dto.Value;
-import com.oneape.octopus.datasource.schema.FieldInfo;
-import com.oneape.octopus.datasource.schema.TableInfo;
+import com.oneape.octopus.datasource.schema.SchemaTableField;
+import com.oneape.octopus.datasource.schema.SchemaTable;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +31,7 @@ import java.util.Map;
  */
 @Slf4j
 public abstract class Actuator {
-    private static final String FILE_PATH       = "/Users/xiaodian/Desktop/";
+    private static final String FILE_PATH       = "/Users/oneape/Desktop/";
     private static final String CSV_FILE_SUFFIX = ".csv";
     private static final String ZIP_FILE_SUFFIX = ".zip";
 
@@ -251,7 +251,7 @@ public abstract class Actuator {
      *
      * @return List
      */
-    public List<TableInfo> allTables() {
+    public List<SchemaTable> allTables() {
         String runSql = getAllTablesSql();
         return getTables(runSql);
     }
@@ -262,7 +262,7 @@ public abstract class Actuator {
      * @param schema String 数据库名称
      * @return List
      */
-    public List<TableInfo> allTablesOfDb(String schema) {
+    public List<SchemaTable> allTablesOfDb(String schema) {
         String runSql = getTablesSqlOfDb(schema);
         return getTables(runSql);
     }
@@ -273,23 +273,23 @@ public abstract class Actuator {
      * @param runSql String
      * @return List
      */
-    public List<TableInfo> getTables(String runSql) {
-        List<TableInfo> tableInfos = new ArrayList<>();
+    public List<SchemaTable> getTables(String runSql) {
+        List<SchemaTable> schemaTables = new ArrayList<>();
         log.info("执行获取表信息SQL: {}", runSql);
         try (ResultSet rs = statement.executeQuery(runSql)) {
             while (rs.next()) {
-                TableInfo ti = new TableInfo();
+                SchemaTable ti = new SchemaTable();
                 ti.setSchema(rs.getString(COL_SCHEMA));
                 ti.setName(rs.getString(COL_TABLE));
                 ti.setComment(rs.getString(COL_COMMENT));
                 ti.setType(rs.getInt(COL_TABLE_TYPE));
-                tableInfos.add(ti);
+                schemaTables.add(ti);
             }
         } catch (SQLException e) {
             log.error("获取表信息失败", e);
             throw new RuntimeException("获取表信息失败", e);
         }
-        return tableInfos;
+        return schemaTables;
     }
 
     /**
@@ -297,7 +297,7 @@ public abstract class Actuator {
      *
      * @return List
      */
-    public List<FieldInfo> allFields() {
+    public List<SchemaTableField> allFields() {
         String runSql = getAllFieldsSql();
         return getFields(runSql);
     }
@@ -308,7 +308,7 @@ public abstract class Actuator {
      * @param schema String 数据库名称
      * @return List
      */
-    public List<FieldInfo> allFieldsOfDb(String schema) {
+    public List<SchemaTableField> allFieldsOfDb(String schema) {
         String runSql = getFieldsSqlOfDb(schema);
         return getFields(runSql);
     }
@@ -320,17 +320,17 @@ public abstract class Actuator {
      * @param tableName String 表名称
      * @return List
      */
-    public List<FieldInfo> fieldOfTable(String schema, String tableName) {
+    public List<SchemaTableField> fieldOfTable(String schema, String tableName) {
         String runSql = getFieldsSqlOfTable(schema, tableName);
         return getFields(runSql);
     }
 
-    public List<FieldInfo> getFields(String runSql) {
-        List<FieldInfo> infos = new ArrayList<>();
+    public List<SchemaTableField> getFields(String runSql) {
+        List<SchemaTableField> infos = new ArrayList<>();
         log.info("查询字段信息：{}", runSql);
         try (ResultSet rs = statement.executeQuery(runSql)) {
             while (rs.next()) {
-                FieldInfo fi = new FieldInfo();
+                SchemaTableField fi = new SchemaTableField();
                 fi.setSchema(rs.getString(COL_SCHEMA));
                 fi.setTableName(rs.getString(COL_TABLE));
                 fi.setPrimaryKey(rs.getInt(COL_PRI_KEY) == 1);

@@ -3,7 +3,7 @@ package com.oneape.octopus.service.peekdata.impl;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.mapper.peekdata.ImportRecordMapper;
-import com.oneape.octopus.model.domain.peekdata.ImportRecordDO;
+import com.oneape.octopus.domain.peekdata.ImportRecordDO;
 import com.oneape.octopus.model.VO.ImportRecordVO;
 import com.oneape.octopus.service.peekdata.ImportRecordService;
 import lombok.extern.slf4j.Slf4j;

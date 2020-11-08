@@ -1,7 +1,7 @@
 package com.oneape.octopus.datasource;
 
 /**
- * 数据列加工处理方法
+ * Data column processing method.
  * @param <T>
  * @param <R>
  */

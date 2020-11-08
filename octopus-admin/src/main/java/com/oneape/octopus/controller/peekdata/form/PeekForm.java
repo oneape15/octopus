@@ -1,7 +1,7 @@
 package com.oneape.octopus.controller.peekdata.form;
 
 import com.oneape.octopus.controller.BaseForm;
-import com.oneape.octopus.model.domain.peekdata.PeekDO;
+import com.oneape.octopus.domain.peekdata.PeekDO;
 import com.oneape.octopus.model.VO.PeekFieldVO;
 import com.oneape.octopus.model.VO.PeekRuleVO;
 import lombok.Data;

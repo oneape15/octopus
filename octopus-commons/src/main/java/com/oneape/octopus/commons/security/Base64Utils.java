@@ -1,32 +1,60 @@
 package com.oneape.octopus.commons.security;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import org.apache.commons.lang3.StringUtils;
+
+import java.nio.charset.Charset;
+import java.util.Base64;
 
 /**
- * base64工具
+ * base64 tools
  * Created by oneape<oneape15@163.com>
  * Created 2020-02-27 10:02.
  * Modify:
  */
 public class Base64Utils {
+    private static final Charset utf8 = Charset.forName("UTF-8");
+
+    private static final Base64.Decoder decoder = Base64.getDecoder();
+    private static final Base64.Encoder encoder = Base64.getEncoder();
+
     /**
-     * 将字符串加密为base64
+     * Encrypt the byte array as a Base64 byte array.
      *
      * @param before byte[]
      * @return String
      */
     public static String toBase64(byte[] before) {
-        return (new BASE64Encoder()).encodeBuffer(before);
+        byte[] after = encoder.encode(before);
+        return new String(after, utf8);
     }
 
     /**
-     * 将加密为base64后的字符串解密为原文
+     * Decode the cipherText.
      *
-     * @param base64 String
+     * @param cipher String
      * @return byte[]
      */
-    public static byte[] fromBase64(String base64) throws Exception {
-        return (new BASE64Decoder()).decodeBuffer(base64);
+    public static byte[] fromBase64(String cipher) throws Exception {
+        if (StringUtils.isBlank(cipher)) {
+            return null;
+        }
+        byte[] bits = cipher.getBytes(utf8);
+
+        return decoder.decode(bits);
+    }
+
+    /**
+     * Decode the cipherText.
+     *
+     * @param cipher String
+     * @return byte[]
+     */
+    public static String decodeCipherText(String cipher) {
+        if (StringUtils.isBlank(cipher)) {
+            return null;
+        }
+        byte[] bits = cipher.getBytes(utf8);
+
+        return new String(decoder.decode(bits), utf8);
     }
 }

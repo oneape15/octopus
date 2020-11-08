@@ -1,7 +1,7 @@
 package com.oneape.octopus.model.VO.report;
 
-import com.oneape.octopus.model.dto.serve.ServeColumnDTO;
-import com.oneape.octopus.model.domain.serve.ServeInfoDO;
+import com.oneape.octopus.dto.serve.ServeColumnDTO;
+import com.oneape.octopus.domain.serve.ServeInfoDO;
 import com.oneape.octopus.model.VO.report.args.QueryArg;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;

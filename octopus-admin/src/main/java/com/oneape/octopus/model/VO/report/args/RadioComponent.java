@@ -1,6 +1,6 @@
 package com.oneape.octopus.model.VO.report.args;
 
-import com.oneape.octopus.model.enums.ComponentType;
+import com.oneape.octopus.commons.enums.ComponentType;
 
 /**
  * Created by oneape<oneape15@163.com>
