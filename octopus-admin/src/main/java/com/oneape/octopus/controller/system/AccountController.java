@@ -7,7 +7,7 @@ import com.oneape.octopus.commons.cause.UnauthorizedException;
 import com.oneape.octopus.controller.system.form.UserForm;
 import com.oneape.octopus.domain.system.UserDO;
 import com.oneape.octopus.dto.system.UserDTO;
-import com.oneape.octopus.model.VO.ApiResult;
+import com.oneape.octopus.model.vo.ApiResult;
 import com.oneape.octopus.service.system.AccountService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

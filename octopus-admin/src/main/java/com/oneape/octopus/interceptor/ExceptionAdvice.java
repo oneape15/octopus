@@ -2,7 +2,7 @@ package com.oneape.octopus.interceptor;
 
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.cause.UnauthorizedException;
-import com.oneape.octopus.model.VO.ApiResult;
+import com.oneape.octopus.model.vo.ApiResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;

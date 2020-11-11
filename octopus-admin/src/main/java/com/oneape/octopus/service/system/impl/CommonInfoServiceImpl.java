@@ -56,15 +56,6 @@ public class CommonInfoServiceImpl implements CommonInfoService {
     }
 
     /**
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(CommonInfoDO model) {
-        return commonInfoMapper.update(model);
-    }
-
-    /**
      * Get the model information by the primary key.
      *
      * @param id Long

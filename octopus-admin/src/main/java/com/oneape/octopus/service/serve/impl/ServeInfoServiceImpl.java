@@ -2,17 +2,17 @@ package com.oneape.octopus.service.serve.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.algorithm.Digraph;
 import com.oneape.octopus.commons.algorithm.DirectedCycle;
+import com.oneape.octopus.commons.cause.BizException;
+import com.oneape.octopus.commons.enums.ServeType;
 import com.oneape.octopus.commons.value.OptStringUtils;
-import com.oneape.octopus.mapper.serve.ServeInfoMapper;
 import com.oneape.octopus.domain.serve.ServeInfoDO;
 import com.oneape.octopus.dto.serve.ServeColumnDTO;
 import com.oneape.octopus.dto.serve.ServeConfigTextDTO;
 import com.oneape.octopus.dto.serve.ServeParamDTO;
 import com.oneape.octopus.dto.serve.ServeSqlDTO;
-import com.oneape.octopus.commons.enums.ServeType;
+import com.oneape.octopus.mapper.serve.ServeInfoMapper;
 import com.oneape.octopus.service.serve.ServeInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -74,15 +74,6 @@ public class ServeInfoServiceImpl implements ServeInfoService {
         }
 
         return serveInfoMapper.insert(model);
-    }
-
-    /**
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(ServeInfoDO model) {
-        return 0;
     }
 
     /**

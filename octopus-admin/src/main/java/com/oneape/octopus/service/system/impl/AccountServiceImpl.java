@@ -85,15 +85,6 @@ public class AccountServiceImpl implements AccountService {
     }
 
     /**
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(UserDO model) {
-        return userMapper.update(model);
-    }
-
-    /**
      * Get the model information by the primary key.
      *
      * @param id Long

@@ -1,10 +1,8 @@
 package com.oneape.octopus.mapper.system;
 
-import com.oneape.octopus.commons.constant.OctopusConstant;
-import com.oneape.octopus.commons.enums.Archive;
+import com.oneape.octopus.domain.system.UserDO;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.mapper.system.provider.UserSqlProvider;
-import com.oneape.octopus.domain.system.UserDO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

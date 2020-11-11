@@ -1,7 +1,7 @@
 package com.oneape.octopus.controller;
 
 import com.oneape.octopus.commons.cause.BizException;
-import com.oneape.octopus.model.VO.ApiResult;
+import com.oneape.octopus.model.vo.ApiResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;

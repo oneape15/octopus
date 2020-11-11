@@ -17,12 +17,6 @@ public interface BaseService<T extends BaseDO> {
     int save(T model);
 
     /**
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    int edit(T model);
-
-    /**
      * Delete by primary key Id.
      *
      * @param id Long

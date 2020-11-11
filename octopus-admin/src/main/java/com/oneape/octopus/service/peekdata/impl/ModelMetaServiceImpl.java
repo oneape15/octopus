@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.mapper.peekdata.ModelMetaMapper;
 import com.oneape.octopus.domain.peekdata.ModelMetaDO;
-import com.oneape.octopus.model.VO.ModelMetaVO;
+import com.oneape.octopus.model.vo.ModelMetaVO;
 import com.oneape.octopus.service.peekdata.ModelMetaService;
 import com.oneape.octopus.service.system.AccountService;
 import com.oneape.octopus.service.uid.UIDGeneratorService;
@@ -98,15 +98,6 @@ public class ModelMetaServiceImpl implements ModelMetaService {
             return modelMetaMapper.update(model);
         }
         return modelMetaMapper.insert(model);
-    }
-
-    /**
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(ModelMetaDO model) {
-        return 0;
     }
 
     /**

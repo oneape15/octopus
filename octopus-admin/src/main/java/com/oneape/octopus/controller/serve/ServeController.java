@@ -6,7 +6,7 @@ import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.controller.serve.form.ServeForm;
 import com.oneape.octopus.domain.serve.ServeInfoDO;
-import com.oneape.octopus.model.VO.ApiResult;
+import com.oneape.octopus.model.vo.ApiResult;
 import com.oneape.octopus.commons.enums.ReportParamType;
 import com.oneape.octopus.commons.enums.ServeType;
 import com.oneape.octopus.commons.enums.VisualType;

@@ -9,7 +9,7 @@ import com.oneape.octopus.datasource.DatasourceFactory;
 import com.oneape.octopus.datasource.data.DatasourceInfo;
 import com.oneape.octopus.datasource.DatasourceTypeHelper;
 import com.oneape.octopus.domain.schema.DatasourceDO;
-import com.oneape.octopus.model.VO.ApiResult;
+import com.oneape.octopus.model.vo.ApiResult;
 import com.oneape.octopus.service.schema.DatasourceService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;

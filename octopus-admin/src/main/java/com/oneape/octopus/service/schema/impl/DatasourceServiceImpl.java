@@ -55,15 +55,6 @@ public class DatasourceServiceImpl implements DatasourceService {
     }
 
     /**
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(DatasourceDO model) {
-        return datasourceMapper.update(model);
-    }
-
-    /**
      * Delete by primary key Id.
      *
      * @param id Long

@@ -73,15 +73,6 @@ public class RoleServiceImpl implements RoleService {
     }
 
     /**
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(RoleDO model) {
-        return 0;
-    }
-
-    /**
      * Get the model information by the primary key.
      *
      * @param id Long

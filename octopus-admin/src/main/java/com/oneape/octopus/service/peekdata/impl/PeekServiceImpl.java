@@ -19,9 +19,9 @@ import com.oneape.octopus.domain.peekdata.PeekDO;
 import com.oneape.octopus.domain.peekdata.PeekFieldDO;
 import com.oneape.octopus.domain.peekdata.PeekRuleDO;
 import com.oneape.octopus.dto.system.UserDTO;
-import com.oneape.octopus.model.VO.ModelVO;
-import com.oneape.octopus.model.VO.PeekFieldVO;
-import com.oneape.octopus.model.VO.PeekRuleVO;
+import com.oneape.octopus.model.vo.ModelVO;
+import com.oneape.octopus.model.vo.PeekFieldVO;
+import com.oneape.octopus.model.vo.PeekRuleVO;
 import com.oneape.octopus.service.peekdata.AggregationOperatorHelper;
 import com.oneape.octopus.service.peekdata.ModelService;
 import com.oneape.octopus.service.peekdata.PeekRuleTypeHelper;
@@ -96,15 +96,6 @@ public class PeekServiceImpl implements PeekService {
             return peekMapper.update(model);
         }
         return peekMapper.insert(model);
-    }
-
-    /**
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(PeekDO model) {
-        return 0;
     }
 
     /**

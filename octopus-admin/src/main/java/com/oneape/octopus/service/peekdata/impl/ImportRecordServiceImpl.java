@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.mapper.peekdata.ImportRecordMapper;
 import com.oneape.octopus.domain.peekdata.ImportRecordDO;
-import com.oneape.octopus.model.VO.ImportRecordVO;
+import com.oneape.octopus.model.vo.ImportRecordVO;
 import com.oneape.octopus.service.peekdata.ImportRecordService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -85,15 +85,6 @@ public class ImportRecordServiceImpl implements ImportRecordService {
      */
     @Override
     public int save(ImportRecordDO model) {
-        return 0;
-    }
-
-    /**
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(ImportRecordDO model) {
         return 0;
     }
 

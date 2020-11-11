@@ -1,6 +1,6 @@
 package com.oneape.octopus.controller;
 
-import com.oneape.octopus.model.VO.ApiResult;
+import com.oneape.octopus.model.vo.ApiResult;
 import org.assertj.core.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

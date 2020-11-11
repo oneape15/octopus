@@ -3,7 +3,7 @@ package com.oneape.octopus.controller.schema;
 import com.oneape.octopus.controller.schema.form.TableColumnForm;
 import com.oneape.octopus.domain.schema.TableColumnDO;
 import com.oneape.octopus.domain.schema.TableSchemaDO;
-import com.oneape.octopus.model.VO.ApiResult;
+import com.oneape.octopus.model.vo.ApiResult;
 import com.oneape.octopus.service.schema.SchemaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;

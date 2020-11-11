@@ -5,7 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.controller.system.form.RoleForm;
 import com.oneape.octopus.domain.system.RoleDO;
-import com.oneape.octopus.model.VO.ApiResult;
+import com.oneape.octopus.model.vo.ApiResult;
 import com.oneape.octopus.commons.enums.Archive;
 import com.oneape.octopus.service.system.RoleService;
 import org.springframework.validation.annotation.Validated;

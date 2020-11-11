@@ -1,0 +1,83 @@
+package com.oneape.octopus.model.vo;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.oneape.octopus.commons.cause.StateCode;
+import lombok.Data;
+
+import java.io.Serializable;
+
+@Data
+public class ApiResult<T> implements Serializable {
+    /**
+     * 返回结果
+     */
+    private T data;
+    /**
+     * 错误码
+     */
+    @JsonProperty("error_code")
+    private Integer code;
+    /**
+     * 错误信息
+     */
+    @JsonProperty("error_message")
+    private String message;
+
+    public ApiResult() {
+        this(StateCode.OK);
+    }
+
+    public ApiResult(StateCode stateCode) {
+        this.code = stateCode.getCode();
+        this.message = stateCode.getMessage();
+    }
+
+    public ApiResult(StateCode stateCode, T data) {
+        this(stateCode);
+        this.data = data;
+    }
+
+    public ApiResult(Integer code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
+    public ApiResult(T data, Integer code, String message) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
+
+    public ApiResult(T data, Integer code) {
+        this.code = code;
+        this.message = "";
+        this.data = data;
+    }
+
+    public ApiResult(T data) {
+        this();
+        this.data = data;
+    }
+
+    public static <T> ApiResult<T> ofData(T data) {
+        return new ApiResult<>(data);
+    }
+
+    public static <T> ApiResult<T> ofMessage(String message) {
+        return new ApiResult<>(StateCode.OK.getCode(), message);
+    }
+
+    public static <T> ApiResult<T> ofError(StateCode stateCode) {
+        return new ApiResult<>(stateCode);
+    }
+
+    public static <T> ApiResult<T> ofError(int code, String message) {
+        return new ApiResult<>(null, code, message);
+    }
+
+    public static <T> ApiResult<T> ofError(StateCode stateCode, String message) {
+        ApiResult<T> ret = new ApiResult<>(stateCode);
+        ret.setMessage(message);
+        return ret;
+    }
+}

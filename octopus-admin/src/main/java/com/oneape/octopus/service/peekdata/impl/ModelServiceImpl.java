@@ -11,8 +11,8 @@ import com.oneape.octopus.mapper.peekdata.ModelMapper;
 import com.oneape.octopus.domain.peekdata.ModelDO;
 import com.oneape.octopus.domain.peekdata.ModelMetaDO;
 import com.oneape.octopus.domain.schema.DatasourceDO;
-import com.oneape.octopus.model.VO.ModelMetaVO;
-import com.oneape.octopus.model.VO.ModelVO;
+import com.oneape.octopus.model.vo.ModelMetaVO;
+import com.oneape.octopus.model.vo.ModelVO;
 import com.oneape.octopus.service.peekdata.ModelMetaService;
 import com.oneape.octopus.service.peekdata.ModelService;
 import com.oneape.octopus.service.schema.DatasourceService;
@@ -48,15 +48,6 @@ public class ModelServiceImpl implements ModelService {
     @Override
     public List<ModelDO> find(ModelDO model) {
         return modelMapper.list(model);
-    }
-
-    /**
-     * @param model T
-     * @return int 1 - success; 0 - fail.
-     */
-    @Override
-    public int edit(ModelDO model) {
-        return modelMapper.update(model);
     }
 
     /**

@@ -2,8 +2,8 @@ package com.oneape.octopus.controller.peekdata.form;
 
 import com.oneape.octopus.controller.BaseForm;
 import com.oneape.octopus.domain.peekdata.PeekDO;
-import com.oneape.octopus.model.VO.PeekFieldVO;
-import com.oneape.octopus.model.VO.PeekRuleVO;
+import com.oneape.octopus.model.vo.PeekFieldVO;
+import com.oneape.octopus.model.vo.PeekRuleVO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;
