@@ -18,7 +18,7 @@ import java.util.Set;
  */
 public class TestMain {
     public static void main(String[] args) {
-        String sql = " select * from dem_report  1 ";
+        String sql = " select * from dem_report ";
         String dbType = JdbcConstants.POSTGRESQL;
 
         //格式化输出

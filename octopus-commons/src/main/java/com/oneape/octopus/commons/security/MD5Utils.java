@@ -6,11 +6,11 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
 /**
- * md5工具类
+ * MD5 Utility class.
  */
 public class MD5Utils {
 
-    // 盐值, 用于混淆md5
+    // Salt value, used to confuse MD5.
     private static final String slat = "*I_think*tomorrow_Will_be_better*";
 
     public static String getMD5(String str) {
@@ -39,7 +39,7 @@ public class MD5Utils {
     }
 
     /**
-     * 对系统用户进行特殊md5加密
+     * Special MD5 encryption for system users.
      * --> md5( ( md5(password + salt) ).toLowerCase()  + username ).toUpperCase()
      *
      * @param username String

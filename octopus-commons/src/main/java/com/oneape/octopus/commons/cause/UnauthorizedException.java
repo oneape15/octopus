@@ -1,19 +1,23 @@
 package com.oneape.octopus.commons.cause;
 
-import com.oneape.octopus.commons.cause.BizException;
+import lombok.Getter;
 
 /**
- * 未授权异常
+ * Unauthorized exception class.
  */
+@Getter
 public class UnauthorizedException extends BizException {
+    private String msg;
+
     /**
-     * 默认异常构造器.
+     * Default constructor.
      */
     public UnauthorizedException() {
-        setCode(StateCode.Unauthorized.getCode());
+        this("");
     }
 
     public UnauthorizedException(String msg) {
         super(StateCode.Unauthorized.getCode(), msg);
+        this.msg = msg;
     }
 }

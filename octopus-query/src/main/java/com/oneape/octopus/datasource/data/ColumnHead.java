@@ -10,15 +10,15 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class ColumnHead implements Serializable {
     /**
-     * 列名称
+     * The column name.
      */
     private String   name;
     /**
-     * 列昵称
+     * The column alias.
      */
     private String   label;
     /**
-     * 数据类型
+     * The column data type.
      */
     private DataType dataType;
 

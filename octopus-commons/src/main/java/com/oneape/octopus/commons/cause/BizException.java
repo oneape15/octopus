@@ -6,86 +6,91 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class BizException extends RuntimeException {
-    private int code;    //异常业务编码
+    // Abnormal service coding.
+    private int    code;
+    // Abnormal service message.
+    private String msg;
 
     /**
-     * 默认异常构造器.
+     * Constructs a new biz exception with {@code null} as its detail message and code.
+     * The cause is not initialized.
      */
     public BizException() {
-        this(StateCode.BizError);
-    }
-
-    public BizException(StateCode stateCode) {
-        super(stateCode.getMessage());
-        this.code = stateCode.getCode();
+        this(StateCode.BizError.getCode());
     }
 
     /**
-     * 根据错误码和错误信息构造异常.
+     * Constructs a new biz exception with the specified detail code.
+     * The cause is not initialized.
      *
-     * @param code    错误码
-     * @param message 异常信息.
+     * @param code int    Abnormal service coding.
      */
-    public BizException(final int code, final String message) {
-        super(message);
-        this.code = code;
+    public BizException(final int code) {
+        this(code, "");
     }
 
     /**
-     * 根据异常信息和原生异常构造对象.
+     * Constructs a new biz exception with the specified detail message.
+     * The cause is not initialized.
      *
-     * @param code    错误码
-     * @param message 异常信息.
-     * @param cause   原生异常.
-     */
-    public BizException(final int code, final String message, final Throwable cause) {
-        super(message, cause);
-        this.code = code;
-    }
-
-    /**
-     * 根据异常信息和原生异常构造对象.
-     *
-     * @param message 异常信息.
-     * @param cause   原生异常.
-     */
-    public BizException(final String message, final Throwable cause) {
-        this(StateCode.BizError, message, cause);
-    }
-
-    /**
-     * 根据异常信息构造对象.
-     *
-     * @param message 异常信息.
+     * @param message String Abnormal service message.
      */
     public BizException(final String message) {
         this(StateCode.BizError.getCode(), message);
     }
 
     /**
-     * 根据原生异常构造对象.
+     * Constructs a new biz exception with the specified cause.
+     * The message and code is default value.
      *
-     * @param cause 原生异常.
+     * @param cause Throwable
      */
     public BizException(final Throwable cause) {
-        this(StateCode.BizError, cause);
+        this(StateCode.BizError.getCode(), StateCode.BizError.getMessage(), cause);
     }
 
-    public BizException(final StateCode stateCode, final Throwable cause) {
-        this(stateCode.getCode(), stateCode.getMessage(), cause);
+    /**
+     * Constructs a new biz exception with the specified detail message and code.
+     * The cause is not initialized.
+     *
+     * @param code    int    Abnormal service coding.
+     * @param message String Abnormal service message.
+     */
+    public BizException(final int code, final String message) {
+        this(code, message, null);
     }
 
-    public BizException(final StateCode stateCode, final String errMsg, final Throwable cause) {
-        super(errMsg, cause);
-        this.code = stateCode != null ? stateCode.getCode() : StateCode.BizError.getCode();
-
+    /**
+     * Constructs a new biz exception with the specified detail message, code and cause.
+     *
+     * @param code    int    Abnormal service coding.
+     * @param message String Abnormal service message.
+     * @param cause   Throwable
+     */
+    public BizException(final int code, final String message, final Throwable cause) {
+        super(message, cause);
+        this.code = code;
+        this.msg = message;
     }
 
+    /**
+     * Constructs a new biz exception with the specified detail message and cause.
+     * THe code is default value.
+     *
+     * @param message String Abnormal service message.
+     */
+    public BizException(final String message, final Throwable cause) {
+        this(StateCode.BizError.getCode(), message, cause);
+    }
+
+    /**
+     * Returns the detail message string of this throwable.
+     *
+     * @return the detail message string of this {@code Throwable} instance
+     * (which may be {@code null}).
+     */
     @Override
-    public String toString() {
-        return "BizException{" +
-                "code='" + code + '\'' +
-                ",message='" + getMessage() + '\'' +
-                "} ";
+    public String getMessage() {
+        return this.msg;
     }
 }

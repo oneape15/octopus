@@ -1,25 +1,24 @@
 package com.oneape.octopus.datasource.dialect;
 
-import com.oneape.octopus.commons.value.DataUtils;
+import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.dto.DataType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import java.sql.Statement;
+import java.sql.Connection;
 
 /**
- * H2数据源执行器
+ * The H2 data source executor
  */
 @Slf4j
-public class H2Actuator extends Actuator {
-    private static final String PAGE_KEY = "LIMIT";
+public class H2Actuator extends MySQLActuator {
 
-    public H2Actuator(Statement statement) {
-        super(statement);
+    public H2Actuator(Connection conn) {
+        super(conn);
     }
 
     /**
-     * 从URL中获取数据库名称
+     * Get database name from the URL.
      *
      * @param url String
      * @return String
@@ -28,7 +27,7 @@ public class H2Actuator extends Actuator {
     public String getSchemaNameFromUrl(String url) {
         String startString = "jdbc:h2:tcp://";
         if (!StringUtils.startsWithIgnoreCase(url, startString)) {
-            throw new RuntimeException("不是合法的H2连接地址: " + url);
+            throw new RuntimeException("Not a valid H2 connection address: " + url);
         }
         String tmp = StringUtils.substring(url, startString.length());
         int index;
@@ -36,7 +35,8 @@ public class H2Actuator extends Actuator {
             String schema = StringUtils.substring(tmp, index + 1);
             return StringUtils.trimToNull(schema);
         }
-        return null;
+
+        throw new BizException("The schema name were not found!");
     }
 
     /**
@@ -46,30 +46,16 @@ public class H2Actuator extends Actuator {
      */
     @Override
     public String getAllDatabaseSql() {
-        return "SELECT " +
-                " DISTINCT TABLE_CATALOG " + COL_SCHEMA + " " +
-                "FROM " +
-                "INFORMATION_SCHEMA.TABLES";
+        return "SELECT DISTINCT TABLE_CATALOG " + COL_SCHEMA + " FROM INFORMATION_SCHEMA.TABLES";
     }
 
     /**
-     * 获取所有表的执行SQL
+     * Gets the table information SQL for the specified database.
      *
      * @return String
      */
     @Override
-    public String getAllTablesSql() {
-        return getTablesSqlOfDb(null);
-    }
-
-    /**
-     * 获取指定数据库的表信息SQL
-     *
-     * @param schema String 数据库名称
-     * @return String
-     */
-    @Override
-    public String getTablesSqlOfDb(String schema) {
+    public String getTablesSql() {
         return "SELECT " +
                 " TABLE_CATALOG " + COL_SCHEMA + "," +
                 " TABLE_NAME " + COL_TABLE + ", " +
@@ -78,46 +64,16 @@ public class H2Actuator extends Actuator {
                 "FROM " +
                 " INFORMATION_SCHEMA.TABLES " +
                 "WHERE " +
-                " TABLE_SCHEMA='PUBLIC'";
+                " TABLE_SCHEMA='PUBLIC' AND TABLE_CATALOG = ?";
     }
 
     /**
-     * 获取所有表字段执行SQL
+     * Gets all field information for the specified database.
      *
      * @return String
      */
     @Override
-    public String getAllFieldsSql() {
-        return getFieldsSqlOfTable(null, null);
-    }
-
-    /**
-     * 获取指定数据库所有字段信息
-     *
-     * @param schema String 数据库名称
-     * @return String
-     */
-    @Override
-    public String getFieldsSqlOfDb(String schema) {
-        return getFieldsSqlOfTable(schema, null);
-    }
-
-    /**
-     * 获取指定表字段执行SQL
-     *
-     * @param schema    String 数据库名称
-     * @param tableName String 表名称
-     * @return String
-     */
-    @Override
-    public String getFieldsSqlOfTable(String schema, String tableName) {
-        String whereSql = " WHERE TABLE_SCHEMA='PUBLIC' ";
-        if (StringUtils.isNotBlank(schema)) {
-            whereSql += " AND TABLE_CATALOG = '" + schema + "'";
-        }
-        if (StringUtils.isNotBlank(tableName)) {
-            whereSql += " AND TABLE_NAME = '" + tableName + "'";
-        }
+    public String getFieldsSql() {
         return "SELECT " +
                 " TABLE_CATALOG " + COL_SCHEMA + ", " +
                 " TABLE_NAME " + COL_TABLE + ", " +
@@ -128,12 +84,33 @@ public class H2Actuator extends Actuator {
                 " 0 " + COL_PRI_KEY + ", " +
                 " REMARKS  " + COL_COMMENT + " " +
                 "FROM information_schema.COLUMNS " +
-                whereSql + " " +
+                " WHERE TABLE_SCHEMA='PUBLIC' AND TABLE_CATALOG = ? " +
                 "ORDER BY TABLE_SCHEMA, TABLE_NAME, ORDINAL_POSITION";
     }
 
     /**
-     * 将不同数据源的数据类型转换标准的数据类型
+     * Gets the specified table field to execute SQL.
+     *
+     * @return String
+     */
+    @Override
+    public String getFieldsSqlOfTable() {
+        return "SELECT " +
+                " TABLE_CATALOG " + COL_SCHEMA + ", " +
+                " TABLE_NAME " + COL_TABLE + ", " +
+                " COLUMN_NAME " + COL_COLUMN + ", " +
+                " COLUMN_DEFAULT " + COL_DEFAULT_VAL + ", " +
+                " CASE WHEN NULLABLE = 1 THEN 0 ELSE 1 END " + COL_NULLABLE + ", " +
+                " DATA_TYPE " + COL_DATA_TYPE + ", " +
+                " 0 " + COL_PRI_KEY + ", " +
+                " REMARKS  " + COL_COMMENT + " " +
+                "FROM information_schema.COLUMNS " +
+                " WHERE TABLE_SCHEMA='PUBLIC' AND TABLE_CATALOG = ? AND TABLE_NAME = ? " +
+                "ORDER BY TABLE_SCHEMA, TABLE_NAME, ORDINAL_POSITION";
+    }
+
+    /**
+     * Converts data types from different data sources to standard data types.
      *
      * @param dataType String
      * @return DataType
@@ -144,7 +121,7 @@ public class H2Actuator extends Actuator {
     }
 
     /**
-     * 将列类型转换成标准的数据类型
+     * Converts a column type to a standard data type
      *
      * @param columnType     int
      * @param columnTypeName String
@@ -164,7 +141,7 @@ public class H2Actuator extends Actuator {
         if ((index = StringUtils.indexOf(tmp, " ")) > -1) {
             tmp = StringUtils.substring(tmp, 0, index).trim();
         }
-        DataType dt = null;
+        DataType dt;
         switch (tmp) {
             case "int":
             case "integer":
@@ -250,73 +227,4 @@ public class H2Actuator extends Actuator {
         return dt;
     }
 
-    /**
-     * 获取数据总条数SQL
-     *
-     * @param detailSql String
-     * @return String
-     */
-    @Override
-    public String wrapperTotalSql(String detailSql) {
-        return "SELECT COUNT(1) AS " + COL_COUNT_SIZE +
-                " FROM (" + detailSql +
-                ") AS tmp";
-    }
-
-    /**
-     * 进行分页处理
-     *
-     * @param detailSql String 详细sql
-     * @param pageIndex int 第几页 从0开始
-     * @param pageSize  int 一页显示条数
-     * @return String
-     */
-    @Override
-    public String wrapperPageableSql(String detailSql, int pageIndex, int pageSize) {
-        if (StringUtils.isBlank(detailSql)) {
-            return detailSql;
-        }
-
-        return detailSql + " " +
-                PAGE_KEY + " " + (pageIndex * pageSize) + ", " + pageSize;
-    }
-
-    /**
-     * 判断是否已经分页
-     *
-     * @param detailSql String
-     * @return true - 已经分页； false - 未分页
-     */
-    @Override
-    public boolean hasPageable(String detailSql) {
-        if (StringUtils.isBlank(detailSql)) {
-            return false;
-        }
-        String tmp = StringUtils.upperCase(detailSql).trim();
-        int index = StringUtils.lastIndexOf(tmp, PAGE_KEY);
-        if (index < 0) {
-            return false;
-        }
-
-        int startIndex = index + PAGE_KEY.length();
-        // 判断SQL是否以 LIMIT int1 或 LIMIT int1, int2结束
-        String subString = StringUtils.substring(tmp, startIndex).trim();
-        if (StringUtils.isBlank(subString)) {
-            log.error("不合法的SQL: {}", detailSql);
-            throw new RuntimeException("不合法的SQL:" + detailSql);
-        }
-
-        String[] arr = StringUtils.split(subString, ",");
-        if (arr == null || arr.length > 2) {
-            return false;
-        }
-
-        if (arr.length == 1) {
-            return DataUtils.isInteger(arr[0]);
-        } else if (arr.length == 2) {
-            return DataUtils.isInteger(arr[0]) && DataUtils.isInteger(arr[1]);
-        }
-
-        return false;
-    }
 }

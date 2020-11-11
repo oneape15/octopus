@@ -1,5 +1,6 @@
 package com.oneape.octopus.commons.files;
 
+import com.oneape.octopus.commons.cause.BizException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -28,7 +29,7 @@ public class EasyCsv {
 
     public EasyCsv(String fullFileName) throws Exception {
         if (StringUtils.isBlank(fullFileName)) {
-            throw new RuntimeException("文件路径为空");
+            throw new BizException("The file path is empty");
         }
         fullFileName = StringUtils.trim(fullFileName);
 
@@ -36,10 +37,10 @@ public class EasyCsv {
             fullFileName = fullFileName + ".csv";
         }
 
-        // 判断文件是否存在
+        // Determine if the file exists.
         Boolean isExist = FileUtils.isExist(fullFileName);
         if (isExist) {
-            throw new RuntimeException("文件:【" + fullFileName + "】已存在");
+            throw new BizException("File already exists! filePath: " + fullFileName);
         }
 
         fileWriter = new FileWriter(fullFileName, false);
@@ -52,57 +53,54 @@ public class EasyCsv {
     }
 
     /**
-     * 写入一行数据
+     * Write one line at a time.
      *
      * @param row Collection
      * @throws Exception e
      */
     public void writeRow(Collection<Object> row) throws Exception {
         if (!isActive) {
-            throw new RuntimeException("文件流已经关闭,无法进行操作");
+            throw new BizException("The csv file stream is closed and cannot be operated on!");
         }
         csvPrinter.printRecord(row);
     }
 
     public void writeRow(Iterator<Object> row) throws Exception {
         if (!isActive) {
-            throw new RuntimeException("文件流已经关闭,无法进行操作");
+            throw new BizException("The csv file stream is closed and cannot be operated on!");
         }
         csvPrinter.printRecord(row);
     }
 
     /**
-     * 一次写入多行
+     * Multiple writes at a time.
      *
      * @param rows List
      * @throws Exception e
      */
     public void writeRow(List<List<Object>> rows) throws Exception {
         if (!isActive) {
-            throw new RuntimeException("文件流已经关闭,无法进行操作");
+            throw new BizException("The csv file stream is closed and cannot be operated on!");
         }
         csvPrinter.printRecords(rows);
     }
 
     public void flush() throws Exception {
         if (!isActive) {
-            throw new RuntimeException("文件流已经关闭,无法进行操作");
+            throw new BizException("The csv file stream is closed and cannot be operated on!");
         }
         csvPrinter.flush();
     }
 
-    /**
-     * 结束操作
-     */
     public void finish() {
         try {
+            isActive = false;
             csvPrinter.flush();
             fileWriter.flush();
             fileWriter.close();
             csvPrinter.close();
-            isActive = false;
         } catch (Exception e) {
-            log.error("结束csvPrinter, fileWriter流失败", e);
+            log.error("close file writer fail!", e);
         }
     }
 }

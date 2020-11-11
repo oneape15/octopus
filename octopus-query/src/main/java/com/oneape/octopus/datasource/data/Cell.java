@@ -1,4 +1,4 @@
-package com.oneape.octopus.datasource;
+package com.oneape.octopus.datasource.data;
 
 import com.oneape.octopus.datasource.data.ColumnHead;
 import lombok.Data;
@@ -12,8 +12,14 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 public class Cell implements Serializable {
+    /**
+     * The Head information.
+     */
     private ColumnHead head;
-    private Object value;
+    /**
+     * The value of cell.
+     */
+    private Object     value;
 
     public Cell(ColumnHead head, Object value) {
         this.head = head;

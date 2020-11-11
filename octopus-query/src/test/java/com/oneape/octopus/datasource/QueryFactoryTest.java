@@ -2,95 +2,61 @@ package com.oneape.octopus.datasource;
 
 import com.alibaba.fastjson.JSON;
 import com.oneape.octopus.commons.dto.DataType;
+import com.oneape.octopus.datasource.data.DatasourceInfo;
+import com.oneape.octopus.datasource.data.ExecParam;
 import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.commons.dto.Value;
 import com.oneape.octopus.datasource.schema.SchemaTableField;
 import com.oneape.octopus.datasource.schema.SchemaTable;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @Slf4j
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class QueryFactoryTest {
 
-    private QueryFactory queryFactory;
-    private DatasourceInfo dsi;
-    private DatasourceInfo dsiOfPgSql;
-    private DatasourceInfo dsiOfH2;
-    private String schema;
+    private static QueryFactory   queryFactory;
+    private static DatasourceInfo dsi;
+    private static String         schema;
 
-    @Before
-    public void init() {
+    @BeforeAll
+    static void init() {
         DatasourceFactory datasourceFactory = new DefaultDatasourceFactory();
-        schema = "octopus";
+        schema = "dx2";
+
         dsi = new DatasourceInfo();
-        dsi.setUsername("root");
-        dsi.setPassword("20061253");
-        dsi.setUrl("jdbc:mysql://localhost:3306/octopus");
-        dsi.setDatasourceType(DatasourceTypeHelper.MySQL);
-
-        dsiOfPgSql = new DatasourceInfo();
-        dsiOfPgSql.setUsername("dx2");
-        dsiOfPgSql.setPassword("helloword");
-        dsiOfPgSql.setUrl("jdbc:postgresql://pg-dev.dian.so:5432/dx2");
-        dsiOfPgSql.setDatasourceType(DatasourceTypeHelper.PostgreSQL);
-
-        dsiOfH2 = new DatasourceInfo();
-        dsiOfH2.setUrl("jdbc:h2:~/test");
-        dsiOfH2.setUsername("sa");
-        dsiOfH2.setPassword("");
-        dsiOfH2.setDatasourceType(DatasourceTypeHelper.H2);
+        dsi.setUsername("dx2");
+        dsi.setPassword("helloword");
+        dsi.setUrl("jdbc:postgresql://pg-dev.dian.so:5432/dx2");
+        dsi.setDatasourceType(DatasourceTypeHelper.PostgreSQL);
 
         queryFactory = new DefaultQueryFactory(datasourceFactory);
     }
 
-    @Test
-    public void h2ConnTest() {
-        List<String> list = queryFactory.allDatabase(dsiOfH2);
-        log.info("数据库如下： {}", JSON.toJSONString(list));
-    }
 
-    @Test
-    public void h2TablesTest() {
-        List<SchemaTable> schemaTables = queryFactory.allTables(dsiOfH2);
-
-        Assert.assertNotNull(schemaTables);
-        Assert.assertTrue(schemaTables.size() > 0);
-        log.info("表信息如下： {}", JSON.toJSONString(schemaTables));
-    }
-
-    @Test
-    public void h2FieldsTest() {
-        List<SchemaTableField> fields = queryFactory.allFields(dsiOfH2);
-        Assert.assertNotNull(fields);
-        log.info("数据库字段信息如下：{}", JSON.toJSONString(fields));
-    }
-
-    @Test
-    public void h2FieldsBySchemaTest() {
-        List<SchemaTableField> fields = queryFactory.allFields(dsiOfH2, "TEST");
-        Assert.assertNotNull(fields);
-        log.info("数据库字段信息如下：{}", JSON.toJSONString(fields));
-    }
 
     @Test
     public void allDatabaseTest() {
         List<String> databaseNames = queryFactory.allDatabase(dsi);
-        Assert.assertNotNull("数据库列表为空", databaseNames);
+        assertNotNull(databaseNames, "数据库列表为空");
         log.info("数据库如下： {}", JSON.toJSONString(databaseNames));
     }
 
     @Test
     public void allTablesTest() {
-        List<SchemaTable> schemaTables = queryFactory.allTables(dsi);
+        List<SchemaTable> schemaTables = queryFactory.allTables(dsi, schema);
 
-        Assert.assertNotNull(schemaTables);
-        Assert.assertTrue(schemaTables.size() > 0);
+        assertNotNull(schemaTables);
+        assertTrue(schemaTables.size() > 0);
         log.info("表信息如下： {}", JSON.toJSONString(schemaTables));
     }
 
@@ -98,15 +64,15 @@ public class QueryFactoryTest {
     public void tablesTest() {
         List<SchemaTable> schemaTables = queryFactory.allTables(dsi, schema);
 
-        Assert.assertNotNull(schemaTables);
-        Assert.assertTrue(schemaTables.size() > 0);
+        assertNotNull(schemaTables);
+        assertTrue(schemaTables.size() > 0);
         log.info("表信息如下： {}", JSON.toJSONString(schemaTables));
     }
 
     @Test
     public void allFieldsTest() {
-        List<SchemaTableField> fields = queryFactory.allFields(dsi);
-        Assert.assertNotNull(fields);
+        List<SchemaTableField> fields = queryFactory.allFields(dsi, schema);
+        assertNotNull(fields);
         log.info("数据库字段信息如下：{}", JSON.toJSONString(fields));
     }
 
@@ -114,15 +80,15 @@ public class QueryFactoryTest {
     public void tableFieldsTest() {
         String tableName = "r_datasource";
         List<SchemaTableField> fields = queryFactory.fieldOfTable(dsi, schema, tableName);
-        Assert.assertNotNull(fields);
+        assertNotNull(fields);
         log.info("表：{}字段信息如下：{}", tableName, JSON.toJSONString(fields));
     }
 
     @Test
     public void tableFieldsOfPgSqlTest() {
         String tableName = "agent_department";
-        List<SchemaTableField> fields = queryFactory.fieldOfTable(dsiOfPgSql, "dx2", tableName);
-        Assert.assertNotNull(fields);
+        List<SchemaTableField> fields = queryFactory.fieldOfTable(dsi, "dx2", tableName);
+        assertNotNull(fields);
         log.info("表：{}字段信息如下：{}", tableName, JSON.toJSONString(fields));
     }
 
@@ -176,7 +142,7 @@ public class QueryFactoryTest {
         execParam.setPageIndex(1);
         execParam.setPageSize(5);
 
-        Result result = queryFactory.execSql(dsiOfPgSql, execParam, cell -> {
+        Result result = queryFactory.execSql(dsi, execParam, cell -> {
             if (StringUtils.equals("updator", cell.getHead().getLabel())) {
                 return String.valueOf(cell.getValue()) + "_大人";
             }

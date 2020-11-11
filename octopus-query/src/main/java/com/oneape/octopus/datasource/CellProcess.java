@@ -2,6 +2,7 @@ package com.oneape.octopus.datasource;
 
 /**
  * Data column processing method.
+ *
  * @param <T>
  * @param <R>
  */

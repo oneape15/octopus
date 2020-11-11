@@ -2,7 +2,7 @@ package com.oneape.octopus.service.schema.impl;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.commons.cause.BizException;
-import com.oneape.octopus.datasource.DatasourceInfo;
+import com.oneape.octopus.datasource.data.DatasourceInfo;
 import com.oneape.octopus.datasource.QueryFactory;
 import com.oneape.octopus.datasource.schema.SchemaTableField;
 import com.oneape.octopus.datasource.schema.SchemaTable;

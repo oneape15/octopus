@@ -1,6 +1,6 @@
 package com.oneape.octopus.service.schema;
 
-import com.oneape.octopus.datasource.DatasourceInfo;
+import com.oneape.octopus.datasource.data.DatasourceInfo;
 import com.oneape.octopus.domain.schema.DatasourceDO;
 import com.oneape.octopus.service.BaseService;
 

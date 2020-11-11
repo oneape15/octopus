@@ -19,9 +19,9 @@ public class Result implements Serializable {
     // error info message key
     public static final String KEY_ERR_MSG     = "err_msg";
     // run time
-    public static final String KYE_RUN_TIME    = "run_time";
+    public static final String KEY_RUN_TIME    = "run_time";
     // Export file path
-    public static final String KYE_EXPORT_FILE = "export_file";
+    public static final String KEY_EXPORT_FILE = "export_file";
 
 
     /**
@@ -42,9 +42,9 @@ public class Result implements Serializable {
      */
     private Integer                   totalSize;
     /**
-     * run information
+     * Attached information.
      */
-    private Map<String, String> runInfo = new HashMap<>();
+    private Map<String, String> detailInfo = new HashMap<>();
 
     /**
      * query status enum
@@ -57,6 +57,31 @@ public class Result implements Serializable {
 
     public boolean isSuccess() {
         return status == QueryStatus.SUCCESS;
+    }
+
+    public Result setDetailSql(String detailSql) {
+        detailInfo.put(KEY_DETAIL_SQL, detailSql);
+        return this;
+    }
+
+    public Result setTotalSql(String totalSql) {
+        detailInfo.put(KEY_TOTAL_SQL, totalSql);
+        return this;
+    }
+
+    public Result setErrMsg(String msg) {
+        detailInfo.put(KEY_ERR_MSG, msg);
+        return this;
+    }
+
+    public Result setRunTime(Long runTime) {
+        detailInfo.put(KEY_RUN_TIME, runTime + "");
+        return this;
+    }
+
+    public Result setExportFile(String filePath) {
+        detailInfo.put(KEY_EXPORT_FILE, filePath);
+        return this;
     }
 
 }

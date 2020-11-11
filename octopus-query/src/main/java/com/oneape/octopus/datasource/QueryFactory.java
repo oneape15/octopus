@@ -1,15 +1,15 @@
 package com.oneape.octopus.datasource;
 
-import com.oneape.octopus.datasource.data.Result;
-import com.oneape.octopus.datasource.schema.SchemaTableField;
+import com.oneape.octopus.datasource.data.*;
 import com.oneape.octopus.datasource.schema.SchemaTable;
+import com.oneape.octopus.datasource.schema.SchemaTableField;
 
 import java.util.List;
 
 public interface QueryFactory {
 
     /**
-     * 获取数据库名
+     * Get the database name.
      *
      * @param dsi DatasourceInfo
      * @return String
@@ -17,7 +17,7 @@ public interface QueryFactory {
     String getSchema(DatasourceInfo dsi);
 
     /**
-     * 获取所有数据库名称
+     * Gets all database names.
      *
      * @param dsi DatasourceInfo
      * @return List
@@ -25,51 +25,35 @@ public interface QueryFactory {
     List<String> allDatabase(DatasourceInfo dsi);
 
     /**
-     * 获取所有表信息
-     *
-     * @param dsi DatasourceInfo
-     * @return List
-     */
-    List<SchemaTable> allTables(DatasourceInfo dsi);
-
-    /**
-     * 获取所有表信息
+     * Gets the specified database table information in the data source.
      *
      * @param dsi    DatasourceInfo
-     * @param schema String 数据库名称
+     * @param schema String  the database name.
      * @return List
      */
     List<SchemaTable> allTables(DatasourceInfo dsi, String schema);
 
     /**
-     * 获取所有表的字段信息
-     *
-     * @param dsi DatasourceInfo
-     * @return List
-     */
-    List<SchemaTableField> allFields(DatasourceInfo dsi);
-
-    /**
-     * 获取所有表的字段信息
+     * Gets field information for the table in the specified database in the data source.
      *
      * @param dsi    DatasourceInfo
-     * @param schema String 数据库名称
+     * @param schema String The database name
      * @return List
      */
     List<SchemaTableField> allFields(DatasourceInfo dsi, String schema);
 
     /**
-     * 获取表字段信息
+     * Gets field information for the specified table.
      *
      * @param dsi       DatasourceInfo
-     * @param schema    String 数据库名称
-     * @param tableName String 表名称
+     * @param schema    String The database name
+     * @param tableName String The table name
      * @return List
      */
     List<SchemaTableField> fieldOfTable(DatasourceInfo dsi, String schema, String tableName);
 
     /**
-     * 执行SQL操作
+     * Exec SQL operations
      *
      * @param dsi   DatasourceInfo
      * @param param ExecParam
@@ -78,7 +62,7 @@ public interface QueryFactory {
     Result execSql(DatasourceInfo dsi, ExecParam param);
 
     /**
-     * 执行SQL操作
+     * Exec SQL operations.
      *
      * @param dsi     DatasourceInfo
      * @param param   ExecParam
@@ -88,20 +72,21 @@ public interface QueryFactory {
     Result execSql(DatasourceInfo dsi, ExecParam param, CellProcess<Cell, Object> process);
 
     /**
-     * 导出数据操作
+     * Export data to a local file.
      *
      * @param dsi   DatasourceInfo
      * @param param ExportDataParam
-     * @return int 1 - 成功; 0 - 失败;
+     * @return Result
      */
     Result exportData(DatasourceInfo dsi, ExportDataParam param);
 
     /**
-     * 导出数据操作
+     * Export data to a local file.
      *
-     * @param dsi   DatasourceInfo
-     * @param param ExportDataParam
-     * @return int 1 - 成功; 0 - 失败;
+     * @param dsi     DatasourceInfo
+     * @param param   ExportDataParam
+     * @param process CellProcess
+     * @return Result
      */
     Result exportData(DatasourceInfo dsi, ExportDataParam param, CellProcess<Cell, Object> process);
 }

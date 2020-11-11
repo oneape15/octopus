@@ -3,15 +3,14 @@ package com.oneape.octopus.datasource;
 import com.alibaba.fastjson.JSON;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.oneape.octopus.datasource.data.Result;
+import com.oneape.octopus.datasource.data.*;
 import com.oneape.octopus.datasource.dialect.Actuator;
-import com.oneape.octopus.datasource.schema.SchemaTableField;
 import com.oneape.octopus.datasource.schema.SchemaTable;
+import com.oneape.octopus.datasource.schema.SchemaTableField;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.sql.Connection;
-import java.sql.Statement;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -41,7 +40,7 @@ public class DefaultQueryFactory implements QueryFactory {
     }
 
     /**
-     * Get the database name
+     * Get the database name.
      *
      * @param dsi DatasourceInfo
      * @return String
@@ -67,10 +66,8 @@ public class DefaultQueryFactory implements QueryFactory {
     public List<String> allDatabase(DatasourceInfo dsi) {
         try {
             Connection conn = datasourceFactory.getConnection(dsi);
-            try (Statement statement = conn.createStatement()) {
-                Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
-                return actuator.allDatabase();
-            }
+            Actuator actuator = ActuatorFactory.build(conn, dsi.getDatasourceType());
+            return actuator.allDatabase();
         } catch (Exception e) {
             log.error("Failed to get table information~", e);
             throw new RuntimeException(e);
@@ -78,38 +75,7 @@ public class DefaultQueryFactory implements QueryFactory {
     }
 
     /**
-     * Gets the database of all table names .
-     *
-     * @param dsi DatasourceInfo
-     * @return List
-     */
-    @Override
-    public List<SchemaTable> allTables(DatasourceInfo dsi) {
-        try {
-            String cacheKey = KEY_TABLE + datasourceFactory.getDatasourceKey(dsi) + "_ALL";
-
-            List<SchemaTable> tables = tableCache.getIfPresent(cacheKey);
-            if (CollectionUtils.isNotEmpty(tables)) {
-                return tables;
-            }
-
-            Connection conn = datasourceFactory.getConnection(dsi);
-            try (Statement statement = conn.createStatement()) {
-                Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
-                tables = actuator.allTables();
-                if (CollectionUtils.isNotEmpty(tables)) {
-                    tableCache.put(cacheKey, tables);
-                }
-            }
-            return tables;
-        } catch (Exception e) {
-            log.error("Failed to get table information~", e);
-            throw new RuntimeException("Failed to get table information.", e);
-        }
-    }
-
-    /**
-     * 获取所有表信息
+     * Gets the specified database table information in the data source.
      *
      * @param dsi    DatasourceInfo
      * @param schema String The database name
@@ -125,58 +91,24 @@ public class DefaultQueryFactory implements QueryFactory {
                 return tables;
             }
 
-            Connection conn = datasourceFactory.getConnection(dsi);
-            try (Statement statement = conn.createStatement()) {
-                Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
-                tables = actuator.allTablesOfDb(schema);
-                if (CollectionUtils.isNotEmpty(tables)) {
-                    tableCache.put(cacheKey, tables);
-                }
+            Actuator actuator = ActuatorFactory.build(datasourceFactory.getConnection(dsi), dsi.getDatasourceType());
+            tables = actuator.allTables(schema);
+            if (CollectionUtils.isNotEmpty(tables)) {
+                tableCache.put(cacheKey, tables);
             }
+
             return tables;
         } catch (Exception e) {
             log.error("Failed to get table information~", e);
-            throw new RuntimeException("获取数据库：" + schema + " 表信息失败", e);
+            throw new RuntimeException("Failed to obtain database table information! schema: " + schema, e);
         }
     }
 
     /**
-     * 获取所有表的字段信息
-     *
-     * @param dsi DatasourceInfo
-     * @return List
-     */
-    @Override
-    public List<SchemaTableField> allFields(DatasourceInfo dsi) {
-        try {
-            String cacheKey = KEY_FIELD + datasourceFactory.getDatasourceKey(dsi) + "_ALL_ALL";
-            List<SchemaTableField> fields = fieldCache.getIfPresent(cacheKey);
-            if (CollectionUtils.isNotEmpty(fields)) {
-                return fields;
-            }
-
-            Connection conn = datasourceFactory.getConnection(dsi);
-            try (Statement statement = conn.createStatement()) {
-                Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
-                fields = actuator.allFields();
-
-                if (CollectionUtils.isNotEmpty(fields)) {
-                    fieldCache.put(cacheKey, fields);
-                }
-            }
-
-            return fields;
-        } catch (Exception e) {
-            log.error("获取所有表字段信息失败", e);
-            throw new RuntimeException("获取数据源字段列表失败", e);
-        }
-    }
-
-    /**
-     * 获取所有表的字段信息
+     * Gets field information for the table in the specified database in the data source.
      *
      * @param dsi    DatasourceInfo
-     * @param schema String 数据库名称
+     * @param schema String The database name.
      * @return List
      */
     @Override
@@ -188,28 +120,26 @@ public class DefaultQueryFactory implements QueryFactory {
                 return fields;
             }
 
-            Connection conn = datasourceFactory.getConnection(dsi);
-            try (Statement statement = conn.createStatement()) {
-                Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
-                fields = actuator.allFieldsOfDb(schema);
+            Actuator actuator = ActuatorFactory.build(datasourceFactory.getConnection(dsi), dsi.getDatasourceType());
+            fields = actuator.allFields(schema);
 
-                if (CollectionUtils.isNotEmpty(fields)) {
-                    fieldCache.put(cacheKey, fields);
-                }
+            if (CollectionUtils.isNotEmpty(fields)) {
+                fieldCache.put(cacheKey, fields);
             }
+
             return fields;
         } catch (Exception e) {
-            log.error("获取所有表字段信息失败", e);
-            throw new RuntimeException("获取数据库:" + schema + " 表字段信息失败", e);
+            log.error("Failed to get a list of the specified database fields.", e);
+            throw new RuntimeException("Failed to get a list of the specified database fields. schema :" + schema, e);
         }
     }
 
     /**
-     * 获取表字段信息
+     * Gets field information for the specified table.
      *
      * @param dsi       DatasourceInfo
-     * @param schema    String 数据库名称
-     * @param tableName String 表名称
+     * @param schema    String The database name
+     * @param tableName String The table name
      * @return List
      */
     @Override
@@ -221,19 +151,16 @@ public class DefaultQueryFactory implements QueryFactory {
                 return fields;
             }
 
-            Connection conn = datasourceFactory.getConnection(dsi);
-            try (Statement statement = conn.createStatement()) {
-                Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
-                fields = actuator.fieldOfTable(schema, tableName);
+            Actuator actuator = ActuatorFactory.build(datasourceFactory.getConnection(dsi), dsi.getDatasourceType());
+            fields = actuator.fieldOfTable(schema, tableName);
 
-                if (CollectionUtils.isNotEmpty(fields)) {
-                    fieldCache.put(cacheKey, fields);
-                }
+            if (CollectionUtils.isNotEmpty(fields)) {
+                fieldCache.put(cacheKey, fields);
             }
             return fields;
         } catch (Exception e) {
-            log.error("获取表: {} 字段信息失败", tableName, e);
-            throw new RuntimeException("获取数据库：" + schema + " 中表:" + tableName + " 字段信息失败", e);
+            log.error("Failed to get table field information. table: {}.{}", schema, tableName, e);
+            throw new RuntimeException("Failed to get table field information. table: " + schema + "." + tableName, e);
         }
     }
 
@@ -260,11 +187,8 @@ public class DefaultQueryFactory implements QueryFactory {
     @Override
     public Result execSql(DatasourceInfo dsi, ExecParam param, CellProcess<Cell, Object> process) {
         try {
-            Connection conn = datasourceFactory.getConnection(dsi);
-            try (Statement statement = conn.createStatement()) {
-                Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
-                return actuator.execSql(param, process);
-            }
+            Actuator actuator = ActuatorFactory.build(datasourceFactory.getConnection(dsi), dsi.getDatasourceType());
+            return actuator.execSql(param, process);
         } catch (Exception e) {
             log.error("exec SQL: {}", JSON.toJSONString(param), e);
             return failResult(e);
@@ -272,11 +196,11 @@ public class DefaultQueryFactory implements QueryFactory {
     }
 
     /**
-     * 导出数据操作
+     * Export data to a local file.
      *
      * @param dsi   DatasourceInfo
      * @param param ExportDataParam
-     * @return int 1 - 成功; 0 - 失败;
+     * @return Result
      */
     @Override
     public Result exportData(DatasourceInfo dsi, ExportDataParam param) {
@@ -284,23 +208,20 @@ public class DefaultQueryFactory implements QueryFactory {
     }
 
     /**
-     * 导出数据操作
+     * Export data to a local file.
      *
      * @param dsi     DatasourceInfo
      * @param param   ExportDataParam
      * @param process CellProcess
-     * @return int 1 - 成功; 0 - 失败;
+     * @return Result
      */
     @Override
     public Result exportData(DatasourceInfo dsi, ExportDataParam param, CellProcess<Cell, Object> process) {
         try {
-            Connection conn = datasourceFactory.getConnection(dsi);
-            try (Statement statement = conn.createStatement()) {
-                Actuator actuator = ActuatorFactory.build(statement, dsi.getDatasourceType());
-                return actuator.exportData(param, process);
-            }
+            Actuator actuator = ActuatorFactory.build(datasourceFactory.getConnection(dsi), dsi.getDatasourceType());
+            return actuator.exportData(param, process);
         } catch (Exception e) {
-            log.error("执行SQL: {} 失败", JSON.toJSONString(param), e);
+            log.error("exec SQL: {}", JSON.toJSONString(param), e);
             return failResult(e);
         }
     }
@@ -308,7 +229,7 @@ public class DefaultQueryFactory implements QueryFactory {
     private Result failResult(Exception e) {
         Result result = new Result();
         result.setStatus(Result.QueryStatus.ERROR);
-        result.getRunInfo().put(Result.KEY_ERR_MSG, JSON.toJSONString(e));
+        result.setErrMsg(e.toString());
         return result;
     }
 }

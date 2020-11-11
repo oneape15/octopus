@@ -15,15 +15,15 @@ public enum DatasourceTypeHelper {
     MySQL("com.mysql.cj.jdbc.Driver", "jdbc:mysql://{host}:{port}/{dbName}"),
     Oracle("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@{host}:{port}:{dbName}"),
     PostgreSQL("org.postgresql.Driver", "jdbc:postgresql://{host}:{port}/{dbName}"),
-    OdpsSQL("com.aliyun.odps.jdbc.OdpsDriver", "jdbc:odps:{host}?project={dbName}"),
+    Odps("com.aliyun.odps.jdbc.OdpsDriver", "jdbc:odps:{host}?project={dbName}"),
     SQLite("org.sqlite.SQLiteDataSource", "");
 
     /**
-     * 驱动类全称
+     * Full name of the driver class.
      */
     private String driverClass;
     /**
-     * URL地址模板
+     * URL address template.
      */
     private String urlTemplate;
 
@@ -41,7 +41,7 @@ public enum DatasourceTypeHelper {
     }
 
     /**
-     * 是否为支持的数据源
+     * Is the supported data source.
      *
      * @param databaseName String
      * @return boolean

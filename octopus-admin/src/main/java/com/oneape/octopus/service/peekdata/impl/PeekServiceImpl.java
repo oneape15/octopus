@@ -7,6 +7,9 @@ import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.dto.DataType;
 import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.datasource.*;
+import com.oneape.octopus.datasource.data.DatasourceInfo;
+import com.oneape.octopus.datasource.data.ExecParam;
+import com.oneape.octopus.datasource.data.ExportDataParam;
 import com.oneape.octopus.datasource.data.Result;
 import com.oneape.octopus.mapper.peekdata.PeekFieldMapper;
 import com.oneape.octopus.mapper.peekdata.PeekMapper;
@@ -19,6 +22,7 @@ import com.oneape.octopus.dto.system.UserDTO;
 import com.oneape.octopus.model.VO.ModelVO;
 import com.oneape.octopus.model.VO.PeekFieldVO;
 import com.oneape.octopus.model.VO.PeekRuleVO;
+import com.oneape.octopus.service.peekdata.AggregationOperatorHelper;
 import com.oneape.octopus.service.peekdata.ModelService;
 import com.oneape.octopus.service.peekdata.PeekRuleTypeHelper;
 import com.oneape.octopus.service.peekdata.PeekService;
@@ -363,7 +367,6 @@ public class PeekServiceImpl implements PeekService {
         UserDTO user = accountService.getCurrentUser();
 
         ExportDataParam param = new ExportDataParam();
-        param.setEmail(user.getEmail());
         param.setRawSql(rawSql);
         param.setLimitSize(10 * 10000);
 

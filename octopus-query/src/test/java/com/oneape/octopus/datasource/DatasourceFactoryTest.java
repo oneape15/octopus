@@ -1,35 +1,41 @@
 package com.oneape.octopus.datasource;
 
-
+import com.oneape.octopus.datasource.data.DatasourceInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.sql.Connection;
 import java.util.concurrent.CountDownLatch;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @Slf4j
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class DatasourceFactoryTest {
 
-    private DatasourceFactory factory;
-    private DatasourceInfo dsi;
+    private static DatasourceFactory factory;
+    private static DatasourceInfo    dsi;
 
-    @Before
-    public void init() {
+    @BeforeAll
+    static void init() {
         factory = new DefaultDatasourceFactory();
         dsi = new DatasourceInfo();
-        dsi.setUsername("root");
-        dsi.setPassword("a");
-        dsi.setUrl("jdbc:mysql://localhost:3306/octopus");
-        dsi.setDatasourceType(DatasourceTypeHelper.MySQL);
+        dsi = new DatasourceInfo();
+        dsi.setUsername("dx2");
+        dsi.setPassword("helloword");
+        dsi.setUrl("jdbc:postgresql://pg-dev.dian.so:5432/dx2");
+        dsi.setDatasourceType(DatasourceTypeHelper.PostgreSQL);
     }
 
+    @DisplayName("创建咨询来源：成功创建")
     @Test
     public void getConnectionTest() throws Exception {
         Connection conn = factory.getConnection(dsi);
         log.info("获取连接测试： {}", conn != null);
-        Assert.assertNotNull("连接为空", conn);
+        assertEquals("连接为空", conn);
     }
 
     @Test
@@ -75,7 +81,7 @@ public class DatasourceFactoryTest {
 
         int size = factory.getDatasourceSize();
         System.out.println("数据源数量：" + size);
-        Assert.assertEquals(size, 1);
+        assertEquals(size, 1);
     }
 
     @Test

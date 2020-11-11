@@ -1,7 +1,10 @@
 package com.oneape.octopus.datasource;
 
+import com.alibaba.fastjson.JSON;
+import com.google.common.base.Preconditions;
 import com.oneape.octopus.commons.security.MD5Utils;
 import com.oneape.octopus.commons.security.PBEUtils;
+import com.oneape.octopus.datasource.data.DatasourceInfo;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +30,29 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
     private static final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
     /**
-     * 获取连接对象
+     * Gets a unique identifier for the data source.
+     *
+     * @param dsi DatasourceInfo
+     * @return String
+     */
+    @Override
+    public String getDatasourceKey(DatasourceInfo dsi) {
+        Preconditions.checkNotNull(dsi, "The data source information is empty!");
+        Preconditions.checkArgument(StringUtils.isNotBlank(dsi.getUrl()), "The data source URL is empty!");
+
+        String url = StringUtils.substringBefore(dsi.getUrl(), "?");
+        if (dsi.getDatasourceType() == DatasourceTypeHelper.Odps) {
+            // When ODPS multiple projects at the same time, according to the url param "project=xxx" to differentiate the data sources.
+            url = StringUtils.trimToEmpty(dsi.getUrl());
+        }
+        String password = StringUtils.trimToEmpty(dsi.getPassword());
+        String username = StringUtils.trimToEmpty(dsi.getUsername());
+
+        return MD5Utils.getMD5(url + username + password);
+    }
+
+    /**
+     * Gets the connection database connection object.
      *
      * @param dsInfo DatasourceInfo
      * @return Connection
@@ -48,7 +73,7 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
     }
 
     /**
-     * 添加数据源
+     * Add data source information.
      *
      * @param dsInfo DatasourceInfo
      * @return int  1 - success; 0 - fail.
@@ -60,12 +85,12 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
             readWriteLock.writeLock().lock();
             HikariDataSource ds = datasourceMap.getOrDefault(key, null);
             if (ds != null) {
-                log.info("数据源已经存在");
+                log.info("The data source already exists. datasource: ", JSON.toJSONString(dsInfo));
                 return 1;
             }
             datasourceMap.put(key, initDataSource(dsInfo));
         } catch (Exception e) {
-            log.error("添加数据源失败", e);
+            log.error("Failure to add data source.", e);
             return 0;
         } finally {
             readWriteLock.writeLock().unlock();
@@ -75,7 +100,7 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
     }
 
     /**
-     * 删除数据源
+     * Remove data source information.
      *
      * @param dsInfo DatasourceInfo
      */
@@ -85,21 +110,20 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
         try {
             readWriteLock.writeLock().lock();
             HikariDataSource ds = datasourceMap.get(key);
-            if (ds == null) {
-                log.warn("dataSource不存在");
-                return;
-            }
+            if (ds == null) return;
+
             ds.close();
-            if (ds.isClosed()) {
-                datasourceMap.remove(key);
-            }
+            if (ds.isClosed()) datasourceMap.remove(key);
         } finally {
             readWriteLock.writeLock().unlock();
         }
     }
 
     /**
-     * 刷新数据源( 1 remove, 2 add)
+     * Refresh data source.
+     * Complete the following steps:
+     * 1 remove from the memory cache;
+     * 2 add to the memory cache again;
      *
      * @param dsInfo DatasourceInfo
      */
@@ -115,7 +139,7 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
     }
 
     /**
-     * 获取数据源数量
+     * Get the number of data sources.
      *
      * @return int
      */
@@ -124,20 +148,27 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
         return datasourceMap.size();
     }
 
+    /**
+     * get the value.
+     *
+     * @param value        String
+     * @param defaultValue String
+     * @return String
+     */
     private static String getValueWithDefault(String value, String defaultValue) {
         return StringUtils.isNotEmpty(value) ? value : defaultValue;
     }
 
     /**
-     * 测试数据源是否有效
+     * Test whether the data source is valid.
      *
      * @param dsInfo DatasourceInfo
-     * @return boolean  true - 有效的； false - 无效的；
+     * @return boolean  true - effective; false - invalid;
      */
     @Override
     public boolean testDatasource(DatasourceInfo dsInfo) {
         if (dsInfo == null || dsInfo.getDatasourceType() == null) {
-            throw new RuntimeException("数据源信息为空");
+            throw new RuntimeException("The data source information is empty!");
         }
         String url = dsInfo.getUrl();
         String userName = getValueWithDefault(dsInfo.getUsername(), "");
@@ -150,49 +181,29 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
                  Statement statement = connection.createStatement()) {
                 statement.setQueryTimeout(10);
                 statement.executeQuery(testSql);
-                log.info("数据源连接测试成功");
+                log.info("Data source connection test successful.");
                 return true;
             }
         } catch (Exception e) {
-            log.error("数据库连接测试失败", e);
+            log.error("The database connection test failed!", e);
             return false;
         }
     }
 
     /**
-     * 根据DatasourceInfo生成唯一key
+     * Initializes the data source connection pool.
      *
-     * @param dsi DatasourceInfo
-     * @return String
+     * @param dsi DatasourceInfo.
+     * @return HikariDataSource
      */
-    @Override
-    public String getDatasourceKey(DatasourceInfo dsi) {
-        if (dsi == null) {
-            throw new RuntimeException("数据源信息为空~");
-        }
-        if (StringUtils.isBlank(dsi.getUrl())) {
-            throw new RuntimeException("数据源URL为空~");
-        }
-
-        String url = StringUtils.substringBefore(dsi.getUrl(), "?");
-        if (dsi.getDatasourceType() == DatasourceTypeHelper.OdpsSQL) {
-            // 当odps多个项目同时,要根据 ?project=xxxx来区分数据源
-            url = StringUtils.trimToEmpty(dsi.getUrl());
-        }
-        String password = StringUtils.trimToEmpty(dsi.getPassword());
-        String username = StringUtils.trimToEmpty(dsi.getUsername());
-
-        return MD5Utils.getMD5(url + username + password);
-    }
-
     protected HikariDataSource initDataSource(DatasourceInfo dsi) {
         DatasourceTypeHelper dth = dsi.getDatasourceType();
 
         try {
             Class.forName(dth.getDriverClass());
         } catch (Exception e) {
-            log.error("数据源驱动类：[{}]不存在", dth.getDriverClass());
-            throw new RuntimeException("数据源驱动类：[" + dth.getDriverClass() + "]不存在");
+            log.error("The driver class [{}] is not exist!", dth.getDriverClass());
+            throw new RuntimeException("The driver class [" + dth.getDriverClass() + "] is not exist!");
         }
 
         HikariConfig hikariConfig = new HikariConfig();
@@ -204,10 +215,10 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
         } else {
             hikariConfig.setPassword(dsi.getPassword());
         }
-        hikariConfig.setMaximumPoolSize(5);
-        hikariConfig.setConnectionTimeout(60 * 1000);
+        hikariConfig.setMaximumPoolSize(dsi.getMaxPoolSize() != null ? dsi.getMaxPoolSize() : DatasourceInfo.DEFAULT_POOL_SIZE);
+        hikariConfig.setConnectionTimeout(dsi.getTimeout() != null ? dsi.getTimeout() : DatasourceInfo.DEFAULT_TIMEOUT);
         hikariConfig.setAutoCommit(false);
-        hikariConfig.setReadOnly(true);
+        hikariConfig.setReadOnly(dsi.getReadOnly());
 
         return new HikariDataSource(hikariConfig);
     }

@@ -1,12 +1,14 @@
 package com.oneape.octopus.datasource;
 
+import com.oneape.octopus.datasource.data.DatasourceInfo;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public interface DatasourceFactory {
 
     /**
-     * 获取数据源唯一识别码
+     * Gets a unique identifier for the data source.
      *
      * @param dsi DatasourceInfo
      * @return String
@@ -14,7 +16,7 @@ public interface DatasourceFactory {
     String getDatasourceKey(DatasourceInfo dsi);
 
     /**
-     * 获取连接对象
+     * Gets the connection database connection object.
      *
      * @param dsInfo DatasourceInfo
      * @return Connection
@@ -22,7 +24,7 @@ public interface DatasourceFactory {
     Connection getConnection(DatasourceInfo dsInfo) throws SQLException;
 
     /**
-     * 添加数据源
+     * Add data source information.
      *
      * @param dsInfo DatasourceInfo
      * @return int  1 - success; 0 - fail.
@@ -30,31 +32,34 @@ public interface DatasourceFactory {
     int addDatasource(DatasourceInfo dsInfo);
 
     /**
-     * 删除数据源
+     * Remove data source information.
      *
      * @param dsInfo DatasourceInfo
      */
     void removeDatasource(DatasourceInfo dsInfo);
 
     /**
-     * 刷新数据源( 1 remove, 2 add)
+     * Refresh data source.
+     * Complete the following steps:
+     * 1 remove from the memory cache;
+     * 2 add to the memory cache again;
      *
      * @param dsInfo DatasourceInfo
      */
     void refreshDatasource(DatasourceInfo dsInfo);
 
     /**
-     * 获取数据源数量
+     * Get the number of data sources.
      *
      * @return int
      */
     int getDatasourceSize();
 
     /**
-     * 测试数据源是否有效
+     * Test whether the data source is valid.
      *
      * @param dsInfo DatasourceInfo
-     * @return boolean  true - 有效的； false - 无效的；
+     * @return boolean  true - effective; false - invalid;
      */
     boolean testDatasource(DatasourceInfo dsInfo);
 }

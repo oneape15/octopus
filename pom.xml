@@ -33,6 +33,7 @@
         <commons-collections4.version>4.4</commons-collections4.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <commons-csv.version>1.7</commons-csv.version>
+        <easyexcel.version>2.2.6</easyexcel.version>
         <antlr4-runtime.version>4.7.2</antlr4-runtime.version>
         <HikariCP.version>3.4.1</HikariCP.version>
         <fastjson.version>1.2.62</fastjson.version>
@@ -48,16 +49,23 @@
         <pagehelper-spring-boot-starter.version>1.2.13</pagehelper-spring-boot-starter.version>
         <mybatis-spring-boot-starter.version>2.1.1</mybatis-spring-boot-starter.version>
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
-        <junit-jupiter-api.version>5.6.0-M1</junit-jupiter-api.version>
         <druid.version>1.1.22</druid.version>
 
         <octopus-commons.version>1.0-SNAPSHOT</octopus-commons.version>
         <octopus-dao.version>1.0-SNAPSHOT</octopus-dao.version>
-        <octopus-query.version>1.0-SNAPSHOT</octopus-query.version>
         <octopus-parsing.version>1.0-SNAPSHOT</octopus-parsing.version>
+        <octopus-query.version>1.0-SNAPSHOT</octopus-query.version>
+
+        <junit-jupiter.version>5.7.0</junit-jupiter.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -102,19 +110,6 @@
                 <groupId>javax.persistence</groupId>
                 <artifactId>persistence-api</artifactId>
                 <version>${persistence-api.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <version>${junit-jupiter-api.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.12</version>
-                <scope>test</scope>
             </dependency>
 
             <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
@@ -174,6 +169,12 @@
                 <artifactId>commons-csv</artifactId>
                 <version>${commons-csv.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/com.alibaba/easyexcel -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>easyexcel</artifactId>
+                <version>${easyexcel.version}</version>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/javax.mail/javax.mail-api -->
             <dependency>
                 <groupId>javax.mail</groupId>
@@ -231,5 +232,18 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe-plugin.version}</version>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
