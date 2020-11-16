@@ -20,25 +20,24 @@ public class QuartzTaskParamDTO implements Serializable {
      */
     private String runType;
 
-    // 报表id runType为REPORT时有效
-    private Long serveId;
-    // 查询人Id
-    private Long userId;
-
-    // 查询数据源 runType为RAW_SQL时有效
+    // Serve id, This is valid when the value of runType is SERVE
+    private Long   serveId;
+    // Query person Id
+    private Long   userId;
+    // The datasource name, This is valid when the value of runType is RAW_SQL.
     private String dsName;
-    // 执行sql   runType为RAW_SQL时有效
+    // raw sql, The datasource name, This is valid when the value of runType is RAW_SQL.
     private String rawSql;
 
-    // 邮件标题
+    // Email title
     private String       emailSubject;
-    // 邮件发送人昵称
+    // Nickname of the sender
     private String       emailFromPersonal;
-    // 邮件接收人
+    // Mail receiver
     private List<String> emailTos;
-    // 邮件抄送人
+    // Cc the person
     private List<String> emailCcs;
-    // 邮件内容
+    // Email content
     private String       emailBody;
 
 }

@@ -127,4 +127,17 @@ public class DatasourceServiceImpl implements DatasourceService {
     public boolean isExistDsId(Long dsId) {
         return datasourceMapper.isExistDsId(dsId) > 0;
     }
+
+    /**
+     * Gets data source information by name.
+     *
+     * @param name String
+     * @return DatasourceDO
+     */
+    @Override
+    public List<DatasourceDO> findByName(String name) {
+        DatasourceDO model = new DatasourceDO();
+        model.setName(name);
+        return datasourceMapper.list(model);
+    }
 }

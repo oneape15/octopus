@@ -28,7 +28,7 @@ public interface QuartzTaskService extends BaseService<QuartzTaskDO> {
      * update task information.
      *
      * @param taskId Long
-     * @param status Integer 0 - 停用, 1 - 启用
+     * @param status Integer 0 - block up; 1 - invoke;
      * @return int 1 - success; 0 - fail;
      */
     int updateTaskStatus(Long taskId, Integer status);

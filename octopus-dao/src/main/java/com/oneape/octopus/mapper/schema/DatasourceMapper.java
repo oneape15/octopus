@@ -61,7 +61,6 @@ public interface DatasourceMapper {
     @SelectProvider(type = DatasourceSqlProvider.class, method = "getSameBy")
     int getSameBy(@Param("name") String name, @Param("filterId") Long filterId);
 
-
     /**
      * Checks if the dsId is valid.
      */

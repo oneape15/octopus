@@ -4,6 +4,8 @@ import com.oneape.octopus.datasource.data.DatasourceInfo;
 import com.oneape.octopus.domain.schema.DatasourceDO;
 import com.oneape.octopus.service.BaseService;
 
+import java.util.List;
+
 public interface DatasourceService extends BaseService<DatasourceDO> {
 
     /**
@@ -21,4 +23,13 @@ public interface DatasourceService extends BaseService<DatasourceDO> {
      * @return boolean true - valid ; false - invalid.
      */
     boolean isExistDsId(Long dsId);
+
+    /**
+     * Gets data source information by name.
+     *
+     * @param name String
+     * @return List
+     */
+    List<DatasourceDO> findByName(String name);
+
 }

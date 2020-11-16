@@ -200,7 +200,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
     @Override
     public List<QuartzTaskDO> find(QuartzTaskDO model) {
         Preconditions.checkNotNull(model, "The task information is empty!");
-        return null;
+        return quartzTaskMapper.list(model);
     }
 
     /**
