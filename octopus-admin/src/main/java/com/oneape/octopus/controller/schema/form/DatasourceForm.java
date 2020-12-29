@@ -22,6 +22,8 @@ public class DatasourceForm extends BaseForm implements Serializable {
     @NotBlank(message = "The data source login name is empty.", groups = {AddCheck.class, EditCheck.class})
     private String  username;
     private Integer status;
+    private Integer maxPoolSize;
+    private Integer minIdle;
     private Integer timeout;
     private String  testSql;
     private String  password;

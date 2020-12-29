@@ -12,4 +12,13 @@ public interface ServeInfoService extends BaseService<ServeInfoDO> {
      * @return boolean true - valid. false - invalid.
      */
     boolean checkReportId(Long serveId);
+
+    /**
+     * 1. change the serve status to PUBLISH;
+     * 2. Save one version to the version list.
+     *
+     * @param serveId Long
+     * @return int 1 - success, 0 - fail
+     */
+    int publishServe(Long serveId);
 }

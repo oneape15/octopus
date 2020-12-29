@@ -22,6 +22,7 @@
         <module>octopus-commons</module>
         <module>octopus-wharf</module>
         <module>octopus-dao</module>
+        <module>octopus-customer</module>
     </modules>
 
     <properties>

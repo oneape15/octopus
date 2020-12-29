@@ -22,12 +22,6 @@ public class ServeVersionDO extends BaseDO {
     private String versionCode;
 
     /**
-     * Description version information.
-     */
-    @EntityColumn(name = "version_log", nullable = false)
-    private String versionLog;
-
-    /**
      * The version type
      * {@see VersionType}
      */
@@ -39,5 +33,10 @@ public class ServeVersionDO extends BaseDO {
      */
     @EntityColumn(name = "serve_config", bigColumn = true)
     private String serveConfig;
+
+    /**
+     * Description version information.
+     */
+    private String comment;
 
 }

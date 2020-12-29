@@ -78,6 +78,12 @@ public interface TableColumnMapper {
     })
     List<TableColumnDO> getTableColumnList(@Param("dsId") Long dsId, @Param("tableName") String tableName);
 
+    /**
+     * @param dsId      LOng
+     * @param tableName String
+     * @param columns   List
+     * @return int
+     */
     @UpdateProvider(type = TableColumnSqlProvider.class, method = "updateTableColumnHeatValue")
     int updateTableColumnHeatValue(@Param("dsId") Long dsId, @Param("tableName") String tableName, @Param("columns") List<String> columns);
 }

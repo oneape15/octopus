@@ -1,41 +1,45 @@
 -- datasource Data source information table.
 CREATE TABLE `datasource`
 (
-  `id`          BIGINT(20)    NOT NULL
+  `id`            BIGINT(20)    NOT NULL
   COMMENT 'primary key',
-  `name`        VARCHAR(64)   NOT NULL
+  `name`          VARCHAR(64)   NOT NULL
   COMMENT 'The data source name',
-  `type`        VARCHAR(64)   NOT NULL
+  `type`          VARCHAR(64)   NOT NULL
   COMMENT 'The data source type. eg: MySQL, Oracle',
-  `status`      TINYINT(1)    NOT NULL DEFAULT 0
+  `status`        TINYINT(1)    NOT NULL DEFAULT 0
   COMMENT 'The data source statue , 0 - usable; 1 - disabled',
-  `jdbc_driver` VARCHAR(256)  NULL
+  `jdbc_driver`   VARCHAR(256)  NULL
   COMMENT 'The data source driver class.',
-  `jdbc_url`    VARCHAR(512)  NOT NULL
+  `jdbc_url`      VARCHAR(512)  NOT NULL
   COMMENT 'The data source jdbc url.',
-  `username`    VARCHAR(64)   NOT NULL
+  `username`      VARCHAR(64)   NOT NULL
   COMMENT 'The data source login username.',
-  `password`    VARCHAR(64)   NULL     DEFAULT NULL
+  `password`      VARCHAR(64)   NULL     DEFAULT NULL
   COMMENT 'The data source login password.',
-  `sync`        TINYINT(1)    NULL     DEFAULT 0
+  `sync`          TINYINT(1)    NULL     DEFAULT 0
   COMMENT 'Data source synchronization state. 0 - Out of sync; 1 - sync',
-  `cron`        VARCHAR(128)  NULL
+  `cron`          VARCHAR(128)  NULL
   COMMENT 'Synchronization period expression ''0 0 9 * * ?''',
-  `timeout`     INT(11)       NULL     DEFAULT 60
+  `max_pool_size` INT(11)       NOT NULL DEFAULT 5
+  COMMENT 'The maximum number of connections in the pool',
+  `min_idle`      INT(11)       NOT NULL DEFAULT 5
+  COMMENT 'The minimum number of idle connections in the pool to maintain',
+  `timeout`       INT(11)       NULL     DEFAULT 60
   COMMENT 'Connection pool timeout(ms)',
-  `test_sql`    VARCHAR(1024) NULL
+  `test_sql`      VARCHAR(1024) NULL
   COMMENT 'The check status SQL',
-  `comment`     VARCHAR(256)  NULL
+  `comment`       VARCHAR(256)  NULL
   COMMENT 'description',
-  `archive`     TINYINT(1)    NOT NULL DEFAULT 0
+  `archive`       TINYINT(1)    NOT NULL DEFAULT 0
   COMMENT '0 - normal data; 1 - have archive (soft delete)',
-  `created`     BIGINT(20)    NOT NULL
+  `created`       BIGINT(20)    NOT NULL
   COMMENT 'create time ',
-  `creator`     BIGINT(20)    NOT NULL
+  `creator`       BIGINT(20)    NOT NULL
   COMMENT 'Data record creator',
-  `modified`    BIGINT(20)    NULL     DEFAULT NULL
+  `modified`      BIGINT(20)    NULL     DEFAULT NULL
   COMMENT 'Last updated time',
-  `modifier`    BIGINT(20)    NULL     DEFAULT NULL
+  `modifier`      BIGINT(20)    NULL     DEFAULT NULL
   COMMENT 'Data record  modifier',
   PRIMARY KEY (`id`)
 )
@@ -86,35 +90,35 @@ CREATE TABLE `table_schema`
 CREATE TABLE `table_column`
 (
 
-  `id`         BIGINT(20)   NOT NULL
+  `id`            BIGINT(20)   NOT NULL
   COMMENT 'primary key',
   `datasource_id` BIGINT(20)   NOT NULL
   COMMENT 'the data source id.',
-  `table_name` VARCHAR(512) NOT NULL
+  `table_name`    VARCHAR(512) NOT NULL
   COMMENT 'the table name',
-  `name`       VARCHAR(256) NOT NULL
+  `name`          VARCHAR(256) NOT NULL
   COMMENT 'the column name',
-  `alias`      VARCHAR(256) NULL
+  `alias`         VARCHAR(256) NULL
   COMMENT 'the column alias, default is null',
-  `data_type`  VARCHAR(32)  NULL
+  `data_type`     VARCHAR(32)  NULL
   COMMENT 'eg. INTEGER, FLOAT, STRING, DECIMAL...',
-  `classify`   TINYINT(1)   NOT NULL DEFAULT 0
+  `classify`      TINYINT(1)   NOT NULL DEFAULT 0
   COMMENT 'column classify. 0 - normal column ; 1 - primary key; 2 - foreign key',
-  `heat`       BIGINT(20)   NOT NULL DEFAULT 0
+  `heat`          BIGINT(20)   NOT NULL DEFAULT 0
   COMMENT 'The column use time',
-  `status`     TINYINT(1)   NOT NULL DEFAULT 0
+  `status`        TINYINT(1)   NOT NULL DEFAULT 0
   COMMENT 'The column status. 0 - normal, 1 - has drop',
-  `comment`    VARCHAR(256) NULL
+  `comment`       VARCHAR(256) NULL
   COMMENT 'description',
-  `archive`    TINYINT(1)   NOT NULL DEFAULT 0
+  `archive`       TINYINT(1)   NOT NULL DEFAULT 0
   COMMENT '0 - normal data; 1 - have archive (soft delete)',
-  `created`    BIGINT(20)   NOT NULL
+  `created`       BIGINT(20)   NOT NULL
   COMMENT 'create time ',
-  `creator`    BIGINT(20)   NOT NULL
+  `creator`       BIGINT(20)   NOT NULL
   COMMENT 'Data record creator',
-  `modified`   BIGINT(20)   NULL     DEFAULT NULL
+  `modified`      BIGINT(20)   NULL     DEFAULT NULL
   COMMENT 'Last updated time',
-  `modifier`   BIGINT(20)   NULL     DEFAULT NULL
+  `modifier`      BIGINT(20)   NULL     DEFAULT NULL
   COMMENT 'Data record  modifier',
   PRIMARY KEY (`id`)
 )

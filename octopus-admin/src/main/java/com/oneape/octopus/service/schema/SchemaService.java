@@ -13,6 +13,14 @@ import java.util.List;
 public interface SchemaService {
 
     /**
+     * Update table information.
+     *
+     * @param ts TableSchemaDO
+     * @return int 0 - fail; 1 - success;
+     */
+    int updateTableSchemaInfo(TableSchemaDO ts);
+
+    /**
      * Pulls the specified data source information and saves it.
      *
      * @param dsId Long
@@ -47,6 +55,11 @@ public interface SchemaService {
      * @return 0 - fail; 1 - success;
      */
     int changeTableColumnInfo(TableColumnDO tcDo);
+
+    /**
+     * Initializes the synchronous Job
+     */
+    void initSyncJob();
 
     /**
      * Modify the table heat value.

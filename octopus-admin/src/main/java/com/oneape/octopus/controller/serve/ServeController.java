@@ -5,11 +5,13 @@ import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.controller.serve.form.ServeForm;
+import com.oneape.octopus.controller.serve.form.ServeGroupForm;
 import com.oneape.octopus.domain.serve.ServeInfoDO;
 import com.oneape.octopus.model.vo.ApiResult;
 import com.oneape.octopus.commons.enums.ReportParamType;
 import com.oneape.octopus.commons.enums.ServeType;
 import com.oneape.octopus.commons.enums.VisualType;
+import com.oneape.octopus.service.serve.ServeGroupService;
 import com.oneape.octopus.service.serve.ServeInfoService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,15 +25,17 @@ import java.util.List;
 public class ServeController {
 
     @Resource
-    private ServeInfoService reportService;
+    private ServeInfoService  serveInfoService;
+    @Resource
+    private ServeGroupService serveGroupService;
 
     /**
      * Save serve information.
      */
-    @PostMapping("/design/save")
+    @PostMapping("/save")
     public ApiResult<String> doSaveReport(@RequestBody @Validated(value = ServeForm.AddCheck.class) ServeForm form) {
         ServeInfoDO infoDO = form.toDO();
-        int status = reportService.save(infoDO);
+        int status = serveInfoService.save(infoDO);
         if (status > 0) {
             return ApiResult.ofData("Saved serve information successfully.");
         }
@@ -41,9 +45,9 @@ public class ServeController {
     /**
      * Deleted serve information.
      */
-    @PostMapping("/design/del")
-    public ApiResult<String> doDelReport(@RequestBody @Validated(value = ServeForm.KeyCheck.class) ServeForm form) {
-        int status = reportService.deleteById(form.getId());
+    @PostMapping("/del/{serveId}")
+    public ApiResult<String> doDelReport(@PathVariable(name = "serverId") Long serveId) {
+        int status = serveInfoService.deleteById(serveId);
         if (status > 0) {
             return ApiResult.ofData("Deleted serve information successfully.");
         }
@@ -53,27 +57,45 @@ public class ServeController {
     /**
      * Paging query serve information.
      */
-    @PostMapping("/design/list")
+    @PostMapping("/list")
     public ApiResult<PageInfo<ServeInfoDO>> doList(@RequestBody @Validated ServeForm form) {
         PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
-        List<ServeInfoDO> vos = reportService.find(form.toDO());
+        List<ServeInfoDO> vos = serveInfoService.find(form.toDO());
         return ApiResult.ofData(new PageInfo<>(vos));
+    }
+
+    @PostMapping("/publish/{serveId}")
+    public ApiResult publishServe(@PathVariable(name = "serveId") Long serveId) {
+        int status = serveInfoService.publishServe(serveId);
+        if (status > 0) {
+            return ApiResult.ofData("Publish serve successfully.");
+        }
+        return ApiResult.ofError(StateCode.BizError, "Publish serve fail.");
+    }
+
+    @PostMapping("/move/{serveId}/{groupId}")
+    public ApiResult moveServe(@PathVariable(name = "serveId") Long serveId, @PathVariable(name = "groupId") Long groupId) {
+        int status = serveInfoService.publishServe(serveId);
+        if (status > 0) {
+            return ApiResult.ofData("Move successfully.");
+        }
+        return ApiResult.ofError(StateCode.BizError, "Move fail.");
     }
 
 
     /**
      * Paging query serve information.
      */
-    @GetMapping("/design/get/{id}")
-    public ApiResult<ServeInfoDO> getById(@PathVariable(name = "id") Long id) {
-        ServeInfoDO vo = reportService.findById(id);
+    @GetMapping("/get/{serveId}")
+    public ApiResult<ServeInfoDO> getById(@PathVariable(name = "serveId") Long serveId) {
+        ServeInfoDO vo = serveInfoService.findById(serveId);
         return ApiResult.ofData(vo);
     }
 
     /**
      * Get serve type.
      */
-    @GetMapping("/design/types")
+    @GetMapping("/serveTypes")
     public ApiResult<List<Pair<String, String>>> getReportTypes() {
         List<Pair<String, String>> types = new ArrayList<>();
         for (ServeType rt : ServeType.values()) {
@@ -86,7 +108,7 @@ public class ServeController {
     /**
      * Get serve visual type.
      */
-    @GetMapping("/design/visualTypes")
+    @GetMapping("/visualTypes")
     public ApiResult<List<Pair<Integer, String>>> getReportVisualTypes() {
         List<Pair<Integer, String>> types = new ArrayList<>();
         for (VisualType rt : VisualType.values()) {
@@ -98,7 +120,7 @@ public class ServeController {
     /**
      * Get serve param type.
      */
-    @GetMapping("/design/paramTypes")
+    @GetMapping("/paramTypes")
     public ApiResult<List<Pair<Integer, String>>> getReportParamTypes() {
         List<Pair<Integer, String>> pairs = new ArrayList<>();
         for (ReportParamType ppt : ReportParamType.values()) {
@@ -106,4 +128,32 @@ public class ServeController {
         }
         return ApiResult.ofData(pairs);
     }
+
+    /**
+     * Save serve group information.
+     *
+     * @param from ServeGroupForm
+     */
+    @PostMapping("/group/save")
+    public ApiResult saveGroup(@RequestBody @Validated(value = ServeGroupForm.AddCheck.class) ServeGroupForm from) {
+        int status = serveGroupService.save(from.toDO());
+        if (status > 0) {
+            return ApiResult.ofData("Saved serve group information successfully.");
+        }
+        return ApiResult.ofError(StateCode.BizError, "Saved serve group information fail.");
+    }
+
+    /**
+     * Deleted serve group information.
+     */
+    @PostMapping("/group/del/{groupId}")
+    public ApiResult<String> doDelServeGroup(@PathVariable(name = "groupId") Long groupId) {
+        int status = serveGroupService.deleteById(groupId);
+        if (status > 0) {
+            return ApiResult.ofData("Deleted serve group information successfully.");
+        }
+        return ApiResult.ofError(StateCode.BizError, "Deleted serve group information fail.");
+    }
+
+
 }

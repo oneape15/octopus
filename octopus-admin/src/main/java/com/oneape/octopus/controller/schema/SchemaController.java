@@ -1,6 +1,7 @@
 package com.oneape.octopus.controller.schema;
 
 import com.oneape.octopus.controller.schema.form.TableColumnForm;
+import com.oneape.octopus.controller.schema.form.TableSchemaForm;
 import com.oneape.octopus.domain.schema.TableColumnDO;
 import com.oneape.octopus.domain.schema.TableSchemaDO;
 import com.oneape.octopus.model.vo.ApiResult;
@@ -25,7 +26,7 @@ public class SchemaController {
     @Resource
     private SchemaService schemaService;
 
-    @RequestMapping(value = "/reloadDatabase/{dsId}", method = {RequestMethod.GET})
+    @GetMapping(value = "/reloadDatabase/{dsId}")
     public ApiResult reloadDatabaseById(@PathVariable(name = "dsId") Long dsId) {
         int status = schemaService.fetchAndSaveDatabaseInfo(dsId);
         if (status <= 0) {
@@ -35,7 +36,7 @@ public class SchemaController {
     }
 
 
-    @RequestMapping(value = "/reload/{dsId}/{tableName}", method = {RequestMethod.GET})
+    @GetMapping(value = "/reload/{dsId}/{tableName}")
     public ApiResult fetchTableInfo(@PathVariable(name = "dsId") Long dsId, @PathVariable(name = "tableName") String tableName) {
         int status = schemaService.fetchAndSaveTableColumnInfo(dsId, tableName);
         if (status <= 0) {
@@ -44,14 +45,14 @@ public class SchemaController {
         return ApiResult.ofData("Pull table Schema successfully!");
     }
 
-    @RequestMapping(value = "/fetchTableList/{dsId}", method = {RequestMethod.GET})
+    @GetMapping(value = "/fetchTableList/{dsId}")
     public ApiResult<List<TableSchemaDO>> fetchTableList(@PathVariable(name = "dsId") Long dsId) {
         List<TableSchemaDO> tableSchemaDOs = schemaService.fetchTableList(dsId);
 
         return ApiResult.ofData(tableSchemaDOs);
     }
 
-    @RequestMapping(value = "/fetchTableColumnList/{dsId}/{tableName}", method = {RequestMethod.GET})
+    @GetMapping(value = "/fetchTableColumnList/{dsId}/{tableName}")
     public ApiResult<List<TableColumnDO>> fetchTableColumnList(@PathVariable(name = "dsId") Long dsId,
                                                                @PathVariable(name = "tableName") String tableName) {
         List<TableColumnDO> tableSchemaDOs = schemaService.fetchTableColumnList(dsId, tableName);
@@ -59,12 +60,21 @@ public class SchemaController {
         return ApiResult.ofData(tableSchemaDOs);
     }
 
-    @RequestMapping(value = "/column/changeInfo", method = {RequestMethod.POST})
+    @PostMapping(value = "/column/changeInfo")
     public ApiResult changeColumnInfo(@RequestBody @Validated(value = TableColumnForm.InfoCheck.class) TableColumnForm form) {
         int status = schemaService.changeTableColumnInfo(form.toDO());
         if (status <= 0) {
             return ApiResult.ofMessage("Modify the table field information fail!");
         }
         return ApiResult.ofData("Modify the table field information successfully!");
+    }
+
+    @PostMapping(value = "/table/changeInfo")
+    public ApiResult changeTableInfo(@RequestBody @Validated(value = TableSchemaForm.InfoCheck.class) TableSchemaForm form) {
+        int status = schemaService.updateTableSchemaInfo(form.toDO());
+        if (status <= 0) {
+            return ApiResult.ofMessage("Modify the table information fail!");
+        }
+        return ApiResult.ofData("Modify the table information successfully!");
     }
 }

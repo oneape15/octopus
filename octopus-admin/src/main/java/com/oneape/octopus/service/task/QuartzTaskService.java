@@ -4,6 +4,8 @@ package com.oneape.octopus.service.task;
 import com.oneape.octopus.domain.task.QuartzTaskDO;
 import com.oneape.octopus.service.BaseService;
 
+import java.util.Map;
+
 /**
  * Created by oneape<oneape15@163.com>
  * Created 2020-09-23 11:09.
@@ -34,11 +36,26 @@ public interface QuartzTaskService extends BaseService<QuartzTaskDO> {
     int updateTaskStatus(Long taskId, Integer status);
 
     /**
-     * Get task information based on Id
+     * Add the task to the schedule.
      *
-     * @param taskId Long
-     * @return QuartzTaskDO
+     * @param taskDO     QuartzTaskDO
+     * @param jobDataMap Map
      */
-    QuartzTaskDO findById(Long taskId);
+    void addJob2Schedule(QuartzTaskDO taskDO, Map<String, Object> jobDataMap);
+
+    /**
+     * Update task.
+     *
+     * @param taskDO     QuartzTaskDO
+     * @param jobDataMap Map
+     */
+    void updateJob2Schedule(QuartzTaskDO taskDO, Map<String, Object> jobDataMap);
+
+    /**
+     * Remove task.
+     *
+     * @param taskDO QuartzTaskDO
+     */
+    void deleteJob2Schedule(QuartzTaskDO taskDO);
 
 }

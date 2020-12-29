@@ -1,8 +1,8 @@
 package com.oneape.octopus.mapper.schema;
 
+import com.oneape.octopus.domain.schema.TableSchemaDO;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.mapper.schema.provider.TableSchemaSqlProvider;
-import com.oneape.octopus.domain.schema.TableSchemaDO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -23,6 +23,15 @@ public interface TableSchemaMapper {
      */
     @InsertProvider(type = TableSchemaSqlProvider.class, method = "insert")
     int insert(TableSchemaDO model);
+
+    /**
+     * Update data by primary key.
+     *
+     * @param model T
+     * @return int 1 - success; 0 - fail.
+     */
+    @UpdateProvider(type = TableSchemaSqlProvider.class, method = "updateById")
+    int update(TableSchemaDO model);
 
     /**
      * get data by primary key.
@@ -76,4 +85,10 @@ public interface TableSchemaMapper {
                     " WHERE " + BaseSqlProvider.FIELD_ARCHIVE + " = 0  AND datasource_id = #{dsId} AND name = #{tableName}"
     })
     int updateTableHeatValue(@Param("dsId") Long dsId, @Param("tableName") String tableName, @Param("incHeat") Integer incHeat);
+
+    @Select({
+            "SELECT * FROM " + TableSchemaSqlProvider.TABLE_NAME
+                    + " WHERE " + BaseSqlProvider.FIELD_ARCHIVE + " = 0  AND sync_cron IS NOT NULL"
+    })
+    List<TableSchemaDO> getNeedSyncTableList();
 }

@@ -69,4 +69,15 @@ public interface DatasourceMapper {
                     " WHERE " + BaseSqlProvider.FIELD_ARCHIVE + " = 0  AND id = #{dsId}"
     })
     int isExistDsId(@Param("dsId") Long dsId);
+
+    /**
+     * The query is based on a property in the entity that is not null.
+     *
+     * @return List
+     */
+    @Select({
+            "SELECT * FROM " + DatasourceSqlProvider.TABLE_NAME +
+                    " WHERE " + BaseSqlProvider.FIELD_ARCHIVE + " = 0  AND cron IS NOT NULL"
+    })
+    List<DatasourceDO> getNeedSyncDatasourceList();
 }

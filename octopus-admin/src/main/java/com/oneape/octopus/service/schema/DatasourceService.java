@@ -32,4 +32,9 @@ public interface DatasourceService extends BaseService<DatasourceDO> {
      */
     List<DatasourceDO> findByName(String name);
 
+    /**
+     * Initializes the synchronous Job
+     */
+    void initSyncJob();
+
 }

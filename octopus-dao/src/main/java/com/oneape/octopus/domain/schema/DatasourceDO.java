@@ -56,6 +56,16 @@ public class DatasourceDO extends BaseDO {
      */
     private Integer timeout;
     /**
+     * The maximum number of connections in the pool.
+     */
+    @EntityColumn(name = "max_pool_size")
+    private Integer maxPoolSize;
+    /**
+     * The minimum number of idle connections in the pool to maintain.
+     */
+    @EntityColumn(name = "min_idle")
+    private Integer minIdle;
+    /**
      * the sql of check datasource valid
      */
     @EntityColumn(name = "test_sql")

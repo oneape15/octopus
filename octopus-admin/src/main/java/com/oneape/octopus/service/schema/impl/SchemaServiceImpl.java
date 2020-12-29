@@ -2,16 +2,18 @@ package com.oneape.octopus.service.schema.impl;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.commons.cause.BizException;
-import com.oneape.octopus.datasource.data.DatasourceInfo;
 import com.oneape.octopus.datasource.QueryFactory;
-import com.oneape.octopus.datasource.schema.SchemaTableField;
+import com.oneape.octopus.datasource.data.DatasourceInfo;
 import com.oneape.octopus.datasource.schema.SchemaTable;
-import com.oneape.octopus.mapper.schema.TableColumnMapper;
-import com.oneape.octopus.mapper.schema.TableSchemaMapper;
+import com.oneape.octopus.datasource.schema.SchemaTableField;
 import com.oneape.octopus.domain.schema.TableColumnDO;
 import com.oneape.octopus.domain.schema.TableSchemaDO;
+import com.oneape.octopus.domain.task.QuartzTaskDO;
+import com.oneape.octopus.mapper.schema.TableColumnMapper;
+import com.oneape.octopus.mapper.schema.TableSchemaMapper;
 import com.oneape.octopus.service.schema.DatasourceService;
 import com.oneape.octopus.service.schema.SchemaService;
+import com.oneape.octopus.service.task.QuartzTaskService;
 import com.oneape.octopus.service.uid.UIDGeneratorService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,10 +22,13 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by oneape<oneape15@163.com>
@@ -46,6 +51,41 @@ public class SchemaServiceImpl implements SchemaService {
     private UIDGeneratorService uidGeneratorService;
     @Resource
     private DatasourceService   datasourceService;
+    @Resource
+    private QuartzTaskService   quartzTaskService;
+
+    /**
+     * Update table information.
+     *
+     * @param ts TableSchemaDO
+     * @return int 0 - fail; 1 - success;
+     */
+    @Override
+    public int updateTableSchemaInfo(TableSchemaDO ts) {
+        TableSchemaDO oldDo = Preconditions.checkNotNull(tableSchemaMapper.findById(ts.getId()), "The schema information is invalid.");
+
+        TableSchemaDO model = new TableSchemaDO();
+        model.setId(ts.getId());
+        model.setComment(ts.getComment());
+        model.setSyncCron(ts.getSyncCron());
+        model.setSyncTime(ts.getSyncTime());
+        int status = tableSchemaMapper.update(model);
+        if (status > 0) {
+            if (StringUtils.isNotBlank(oldDo.getSyncCron())) {
+                if (StringUtils.isBlank(ts.getSyncCron())) {
+                    quartzTaskService.deleteJob2Schedule(tableSchema2QuartzTaskDO(oldDo));
+                } else {
+                    quartzTaskService.updateJob2Schedule(tableSchema2QuartzTaskDO(oldDo), buildJobDataMap(oldDo));
+                }
+            } else {
+                if (StringUtils.isNotBlank(ts.getSyncCron())) {
+                    oldDo.setSyncCron(ts.getSyncCron());
+                    quartzTaskService.addJob2Schedule(tableSchema2QuartzTaskDO(oldDo), buildJobDataMap(oldDo));
+                }
+            }
+        }
+        return status;
+    }
 
     /**
      * Pulls the specified data source information and saves it.
@@ -185,11 +225,58 @@ public class SchemaServiceImpl implements SchemaService {
      * @param tcDo TableColumnDO
      * @return 0 - fail; 1 - success;
      */
+    @Transactional
     @Override
     public int changeTableColumnInfo(TableColumnDO tcDo) {
         Preconditions.checkNotNull(tcDo, "The column object is null.");
         Preconditions.checkArgument(tcDo.getId() != null, "The  primary key of column is null.");
         return tableColumnMapper.update(tcDo);
+    }
+
+    /**
+     * Initializes the synchronous Job
+     */
+    @Override
+    public void initSyncJob() {
+        List<TableSchemaDO> tsList = tableSchemaMapper.getNeedSyncTableList();
+        if (CollectionUtils.isEmpty(tsList)) {
+            return;
+        }
+
+        for (TableSchemaDO ts : tsList) {
+            quartzTaskService.addJob2Schedule(tableSchema2QuartzTaskDO(ts), buildJobDataMap(ts));
+        }
+    }
+
+    /**
+     * build the job data map.
+     *
+     * @param ts TableSchemaDO
+     * @return Map
+     */
+    private Map<String, Object> buildJobDataMap(TableSchemaDO ts) {
+        Map<String, Object> jobDataMap = new HashMap<>();
+        jobDataMap.put("dsId", ts.getDatasourceId());
+        jobDataMap.put("tableName", ts.getName());
+        return jobDataMap;
+    }
+
+
+    /**
+     * build the task object.
+     *
+     * @param ts TableSchemaDO
+     * @return QuartzTaskDO
+     */
+    private QuartzTaskDO tableSchema2QuartzTaskDO(TableSchemaDO ts) {
+        QuartzTaskDO qt = new QuartzTaskDO();
+        qt.setTaskName(ts.getDatasourceId() + "_" + ts.getName());
+        qt.setCron(ts.getSyncCron());
+        qt.setGroupName("TABLE_SCHEMA_GROUP");
+        qt.setStatus(1);
+        qt.setJobClass("com.oneape.octopus.job.SchemaTableSyncJob");
+
+        return qt;
     }
 
     /**

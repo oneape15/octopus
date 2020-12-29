@@ -1,5 +1,7 @@
 package com.oneape.octopus.config;
 
+import com.oneape.octopus.service.schema.DatasourceService;
+import com.oneape.octopus.service.schema.SchemaService;
 import com.oneape.octopus.service.task.QuartzTaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -21,6 +23,10 @@ import javax.annotation.Resource;
 public class ScheduledTaskRunner implements ApplicationRunner {
     @Resource
     private QuartzTaskService quartzTaskService;
+    @Resource
+    private SchemaService     schemaService;
+    @Resource
+    private DatasourceService datasourceService;
 
     /**
      * Callback used to run the bean.
@@ -31,7 +37,16 @@ public class ScheduledTaskRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         log.info("Start the task -- start! ");
+
+        // init user task.
         quartzTaskService.initInvokeTask();
+
+        // init datasource sync task.
+        datasourceService.initSyncJob();
+
+        // init table sync task.
+        schemaService.initSyncJob();
+
         log.info("Start the task -- end! ");
     }
 }

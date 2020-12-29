@@ -47,10 +47,17 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
         int count = 0;
         for (QuartzTaskDO task : taskList) {
             count++;
-            addJob2Schedule(task);
+            this.addJob2Schedule(task, buildJobDataMap(task));
         }
 
-        log.info("Total startup tasks: {}.", count);
+        log.info("Total startup user tasks: {}.", count);
+    }
+
+    private Map<String, Object> buildJobDataMap(QuartzTaskDO taskDO) {
+        Map<String, Object> jobDataMap = new HashMap<>();
+        jobDataMap.put("id", taskDO.getId());
+
+        return jobDataMap;
     }
 
     /**
@@ -91,6 +98,8 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
 
         int status;
 
+        Map<String, Object> jobDataMap = buildJobDataMap(model);
+
         // update task information.
         if (isEdit) {
             status = quartzTaskMapper.update(model);
@@ -102,11 +111,11 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
                 Integer newStatus = model.getStatus();
                 // Same, and the status is 1, just update.
                 if (oldStatus.equals(newStatus) && oldStatus == 1) {
-                    updateJob2Schedule(model);
+                    updateJob2Schedule(model, jobDataMap);
                 } else {
                     // Different, depending on the new state.
                     if (newStatus == 1) {
-                        addJob2Schedule(model);
+                        addJob2Schedule(model, jobDataMap);
                     } else {
                         deleteJob2Schedule(model);
                     }
@@ -118,7 +127,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
 
             // The task is added to the schedule only if the save is successful and the task is enabled.
             if (status > 0 && model.getStatus() == 1) {
-                addJob2Schedule(model);
+                addJob2Schedule(model, jobDataMap);
             }
         }
 
@@ -137,8 +146,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
         JobKey jobKey = JobKey.jobKey(taskDO.getTaskName(), taskDO.getGroupName());
         try {
             // Get the JobDataMap，write the data.
-            Map<String, Object> paramMap = new HashMap<>();
-            paramMap.put("id", taskDO.getId());
+            Map<String, Object> paramMap = buildJobDataMap(taskDO);
             JobDataMap dataMap = new JobDataMap();
             dataMap.putAll(paramMap);
 
@@ -218,9 +226,11 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
     /**
      * Add the task to the schedule.
      *
-     * @param taskDO QuartzTaskDO
+     * @param taskDO     QuartzTaskDO
+     * @param jobDataMap Map
      */
-    private void addJob2Schedule(QuartzTaskDO taskDO) {
+    @Override
+    public void addJob2Schedule(QuartzTaskDO taskDO, Map<String, Object> jobDataMap) {
         Preconditions.checkNotNull(taskDO, "The task information is empty!");
         Preconditions.checkArgument(!StringUtils.isAnyBlank(taskDO.getGroupName(), taskDO.getTaskName()), "The task name or task group is empty!");
 
@@ -256,9 +266,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
                     .build();
 
             // Get the JobDataMap，write the data.
-            Map<String, Object> paramMap = new HashMap<>();
-            paramMap.put("id", taskDO.getId());
-            trigger.getJobDataMap().putAll(paramMap);
+            trigger.getJobDataMap().putAll(jobDataMap);
 
             quartzScheduler.scheduleJob(jobDetail, trigger);
             log.info("Add task : {}-{}({}) success!", taskGroup, taskName, cron);
@@ -271,9 +279,11 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
     /**
      * Update task.
      *
-     * @param taskDO QuartzTaskDO
+     * @param taskDO     QuartzTaskDO
+     * @param jobDataMap Map
      */
-    private void updateJob2Schedule(QuartzTaskDO taskDO) {
+    @Override
+    public void updateJob2Schedule(QuartzTaskDO taskDO, Map<String, Object> jobDataMap) {
         Preconditions.checkNotNull(taskDO, "The task information is empty!");
         Preconditions.checkArgument(!StringUtils.isAnyBlank(taskDO.getGroupName(), taskDO.getTaskName()), "The task name or task group is empty!");
 
@@ -307,9 +317,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
             }
 
             // Get the JobDataMap，write the data.
-            Map<String, Object> paramMap = new HashMap<>();
-            paramMap.put("id", taskDO.getId());
-            trigger.getJobDataMap().putAll(paramMap);
+            trigger.getJobDataMap().putAll(jobDataMap);
 
             quartzScheduler.rescheduleJob(triggerKey, trigger);
 
@@ -325,7 +333,8 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
      *
      * @param taskDO QuartzTaskDO
      */
-    private void deleteJob2Schedule(QuartzTaskDO taskDO) {
+    @Override
+    public void deleteJob2Schedule(QuartzTaskDO taskDO) {
         Preconditions.checkNotNull(taskDO, "The task information is empty!");
         Preconditions.checkArgument(!StringUtils.isAnyBlank(taskDO.getGroupName(), taskDO.getTaskName()), "The task name or task group is empty!");
 

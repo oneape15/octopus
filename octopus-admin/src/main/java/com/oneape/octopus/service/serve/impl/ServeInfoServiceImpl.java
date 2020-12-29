@@ -13,6 +13,7 @@ import com.oneape.octopus.dto.serve.ServeConfigTextDTO;
 import com.oneape.octopus.dto.serve.ServeParamDTO;
 import com.oneape.octopus.dto.serve.ServeSqlDTO;
 import com.oneape.octopus.mapper.serve.ServeInfoMapper;
+import com.oneape.octopus.mapper.serve.ServeVersionMapper;
 import com.oneape.octopus.service.serve.ServeInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -27,7 +28,9 @@ import java.util.*;
 @Service
 public class ServeInfoServiceImpl implements ServeInfoService {
     @Resource
-    private ServeInfoMapper serveInfoMapper;
+    private ServeInfoMapper    serveInfoMapper;
+    @Resource
+    private ServeVersionMapper serveVersionMapper;
 
     /**
      * save data to table.
@@ -124,6 +127,18 @@ public class ServeInfoServiceImpl implements ServeInfoService {
     public boolean checkReportId(Long serveId) {
         int size = serveInfoMapper.checkServeId(serveId);
         return size > 0;
+    }
+
+    /**
+     * 1. change the serve status to PUBLISH;
+     * 2. Save one version to the version list.
+     *
+     * @param serveId Long
+     * @return int 1 - success, 0 - fail
+     */
+    @Override
+    public int publishServe(Long serveId) {
+        return 0;
     }
 
     /**
