@@ -2,6 +2,7 @@ package com.oneape.octopus.domain.serve;
 
 import com.oneape.octopus.commons.annotation.SortId;
 import com.oneape.octopus.commons.enums.EntityColumn;
+import com.oneape.octopus.commons.enums.ServeType;
 import com.oneape.octopus.domain.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,6 +31,12 @@ public class ServeGroupDO extends BaseDO {
      */
     private String icon;
     /**
+     * {@link ServeType}
+     * serve type , report;  interface; eg.
+     */
+    @EntityColumn(name = "serve_type", nullable = false)
+    private String serveType;
+    /**
      * Group sort key.
      */
     @SortId
@@ -39,4 +46,9 @@ public class ServeGroupDO extends BaseDO {
      * Group description information.
      */
     private String comment;
+
+    public ServeGroupDO(Long id) {
+        this.setId(id);
+    }
 }
+

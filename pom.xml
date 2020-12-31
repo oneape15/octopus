@@ -51,6 +51,7 @@
         <mybatis-spring-boot-starter.version>2.1.1</mybatis-spring-boot-starter.version>
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
         <druid.version>1.1.22</druid.version>
+        <redisson.version>3.12.3</redisson.version>
 
         <octopus-commons.version>1.0-SNAPSHOT</octopus-commons.version>
         <octopus-dao.version>1.0-SNAPSHOT</octopus-dao.version>
@@ -236,6 +237,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-quartz</artifactId>
                 <version>2.3.4.RELEASE</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.redisson/redisson -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson</artifactId>
+                <version>${redisson.version}</version>
             </dependency>
 
         </dependencies>

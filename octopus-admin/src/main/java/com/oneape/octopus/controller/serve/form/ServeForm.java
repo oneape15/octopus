@@ -1,6 +1,8 @@
 package com.oneape.octopus.controller.serve.form;
 
 import com.alibaba.fastjson.JSON;
+import com.oneape.octopus.commons.validation.ServeTypeNotNull;
+import com.oneape.octopus.commons.validation.VisualTypeNotNull;
 import com.oneape.octopus.controller.BaseForm;
 import com.oneape.octopus.domain.serve.ServeInfoDO;
 import com.oneape.octopus.dto.serve.*;
@@ -19,11 +21,13 @@ import java.util.List;
 public class ServeForm extends BaseForm implements Serializable {
     @NotNull(message = "The serve Id is empty.", groups = {EditCheck.class, KeyCheck.class})
     private Long    id;
+    @NotNull(message = "The group Id is empty.", groups = {AddCheck.class, EditCheck.class})
+    private Long    groupId;
     @NotBlank(message = "The serve name is empty.", groups = {AddCheck.class, EditCheck.class})
     private String  name;
-    @NotNull(message = "The serve type is empty.", groups = {AddCheck.class, EditCheck.class})
+    @ServeTypeNotNull(message = "Invalid serveType value.", groups = {AddCheck.class, EditCheck.class})
     private String  serveType;
-    @NotNull(message = "The serve visual type is empty.", groups = {AddCheck.class, EditCheck.class})
+    @VisualTypeNotNull(message = "Invalid visualType value.", groups = {AddCheck.class, EditCheck.class})
     private Integer visualType;
 
     private Long   sortId;

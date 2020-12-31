@@ -2,6 +2,9 @@ package com.oneape.octopus.commons.enums;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Serve Type
  */
@@ -18,6 +21,15 @@ public enum ServeType {
 
     private String code;
     private String desc;
+
+    private static Map<String, ServeType> map;
+
+    static {
+        map = new HashMap<>();
+        for (ServeType st : values()) {
+            map.put(st.getCode(), st);
+        }
+    }
 
     ServeType(String code, String desc) {
         this.code = code;
@@ -37,11 +49,13 @@ public enum ServeType {
         if (StringUtils.isBlank(code)) {
             return null;
         }
-        for (ServeType st : values()) {
-            if (StringUtils.equalsIgnoreCase(st.getCode(), code)) {
-                return st;
-            }
-        }
-        return null;
+
+        return map.getOrDefault(StringUtils.upperCase(code), null);
+    }
+
+    public static boolean isValid(String code) {
+        if (StringUtils.isBlank(code)) return false;
+
+        return map.getOrDefault(StringUtils.upperCase(code), null) != null;
     }
 }

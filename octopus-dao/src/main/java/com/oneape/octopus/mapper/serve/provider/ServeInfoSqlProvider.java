@@ -2,10 +2,11 @@ package com.oneape.octopus.mapper.serve.provider;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.commons.dto.EntityAttribute;
-import com.oneape.octopus.commons.value.EntityColumnUtils;
-import com.oneape.octopus.mapper.BaseSqlProvider;
-import com.oneape.octopus.domain.serve.ServeInfoDO;
 import com.oneape.octopus.commons.enums.Archive;
+import com.oneape.octopus.commons.enums.ServeStatusType;
+import com.oneape.octopus.commons.value.EntityColumnUtils;
+import com.oneape.octopus.domain.serve.ServeInfoDO;
+import com.oneape.octopus.mapper.BaseSqlProvider;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
 
@@ -57,8 +58,41 @@ public class ServeInfoSqlProvider extends BaseSqlProvider<ServeInfoDO> {
 
         return new SQL()
                 .SELECT("COUNT(0)")
-                .FROM(getTableName())
+                .FROM(TABLE_NAME)
                 .WHERE(wheres.toArray(new String[wheres.size()]))
+                .toString();
+    }
+
+    public String countArchiveServe(@Param("serveType") String serveType) {
+        return new SQL()
+                .SELECT("COUNT(0)")
+                .FROM(TABLE_NAME)
+                .WHERE(FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
+                        "serve_type = #{serveType}",
+                        "status = " + ServeStatusType.ARCHIVE.name())
+                .toString();
+    }
+
+    public String countPersonalServe(@Param("serveType") String serveType, @Param("userId") Long userId) {
+        String link2GroupId = new SQL()
+                .SELECT("DISTINCT serve_id")
+                .FROM(TABLE_NAME + " AS t")
+                .LEFT_OUTER_JOIN(ServeRlGroupSqlProvider.TABLE_NAME + " AS rl ON t.id = rl.serve_id")
+                .WHERE("t." + FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
+                        "t.serve_type = #{serveType}",
+                        "t.status = " + ServeStatusType.EDIT.name(),
+                        "t." + FIELD_CREATOR + " = #{userId}",
+                        "rl." + FIELD_ARCHIVE + " = " + Archive.NORMAL.value()
+                )
+                .toString();
+        return new SQL()
+                .SELECT("COUNT(DISTINCT id)")
+                .FROM(TABLE_NAME)
+                .WHERE(FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
+                        "serve_type = #{serveType}",
+                        "status = " + ServeStatusType.EDIT.name(),
+                        FIELD_CREATOR + " = #{userId}",
+                        "id NOT IN (" + link2GroupId + ")")
                 .toString();
     }
 

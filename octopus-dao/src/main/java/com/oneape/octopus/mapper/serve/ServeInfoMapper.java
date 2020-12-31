@@ -1,5 +1,6 @@
 package com.oneape.octopus.mapper.serve;
 
+import com.oneape.octopus.commons.enums.ServeStatusType;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.mapper.serve.provider.ServeInfoSqlProvider;
 import com.oneape.octopus.domain.serve.ServeInfoDO;
@@ -73,4 +74,10 @@ public interface ServeInfoMapper {
                     " WHERE " + BaseSqlProvider.FIELD_ARCHIVE + " = 0 AND id = #{serveId}"
     })
     int checkServeId(@Param("serveId") Long serveId);
+
+    @SelectProvider(type = ServeInfoSqlProvider.class, method = "countArchiveServe")
+    int countArchiveServe(@Param("serveType") String serveType);
+
+    @SelectProvider(type = ServeInfoSqlProvider.class, method = "countPersonalServe")
+    int countPersonalServe(@Param("serveType") String serveType, @Param("userId") Long userId);
 }

@@ -5,24 +5,31 @@ import com.google.common.base.Preconditions;
 import com.oneape.octopus.commons.algorithm.Digraph;
 import com.oneape.octopus.commons.algorithm.DirectedCycle;
 import com.oneape.octopus.commons.cause.BizException;
-import com.oneape.octopus.commons.enums.ServeType;
+import com.oneape.octopus.commons.enums.ServeStatusType;
 import com.oneape.octopus.commons.value.OptStringUtils;
+import com.oneape.octopus.domain.serve.ServeGroupDO;
 import com.oneape.octopus.domain.serve.ServeInfoDO;
+import com.oneape.octopus.domain.serve.ServeRlGroupDO;
 import com.oneape.octopus.dto.serve.ServeColumnDTO;
 import com.oneape.octopus.dto.serve.ServeConfigTextDTO;
 import com.oneape.octopus.dto.serve.ServeParamDTO;
 import com.oneape.octopus.dto.serve.ServeSqlDTO;
+import com.oneape.octopus.mapper.serve.ServeGroupMapper;
 import com.oneape.octopus.mapper.serve.ServeInfoMapper;
+import com.oneape.octopus.mapper.serve.ServeRlGroupMapper;
 import com.oneape.octopus.mapper.serve.ServeVersionMapper;
 import com.oneape.octopus.service.serve.ServeInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -30,7 +37,13 @@ public class ServeInfoServiceImpl implements ServeInfoService {
     @Resource
     private ServeInfoMapper    serveInfoMapper;
     @Resource
+    private ServeGroupMapper   serveGroupMapper;
+    @Resource
+    private ServeRlGroupMapper serveRlGroupMapper;
+    @Resource
     private ServeVersionMapper serveVersionMapper;
+    @Resource
+    private RedissonClient     redissonClient;
 
     /**
      * save data to table.
@@ -43,40 +56,70 @@ public class ServeInfoServiceImpl implements ServeInfoService {
     @Transactional
     @Override
     public int save(ServeInfoDO model) {
+        throw new RuntimeException("unrealized");
+    }
+
+    /**
+     * save data to table.
+     * <p>
+     * If the Model property ID is not null, the update operation is performed, or the insert operation is performed。
+     *
+     * @param model   ServeInfoDO
+     * @param groupId Long
+     * @return int 1 - success; 0 - fail.
+     */
+    @Transactional
+    @Override
+    public int save(ServeInfoDO model, Long groupId) {
         Preconditions.checkNotNull(model, "The serve object is null.");
         Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "The serve name is empty.");
-        Preconditions.checkNotNull(StringUtils.isNotBlank(model.getServeType()), "The serve type is null.");
-        ServeType st = ServeType.getByCode(model.getServeType());
-        if (st == null) {
-            throw new BizException("Invalid serve type.");
-        }
+        ServeGroupDO sgDo = Preconditions.checkNotNull(serveGroupMapper.findById(groupId), "The group id is invalid.");
+        Preconditions.checkArgument(StringUtils.equals(model.getServeType(), sgDo.getServeType()), "The serve type is equal.");
 
         // whether is updating.
         boolean isUpdate = false;
         if (model.getId() != null && model.getId() > 0) {
-            boolean valid = checkReportId(model.getId());
+            boolean valid = checkServeId(model.getId());
             if (!valid) {
                 throw new BizException("The serve id is invalid.");
             }
             isUpdate = true;
         }
 
-        Preconditions.checkArgument(serveInfoMapper.hasSameName(model.getName(), isUpdate ? model.getId() : null) <= 0, "Name already exists.");
-
-        // Checks if the configuration is correct
-        if (StringUtils.isNotBlank(model.getConfigText())
-                && !StringUtils.equals(model.getConfigText(), "{}")) {
-            ServeConfigTextDTO configTextDTO = JSON.parseObject(model.getConfigText(), ServeConfigTextDTO.class);
-            checkServeConfigInfo(configTextDTO);
-        } else {
-            model.setConfigText(null);
+        RLock lock = redissonClient.getLock("SERVE_SAVE_" + model.getName() + (isUpdate ? model.getId() : "1"));
+        if (lock.isLocked()) {
+            throw new BizException("Get Lock fail.");
         }
+        try {
+            lock.lock(2, TimeUnit.MINUTES);
 
-        if (isUpdate) {
-            return serveInfoMapper.update(model);
+            Preconditions.checkArgument(serveInfoMapper.hasSameName(model.getName(), isUpdate ? model.getId() : null) <= 0, "Name already exists.");
+            // Checks if the configuration is correct
+            if (StringUtils.isNotBlank(model.getConfigText())
+                    && !StringUtils.equals(model.getConfigText(), "{}")) {
+                ServeConfigTextDTO configTextDTO = JSON.parseObject(model.getConfigText(), ServeConfigTextDTO.class);
+                checkServeConfigInfo(configTextDTO);
+            } else {
+                model.setConfigText(null);
+            }
+
+            int status;
+            if (isUpdate) {
+                status = serveInfoMapper.update(model);
+                if (status > 0) {
+                    serveRlGroupMapper.updateGroupIdByServeId(model.getId(), groupId);
+                }
+            } else {
+                status = serveInfoMapper.insert(model);
+                if (status > 0) {
+                    serveRlGroupMapper.insert(new ServeRlGroupDO(model.getId(), groupId));
+                }
+            }
+
+            return status;
+        } finally {
+            lock.unlock();
         }
-
-        return serveInfoMapper.insert(model);
     }
 
     /**
@@ -89,6 +132,11 @@ public class ServeInfoServiceImpl implements ServeInfoService {
     @Transactional
     public int deleteById(Long id) {
         Preconditions.checkNotNull(id, "The serve primary key Id is empty.");
+        ServeInfoDO siDo = Preconditions.checkNotNull(findById(id), "The serve id is invalid.");
+        ServeStatusType sst = ServeStatusType.getByCode(siDo.getStatus());
+        if (sst != null && sst != ServeStatusType.ARCHIVE) {
+            throw new BizException("The serve deletion is not allowed.");
+        }
 
         return serveInfoMapper.delete(new ServeInfoDO(id));
     }
@@ -124,9 +172,8 @@ public class ServeInfoServiceImpl implements ServeInfoService {
      * @return boolean true - valid. false - invalid.
      */
     @Override
-    public boolean checkReportId(Long serveId) {
-        int size = serveInfoMapper.checkServeId(serveId);
-        return size > 0;
+    public boolean checkServeId(Long serveId) {
+        return serveInfoMapper.checkServeId(serveId) > 0;
     }
 
     /**
@@ -138,7 +185,27 @@ public class ServeInfoServiceImpl implements ServeInfoService {
      */
     @Override
     public int publishServe(Long serveId) {
+
         return 0;
+    }
+
+    /**
+     * Move serve to another group.
+     * <p>
+     * One serve only link to one group.
+     *
+     * @param serveId Long
+     * @param groupId Long
+     * @return int 1 - success, 0 - fail
+     */
+    @Transactional
+    @Override
+    public int moveServe(Long serveId, Long groupId) {
+        ServeInfoDO siDo = Preconditions.checkNotNull(serveInfoMapper.findById(serveId), "The serve id is invalid.");
+        ServeGroupDO sgDo = Preconditions.checkNotNull(serveGroupMapper.findById(groupId), "The group id is invalid.");
+        Preconditions.checkArgument(StringUtils.equals(siDo.getServeType(), sgDo.getServeType()), "The serve type is equal.");
+
+        return serveRlGroupMapper.updateGroupIdByServeId(serveId, groupId);
     }
 
     /**

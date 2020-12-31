@@ -36,3 +36,62 @@ CREATE TABLE `serve_info`
   DEFAULT CHARACTER SET = utf8
   COLLATE = utf8_general_ci;
 
+-- Serve information table.
+CREATE TABLE `serve_group`
+(
+  `id`          BIGINT(20)   NOT NULL
+  COMMENT 'primary key',
+  `parent_id`   BIGINT(20)   NOT NULL
+  COMMENT 'The parent node id',
+  `name`        VARCHAR(64)  NOT NULL
+  COMMENT 'group name.',
+  `icon`        VARCHAR(256) NULL
+  COMMENT 'The serve icon url',
+  `serve_type`  VARCHAR(32)  NOT NULL
+  COMMENT 'serve type , 1 - table; 2 - interface; eg.',
+  `sort_id`     BIGINT(20)   NOT NULL
+  COMMENT 'Sort field',
+  `comment`     VARCHAR(256) NULL
+  COMMENT 'description',
+  `archive`     TINYINT(1)   NOT NULL DEFAULT 0
+  COMMENT '0 - normal data; 1 - have archive (soft delete)',
+  `created`     BIGINT(20)   NOT NULL
+  COMMENT 'create time ',
+  `creator`     BIGINT(20)   NOT NULL
+  COMMENT 'Data record creator',
+  `modified`    BIGINT(20)   NULL     DEFAULT NULL
+  COMMENT 'Last updated time',
+  `modifier`    BIGINT(20)   NULL     DEFAULT NULL
+  COMMENT 'Data record  modifier',
+  PRIMARY KEY (`id`)
+)
+  ENGINE = InnoDB
+  COMMENT 'Serve group table.'
+  DEFAULT CHARACTER SET = utf8
+  COLLATE = utf8_general_ci;
+
+-- Service and grouping association relational table.
+CREATE TABLE `serve_rl_group`
+(
+  `id`       BIGINT(20) NOT NULL
+  COMMENT 'primary key',
+  `serve_id` BIGINT(20) NOT NULL
+  COMMENT 'The serve id',
+  `group_id` BIGINT(20) NOT NULL
+  COMMENT 'The group id',
+  `archive`  TINYINT(1) NOT NULL DEFAULT 0
+  COMMENT '0 - normal data; 1 - have archive (soft delete)',
+  `created`  BIGINT(20) NOT NULL
+  COMMENT 'create time ',
+  `creator`  BIGINT(20) NOT NULL
+  COMMENT 'Data record creator',
+  `modified` BIGINT(20) NULL     DEFAULT NULL
+  COMMENT 'Last updated time',
+  `modifier` BIGINT(20) NULL     DEFAULT NULL
+  COMMENT 'Data record  modifier',
+  PRIMARY KEY (`id`)
+)
+  ENGINE = InnoDB
+  COMMENT 'Service and grouping association relational tables.'
+  DEFAULT CHARACTER SET = utf8
+  COLLATE = utf8_general_ci;
