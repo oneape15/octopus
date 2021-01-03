@@ -429,7 +429,7 @@ public abstract class Actuator {
      */
     public Result exportData(ExportDataParam param, CellProcess<Cell, Object> process) {
         Result result = new Result();
-        String fileName = StringUtils.isBlank(param.getTitle()) ? CodeBuilderUtils.RandmonStr(15) : StringUtils.trim(param.getTitle());
+        String fileName = StringUtils.isBlank(param.getTitle()) ? CodeBuilderUtils.randomStr(15) : StringUtils.trim(param.getTitle());
         Pair<String, String> pair = preDealSql(param);
 
         // save the run sql.

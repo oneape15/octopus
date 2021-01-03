@@ -17,12 +17,12 @@ public class CodeBuilderUtils {
     private static Random random = new Random();
 
     /**
-     * 获取指定长度的随机字符串
+     * Gets a random string of the specified length.
      *
      * @param len int
      * @return String
      */
-    public static String RandmonStr(int len) {
+    public static String randomStr(int len) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < len; i++) {
             sb.append(ALL_CHAR[random.nextInt(ALL_CHAR_LEN)]);

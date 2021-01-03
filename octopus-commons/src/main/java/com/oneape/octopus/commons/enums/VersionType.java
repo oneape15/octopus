@@ -15,7 +15,7 @@ public enum VersionType {
      */
     PUBLISH,
     /**
-     * Previous version information.
+     * Version history.
      */
-    OFFLINE;
+    HISTORY;
 }

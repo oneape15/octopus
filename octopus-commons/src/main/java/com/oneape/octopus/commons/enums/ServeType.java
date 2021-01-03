@@ -2,8 +2,7 @@ package com.oneape.octopus.commons.enums;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Serve Type
@@ -16,16 +15,20 @@ public enum ServeType {
     /**
      * Interface service type.
      */
-    INTERFACE("INTERFACE", "The interface type");
+    INTERFACE("INTERFACE", "The interface type"),
+    /**
+     * List of Value
+     */
+    LOV("LOV", "List Of Value");
 
 
     private String code;
     private String desc;
 
-    private static Map<String, ServeType> map;
+    private static LinkedHashMap<String, ServeType> map;
 
     static {
-        map = new HashMap<>();
+        map = new LinkedHashMap<>();
         for (ServeType st : values()) {
             map.put(st.getCode(), st);
         }
@@ -57,5 +60,9 @@ public enum ServeType {
         if (StringUtils.isBlank(code)) return false;
 
         return map.getOrDefault(StringUtils.upperCase(code), null) != null;
+    }
+
+    public static List<ServeType> getList() {
+        return new ArrayList<>(map.values());
     }
 }

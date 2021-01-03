@@ -1,6 +1,7 @@
 package com.oneape.octopus.domain.serve;
 
 import com.oneape.octopus.commons.enums.EntityColumn;
+import com.oneape.octopus.commons.enums.VersionType;
 import com.oneape.octopus.domain.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,6 +16,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ServeVersionDO extends BaseDO {
+
+    /**
+     * The serve id.
+     */
+    @EntityColumn(name = "serve_id", nullable = false)
+    private Long   serveId;
     /**
      * The unique code.
      */
@@ -23,7 +30,7 @@ public class ServeVersionDO extends BaseDO {
 
     /**
      * The version type
-     * {@see VersionType}
+     * {@link VersionType}
      */
     @EntityColumn(name = "version_type", nullable = false)
     private String versionType;

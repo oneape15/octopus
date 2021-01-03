@@ -15,6 +15,11 @@ import java.util.List;
 public interface ServeGroupService extends BaseService<ServeGroupDO> {
 
     /**
+     * The maximum depth of group tree.
+     */
+    Integer GROUP_MAX_DEPTH = 8;
+
+    /**
      * Move the group.
      *
      * @param groupId     Long
@@ -22,6 +27,22 @@ public interface ServeGroupService extends BaseService<ServeGroupDO> {
      * @return int 1 - success; 0 - fail.
      */
     int moveGroup(Long groupId, Long newParentId);
+
+    /**
+     * Calculate the depth of a branch of the tree.
+     *
+     * @param groupId Long
+     * @return int the depth size.
+     */
+    int calcTreeDepth(Long groupId);
+
+    /**
+     * Calculate the maximum depth of the tree.
+     *
+     * @param groupId Long
+     * @return int the max depth size of children tree.
+     */
+    int calcChildrenTreeMaxDepth(Long groupId);
 
     /**
      * check has same name.

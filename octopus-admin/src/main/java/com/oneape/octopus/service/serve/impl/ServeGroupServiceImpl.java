@@ -1,6 +1,7 @@
 package com.oneape.octopus.service.serve.impl;
 
 import com.google.common.base.Preconditions;
+import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.cause.UnauthorizedException;
 import com.oneape.octopus.commons.enums.FixServeGroupType;
 import com.oneape.octopus.commons.enums.ServeType;
@@ -49,6 +50,7 @@ public class ServeGroupServiceImpl implements ServeGroupService {
     public int save(ServeGroupDO model) {
         Preconditions.checkNotNull(model, "The group object is null.");
         Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "The group name is empty.");
+        Preconditions.checkArgument(StringUtils.isNotBlank(model.getServeType()), "The group serve type is invalid.");
 
         // whether is updating.
         boolean isUpdate = false;
@@ -62,12 +64,15 @@ public class ServeGroupServiceImpl implements ServeGroupService {
         if (isUpdate) {
             // not allow edit the parent id in here.
             model.setParentId(null);
+            // not allow edit the serve type in here.
+            model.setServeType(null);
             return serveGroupMapper.update(model);
         } else {
             // check the parent id.
             Long parentId = TypeValueUtils.getOrDefault(model.getParentId(), FixServeGroupType.ROOT.getId());
             if (!FixServeGroupType.ROOT.getId().equals(parentId)) {
                 Preconditions.checkNotNull(serveGroupMapper.findById(parentId), "The parent group id is invalid.");
+                Preconditions.checkArgument(calcTreeDepth(parentId) > GROUP_MAX_DEPTH, "The group tree Max depth is " + GROUP_MAX_DEPTH);
             }
 
             return serveGroupMapper.insert(model);
@@ -83,7 +88,8 @@ public class ServeGroupServiceImpl implements ServeGroupService {
     @Override
     public int deleteById(Long id) {
         if (id == null || id < 0) return 1;
-        Preconditions.checkArgument(serveRlGroupMapper.countGroupLinkServeSize(id) <= 0, "The group mounted under the serve does not allow deletion.");
+        Preconditions.checkArgument(serveRlGroupMapper.countGroupLinkServeSize(id) <= 0,
+                "The group mounted under the serve does not allow deletion.");
         return serveGroupMapper.delete(new ServeGroupDO(id));
     }
 
@@ -124,7 +130,53 @@ public class ServeGroupServiceImpl implements ServeGroupService {
             Preconditions.checkNotNull(serveGroupMapper.findById(newParentId), "The parent group Id is Invalid.");
         }
 
+        Integer parentDepth = calcTreeDepth(newParentId);
+        Integer selfDepth = calcChildrenTreeMaxDepth(groupId);
+        if (parentDepth + selfDepth > GROUP_MAX_DEPTH) {
+            throw new BizException("The group tree Max depth is " + GROUP_MAX_DEPTH);
+        }
+
         return serveGroupMapper.changeParentId(groupId, newParentId);
+    }
+
+    /**
+     * Calculate the depth of a branch of the tree.
+     *
+     * @param groupId Long
+     * @return int the depth size.
+     */
+    @Override
+    public int calcTreeDepth(Long groupId) {
+        List<ServeGroupDO> list = serveGroupMapper.listAllOfIdAndParentId();
+        Map<Long, Long> id2parentIdMap = new HashMap<>();
+        if (CollectionUtils.isEmpty(list)) {
+            return 0;
+        }
+
+        list.forEach(l -> id2parentIdMap.put(l.getId(), l.getParentId()));
+
+        int depth = 0;
+        Long parentId = groupId;
+        while (!FixServeGroupType.ROOT.getId().equals(parentId)) {
+            parentId = id2parentIdMap.get(parentId);
+            if (parentId == null) {
+                parentId = FixServeGroupType.ROOT.getId();
+            }
+            depth++;
+        }
+
+        return depth;
+    }
+
+    /**
+     * Calculate the maximum depth of the tree.
+     *
+     * @param groupId Long
+     * @return int the max depth size of children tree.
+     */
+    @Override
+    public int calcChildrenTreeMaxDepth(Long groupId) {
+        return 0;
     }
 
     /**

@@ -24,6 +24,11 @@ public class ServeInfoDO extends BaseDO {
     @EntityColumn(name = "name", nullable = false)
     private String  name;
     /**
+     * Serve code.
+     */
+    @EntityColumn(name = "code", nullable = false)
+    private String  code;
+    /**
      * The serve icon url.
      */
     private String  icon;

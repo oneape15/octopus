@@ -1,6 +1,7 @@
 package com.oneape.octopus.commons.enums;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -16,6 +17,15 @@ public enum ReportParamType {
 
     private int    code;
     private String desc;
+
+    private static LinkedHashMap<Integer, ReportParamType> map;
+
+    static {
+        map = new LinkedHashMap<>();
+        for (ReportParamType rpt : values()) {
+            map.put(rpt.getCode(), rpt);
+        }
+    }
 
     ReportParamType(int code, String desc) {
         this.code = code;
@@ -58,8 +68,7 @@ public enum ReportParamType {
     public static List<Integer> split(int value) {
         List<Integer> arr = new ArrayList<>();
         if (value > 0) {
-            for (ReportParamType rft : values()) {
-                int code = rft.getCode();
+            for (Integer code : map.keySet()) {
                 if ((code & value) == code) {
                     arr.add(code);
                 }
@@ -114,5 +123,9 @@ public enum ReportParamType {
      */
     public static boolean isRangeValue(Integer type) {
         return contains(type, BETWEEN);
+    }
+
+    public static List<ReportParamType> getList() {
+        return new ArrayList<>(map.values());
     }
 }

@@ -6,6 +6,13 @@ import com.oneape.octopus.service.BaseService;
 public interface ServeInfoService extends BaseService<ServeInfoDO> {
 
     /**
+     * The serve code length.
+     */
+    public static final Integer CODE_LEN            = 16;
+    public static final String  COPY_TAG            = "_copy_";
+    public static final Integer COPY_TAG_RANDOM_LEN = 6;
+
+    /**
      * save data to table.
      * <p>
      * If the Model property ID is not null, the update operation is performed, or the insert operation is performed。
@@ -14,6 +21,16 @@ public interface ServeInfoService extends BaseService<ServeInfoDO> {
      * @return int 1 - success; 0 - fail.
      */
     int save(ServeInfoDO model, Long groupId);
+
+    /**
+     * Copy a new service with the specified service as the template.
+     * If the version code is not empty, a version is used as a template.
+     *
+     * @param serveId Long
+     * @param verCode String
+     * @return int 1 - success; 0 - fail.
+     */
+    int copyById(Long serveId, String verCode);
 
     /**
      * Whether the serveId Id is valid.
@@ -31,6 +48,15 @@ public interface ServeInfoService extends BaseService<ServeInfoDO> {
      * @return int 1 - success, 0 - fail
      */
     int publishServe(Long serveId);
+
+    /**
+     * Rolls back the specified version of the service.
+     *
+     * @param serveId     Long
+     * @param versionCode String
+     * @return int 1 - success, 0 - fail
+     */
+    int rollbackServe(Long serveId, String versionCode);
 
     /**
      * Move serve to another group.

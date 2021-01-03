@@ -1,6 +1,7 @@
 package com.oneape.octopus.mapper.serve;
 
 import com.oneape.octopus.domain.serve.ServeGroupDO;
+import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.mapper.serve.provider.ServeGroupSqlProvider;
 import org.apache.ibatis.annotations.*;
 
@@ -86,4 +87,9 @@ public interface ServeGroupMapper {
     @SelectProvider(type = ServeGroupSqlProvider.class, method = "listWithOrder")
     List<ServeGroupDO> listWithOrder(@Param("model") ServeGroupDO model,
                                      @Param("orderFields") List<String> orderFields);
+
+    @Select({
+            "SELECT id, parent_id FROM " + ServeGroupSqlProvider.TABLE_NAME + " WHERE " + BaseSqlProvider.FIELD_ARCHIVE + " = 0 "
+    })
+    List<ServeGroupDO> listAllOfIdAndParentId();
 }

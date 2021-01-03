@@ -1,11 +1,9 @@
 package com.oneape.octopus.mapper.serve;
 
 import com.oneape.octopus.domain.serve.ServeVersionDO;
+import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.mapper.serve.provider.ServeVersionSqlProvider;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 
 /**
  * Created by oneape<oneape15@163.com>
@@ -48,5 +46,19 @@ public interface ServeVersionMapper {
      */
     @SelectProvider(type = ServeVersionSqlProvider.class, method = "findById")
     ServeVersionDO findById(@Param("id") Long id);
+
+    @Select({
+            "SELECT * FROM " + ServeVersionSqlProvider.TABLE_NAME +
+                    " WHERE serve_id = #{serveId} AND version_code = #{versionCode} AND " + BaseSqlProvider.FIELD_ARCHIVE + " = 0"
+    })
+    ServeVersionDO findBy(@Param("serveId") Long serveId, @Param("versionCode") String versionCode);
+
+    /**
+     * Modifies the change history state of the specified service as published.
+     *
+     * @param serveId Long
+     */
+    @UpdateProvider(type = ServeVersionSqlProvider.class, method = "changePublish2History")
+    int changePublish2History(@Param("serveId") Long serveId);
 
 }

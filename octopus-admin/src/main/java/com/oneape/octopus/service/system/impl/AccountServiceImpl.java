@@ -72,7 +72,7 @@ public class AccountServiceImpl implements AccountService {
         Preconditions.checkArgument(userMapper.sameNameCheck(model.getUsername(), null) == 0, "The username already exists.");
         String rawPwd = model.getPassword();
         if (StringUtils.isBlank(rawPwd)) {
-            rawPwd = CodeBuilderUtils.RandmonStr(6);
+            rawPwd = CodeBuilderUtils.randomStr(6);
         }
         String pwdMd5 = MD5Utils.saltUserPassword(model.getUsername(), rawPwd, null);
         model.setPassword(pwdMd5);
@@ -266,7 +266,7 @@ public class AccountServiceImpl implements AccountService {
         UserDO user = Preconditions.checkNotNull(userMapper.findById(userId), "The user information is null.");
 
         // Randomly generate a password.
-        String pwd = CodeBuilderUtils.RandmonStr(6);
+        String pwd = CodeBuilderUtils.randomStr(6);
         String pwdMd5 = MD5Utils.saltUserPassword(user.getUsername(), pwd, null);
         user.setPassword(pwdMd5);
         int status = userMapper.update(user);

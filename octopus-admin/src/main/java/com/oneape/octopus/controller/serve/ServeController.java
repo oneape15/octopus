@@ -14,6 +14,7 @@ import com.oneape.octopus.domain.serve.ServeInfoDO;
 import com.oneape.octopus.model.vo.ApiResult;
 import com.oneape.octopus.service.serve.ServeGroupService;
 import com.oneape.octopus.service.serve.ServeInfoService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,6 +57,31 @@ public class ServeController {
     }
 
     /**
+     * Copy a new service with the specified service as the template.
+     */
+    @PostMapping("/copy/{serveId}")
+    public ApiResult<String> doCopyServe(@PathVariable(name = "serverId") Long serveId) {
+        int status = serveInfoService.copyById(serveId, null);
+        if (status > 0) {
+            return ApiResult.ofData("Deleted serve information successfully.");
+        }
+        return ApiResult.ofError(StateCode.BizError, "Deleted serve information fail.");
+    }
+
+    /**
+     * Copy a brand new service to the template according to the specified version.
+     */
+    @PostMapping("/copy/{serveId}/{versionCode}")
+    public ApiResult<String> doCopyServeByVersionCode(@PathVariable(name = "serverId") Long serveId,
+                                                      @PathVariable(name = "versionCode") String versionCode) {
+        int status = serveInfoService.copyById(serveId, versionCode);
+        if (status > 0) {
+            return ApiResult.ofData("Deleted serve information successfully.");
+        }
+        return ApiResult.ofError(StateCode.BizError, "Deleted serve information fail.");
+    }
+
+    /**
      * Paging query serve information.
      */
     @PostMapping("/list")
@@ -65,6 +91,11 @@ public class ServeController {
         return ApiResult.ofData(new PageInfo<>(vos));
     }
 
+    /**
+     * Publishing service.
+     *
+     * @param serveId Long
+     */
     @PostMapping("/publish/{serveId}")
     public ApiResult publishServe(@PathVariable(name = "serveId") Long serveId) {
         int status = serveInfoService.publishServe(serveId);
@@ -74,6 +105,26 @@ public class ServeController {
         return ApiResult.ofError(StateCode.BizError, "Publish serve fail.");
     }
 
+    /**
+     * Rolls back the specified version of the service.
+     *
+     * @param serveId Long
+     * @param verCode String
+     */
+    public ApiResult rollbackServe(@PathVariable(name = "serveId") Long serveId, @PathVariable(name = "verCode") String verCode) {
+        int status = serveInfoService.rollbackServe(serveId, verCode);
+        if (status > 0) {
+            return ApiResult.ofData("Rolls back serve successfully.");
+        }
+        return ApiResult.ofError(StateCode.BizError, "Rolls back serve fail.");
+    }
+
+    /**
+     * Move the service to the new grouping directory.
+     *
+     * @param serveId Long
+     * @param groupId Long
+     */
     @PostMapping("/move/{serveId}/{groupId}")
     public ApiResult moveServe(@PathVariable(name = "serveId") Long serveId, @PathVariable(name = "groupId") Long groupId) {
         int status = serveInfoService.moveServe(serveId, groupId);
@@ -98,9 +149,7 @@ public class ServeController {
     @GetMapping("/serveTypes")
     public ApiResult<List<Pair<String, String>>> getReportTypes() {
         List<Pair<String, String>> types = new ArrayList<>();
-        for (ServeType rt : ServeType.values()) {
-            types.add(new Pair<>(rt.getCode(), rt.getDesc()));
-        }
+        ServeType.getList().forEach(rt -> types.add(new Pair<>(rt.getCode(), rt.getDesc())));
         return ApiResult.ofData(types);
     }
 
@@ -111,9 +160,7 @@ public class ServeController {
     @GetMapping("/visualTypes")
     public ApiResult<List<Pair<Integer, String>>> getReportVisualTypes() {
         List<Pair<Integer, String>> types = new ArrayList<>();
-        for (VisualType rt : VisualType.values()) {
-            types.add(new Pair<>(rt.getCode(), rt.getDesc()));
-        }
+        VisualType.getList().forEach(vt -> types.add(new Pair<>(vt.getCode(), vt.getDesc())));
         return ApiResult.ofData(types);
     }
 
@@ -123,9 +170,7 @@ public class ServeController {
     @GetMapping("/paramTypes")
     public ApiResult<List<Pair<Integer, String>>> getReportParamTypes() {
         List<Pair<Integer, String>> pairs = new ArrayList<>();
-        for (ReportParamType ppt : ReportParamType.values()) {
-            pairs.add(new Pair<>(ppt.getCode(), ppt.getDesc()));
-        }
+        ReportParamType.getList().forEach(rpt -> pairs.add(new Pair<>(rpt.getCode(), rpt.getDesc())));
         return ApiResult.ofData(pairs);
     }
 
@@ -170,6 +215,9 @@ public class ServeController {
         return ApiResult.ofError(StateCode.BizError, "Deleted serve group information fail.");
     }
 
+    /**
+     * Building a grouping tree.
+     */
     @PostMapping("/group/tree")
     public ApiResult getGroupTree(@RequestBody @Validated(value = ServeGroupForm.TreeCheck.class) ServeGroupForm from) {
 

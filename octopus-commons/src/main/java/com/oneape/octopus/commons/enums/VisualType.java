@@ -1,7 +1,6 @@
 package com.oneape.octopus.commons.enums;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The report visual Type
@@ -32,10 +31,10 @@ public enum VisualType {
     private Integer code;
     private String  desc;
 
-    private static Map<Integer, VisualType> map;
+    private static LinkedHashMap<Integer, VisualType> map;
 
     static {
-        map = new HashMap<>();
+        map = new LinkedHashMap<>();
         for (VisualType vt : values()) {
             map.put(vt.getCode(), vt);
         }
@@ -58,5 +57,9 @@ public enum VisualType {
         if (code == null || code < 0) return false;
 
         return map.getOrDefault(code, null) != null;
+    }
+
+    public static List<VisualType> getList() {
+        return new ArrayList<>(map.values());
     }
 }

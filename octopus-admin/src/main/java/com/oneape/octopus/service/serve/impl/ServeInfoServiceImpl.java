@@ -6,10 +6,13 @@ import com.oneape.octopus.commons.algorithm.Digraph;
 import com.oneape.octopus.commons.algorithm.DirectedCycle;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.enums.ServeStatusType;
+import com.oneape.octopus.commons.enums.VersionType;
+import com.oneape.octopus.commons.value.CodeBuilderUtils;
 import com.oneape.octopus.commons.value.OptStringUtils;
 import com.oneape.octopus.domain.serve.ServeGroupDO;
 import com.oneape.octopus.domain.serve.ServeInfoDO;
 import com.oneape.octopus.domain.serve.ServeRlGroupDO;
+import com.oneape.octopus.domain.serve.ServeVersionDO;
 import com.oneape.octopus.dto.serve.ServeColumnDTO;
 import com.oneape.octopus.dto.serve.ServeConfigTextDTO;
 import com.oneape.octopus.dto.serve.ServeParamDTO;
@@ -123,6 +126,40 @@ public class ServeInfoServiceImpl implements ServeInfoService {
     }
 
     /**
+     * Copy a new service with the specified service as the template.
+     * If the version code is not empty, a version is used as a template.
+     *
+     * @param serveId Long
+     * @param verCode String
+     * @return int 1 - success; 0 - fail.
+     */
+    @Override
+    public int copyById(Long serveId, String verCode) {
+        Preconditions.checkNotNull(serveId, "The serve primary key Id is empty.");
+        ServeInfoDO siDo;
+        if (StringUtils.isNotBlank(verCode)) {
+            ServeVersionDO svDo = Preconditions.checkNotNull(serveVersionMapper.findBy(serveId, verCode),
+                    "Specifies that the version information is empty.");
+            siDo = JSON.parseObject(svDo.getServeConfig(), ServeInfoDO.class);
+
+        } else {
+            siDo = Preconditions.checkNotNull(findById(serveId), "The serve id is invalid.");
+        }
+
+        siDo.setCode(CodeBuilderUtils.randomStr(CODE_LEN));
+        String name = siDo.getName();
+        int index;
+        if ((index = StringUtils.indexOf(name, COPY_TAG)) > 0) {
+            name = StringUtils.substring(name, 0, index) + CodeBuilderUtils.randomStr(COPY_TAG_RANDOM_LEN);
+        } else {
+            name = name + COPY_TAG + CodeBuilderUtils.randomStr(COPY_TAG_RANDOM_LEN);
+        }
+        siDo.setName(name);
+        siDo.setId(null);
+        return serveInfoMapper.insert(siDo);
+    }
+
+    /**
      * Delete by primary key Id.
      *
      * @param id Long
@@ -185,8 +222,33 @@ public class ServeInfoServiceImpl implements ServeInfoService {
      */
     @Override
     public int publishServe(Long serveId) {
+        ServeInfoDO siDo = Preconditions.checkNotNull(serveInfoMapper.findById(serveId), "The serve id is invalid.");
 
         return 0;
+    }
+
+    /**
+     * Rolls back the specified version of the service.
+     *
+     * @param serveId Long
+     * @param verCode String
+     * @return int 1 - success, 0 - fail
+     */
+    @Transactional
+    @Override
+    public int rollbackServe(Long serveId, String verCode) {
+        ServeVersionDO svDo = Preconditions.checkNotNull(serveVersionMapper.findBy(serveId, verCode),
+                "Specifies that the version information is empty.");
+        ServeInfoDO siDo = JSON.parseObject(svDo.getServeConfig(), ServeInfoDO.class);
+        siDo.setStatus(ServeStatusType.PUBLISH.name());
+        int status = serveInfoMapper.update(siDo);
+        if (status > 0) {
+            serveVersionMapper.changePublish2History(serveId);
+
+            svDo.setVersionType(VersionType.PUBLISH.name());
+            serveVersionMapper.update(svDo);
+        }
+        return status;
     }
 
     /**
