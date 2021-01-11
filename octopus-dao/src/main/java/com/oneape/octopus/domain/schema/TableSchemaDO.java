@@ -23,26 +23,38 @@ public class TableSchemaDO extends BaseDO {
     @EntityColumn(name = "datasource_id", nullable = false)
     private Long    datasourceId;
     /**
+     * the datasource schema.
+     */
+    @EntityColumn(name = "schema_name")
+    private String  schemaName;
+    /**
      * db table name
      */
     @EntityColumn(nullable = false)
     private String  name;
     /**
+     * Data table alias.
+     */
+    private String  alias;
+    /**
      * the table is view table, 0 - no; 1 - yes
      */
-    @EntityColumn(name = "view_table")
-    private Integer viewTable;
+    @EntityColumn(name = "view")
+    private Integer view;
+    /**
+     * synchronization state. 0 - Out of sync; 1 - sync.
+     */
+    private Integer sync;
+    /**
+     * Synchronous table structure expression.
+     * if CRON is null, then is never sync.
+     */
+    private String  cron;
     /**
      * Latest synchronization table structure time
      */
     @EntityColumn(name = "sync_time")
     private Long    syncTime;
-    /**
-     * Synchronous table structure expression.
-     * if syncCron is null, then is never sync.
-     */
-    @EntityColumn(name = "sync_cron")
-    private String  syncCron;
     /**
      * the table use time;
      */

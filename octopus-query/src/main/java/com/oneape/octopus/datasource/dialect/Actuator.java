@@ -260,7 +260,7 @@ public abstract class Actuator {
                     ti.setSchema(rs.getString(COL_SCHEMA));
                     ti.setName(rs.getString(COL_TABLE));
                     ti.setComment(rs.getString(COL_COMMENT));
-                    ti.setType(rs.getInt(COL_TABLE_TYPE));
+                    ti.setView(rs.getInt(COL_TABLE_TYPE));
                     schemaTables.add(ti);
                 }
             }

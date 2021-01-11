@@ -47,6 +47,9 @@ public class DatasourceServiceImpl implements DatasourceService {
     @Override
     public int save(DatasourceDO model) {
         Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "The data source name is empty.");
+        if (model.getId() <= 0) {
+            model.setId(null);
+        }
         int hasSame = datasourceMapper.getSameBy(model.getName(), model.getId());
         if (hasSame > 0) {
             throw new BizException("The same data source name exists.");
@@ -160,6 +163,22 @@ public class DatasourceServiceImpl implements DatasourceService {
     @Override
     public boolean isExistDsId(Long dsId) {
         return datasourceMapper.isExistDsId(dsId) > 0;
+    }
+
+    /**
+     * change the datasource status.
+     *
+     * @param dsId   Long
+     * @param status Integer
+     * @return boolean true - success, false - fail.
+     */
+    @Override
+    public boolean changeStatus(Long dsId, Integer status) {
+        Preconditions.checkNotNull(datasourceMapper.findById(dsId), "The data source id is invalid.");
+        DatasourceDO ddo = new DatasourceDO();
+        ddo.setId(dsId);
+        ddo.setStatus(status);
+        return datasourceMapper.update(ddo) > 0;
     }
 
     /**

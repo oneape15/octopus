@@ -13,16 +13,24 @@ import java.io.Serializable;
 @Data
 public class TableSchemaForm implements Serializable {
 
-    private Long   id;
+    private Long    id;
+    /**
+     * Data table alias.
+     */
+    private String  alias;
+    /**
+     * synchronization state. 0 - Out of sync; 1 - sync.
+     */
+    private Integer sync;
     /**
      * Synchronous table structure expression.
-     * if syncCron is null, then is never sync.
+     * if CRON is null, then is never sync.
      */
-    private String syncCron;
+    private String  cron;
     /**
      * db table description
      */
-    private String comment;
+    private String  comment;
 
     public interface InfoCheck {
     }
@@ -30,7 +38,8 @@ public class TableSchemaForm implements Serializable {
     public TableSchemaDO toDO() {
         TableSchemaDO tsdo = new TableSchemaDO();
         tsdo.setId(id);
-        tsdo.setSyncCron(syncCron);
+        tsdo.setCron(cron);
+        tsdo.setAlias(alias);
         tsdo.setComment(comment);
         return tsdo;
     }

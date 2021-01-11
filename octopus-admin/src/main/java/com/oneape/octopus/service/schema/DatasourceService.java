@@ -25,6 +25,15 @@ public interface DatasourceService extends BaseService<DatasourceDO> {
     boolean isExistDsId(Long dsId);
 
     /**
+     * change the datasource status.
+     *
+     * @param dsId   Long
+     * @param status Integer
+     * @return boolean true - success, false - fail.
+     */
+    boolean changeStatus(Long dsId, Integer status);
+
+    /**
      * Gets data source information by name.
      *
      * @param name String

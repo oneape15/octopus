@@ -17,19 +17,23 @@ public class DatasourceForm extends BaseForm implements Serializable {
     private Long    id;
     @NotBlank(message = "The data source name is empty.", groups = {AddCheck.class, EditCheck.class})
     private String  name;
+    @NotBlank(message = "The data source type is empty.", groups = {AddCheck.class, EditCheck.class})
+    private String  type;
+    private Integer status;
     @NotBlank(message = "The data source URL is empty.", groups = {AddCheck.class, EditCheck.class})
     private String  jdbcUrl;
     @NotBlank(message = "The data source login name is empty.", groups = {AddCheck.class, EditCheck.class})
     private String  username;
-    private Integer status;
+    private String  password;
+    private Integer sync;
+    private String cron;
+    private Integer timeout;
     private Integer maxPoolSize;
     private Integer minIdle;
-    private Integer timeout;
+    private Integer readOnly;
+    private Integer canDdl;
     private String  testSql;
-    private String  password;
     private String  comment;
-    @NotBlank(message = "The data source type is empty.", groups = {AddCheck.class, EditCheck.class})
-    private String  type;
 
     public interface AddCheck {
     }

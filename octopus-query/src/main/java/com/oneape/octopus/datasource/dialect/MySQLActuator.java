@@ -32,7 +32,7 @@ public class MySQLActuator extends Actuator {
     public String getSchemaNameFromUrl(String url) {
         String startString = "jdbc:mysql://";
         if (!StringUtils.startsWithIgnoreCase(url, startString)) {
-            throw new RuntimeException("Not a valid MySQL connection address: " + url);
+            throw new BizException("Not a valid MySQL connection address: " + url);
         }
         String tmp = StringUtils.substring(url, startString.length());
         int index;

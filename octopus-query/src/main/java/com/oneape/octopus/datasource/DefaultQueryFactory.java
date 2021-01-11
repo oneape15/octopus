@@ -3,6 +3,7 @@ package com.oneape.octopus.datasource;
 import com.alibaba.fastjson.JSON;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.datasource.data.*;
 import com.oneape.octopus.datasource.dialect.Actuator;
 import com.oneape.octopus.datasource.schema.SchemaTable;
@@ -50,6 +51,8 @@ public class DefaultQueryFactory implements QueryFactory {
         try {
             Actuator actuator = ActuatorFactory.build(null, dsi.getDatasourceType());
             return actuator.getSchema(dsi.getUrl());
+        } catch (BizException be) {
+            throw be;
         } catch (Exception e) {
             log.error("Failed to get database~", e);
             throw new RuntimeException(e);
@@ -68,6 +71,8 @@ public class DefaultQueryFactory implements QueryFactory {
             Connection conn = datasourceFactory.getConnection(dsi);
             Actuator actuator = ActuatorFactory.build(conn, dsi.getDatasourceType());
             return actuator.allDatabase();
+        } catch (BizException be) {
+            throw be;
         } catch (Exception e) {
             log.error("Failed to get table information~", e);
             throw new RuntimeException(e);
@@ -98,6 +103,8 @@ public class DefaultQueryFactory implements QueryFactory {
             }
 
             return tables;
+        } catch (BizException be) {
+            throw be;
         } catch (Exception e) {
             log.error("Failed to get table information~", e);
             throw new RuntimeException("Failed to obtain database table information! schema: " + schema, e);
@@ -128,6 +135,8 @@ public class DefaultQueryFactory implements QueryFactory {
             }
 
             return fields;
+        } catch (BizException be) {
+            throw be;
         } catch (Exception e) {
             log.error("Failed to get a list of the specified database fields.", e);
             throw new RuntimeException("Failed to get a list of the specified database fields. schema :" + schema, e);
@@ -158,6 +167,8 @@ public class DefaultQueryFactory implements QueryFactory {
                 fieldCache.put(cacheKey, fields);
             }
             return fields;
+        } catch (BizException be) {
+            throw be;
         } catch (Exception e) {
             log.error("Failed to get table field information. table: {}.{}", schema, tableName, e);
             throw new RuntimeException("Failed to get table field information. table: " + schema + "." + tableName, e);
@@ -176,6 +187,8 @@ public class DefaultQueryFactory implements QueryFactory {
         try {
             Actuator actuator = ActuatorFactory.build(datasourceFactory.getConnection(dsi), dsi.getDatasourceType());
             return actuator.runSql(ddlSql);
+        } catch (BizException be) {
+            throw be;
         } catch (Exception e) {
             log.error("run SQL: {}", ddlSql, e);
             return failResult(e);
@@ -207,6 +220,8 @@ public class DefaultQueryFactory implements QueryFactory {
         try {
             Actuator actuator = ActuatorFactory.build(datasourceFactory.getConnection(dsi), dsi.getDatasourceType());
             return actuator.execSql(param, process);
+        } catch (BizException be) {
+            throw be;
         } catch (Exception e) {
             log.error("exec SQL: {}", JSON.toJSONString(param), e);
             return failResult(e);
@@ -238,6 +253,8 @@ public class DefaultQueryFactory implements QueryFactory {
         try {
             Actuator actuator = ActuatorFactory.build(datasourceFactory.getConnection(dsi), dsi.getDatasourceType());
             return actuator.exportData(param, process);
+        } catch (BizException be) {
+            throw be;
         } catch (Exception e) {
             log.error("exec SQL: {}", JSON.toJSONString(param), e);
             return failResult(e);

@@ -67,19 +67,19 @@ public class SchemaServiceImpl implements SchemaService {
         TableSchemaDO model = new TableSchemaDO();
         model.setId(ts.getId());
         model.setComment(ts.getComment());
-        model.setSyncCron(ts.getSyncCron());
+        model.setCron(ts.getCron());
         model.setSyncTime(ts.getSyncTime());
         int status = tableSchemaMapper.update(model);
         if (status > 0) {
-            if (StringUtils.isNotBlank(oldDo.getSyncCron())) {
-                if (StringUtils.isBlank(ts.getSyncCron())) {
+            if (StringUtils.isNotBlank(oldDo.getCron())) {
+                if (StringUtils.isBlank(ts.getCron())) {
                     quartzTaskService.deleteJob2Schedule(tableSchema2QuartzTaskDO(oldDo));
                 } else {
                     quartzTaskService.updateJob2Schedule(tableSchema2QuartzTaskDO(oldDo), buildJobDataMap(oldDo));
                 }
             } else {
-                if (StringUtils.isNotBlank(ts.getSyncCron())) {
-                    oldDo.setSyncCron(ts.getSyncCron());
+                if (StringUtils.isNotBlank(ts.getCron())) {
+                    oldDo.setCron(ts.getCron());
                     quartzTaskService.addJob2Schedule(tableSchema2QuartzTaskDO(oldDo), buildJobDataMap(oldDo));
                 }
             }
@@ -95,7 +95,7 @@ public class SchemaServiceImpl implements SchemaService {
      */
     @Override
     public int fetchAndSaveDatabaseInfo(Long dsId) {
-        DatasourceInfo dsi = Preconditions.checkNotNull(datasourceService.getDatasourceInfoById(dsId), "The data source does not exist。 dsId: " + dsId);
+        DatasourceInfo dsi = Preconditions.checkNotNull(datasourceService.getDatasourceInfoById(dsId), "The data source does not exist, dsId: " + dsId);
 
         // Get the database name
         String schema = queryFactory.getSchema(dsi);
@@ -122,8 +122,10 @@ public class SchemaServiceImpl implements SchemaService {
             }
 
             TableSchemaDO tsdo = new TableSchemaDO();
+            tsdo.setSchemaName(schema);
             tsdo.setDatasourceId(dsId);
             tsdo.setName(tableName);
+            tsdo.setView(ti.getView());
             if (StringUtils.isNotBlank(ti.getComment())) {
                 tsdo.setComment(ti.getComment());
             }
@@ -271,7 +273,7 @@ public class SchemaServiceImpl implements SchemaService {
     private QuartzTaskDO tableSchema2QuartzTaskDO(TableSchemaDO ts) {
         QuartzTaskDO qt = new QuartzTaskDO();
         qt.setTaskName(ts.getDatasourceId() + "_" + ts.getName());
-        qt.setCron(ts.getSyncCron());
+        qt.setCron(ts.getCron());
         qt.setGroupName("TABLE_SCHEMA_GROUP");
         qt.setStatus(1);
         qt.setJobClass("com.oneape.octopus.job.SchemaTableSyncJob");

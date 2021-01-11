@@ -25,6 +25,10 @@ CREATE TABLE `datasource`
   COMMENT 'The maximum number of connections in the pool',
   `min_idle`      INT(11)       NOT NULL DEFAULT 5
   COMMENT 'The minimum number of idle connections in the pool to maintain',
+  `read_only`     TINYINT(1)    NOT NULL DEFAULT 0
+  COMMENT 'Read-only data source tag',
+  `can_ddl`       TINYINT(1)    NOT NULL DEFAULT 0
+  COMMENT ' Can support DDL operations',
   `timeout`       INT(11)       NULL     DEFAULT 60
   COMMENT 'Connection pool timeout(ms)',
   `test_sql`      VARCHAR(1024) NULL
@@ -55,19 +59,25 @@ CREATE TABLE `table_schema`
   COMMENT 'primary key',
   `datasource_id` BIGINT(20)   NOT NULL
   COMMENT 'the data source id.',
-  `name`          VARCHAR(512) NOT NULL
+  `schema_name`   VARCHAR(128) NOT NULL
+  COMMENT 'the schema name.',
+  `name`          VARCHAR(256) NOT NULL
   COMMENT 'the table name',
-  `view_table`    TINYINT(1)   NOT NULL DEFAULT 0
+  `alias`         VARCHAR(256) NULL
+  COMMENT 'data table alias',
+  `view`          TINYINT(1)   NOT NULL DEFAULT 0
   COMMENT 'the table is view table, 0 - no; 1 - yes',
+  `sync`          TINYINT(1)   NOT NULL DEFAULT 0
+  COMMENT 'synchronization state. 0 - Out of sync; 1 - sync',
+  `cron`          VARCHAR(128) NULL
+  COMMENT 'Synchronous table structure expression. CRON is null, then is never sync.',
   `sync_time`     BIGINT(20)   NULL
   COMMENT 'Latest synchronization table structure time',
-  `sync_cron`     VARCHAR(128) NULL
-  COMMENT 'Synchronous table structure expression. syncCron is null, then is never sync.',
   `heat`          BIGINT(20)   NOT NULL DEFAULT 0
   COMMENT 'The table use time',
   `status`        TINYINT(1)   NOT NULL DEFAULT 0
   COMMENT 'The table status. 0 - normal, 1 - has drop',
-  `comment`       VARCHAR(256) NULL
+  `comment`       VARCHAR(512) NULL
   COMMENT 'description',
   `archive`       TINYINT(1)   NOT NULL DEFAULT 0
   COMMENT '0 - normal data; 1 - have archive (soft delete)',

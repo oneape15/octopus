@@ -22,7 +22,7 @@ public class SchemaTable implements Serializable {
     /**
      * The table type 0 - Physical table； 1 - view
      */
-    private Integer type;
+    private Integer view;
     /**
      * The schema table description.
      */

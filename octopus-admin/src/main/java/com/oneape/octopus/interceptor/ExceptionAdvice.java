@@ -1,5 +1,6 @@
 package com.oneape.octopus.interceptor;
 
+import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.cause.UnauthorizedException;
 import com.oneape.octopus.model.vo.ApiResult;
@@ -116,6 +117,13 @@ public class ExceptionAdvice {
         return ApiResult.ofError(StateCode.MethodNotAllowed);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @ExceptionHandler(BizException.class)
+    public ApiResult<String> handleBizException(BizException e){
+        log.error(e.getMessage(), e);
+        String errorMsg = e.getMessage();
+        return ApiResult.ofError(StateCode.BizError, errorMsg);
+    }
     /**
      * 500 - Internal Server Error
      */

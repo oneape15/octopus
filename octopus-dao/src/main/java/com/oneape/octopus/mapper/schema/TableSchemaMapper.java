@@ -88,7 +88,7 @@ public interface TableSchemaMapper {
 
     @Select({
             "SELECT * FROM " + TableSchemaSqlProvider.TABLE_NAME
-                    + " WHERE " + BaseSqlProvider.FIELD_ARCHIVE + " = 0  AND sync_cron IS NOT NULL"
+                    + " WHERE " + BaseSqlProvider.FIELD_ARCHIVE + " = 0 AND sync = 1 AND cron IS NOT NULL"
     })
     List<TableSchemaDO> getNeedSyncTableList();
 }
