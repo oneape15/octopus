@@ -1,7 +1,7 @@
-package com.oneape.octopus.controller.schema;
+package com.oneape.octopus.controller.datawarehouse;
 
-import com.oneape.octopus.controller.schema.form.TableColumnForm;
-import com.oneape.octopus.controller.schema.form.TableSchemaForm;
+import com.oneape.octopus.controller.datawarehouse.form.TableColumnForm;
+import com.oneape.octopus.controller.datawarehouse.form.TableSchemaForm;
 import com.oneape.octopus.domain.schema.TableColumnDO;
 import com.oneape.octopus.domain.schema.TableSchemaDO;
 import com.oneape.octopus.model.vo.ApiResult;

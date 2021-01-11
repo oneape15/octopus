@@ -216,6 +216,7 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
             hikariConfig.setPassword(dsi.getPassword());
         }
         hikariConfig.setMaximumPoolSize(dsi.getMaxPoolSize() != null ? dsi.getMaxPoolSize() : DatasourceInfo.DEFAULT_POOL_SIZE);
+        hikariConfig.setMinimumIdle(dsi.getMinIdle() != null ? dsi.getMinIdle() : DatasourceInfo.DEFAULT_IDLE);
         hikariConfig.setConnectionTimeout(dsi.getTimeout() != null ? dsi.getTimeout() : DatasourceInfo.DEFAULT_TIMEOUT);
         hikariConfig.setAutoCommit(false);
         hikariConfig.setReadOnly(dsi.getReadOnly());

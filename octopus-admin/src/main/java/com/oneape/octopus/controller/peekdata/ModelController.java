@@ -80,7 +80,7 @@ public class ModelController {
      */
     @PostMapping("/list")
     public ApiResult<PageInfo<ModelDO>> doList(@RequestBody @Validated ModelForm form) {
-        PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
+        PageHelper.startPage(form.getCurrent(), form.getPageSize());
         List<ModelDO> vos = modelService.find(form.toDO());
         return ApiResult.ofData(new PageInfo<>(vos));
     }

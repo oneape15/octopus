@@ -17,9 +17,10 @@ import java.util.Map;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class UserDTO extends UserDO implements Serializable {
-
-    // Token when the user logs in successfully
-    private String                     token;
+    // The department name of user.
+    private String                     deptName;
+    private Integer                    notifyCount;
+    private Integer                    unreadCount;
     // The own Role;
     private List<RoleDO>               roles;
     // Resource operation permissions

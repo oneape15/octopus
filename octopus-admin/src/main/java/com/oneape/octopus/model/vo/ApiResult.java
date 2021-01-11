@@ -1,6 +1,5 @@
 package com.oneape.octopus.model.vo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oneape.octopus.commons.cause.StateCode;
 import lombok.Data;
 
@@ -11,17 +10,15 @@ public class ApiResult<T> implements Serializable {
     /**
      * 返回结果
      */
-    private T data;
+    private T       data;
     /**
      * 错误码
      */
-    @JsonProperty("error_code")
     private Integer code;
     /**
      * 错误信息
      */
-    @JsonProperty("error_message")
-    private String message;
+    private String  msg;
 
     public ApiResult() {
         this(StateCode.OK);
@@ -29,7 +26,7 @@ public class ApiResult<T> implements Serializable {
 
     public ApiResult(StateCode stateCode) {
         this.code = stateCode.getCode();
-        this.message = stateCode.getMessage();
+        this.msg = stateCode.getMessage();
     }
 
     public ApiResult(StateCode stateCode, T data) {
@@ -39,18 +36,18 @@ public class ApiResult<T> implements Serializable {
 
     public ApiResult(Integer code, String message) {
         this.code = code;
-        this.message = message;
+        this.msg = message;
     }
 
-    public ApiResult(T data, Integer code, String message) {
+    public ApiResult(T data, Integer code, String msg) {
         this.code = code;
-        this.message = message;
+        this.msg = msg;
         this.data = data;
     }
 
     public ApiResult(T data, Integer code) {
         this.code = code;
-        this.message = "";
+        this.msg = "";
         this.data = data;
     }
 
@@ -63,21 +60,21 @@ public class ApiResult<T> implements Serializable {
         return new ApiResult<>(data);
     }
 
-    public static <T> ApiResult<T> ofMessage(String message) {
-        return new ApiResult<>(StateCode.OK.getCode(), message);
+    public static <T> ApiResult<T> ofMessage(String msg) {
+        return new ApiResult<>(StateCode.OK.getCode(), msg);
     }
 
     public static <T> ApiResult<T> ofError(StateCode stateCode) {
         return new ApiResult<>(stateCode);
     }
 
-    public static <T> ApiResult<T> ofError(int code, String message) {
-        return new ApiResult<>(null, code, message);
+    public static <T> ApiResult<T> ofError(int code, String msg) {
+        return new ApiResult<>(null, code, msg);
     }
 
-    public static <T> ApiResult<T> ofError(StateCode stateCode, String message) {
+    public static <T> ApiResult<T> ofError(StateCode stateCode, String msg) {
         ApiResult<T> ret = new ApiResult<>(stateCode);
-        ret.setMessage(message);
+        ret.setMsg(msg);
         return ret;
     }
 }

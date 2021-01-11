@@ -28,6 +28,7 @@ public class UserForm extends BaseForm implements Serializable {
     private String  avatar;
     private Integer status;
     private Integer gender;
+    private String  type;
 
     @NotNull(message = "The userId List is empty.", groups = {DelCheck.class})
     private List<Long> userIds;

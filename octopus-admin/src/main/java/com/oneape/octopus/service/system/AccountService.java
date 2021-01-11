@@ -56,9 +56,17 @@ public interface AccountService extends BaseService<UserDO> {
      *
      * @param username String
      * @param password String
-     * @return UserDTO
+     * @return String login token value.
      */
-    UserDTO login(String username, String password);
+    String login(String username, String password);
+
+    /**
+     * the user login out option.
+     *
+     * @param userId Long
+     * @return int 0 - fail; 1 - success;
+     */
+    int outLogin(Long userId);
 
     /**
      * Reset user password.

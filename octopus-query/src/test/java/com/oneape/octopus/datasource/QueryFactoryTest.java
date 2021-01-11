@@ -34,9 +34,9 @@ public class QueryFactoryTest {
         schema = "dx2";
 
         dsi = new DatasourceInfo();
-        dsi.setUsername("dx2");
+        dsi.setUsername("helloword");
         dsi.setPassword("helloword");
-        dsi.setUrl("jdbc:postgresql://pg-dev.dian.so:5432/dx2");
+        dsi.setUrl("jdbc:postgresql://127.0.0.1:5432/test");
         dsi.setDatasourceType(DatasourceTypeHelper.PostgreSQL);
 
         queryFactory = new DefaultQueryFactory(datasourceFactory);

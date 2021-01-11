@@ -86,7 +86,7 @@ public class ServeController {
      */
     @PostMapping("/list")
     public ApiResult<PageInfo<ServeInfoDO>> doList(@RequestBody @Validated ServeForm form) {
-        PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
+        PageHelper.startPage(form.getCurrent(), form.getPageSize());
         List<ServeInfoDO> vos = serveInfoService.find(form.toDO());
         return ApiResult.ofData(new PageInfo<>(vos));
     }

@@ -61,7 +61,7 @@ public class PeekController {
 
     @PostMapping("/list")
     public ApiResult<PageInfo<PeekDO>> doList(@RequestBody @Validated PeekForm form) {
-        PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
+        PageHelper.startPage(form.getCurrent(), form.getPageSize());
         List<PeekDO> vos = peekService.find(form.toDO());
         return ApiResult.ofData(new PageInfo<>(vos));
     }

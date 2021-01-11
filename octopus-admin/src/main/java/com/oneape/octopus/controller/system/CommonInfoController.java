@@ -39,7 +39,7 @@ public class CommonInfoController {
 
     @PostMapping("/list")
     public ApiResult<PageInfo<CommonInfoDO>> doList(@RequestBody @Validated CommonInfoForm form) {
-        PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
+        PageHelper.startPage(form.getCurrent(), form.getPageSize());
         List<CommonInfoDO> list = commonInfoService.find(form.toDO());
         return ApiResult.ofData(new PageInfo<>(list));
     }

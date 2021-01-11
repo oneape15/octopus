@@ -23,7 +23,6 @@ public class Result implements Serializable {
     // Export file path
     public static final String KEY_EXPORT_FILE = "export_file";
 
-
     /**
      * query status
      */
@@ -53,6 +52,19 @@ public class Result implements Serializable {
         SUCCESS,
         TIMEOUT,
         ERROR;
+    }
+
+    public static Result ofError(String errMsg) {
+        Result ret = new Result();
+        ret.setErrMsg(errMsg);
+        ret.setStatus(QueryStatus.ERROR);
+        return ret;
+    }
+
+    public static Result ofSuccess() {
+        Result ret = new Result();
+        ret.setStatus(QueryStatus.SUCCESS);
+        return ret;
     }
 
     public boolean isSuccess() {

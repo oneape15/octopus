@@ -149,10 +149,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
         // get user full information.
-        UserDTO dto = getFullInformationById(udo.getId());
-        dto.setToken(token);
-
-        return dto;
+        return getFullInformationById(udo.getId());
     }
 
     /**
@@ -231,13 +228,13 @@ public class AccountServiceImpl implements AccountService {
      *
      * @param username String
      * @param password String
-     * @return UserDTO
+     * @return String login token value.
      */
     @Transactional
     @Override
-    public UserDTO login(String username, String password) {
+    public String login(String username, String password) {
         UserDO udo = getByUsername(username);
-        if (udo == null || !StringUtils.equals(password, udo.getPassword())) {
+        if (udo == null || !StringUtils.equalsIgnoreCase(password, udo.getPassword())) {
             throw new BizException("Error username or password.");
         }
 
@@ -247,11 +244,18 @@ public class AccountServiceImpl implements AccountService {
             throw new BizException("Login token generation failed. Please try again");
         }
 
-        // Get user full information.
-        UserDTO dto = getFullInformationById(udo.getId());
-        dto.setToken(token);
+        return token;
+    }
 
-        return dto;
+    /**
+     * the user login out option.
+     *
+     * @param userId Long
+     * @return int 0 - fail; 1 - success;
+     */
+    @Override
+    public int outLogin(Long userId) {
+        return 1;
     }
 
     /**

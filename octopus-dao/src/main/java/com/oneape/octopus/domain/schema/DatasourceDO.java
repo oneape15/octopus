@@ -66,6 +66,16 @@ public class DatasourceDO extends BaseDO {
     @EntityColumn(name = "min_idle")
     private Integer minIdle;
     /**
+     * Read-only data source tag.
+     */
+    @EntityColumn(name = "read_only")
+    private Integer readOnly;
+    /**
+     * Can support DDL operations.
+     */
+    @EntityColumn(name = "can_ddl")
+    private Integer canDdl;
+    /**
      * the sql of check datasource valid
      */
     @EntityColumn(name = "test_sql")

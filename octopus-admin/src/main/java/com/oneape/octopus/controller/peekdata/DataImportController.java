@@ -45,7 +45,7 @@ public class DataImportController {
      */
     @PostMapping("/list")
     public ApiResult<PageInfo<ImportRecordVO>> queryRecordList(@RequestBody DataImportForm form) {
-        PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
+        PageHelper.startPage(form.getCurrent(), form.getPageSize());
         List<ImportRecordVO> records = importRecordService.list(form.toDO());
         return ApiResult.ofData(new PageInfo<>(records));
     }

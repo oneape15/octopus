@@ -4,11 +4,13 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.cause.UnauthorizedException;
+import com.oneape.octopus.controller.SessionThreadLocal;
 import com.oneape.octopus.controller.system.form.UserForm;
 import com.oneape.octopus.domain.system.UserDO;
 import com.oneape.octopus.dto.system.UserDTO;
 import com.oneape.octopus.model.vo.ApiResult;
 import com.oneape.octopus.service.system.AccountService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,12 +31,36 @@ public class AccountController {
      * The user login option.
      */
     @PostMapping(value = "/login")
-    public ApiResult<UserDTO> doLogin(@RequestBody @Validated(value = UserForm.LoginCheck.class) UserForm form) {
-        UserDTO dto = accountService.login(form.getUsername(), form.getPassword());
-        if (dto == null) {
+    public ApiResult<String> doLogin(@RequestBody @Validated(value = UserForm.LoginCheck.class) UserForm form) {
+        String token = accountService.login(form.getUsername(), form.getPassword());
+        if (StringUtils.isBlank(token)) {
             return ApiResult.ofError(StateCode.LoginError);
         }
-        return ApiResult.ofData(dto);
+        return ApiResult.ofData(token);
+    }
+
+    /**
+     * Get full user information.
+     */
+    @GetMapping(value = "/currentUser")
+    public ApiResult<UserDTO> getCurrentUser() {
+        Long userId = SessionThreadLocal.getUserId();
+        UserDTO userDTO = accountService.getFullInformationById(userId);
+
+        return ApiResult.ofData(userDTO);
+    }
+
+    /**
+     * The user login out option.
+     */
+    @PostMapping(value = "/outLogin")
+    public ApiResult doOutLogin(@RequestBody @Validated(value = UserForm.LoginCheck.class) UserForm form) {
+        int status = accountService.outLogin(form.getId());
+        if (status > 0) {
+            return ApiResult.ofMessage("login out success.");
+        }
+
+        return ApiResult.ofError(-1, "login out fail.");
     }
 
     /**
@@ -55,7 +81,7 @@ public class AccountController {
      */
     @PostMapping("/list")
     public ApiResult<PageInfo<UserDO>> list(@RequestBody @Validated UserForm form) {
-        PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
+        PageHelper.startPage(form.getCurrent(), form.getPageSize());
         List<UserDO> list = accountService.find(form.toDO());
         return ApiResult.ofData(new PageInfo<>(list));
     }

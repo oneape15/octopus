@@ -10,6 +10,7 @@ public class DatasourceInfo implements Serializable {
 
     public static final Integer DEFAULT_TIMEOUT   = 60 * 1000;
     public static final Integer DEFAULT_POOL_SIZE = 5;
+    public static final Integer DEFAULT_IDLE      = 1;
 
     /**
      * the datasource primary key
@@ -43,6 +44,10 @@ public class DatasourceInfo implements Serializable {
      * Data source max pool size.
      */
     private Integer maxPoolSize = DEFAULT_POOL_SIZE;
+    /**
+     * Minimum free connection.
+     */
+    private Integer minIdle     = 1;
     /**
      * The datasource is read only.
      */

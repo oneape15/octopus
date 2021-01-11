@@ -1,4 +1,4 @@
-package com.oneape.octopus.controller.schema.form;
+package com.oneape.octopus.controller.datawarehouse.form;
 
 import com.oneape.octopus.domain.schema.TableSchemaDO;
 import lombok.Data;

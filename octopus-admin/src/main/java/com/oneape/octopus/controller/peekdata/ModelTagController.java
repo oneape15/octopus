@@ -46,7 +46,7 @@ public class ModelTagController {
 
     @PostMapping("/list")
     public ApiResult<PageInfo<ModelTagDO>> doList(@RequestBody @Validated TagForm form) {
-        PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
+        PageHelper.startPage(form.getCurrent(), form.getPageSize());
         List<ModelTagDO> vos = modelTagService.find(form.toDO());
         return ApiResult.ofData(new PageInfo<>(vos));
     }

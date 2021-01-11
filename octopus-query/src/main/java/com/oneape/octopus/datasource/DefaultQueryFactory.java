@@ -165,7 +165,25 @@ public class DefaultQueryFactory implements QueryFactory {
     }
 
     /**
-     * Exec SQL operations
+     * Run DDL statements.
+     *
+     * @param dsi    DatasourceInfo
+     * @param ddlSql String
+     * @return Result
+     */
+    @Override
+    public Result runSql(DatasourceInfo dsi, String ddlSql) {
+        try {
+            Actuator actuator = ActuatorFactory.build(datasourceFactory.getConnection(dsi), dsi.getDatasourceType());
+            return actuator.runSql(ddlSql);
+        } catch (Exception e) {
+            log.error("run SQL: {}", ddlSql, e);
+            return failResult(e);
+        }
+    }
+
+    /**
+     * Perform SQL query operations.
      *
      * @param dsi   DatasourceInfo
      * @param param ExecParam
@@ -177,7 +195,7 @@ public class DefaultQueryFactory implements QueryFactory {
     }
 
     /**
-     * Exec SQL operations
+     * Perform SQL query operations.
      *
      * @param dsi     DatasourceInfo
      * @param param   ExecParam

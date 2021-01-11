@@ -364,9 +364,28 @@ public abstract class Actuator {
         return new Pair<>(detailSql, countSql);
     }
 
+    /**
+     * Run DDL statements.
+     *
+     * @param ddlSql String
+     * @return Result
+     */
+    public Result runSql(String ddlSql) {
+        if (StringUtils.isBlank(ddlSql)) {
+            return Result.ofError("The DDL sql is blank.");
+        }
+        try {
+            try (Statement statement = conn.createStatement()) {
+                statement.execute(ddlSql);
+            }
+            return Result.ofSuccess();
+        } catch (SQLException e) {
+            return Result.ofError(e.getMessage());
+        }
+    }
 
     /**
-     * Execute SQL.
+     * Perform SQL query operations.
      *
      * @param param   ExecParam
      * @param process CellProcess

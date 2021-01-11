@@ -7,11 +7,14 @@ import java.io.Serializable;
 @Data
 public class BaseForm implements Serializable {
     /**
-     * 一页显示条数
+     * Displays the number of entries per page.
      */
     protected Integer pageSize = 10;
     /**
-     * 页号从1开始
+     * The page number starts at 1.
      */
-    protected Integer currentPage = 1;
+    protected Integer current  = 1;
+
+    private String sorter;
+    private String filter;
 }

@@ -59,7 +59,7 @@ public class RoleController {
      */
     @PostMapping("/list")
     public ApiResult<PageInfo<RoleDO>> doList(@RequestBody @Validated RoleForm form) {
-        PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
+        PageHelper.startPage(form.getCurrent(), form.getPageSize());
         RoleDO rdo = form.toDO();
         rdo.setArchive(Archive.NORMAL.value());
         List<RoleDO> list = roleService.find(rdo);

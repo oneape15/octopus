@@ -41,7 +41,7 @@ public class UserDO extends BaseDO {
      * The department Id of the user.
      */
     @EntityColumn(name = "dept_id")
-    private           String  deptId;
+    private           Long  deptId;
     /**
      * Account status 0 - normal; 1 - lock.
      */

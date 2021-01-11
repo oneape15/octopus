@@ -43,7 +43,7 @@ public class QuartzTaskController {
 
     @PostMapping(value = "/list")
     public ApiResult listTask(@RequestBody TaskForm form) {
-        PageHelper.startPage(form.getCurrentPage(), form.getPageSize());
+        PageHelper.startPage(form.getCurrent(), form.getPageSize());
         List<QuartzTaskDO> vos = quartzTaskService.find(form.toDO());
         return ApiResult.ofData(new PageInfo<>(vos));
     }

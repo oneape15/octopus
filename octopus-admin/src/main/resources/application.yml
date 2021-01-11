@@ -21,3 +21,12 @@ mail:
   smtp-port:
   secure-smtp: true
   session-debug: true
+
+redis:
+  address: redis://127.0.0.1:6379
+  password: 123456
+  maxIdle: 10
+  maxTotal: 30
+  maxWaitMillis: 300000
+  testOnBorrow: true
+  timeout: 200

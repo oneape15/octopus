@@ -53,7 +53,16 @@ public interface QueryFactory {
     List<SchemaTableField> fieldOfTable(DatasourceInfo dsi, String schema, String tableName);
 
     /**
-     * Exec SQL operations
+     * Run DDL statements.
+     *
+     * @param dsi    DatasourceInfo
+     * @param ddlSql String
+     * @return Result
+     */
+    Result runSql(DatasourceInfo dsi, String ddlSql);
+
+    /**
+     * Perform SQL query operations.
      *
      * @param dsi   DatasourceInfo
      * @param param ExecParam
@@ -62,7 +71,7 @@ public interface QueryFactory {
     Result execSql(DatasourceInfo dsi, ExecParam param);
 
     /**
-     * Exec SQL operations.
+     * Perform SQL query operations.
      *
      * @param dsi     DatasourceInfo
      * @param param   ExecParam
