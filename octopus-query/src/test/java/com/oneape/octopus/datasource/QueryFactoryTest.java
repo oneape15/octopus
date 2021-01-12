@@ -31,7 +31,7 @@ public class QueryFactoryTest {
     @BeforeAll
     static void init() {
         DatasourceFactory datasourceFactory = new DefaultDatasourceFactory();
-        schema = "dx2";
+        schema = "test";
 
         dsi = new DatasourceInfo();
         dsi.setUsername("helloword");
@@ -87,7 +87,7 @@ public class QueryFactoryTest {
     @Test
     public void tableFieldsOfPgSqlTest() {
         String tableName = "agent_department";
-        List<SchemaTableField> fields = queryFactory.fieldOfTable(dsi, "dx2", tableName);
+        List<SchemaTableField> fields = queryFactory.fieldOfTable(dsi, schema, tableName);
         assertNotNull(fields);
         log.info("表：{}字段信息如下：{}", tableName, JSON.toJSONString(fields));
     }

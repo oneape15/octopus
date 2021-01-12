@@ -9,6 +9,7 @@ import com.oneape.octopus.commons.enums.QuartzTaskType;
 import com.oneape.octopus.controller.task.from.TaskForm;
 import com.oneape.octopus.domain.task.QuartzTaskDO;
 import com.oneape.octopus.dto.task.QuartzTaskParamDTO;
+import com.oneape.octopus.job.QuartzScheduledJob;
 import com.oneape.octopus.model.vo.ApiResult;
 import com.oneape.octopus.service.schema.DatasourceService;
 import com.oneape.octopus.service.serve.ServeInfoService;
@@ -107,7 +108,7 @@ public class QuartzTaskController {
             }
             paramDTO.setRunType(runType);
             if (StringUtils.isBlank(form.getJobClass())) {
-                taskDO.setJobClass("so.dian.datacenter.dem.job.EmailScheduledTask");
+                taskDO.setJobClass(QuartzScheduledJob.class.getName());
             }
 
             QuartzTaskType taskType = QuartzTaskType.getByName(runType);

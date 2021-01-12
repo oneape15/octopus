@@ -58,4 +58,12 @@ public interface QuartzTaskService extends BaseService<QuartzTaskDO> {
      */
     void deleteJob2Schedule(QuartzTaskDO taskDO);
 
+    /**
+     * Execute the task according to the ID.
+     *
+     * @param taskId Long
+     * @return int 1 - success; 0 - fail;
+     */
+    int executeTaskById(Long taskId);
+
 }

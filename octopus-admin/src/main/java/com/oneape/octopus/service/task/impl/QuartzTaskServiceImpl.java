@@ -350,4 +350,15 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
             throw new BizException("Remove task fail! ", e);
         }
     }
+
+    /**
+     * Execute the task according to the ID.
+     *
+     * @param taskId Long
+     * @return int 1 - success; 0 - fail;
+     */
+    @Override
+    public int executeTaskById(Long taskId) {
+        return 0;
+    }
 }

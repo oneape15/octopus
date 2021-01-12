@@ -24,9 +24,9 @@ public class DatasourceFactoryTest {
         factory = new DefaultDatasourceFactory();
         dsi = new DatasourceInfo();
         dsi = new DatasourceInfo();
-        dsi.setUsername("dx2");
-        dsi.setPassword("helloword");
-        dsi.setUrl("jdbc:postgresql://pg-dev.dian.so:5432/dx2");
+        dsi.setUsername("root");
+        dsi.setPassword("a123456");
+        dsi.setUrl("jdbc:mysql://localhost:3306/octopus_db");
         dsi.setDatasourceType(DatasourceTypeHelper.PostgreSQL);
     }
 
