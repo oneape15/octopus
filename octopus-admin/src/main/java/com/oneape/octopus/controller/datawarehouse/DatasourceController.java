@@ -38,11 +38,15 @@ public class DatasourceController {
 
     @PostMapping("/save")
     public ApiResult<String> doSaveDatasource(@RequestBody @Validated(value = DatasourceForm.AddCheck.class) DatasourceForm form) {
-        int status = datasourceService.save(form.toDO());
-        if (status > 0) {
-            return ApiResult.ofData("Data source save successfully.");
+        ApiResult<String> ret = testConnection(form);
+        if (ret.isSuccess()) {
+            int status = datasourceService.save(form.toDO());
+            if (status > 0) {
+                return ApiResult.ofData("Data source save successfully.");
+            }
+            return ApiResult.ofError(StateCode.BizError, "Data source save fail.");
         }
-        return ApiResult.ofError(StateCode.BizError, "Data source save fail.");
+        return ret;
     }
 
     @PostMapping("/del")

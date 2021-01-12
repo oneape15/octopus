@@ -38,4 +38,9 @@ public interface UserSessionMapper {
             "SELECT * FROM " + UserSessionSqlProvider.TABLE_NAME + " WHERE token = #{token}"
     })
     UserSessionDO findByToken(@Param("token") String token);
+
+    @Select({
+            "SELECT * FROM " + UserSessionSqlProvider.TABLE_NAME + " WHERE user_id = #{userId} AND app_type = #{appType}"
+    })
+    UserSessionDO findByUserId(@Param("userId") Long userId, @Param("appType") Integer appType);
 }

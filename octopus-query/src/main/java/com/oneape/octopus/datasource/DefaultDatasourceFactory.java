@@ -174,7 +174,9 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
         String userName = getValueWithDefault(dsInfo.getUsername(), "");
         String password = getValueWithDefault(dsInfo.getPassword(), "");
         String testSql = getValueWithDefault(dsInfo.getTestSql(), "select 1");
-
+        if (StringUtils.isNotBlank(password) && StringUtils.startsWith(password, PWD_MASK_TAG)) {
+            password = PBEUtils.decrypt(StringUtils.substringAfter(password, PWD_MASK_TAG));
+        }
         try {
             Class.forName(dsInfo.getDatasourceType().getDriverClass());
             try (Connection connection = DriverManager.getConnection(url, userName, password);
@@ -210,11 +212,12 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
         hikariConfig.setDriverClassName(dth.getDriverClass());
         hikariConfig.setJdbcUrl(dsi.getUrl());
         hikariConfig.setUsername(dsi.getUsername());
+        String password = dsi.getPassword();
         if (StringUtils.isNotBlank(dsi.getPassword()) && StringUtils.startsWith(dsi.getPassword(), PWD_MASK_TAG)) {
-            PBEUtils.decrypt(StringUtils.substringAfter(dsi.getPassword(), PWD_MASK_TAG));
-        } else {
-            hikariConfig.setPassword(dsi.getPassword());
+            password = PBEUtils.decrypt(StringUtils.substringAfter(dsi.getPassword(), PWD_MASK_TAG));
         }
+        hikariConfig.setPassword(password);
+
         hikariConfig.setMaximumPoolSize(dsi.getMaxPoolSize() != null ? dsi.getMaxPoolSize() : DatasourceInfo.DEFAULT_POOL_SIZE);
         hikariConfig.setMinimumIdle(dsi.getMinIdle() != null ? dsi.getMinIdle() : DatasourceInfo.DEFAULT_IDLE);
         hikariConfig.setConnectionTimeout(dsi.getTimeout() != null ? dsi.getTimeout() : DatasourceInfo.DEFAULT_TIMEOUT);

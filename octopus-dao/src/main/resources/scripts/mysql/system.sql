@@ -89,25 +89,29 @@ CREATE TABLE `sys_user`
 --  User session information table
 CREATE TABLE `sys_user_session`
 (
-  `id`         BIGINT(20)   NOT NULL
+  `id`          BIGINT(20)   NOT NULL
   COMMENT 'primary key',
-  `user_id`    BIGINT(128)  NOT NULL
+  `app_type`    TINYINT(1)   NOT NULL
+  COMMENT 'The application type.',
+  `user_id`     BIGINT(128)  NOT NULL
   COMMENT 'user id',
-  `token`      VARCHAR(128) NOT NULL
+  `token`       VARCHAR(128) NOT NULL
   COMMENT 'User login token',
-  `timeout`    INT(11)      NOT NULL
-  COMMENT 'Token failure time',
-  `login_time` BIGINT(20)   NULL
-  COMMENT 'Logon time',
-  `archive`    TINYINT(1)   NOT NULL DEFAULT 0
+  `login_time`  BIGINT(20)   NULL
+  COMMENT 'User login time',
+  `logout_time` BIGINT(20)   NULL
+  COMMENT 'User logout time',
+  `expire_at`   BIGINT(20)   NOT NULL
+  COMMENT 'Token expiration time',
+  `archive`     TINYINT(1)   NOT NULL DEFAULT 0
   COMMENT '0 - normal data; 1 - have archive (soft delete)',
-  `created`    BIGINT(20)   NOT NULL
+  `created`     BIGINT(20)   NOT NULL
   COMMENT 'create time ',
-  `creator`    BIGINT(20)   NOT NULL
+  `creator`     BIGINT(20)   NOT NULL
   COMMENT 'Data record creator',
-  `modified`   BIGINT(20)   NULL     DEFAULT NULL
+  `modified`    BIGINT(20)   NULL     DEFAULT NULL
   COMMENT 'Last updated time',
-  `modifier`   BIGINT(20)   NULL     DEFAULT NULL
+  `modifier`    BIGINT(20)   NULL     DEFAULT NULL
   COMMENT 'Data record  modifier',
   PRIMARY KEY (`id`)
 )

@@ -1,6 +1,7 @@
 package com.oneape.octopus.service.system;
 
 import com.oneape.octopus.domain.system.UserDO;
+import com.oneape.octopus.dto.system.AppType;
 import com.oneape.octopus.dto.system.UserDTO;
 import com.oneape.octopus.service.BaseService;
 
@@ -56,17 +57,19 @@ public interface AccountService extends BaseService<UserDO> {
      *
      * @param username String
      * @param password String
+     * @param appType  AppType
      * @return String login token value.
      */
-    String login(String username, String password);
+    String login(String username, String password, AppType appType);
 
     /**
      * the user login out option.
      *
-     * @param userId Long
+     * @param userId  Long
+     * @param appType AppType
      * @return int 0 - fail; 1 - success;
      */
-    int outLogin(Long userId);
+    int logout(Long userId, AppType appType);
 
     /**
      * Reset user password.

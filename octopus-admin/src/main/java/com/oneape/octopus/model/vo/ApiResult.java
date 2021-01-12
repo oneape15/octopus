@@ -56,6 +56,10 @@ public class ApiResult<T> implements Serializable {
         this.data = data;
     }
 
+    public boolean isSuccess() {
+        return code != null && code == StateCode.OK.getCode();
+    }
+
     public static <T> ApiResult<T> ofData(T data) {
         return new ApiResult<>(data);
     }

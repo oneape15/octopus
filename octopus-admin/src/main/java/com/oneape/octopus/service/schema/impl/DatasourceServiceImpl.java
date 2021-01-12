@@ -56,7 +56,7 @@ public class DatasourceServiceImpl implements DatasourceService {
         }
 
         // Encrypt the password
-        if (StringUtils.isNotBlank(model.getPassword()) && StringUtils.startsWith(model.getPassword(), PWD_MASK_TAG)) {
+        if (StringUtils.isNotBlank(model.getPassword()) && !StringUtils.startsWith(model.getPassword(), PWD_MASK_TAG)) {
             model.setPassword(PWD_MASK_TAG + PBEUtils.encrypt(model.getPassword()));
         }
 

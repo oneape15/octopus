@@ -11,6 +11,7 @@ import com.oneape.octopus.controller.SessionThreadLocal;
 import com.oneape.octopus.domain.system.RoleDO;
 import com.oneape.octopus.domain.system.UserDO;
 import com.oneape.octopus.domain.system.UserSessionDO;
+import com.oneape.octopus.dto.system.AppType;
 import com.oneape.octopus.dto.system.ResourceDTO;
 import com.oneape.octopus.dto.system.UserDTO;
 import com.oneape.octopus.mapper.system.UserMapper;
@@ -22,6 +23,8 @@ import com.oneape.octopus.service.system.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +34,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -47,6 +51,8 @@ public class AccountServiceImpl implements AccountService {
     private ResourceService resourceService;
     @Resource
     private MailService     mailService;
+    @Resource
+    private RedissonClient  redissonClient;
 
     /**
      * save data to table.
@@ -132,14 +138,9 @@ public class AccountServiceImpl implements AccountService {
             throw new UnauthorizedException("Invalid Token");
         }
 
-        Long loginTime = us.getLoginTime();
+        Long expireAt = us.getExpireAt();
 
-        int timeout = us.getTimeout();
-        if (timeout <= 0) {
-            // The default is 60 minutes
-            timeout = TOKEN_TIMEOUT;
-        }
-        if (loginTime == null || loginTime + timeout * ONE_MINUTE < System.currentTimeMillis()) {
+        if (expireAt == null || expireAt <= System.currentTimeMillis()) {
             throw new UnauthorizedException("Login timeout, please login again");
         }
 
@@ -228,34 +229,87 @@ public class AccountServiceImpl implements AccountService {
      *
      * @param username String
      * @param password String
+     * @param appType  AppType
      * @return String login token value.
      */
     @Transactional
     @Override
-    public String login(String username, String password) {
+    public String login(String username, String password, AppType appType) {
         UserDO udo = getByUsername(username);
         if (udo == null || !StringUtils.equalsIgnoreCase(password, udo.getPassword())) {
             throw new BizException("Error username or password.");
         }
 
         // crate a new token.
-        String token = createUserSessionToken(udo.getId());
-        if (StringUtils.isBlank(token)) {
-            throw new BizException("Login token generation failed. Please try again");
+        String randomStr = UUID.randomUUID().toString().replaceAll("-", "");
+        String rawStr = randomStr + TOKEN_INFO_SPLIT + udo.getId();
+        String token;
+        try {
+            token = MD5Utils.getMD5(rawStr);
+        } catch (Exception e) {
+            log.error("Create session Token fail.", e);
+            return null;
         }
 
-        return token;
+        RLock lock = redissonClient.getLock("USER_LOGIN_" + udo.getId() + "_" + appType);
+        if (lock.isLocked()) {
+            throw new BizException("Get Lock fail.");
+        }
+
+        int status;
+        try {
+            lock.lock(1, TimeUnit.MINUTES);
+            UserSessionDO oldDo = userSessionMapper.findByUserId(udo.getId(), appType.getCode());
+            Long expireAt = System.currentTimeMillis() + TOKEN_TIMEOUT * ONE_MINUTE * 2;
+            if (oldDo != null) {
+                oldDo.setLoginTime(System.currentTimeMillis());
+                // It expires in two hours
+                oldDo.setExpireAt(expireAt);
+                oldDo.setToken(token);
+
+                status = userSessionMapper.update(oldDo);
+            } else {
+                UserSessionDO us = new UserSessionDO(udo.getId(), token);
+                us.setAppType(appType.getCode());
+                us.setLoginTime(System.currentTimeMillis());
+                // It expires in two hours
+                us.setExpireAt(expireAt);
+
+                status = userSessionMapper.insert(us);
+            }
+        } finally {
+            lock.unlock();
+        }
+
+        return status > 0 ? token : null;
     }
 
     /**
      * the user login out option.
      *
-     * @param userId Long
+     * @param userId  Long
+     * @param appType AppType
      * @return int 0 - fail; 1 - success;
      */
     @Override
-    public int outLogin(Long userId) {
-        return 1;
+    public int logout(Long userId, AppType appType) {
+        RLock lock = redissonClient.getLock("USER_LOGOUT_" + userId + "_" + appType);
+        if (lock.isLocked()) {
+            throw new BizException("Get Lock fail.");
+        }
+
+        int status;
+        try {
+            lock.lock(1, TimeUnit.MINUTES);
+            UserSessionDO usDo = Preconditions.checkNotNull(userSessionMapper.findByUserId(userId, appType.getCode()), "");
+            usDo.setLogoutTime(System.currentTimeMillis());
+            usDo.setExpireAt(System.currentTimeMillis());
+            status = userSessionMapper.update(usDo);
+        } finally {
+            lock.unlock();
+        }
+
+        return status;
     }
 
     /**
@@ -368,35 +422,6 @@ public class AccountServiceImpl implements AccountService {
         }
 
         return sb.toString();
-    }
-
-    /**
-     * Create session Token
-     *
-     * @param userId Long
-     * @return String
-     */
-    private synchronized String createUserSessionToken(Long userId) {
-        String randomStr = UUID.randomUUID().toString().replaceAll("-", "");
-
-        String rawStr = randomStr + TOKEN_INFO_SPLIT + userId;
-        String token;
-        try {
-            token = MD5Utils.getMD5(rawStr);
-        } catch (Exception e) {
-            log.error("Create session Token fail.", e);
-            return null;
-        }
-
-        UserSessionDO us = new UserSessionDO(userId, token);
-        us.setLoginTime(System.currentTimeMillis());
-        // It expires in two hours
-        us.setTimeout(TOKEN_TIMEOUT * 2);
-        int status = userSessionMapper.insert(us);
-        if (status > 0) {
-            return token;
-        }
-        return null;
     }
 
     /**

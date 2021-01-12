@@ -1,10 +1,8 @@
 package com.oneape.octopus.interceptor;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.oneape.octopus.controller.SessionThreadLocal;
 import com.oneape.octopus.commons.cause.UnauthorizedException;
 import com.oneape.octopus.config.ApplicationContextProvider;
+import com.oneape.octopus.controller.SessionThreadLocal;
 import com.oneape.octopus.dto.system.UserDTO;
 import com.oneape.octopus.service.system.AccountService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,24 +18,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
 public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
 
     private volatile AccountService accountService;
-
-    private Cache<String, UserDTO> cache = CacheBuilder.newBuilder()
-            // 设置缓存的最大容量
-            .maximumSize(100)
-            // 设置缓存在写入一分钟后失效
-            .expireAfterWrite(10, TimeUnit.MINUTES)
-            // 设置并发级别为10
-            .concurrencyLevel(10)
-            // 开启缓存统计
-            .recordStats()
-            .build();
 
     private static final String KEY_TOKEN = "TOKEN_KEY_";
 
@@ -136,16 +122,13 @@ public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
         }
 
         //检测token的合法性
-        UserDTO user = cache.getIfPresent(KEY_TOKEN + token);
-        if (user == null) {
-            user = getUserInfoByToken(token);
-        }
+        UserDTO user = getUserInfoByToken(token);
+
         if (user == null) {
             log.info("token验证失败! token:{}", token);
             throw new UnauthorizedException();
         }
 
-        cache.put(KEY_TOKEN + token, user);
         SessionThreadLocal.setSession(user);
 
         return super.preHandle(request, response, handler);

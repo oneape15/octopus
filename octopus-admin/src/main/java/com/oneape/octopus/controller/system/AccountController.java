@@ -7,6 +7,7 @@ import com.oneape.octopus.commons.cause.UnauthorizedException;
 import com.oneape.octopus.controller.SessionThreadLocal;
 import com.oneape.octopus.controller.system.form.UserForm;
 import com.oneape.octopus.domain.system.UserDO;
+import com.oneape.octopus.dto.system.AppType;
 import com.oneape.octopus.dto.system.UserDTO;
 import com.oneape.octopus.model.vo.ApiResult;
 import com.oneape.octopus.service.system.AccountService;
@@ -32,7 +33,7 @@ public class AccountController {
      */
     @PostMapping(value = "/login")
     public ApiResult<String> doLogin(@RequestBody @Validated(value = UserForm.LoginCheck.class) UserForm form) {
-        String token = accountService.login(form.getUsername(), form.getPassword());
+        String token = accountService.login(form.getUsername(), form.getPassword(), AppType.MANAGE);
         if (StringUtils.isBlank(token)) {
             return ApiResult.ofError(StateCode.LoginError);
         }
@@ -53,9 +54,10 @@ public class AccountController {
     /**
      * The user login out option.
      */
-    @PostMapping(value = "/outLogin")
-    public ApiResult doOutLogin(@RequestBody @Validated(value = UserForm.LoginCheck.class) UserForm form) {
-        int status = accountService.outLogin(form.getId());
+    @PostMapping(value = "/logout")
+    public ApiResult doOutLogin() {
+        Long userId = SessionThreadLocal.getUserId();
+        int status = accountService.logout(userId, AppType.MANAGE);
         if (status > 0) {
             return ApiResult.ofMessage("login out success.");
         }
@@ -84,18 +86,6 @@ public class AccountController {
         PageHelper.startPage(form.getCurrent(), form.getPageSize());
         List<UserDO> list = accountService.find(form.toDO());
         return ApiResult.ofData(new PageInfo<>(list));
-    }
-
-    /**
-     * Get current user information.
-     */
-    @PostMapping("/getCurrent")
-    public ApiResult<UserDTO> getCurrent() {
-        UserDTO vo = accountService.getCurrentUser();
-        if (vo == null) {
-            throw new UnauthorizedException();
-        }
-        return ApiResult.ofData(vo);
     }
 
     /**

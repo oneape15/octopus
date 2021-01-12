@@ -59,6 +59,12 @@ public interface RoleMapper {
     @SelectProvider(type = RoleSqlProvider.class, method = "listOrLink")
     List<RoleDO> listOrLink(@Param("model") RoleDO model);
 
+    /**
+     * @param name     String
+     * @param code     String
+     * @param filterId Long
+     * @return int  0 - not exist
+     */
     @SelectProvider(type = RoleSqlProvider.class, method = "getSameNameOrCodeRole")
     int getSameNameOrCodeRole(@Param("name") String name, @Param("code") String code, @Param("filterId") Long filterId);
 
