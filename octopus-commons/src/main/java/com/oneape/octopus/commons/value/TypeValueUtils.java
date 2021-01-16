@@ -38,6 +38,19 @@ public class TypeValueUtils {
         return defaultVal;
     }
 
+    public static Integer obj2int(Object val, Integer defaultVal) {
+        if (val == null) {
+            return defaultVal;
+        }
+
+        try {
+            return Integer.parseInt(String.valueOf(val));
+        } catch (Exception e) {
+            log.warn("Object:'{}' to Integer error!", val);
+        }
+        return defaultVal;
+    }
+
     public static String int2str(Integer val, String defaultVal) {
         if (val == null) {
             return defaultVal;

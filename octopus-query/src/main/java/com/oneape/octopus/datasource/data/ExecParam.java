@@ -36,7 +36,7 @@ public class ExecParam implements Serializable {
     /**
      * Whether need total size.
      */
-    private Boolean needTotalSize = Boolean.FALSE;
+    private Boolean needCountSize = Boolean.FALSE;
     /**
      * Field alias list.
      */

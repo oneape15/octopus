@@ -66,9 +66,10 @@ public class SchemaServiceImpl implements SchemaService {
 
         TableSchemaDO model = new TableSchemaDO();
         model.setId(ts.getId());
-        model.setComment(ts.getComment());
+        model.setAlias(ts.getAlias());
         model.setCron(ts.getCron());
         model.setSyncTime(ts.getSyncTime());
+        model.setComment(ts.getComment());
         int status = tableSchemaMapper.update(model);
         if (status > 0) {
             if (StringUtils.isNotBlank(oldDo.getCron())) {

@@ -16,14 +16,12 @@ import com.oneape.octopus.commons.dto.Value;
 import com.oneape.octopus.commons.enums.FileType;
 import com.oneape.octopus.commons.files.EasyCsv;
 import com.oneape.octopus.commons.files.ZipUtils;
-import com.oneape.octopus.commons.value.CodeBuilderUtils;
-import com.oneape.octopus.commons.value.DateUtils;
-import com.oneape.octopus.commons.value.Pair;
-import com.oneape.octopus.commons.value.SystemInfoUtils;
+import com.oneape.octopus.commons.value.*;
 import com.oneape.octopus.datasource.CellProcess;
 import com.oneape.octopus.datasource.data.*;
 import com.oneape.octopus.datasource.schema.SchemaTable;
 import com.oneape.octopus.datasource.schema.SchemaTableField;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +33,9 @@ import java.math.BigInteger;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -42,6 +43,9 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public abstract class Actuator {
+    private static final int TAG_COUNT_SQL  = 0;
+    private static final int TAG_DETAIL_SQL = 1;
+
     private static final String ZIP_FILE_SUFFIX = ".zip";
 
     // schema name
@@ -68,6 +72,15 @@ public abstract class Actuator {
     public Actuator(Connection conn) {
         this.conn = conn;
     }
+
+    private static ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
+            10,
+            30,
+            5,
+            TimeUnit.SECONDS,
+            new ArrayBlockingQueue<>(50),
+            new ThreadPoolExecutor.AbortPolicy()
+    );
 
     /**
      * Get database name from the URL.
@@ -200,6 +213,10 @@ public abstract class Actuator {
     public String getSchema(String url) {
         if (StringUtils.isBlank(url)) {
             return null;
+        }
+
+        if (StringUtils.startsWithIgnoreCase(url, "jdbc:odps")) {
+            return getSchemaNameFromUrl(url);
         }
 
         // Remove the parameters after the URL
@@ -343,7 +360,7 @@ public abstract class Actuator {
         detailSql = assembleDetailSql(detailSql, param.getParams());
 
         String countSql = null;
-        if (param.getNeedTotalSize()) {
+        if (param.getNeedCountSize()) {
             countSql = wrapperTotalSql(detailSql);
         }
 
@@ -391,43 +408,60 @@ public abstract class Actuator {
      * @param process CellProcess
      * @return Result
      */
-    public Result execSql(ExecParam param, CellProcess<Cell, Object> process) {
-
+    public Result execSql(ExecParam param, final CellProcess<Cell, Object> process) {
+        // deal the run sql.
         Pair<String, String> pair = preDealSql(param);
-        String detailSql = pair.getLeft();
-
-        // 设置查询SQL
-        Result result = new Result();
 
         // save the run sql.
+        Result result = new Result();
         result.setDetailSql(pair.getLeft())
-                .setTotalSql(pair.getRight());
+                .setCountSql(pair.getRight());
+
+        Map<Integer, String> querySqlMap = new HashMap<>();
+        querySqlMap.put(TAG_DETAIL_SQL, pair.getLeft());
+
+        boolean needCountSize = param.getNeedCountSize();
+        if (needCountSize) {
+            querySqlMap.put(TAG_COUNT_SQL, pair.getRight());
+        }
 
         StopWatch watch = new StopWatch();
         watch.start();
-        try (PreparedStatement ps = conn.prepareStatement(detailSql)) {
-            try (ResultSet rs = ps.executeQuery()) {
-                final List<ColumnHead> columnHeads = getColumnHeads(rs.getMetaData(), param.getField2Alias());
-                result.setColumns(columnHeads);
-                int columnSize = columnHeads.size();
 
-                List<Map<String, Object>> rows = new ArrayList<>();
-                // 循环获取数据行
-                while (rs.next()) {
-                    Map<String, Object> row = new HashMap<>(columnSize);
-                    int i = 1;
-                    for (ColumnHead ch : columnHeads) {
-                        Object obj = getCell(rs, i, ch.getDataType());
-                        if (process != null) {
-                            obj = process.process(new Cell(ch, obj));
-                        }
-                        row.put(ch.getName(), obj);
-                        i++;
-                    }
-                    rows.add(row);
+        try {
+            List<ExecuteResult> results = new ArrayList<>();
+            CompletableFuture[] cfs = querySqlMap
+                    .entrySet()
+                    .stream()
+                    .map(entry -> CompletableFuture
+                            .supplyAsync(() -> fetchResult(entry.getKey(), entry.getValue(), param.getField2Alias(), process))
+                            .whenComplete((ret, e) -> results.add(ret)))
+                    .toArray(CompletableFuture[]::new);
+
+            CompletableFuture.allOf(cfs).join();
+
+            for (ExecuteResult execRet : results) {
+                if (!execRet.getSuccess() && execRet.getException() != null) {
+                    result.setErrMsg(execRet.getException().getMessage());
+                    continue;
                 }
-                result.setRows(rows);
+
+                List<Map<String, Object>> rows = execRet.getRows();
+                if (TAG_COUNT_SQL == execRet.getType() && CollectionUtils.isNotEmpty(rows)) {
+                    result.setCountSize(TypeValueUtils.obj2int(rows.get(0).get(COL_COUNT_SIZE), -1));
+                    continue;
+                }
+                if (TAG_DETAIL_SQL == execRet.getType()) {
+                    result.setRows(rows);
+                    result.setColumns(execRet.getColumnHeads());
+                }
             }
+
+            // fill the row length to count size
+            if (!needCountSize) {
+                result.setCountSize(CollectionUtils.isEmpty(result.getRows()) ? 0 : result.getRows().size());
+            }
+
         } catch (Exception e) {
             result.setErrMsg(e.toString());
         } finally {
@@ -436,6 +470,60 @@ public abstract class Actuator {
         }
 
         return result;
+    }
+
+    private ExecuteResult fetchResult(int type, String sql, Map<String, String> field2Alias, CellProcess<Cell, Object> process) {
+        ExecuteResult ret = new ExecuteResult();
+        ret.setType(type);
+
+        if (StringUtils.isBlank(sql)) return ret;
+
+        log.debug("run sql: {}", sql);
+        List<Map<String, Object>> rows = new ArrayList<>();
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                switch (type) {
+                    case TAG_COUNT_SQL: {
+                        rs.next();
+                        Map<String, Object> row = new HashMap<>();
+                        row.put(COL_COUNT_SIZE, rs.getInt(COL_COUNT_SIZE));
+                        rows.add(row);
+                    }
+                    break;
+                    case TAG_DETAIL_SQL: {
+                        final List<ColumnHead> columnHeads = getColumnHeads(rs.getMetaData(), field2Alias);
+                        int columnSize = columnHeads.size();
+
+                        while (rs.next()) {
+                            Map<String, Object> row = new HashMap<>(columnSize);
+                            int i = 1;
+                            for (ColumnHead ch : columnHeads) {
+                                Object obj = getCell(rs, i, ch.getDataType());
+                                if (process != null) {
+                                    obj = process.process(new Cell(ch, obj));
+                                }
+                                row.put(ch.getName(), obj);
+                                i++;
+                            }
+                            rows.add(row);
+                        }
+                    }
+                    break;
+                    default:
+                        log.error("undefined the type.");
+                        break;
+                }
+                ret.setSuccess(true);
+                ret.setRows(rows);
+            }
+        } catch (Exception e) {
+            log.error("SQL execution error, sql: {}", sql, e);
+            ret.setException(e);
+            ret.setSuccess(false);
+        }
+
+        return ret;
     }
 
 
@@ -453,7 +541,7 @@ public abstract class Actuator {
 
         // save the run sql.
         result.setDetailSql(pair.getLeft())
-                .setTotalSql(pair.getRight());
+                .setCountSql(pair.getRight());
 
         // get the file type.
         FileType fileType = param.getExportFileType() != null ? param.getExportFileType() : FileType.CSV;
@@ -518,7 +606,7 @@ public abstract class Actuator {
             throw new RuntimeException("执行TOTAL查询语句为空");
         }
         try (PreparedStatement ps = conn.prepareStatement(countSql)) {
-            try (ResultSet rs = ps.executeQuery(countSql)) {
+            try (ResultSet rs = ps.executeQuery()) {
                 rs.next();
                 return rs.getInt(COL_COUNT_SIZE);
             }
@@ -558,7 +646,8 @@ public abstract class Actuator {
      */
     private int writeData2Xls(ExportDataParam param, String fullFileName, String detailSql, Result result, CellProcess<Cell, Object> process) {
         try (PreparedStatement ps = conn.prepareStatement(detailSql)) {
-            try (ResultSet rs = ps.executeQuery(detailSql)) {
+            ps.setFetchSize(1000);
+            try (ResultSet rs = ps.executeQuery()) {
 
                 ExcelWriterBuilder excelWriterBuilder = EasyExcelFactory.write(fullFileName);
                 ExcelWriter writer = excelWriterBuilder.build();
@@ -650,7 +739,8 @@ public abstract class Actuator {
     private int writeData2Csv(ExportDataParam param, String fullFileName, String detailSql, Result result, CellProcess<Cell, Object> process) {
         EasyCsv easyCsv = null;
         try (PreparedStatement ps = conn.prepareStatement(detailSql)) {
-            try (ResultSet rs = ps.executeQuery(detailSql)) {
+            ps.setFetchSize(1000);
+            try (ResultSet rs = ps.executeQuery()) {
 
                 easyCsv = new EasyCsv(fullFileName);
 
@@ -815,6 +905,19 @@ public abstract class Actuator {
                 }
             default:
                 return rs.getObject(index);
+        }
+    }
+
+    @Data
+    private class ExecuteResult {
+        private Integer                   type;
+        private Boolean                   success;
+        private List<ColumnHead>          columnHeads;
+        private List<Map<String, Object>> rows;
+        private Exception                 exception;
+
+        public ExecuteResult() {
+            this.success = false;
         }
     }
 }

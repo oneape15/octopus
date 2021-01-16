@@ -3,7 +3,6 @@ package com.oneape.octopus.datasource.data;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,16 +11,6 @@ import java.util.Map;
  */
 @Data
 public class Result implements Serializable {
-    // query total sql key
-    public static final String KEY_TOTAL_SQL   = "total_sql";
-    // query sql key
-    public static final String KEY_DETAIL_SQL  = "detail_sql";
-    // error info message key
-    public static final String KEY_ERR_MSG     = "err_msg";
-    // run time
-    public static final String KEY_RUN_TIME    = "run_time";
-    // Export file path
-    public static final String KEY_EXPORT_FILE = "export_file";
 
     /**
      * query status
@@ -39,11 +28,11 @@ public class Result implements Serializable {
     /**
      * total size
      */
-    private Integer                   totalSize;
+    private Integer                   countSize;
     /**
      * Attached information.
      */
-    private Map<String, String> detailInfo = new HashMap<>();
+    private DetailInfo detailInfo = new DetailInfo();
 
     /**
      * query status enum
@@ -72,27 +61,27 @@ public class Result implements Serializable {
     }
 
     public Result setDetailSql(String detailSql) {
-        detailInfo.put(KEY_DETAIL_SQL, detailSql);
+        detailInfo.setDetailSql(detailSql);
         return this;
     }
 
-    public Result setTotalSql(String totalSql) {
-        detailInfo.put(KEY_TOTAL_SQL, totalSql);
+    public Result setCountSql(String countSql) {
+        detailInfo.setCountSql(countSql);
         return this;
     }
 
     public Result setErrMsg(String msg) {
-        detailInfo.put(KEY_ERR_MSG, msg);
+        detailInfo.setErrMsg(msg);
         return this;
     }
 
     public Result setRunTime(Long runTime) {
-        detailInfo.put(KEY_RUN_TIME, runTime + "");
+        detailInfo.setRunTime(runTime);
         return this;
     }
 
     public Result setExportFile(String filePath) {
-        detailInfo.put(KEY_EXPORT_FILE, filePath);
+        detailInfo.setExportFile(filePath);
         return this;
     }
 

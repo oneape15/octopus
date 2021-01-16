@@ -1,6 +1,5 @@
 package com.oneape.octopus.datasource.data;
 
-import com.oneape.octopus.datasource.data.ColumnHead;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

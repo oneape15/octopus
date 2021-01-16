@@ -1,8 +1,10 @@
 package com.oneape.octopus.controller.datawarehouse.form;
 
+import com.oneape.octopus.commons.validation.IntValueRangeDetection;
 import com.oneape.octopus.domain.schema.TableSchemaDO;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -12,7 +14,7 @@ import java.io.Serializable;
  */
 @Data
 public class TableSchemaForm implements Serializable {
-
+    @NotNull(message = "The table primary key is null.", groups = {InfoCheck.class})
     private Long    id;
     /**
      * Data table alias.
@@ -21,6 +23,7 @@ public class TableSchemaForm implements Serializable {
     /**
      * synchronization state. 0 - Out of sync; 1 - sync.
      */
+    @IntValueRangeDetection(range = {0, 1}, groups = {InfoCheck.class})
     private Integer sync;
     /**
      * Synchronous table structure expression.

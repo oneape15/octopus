@@ -6,19 +6,19 @@ import com.google.common.base.Preconditions;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.dto.DataType;
 import com.oneape.octopus.commons.value.Pair;
-import com.oneape.octopus.datasource.*;
+import com.oneape.octopus.datasource.QueryFactory;
 import com.oneape.octopus.datasource.data.DatasourceInfo;
 import com.oneape.octopus.datasource.data.ExecParam;
 import com.oneape.octopus.datasource.data.ExportDataParam;
 import com.oneape.octopus.datasource.data.Result;
-import com.oneape.octopus.mapper.peekdata.PeekFieldMapper;
-import com.oneape.octopus.mapper.peekdata.PeekMapper;
-import com.oneape.octopus.mapper.peekdata.PeekRuleMapper;
 import com.oneape.octopus.domain.peekdata.ModelMetaDO;
 import com.oneape.octopus.domain.peekdata.PeekDO;
 import com.oneape.octopus.domain.peekdata.PeekFieldDO;
 import com.oneape.octopus.domain.peekdata.PeekRuleDO;
 import com.oneape.octopus.dto.system.UserDTO;
+import com.oneape.octopus.mapper.peekdata.PeekFieldMapper;
+import com.oneape.octopus.mapper.peekdata.PeekMapper;
+import com.oneape.octopus.mapper.peekdata.PeekRuleMapper;
 import com.oneape.octopus.model.vo.ModelVO;
 import com.oneape.octopus.model.vo.PeekFieldVO;
 import com.oneape.octopus.model.vo.PeekRuleVO;
@@ -236,7 +236,7 @@ public class PeekServiceImpl implements PeekService {
         param.setRawSql(rawSql);
         param.setPageSize(10);
         param.setPageIndex(0);
-        param.setNeedTotalSize(true);
+        param.setNeedCountSize(true);
 
         return queryFactory.execSql(dsi, param);
     }

@@ -2,6 +2,7 @@ package com.oneape.octopus.datasource;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
+import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.security.MD5Utils;
 import com.oneape.octopus.commons.security.PBEUtils;
 import com.oneape.octopus.datasource.data.DatasourceInfo;
@@ -179,6 +180,11 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
         }
         try {
             Class.forName(dsInfo.getDatasourceType().getDriverClass());
+        } catch (Exception e) {
+            throw new BizException("Class not found: " + dsInfo.getDatasourceType().getDriverClass());
+        }
+
+        try {
             try (Connection connection = DriverManager.getConnection(url, userName, password);
                  Statement statement = connection.createStatement()) {
                 statement.setQueryTimeout(10);
@@ -187,9 +193,9 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
                 return true;
             }
         } catch (Exception e) {
-            log.error("The database connection test failed!", e);
-            return false;
+            log.error(" The database connection test failed!", e);
         }
+        return false;
     }
 
     /**
@@ -221,8 +227,12 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
         hikariConfig.setMaximumPoolSize(dsi.getMaxPoolSize() != null ? dsi.getMaxPoolSize() : DatasourceInfo.DEFAULT_POOL_SIZE);
         hikariConfig.setMinimumIdle(dsi.getMinIdle() != null ? dsi.getMinIdle() : DatasourceInfo.DEFAULT_IDLE);
         hikariConfig.setConnectionTimeout(dsi.getTimeout() != null ? dsi.getTimeout() : DatasourceInfo.DEFAULT_TIMEOUT);
-        hikariConfig.setAutoCommit(false);
-        hikariConfig.setReadOnly(dsi.getReadOnly());
+        hikariConfig.setAutoCommit(true);
+
+        // ODPS enabling read-only is not supported.
+        if (dsi.getDatasourceType() != DatasourceTypeHelper.Odps) {
+            hikariConfig.setReadOnly(dsi.getReadOnly());
+        }
 
         return new HikariDataSource(hikariConfig);
     }
