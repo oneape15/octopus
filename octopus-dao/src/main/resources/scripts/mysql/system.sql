@@ -67,8 +67,8 @@ CREATE TABLE `sys_user`
   COMMENT 'cell-phone number',
   `email`    VARCHAR(128) NULL
   COMMENT 'email address',
-  `status`   TINYINT(1)   NOT NULL DEFAULT 0
-  COMMENT 'Account status 0 - normal; 1 - lock.',
+  `status`   VARCHAR(32)  NOT NULL DEFAULT 'INACTIVE'
+  COMMENT 'Account status INACTIVE, NORMAL, LOCK.',
   `archive`  TINYINT(1)   NOT NULL DEFAULT 0
   COMMENT '0 - normal data; 1 - have archive (soft delete)',
   `created`  BIGINT(20)   NOT NULL

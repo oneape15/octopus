@@ -114,7 +114,7 @@ public class QueryFactoryTest {
                 " TABLE_NAME,   " +
                 " ORDINAL_POSITION   ";
         ExecParam execParam = new ExecParam();
-        execParam.setNeedTotalSize(true);
+        execParam.setNeedCountSize(true);
         execParam.setRawSql(rawSql);
         List<Value> values = new ArrayList<>();
         values.add(new Value("octopus", DataType.STRING));
@@ -133,7 +133,7 @@ public class QueryFactoryTest {
     public void queryPgSqlTest() {
         String rawSql = "SELECT * FROM agent_department WHERE agent_id = ? and updator = ?";
         ExecParam execParam = new ExecParam();
-        execParam.setNeedTotalSize(true);
+        execParam.setNeedCountSize(true);
         execParam.setRawSql(rawSql);
         List<Value> values = new ArrayList<>();
         values.add(new Value(1, DataType.INTEGER));

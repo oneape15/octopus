@@ -13,6 +13,8 @@ CREATE TABLE `serve_info`
   COMMENT 'serve type , 1 - table; 2 - interface; eg.',
   `visual_type` INT(11)      NOT NULL
   COMMENT 'the serve visual type , 1 - table; 2 - line; 4 - bar; eg.',
+  `status`      VARCHAR(32)  NOT NULL
+  COMMENT 'the serve status',
   `sort_id`     BIGINT(20)   NOT NULL
   COMMENT 'Sort field',
   `comment`     VARCHAR(256) NULL
@@ -39,29 +41,29 @@ CREATE TABLE `serve_info`
 -- Serve information table.
 CREATE TABLE `serve_group`
 (
-  `id`          BIGINT(20)   NOT NULL
+  `id`         BIGINT(20)   NOT NULL
   COMMENT 'primary key',
-  `parent_id`   BIGINT(20)   NOT NULL
+  `parent_id`  BIGINT(20)   NOT NULL
   COMMENT 'The parent node id',
-  `name`        VARCHAR(64)  NOT NULL
+  `name`       VARCHAR(64)  NOT NULL
   COMMENT 'group name.',
-  `icon`        VARCHAR(256) NULL
+  `icon`       VARCHAR(256) NULL
   COMMENT 'The serve icon url',
-  `serve_type`  VARCHAR(32)  NOT NULL
+  `serve_type` VARCHAR(32)  NOT NULL
   COMMENT 'serve type , 1 - table; 2 - interface; eg.',
-  `sort_id`     BIGINT(20)   NOT NULL
+  `sort_id`    BIGINT(20)   NOT NULL
   COMMENT 'Sort field',
-  `comment`     VARCHAR(256) NULL
+  `comment`    VARCHAR(256) NULL
   COMMENT 'description',
-  `archive`     TINYINT(1)   NOT NULL DEFAULT 0
+  `archive`    TINYINT(1)   NOT NULL DEFAULT 0
   COMMENT '0 - normal data; 1 - have archive (soft delete)',
-  `created`     BIGINT(20)   NOT NULL
+  `created`    BIGINT(20)   NOT NULL
   COMMENT 'create time ',
-  `creator`     BIGINT(20)   NOT NULL
+  `creator`    BIGINT(20)   NOT NULL
   COMMENT 'Data record creator',
-  `modified`    BIGINT(20)   NULL     DEFAULT NULL
+  `modified`   BIGINT(20)   NULL     DEFAULT NULL
   COMMENT 'Last updated time',
-  `modifier`    BIGINT(20)   NULL     DEFAULT NULL
+  `modifier`   BIGINT(20)   NULL     DEFAULT NULL
   COMMENT 'Data record  modifier',
   PRIMARY KEY (`id`)
 )

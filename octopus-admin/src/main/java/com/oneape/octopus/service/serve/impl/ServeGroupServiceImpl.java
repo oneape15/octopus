@@ -59,7 +59,7 @@ public class ServeGroupServiceImpl implements ServeGroupService {
             isUpdate = true;
         }
 
-        Preconditions.checkArgument(hasSameName(model.getName(), isUpdate ? model.getId() : null), "The group name has exist.");
+        Preconditions.checkArgument(!hasSameName(model.getName(), isUpdate ? model.getId() : null), "The group name has exist.");
 
         if (isUpdate) {
             // not allow edit the parent id in here.
@@ -238,7 +238,7 @@ public class ServeGroupServiceImpl implements ServeGroupService {
             List<Long> parentIds = new ArrayList<>();
             LinkedHashMap<Long, TreeNodeVO> id2NodeMap = new LinkedHashMap<>();
             groupList.forEach(sg -> {
-                Long parentId = TypeValueUtils.getOrDefault(sg.getParentId(), -1L);
+                Long parentId = TypeValueUtils.getOrDefault(sg.getParentId(), FixServeGroupType.ROOT.getId());
                 id2parentIdMap.put(sg.getId(), parentId);
 
                 // build group tree node
@@ -253,6 +253,8 @@ public class ServeGroupServiceImpl implements ServeGroupService {
                 }
             });
 
+            List<TreeNodeVO> rootNodes = new ArrayList<>();
+
             // build tree
             while (CollectionUtils.isNotEmpty(parentIds)) {
                 List<Long> leafNodeIds = new ArrayList<>();
@@ -265,8 +267,9 @@ public class ServeGroupServiceImpl implements ServeGroupService {
 
                     TreeNodeVO node = id2NodeMap.remove(id);
                     TreeNodeVO parentNode = id2NodeMap.get(parentId);
-
-                    if (parentNode != null && node != null) {
+                    if (FixServeGroupType.ROOT.getId().equals(parentId)) {
+                        rootNodes.add(node);
+                    } else if (parentNode != null && node != null) {
                         Integer size = parentNode.getLeafSize() + node.getLeafSize();
                         parentNode.setLeafSize(size);
                         parentNode.addChild(node);
@@ -279,12 +282,13 @@ public class ServeGroupServiceImpl implements ServeGroupService {
                 parentIds.removeAll(needRemoveParentIds);
             }
 
+            nodes.addAll(rootNodes);
             nodes.addAll(id2NodeMap.values());
         }
 
         // personal node deal.
         if (addPersonalNode) {
-            TreeNodeVO personalNode = new TreeNodeVO(FixServeGroupType.PERSONAL.getId().toString(), FixServeGroupType.PERSONAL.getGroupName());
+            TreeNodeVO personalNode = new TreeNodeVO(FixServeGroupType.PERSONAL);
             if (addNodeSize) {
                 int size = serveInfoMapper.countPersonalServe(serveType.getCode(), userId);
                 personalNode.setLeafSize(size);
@@ -294,7 +298,7 @@ public class ServeGroupServiceImpl implements ServeGroupService {
 
         // archive node deal.
         if (addArchiveNode) {
-            TreeNodeVO archiveNode = new TreeNodeVO(FixServeGroupType.ARCHIVE.getId().toString(), FixServeGroupType.ARCHIVE.getGroupName());
+            TreeNodeVO archiveNode = new TreeNodeVO(FixServeGroupType.ARCHIVE);
             if (addNodeSize) {
                 int size = serveInfoMapper.countArchiveServe(serveType.getCode());
                 archiveNode.setLeafSize(size);
@@ -304,7 +308,7 @@ public class ServeGroupServiceImpl implements ServeGroupService {
 
         // root node deal.
         if (addRootNode) {
-            TreeNodeVO rootNode = new TreeNodeVO(FixServeGroupType.ROOT.getId().toString(), FixServeGroupType.ROOT.getGroupName());
+            TreeNodeVO rootNode = new TreeNodeVO(FixServeGroupType.ROOT);
             rootNode.addChildren(nodes);
             nodes.clear();
             nodes.add(rootNode);

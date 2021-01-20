@@ -1,5 +1,6 @@
 package com.oneape.octopus.commons.vo;
 
+import com.oneape.octopus.commons.enums.FixServeGroupType;
 import com.oneape.octopus.commons.value.TypeValueUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,6 +44,12 @@ public class TreeNodeVO implements Serializable {
         this.key = key;
         this.value = key;
         this.title = title;
+    }
+
+    public TreeNodeVO(FixServeGroupType fgt) {
+        this.key = String.valueOf(fgt.getId());
+        this.value = key;
+        this.title = fgt.getGroupName();
     }
 
     public void addChildren(List<TreeNodeVO> list) {

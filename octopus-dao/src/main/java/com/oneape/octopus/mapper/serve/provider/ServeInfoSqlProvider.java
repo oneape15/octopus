@@ -69,7 +69,7 @@ public class ServeInfoSqlProvider extends BaseSqlProvider<ServeInfoDO> {
                 .FROM(TABLE_NAME)
                 .WHERE(FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
                         "serve_type = #{serveType}",
-                        "status = " + ServeStatusType.ARCHIVE.name())
+                        "status = '" + ServeStatusType.ARCHIVE.name() + "'")
                 .toString();
     }
 
@@ -80,7 +80,7 @@ public class ServeInfoSqlProvider extends BaseSqlProvider<ServeInfoDO> {
                 .LEFT_OUTER_JOIN(ServeRlGroupSqlProvider.TABLE_NAME + " AS rl ON t.id = rl.serve_id")
                 .WHERE("t." + FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
                         "t.serve_type = #{serveType}",
-                        "t.status = " + ServeStatusType.EDIT.name(),
+                        "t.status = '" + ServeStatusType.EDIT.name() + "'",
                         "t." + FIELD_CREATOR + " = #{userId}",
                         "rl." + FIELD_ARCHIVE + " = " + Archive.NORMAL.value()
                 )
@@ -90,7 +90,7 @@ public class ServeInfoSqlProvider extends BaseSqlProvider<ServeInfoDO> {
                 .FROM(TABLE_NAME)
                 .WHERE(FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
                         "serve_type = #{serveType}",
-                        "status = " + ServeStatusType.EDIT.name(),
+                        "status = '" + ServeStatusType.EDIT.name() + "'",
                         FIELD_CREATOR + " = #{userId}",
                         "id NOT IN (" + link2GroupId + ")")
                 .toString();

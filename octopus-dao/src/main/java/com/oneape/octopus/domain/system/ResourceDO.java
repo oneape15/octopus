@@ -24,6 +24,10 @@ public class ResourceDO extends BaseDO {
      */
     private String  name;
     /**
+     * The resource code.
+     */
+    private String  code;
+    /**
      * The resource icon
      */
     private String  icon;

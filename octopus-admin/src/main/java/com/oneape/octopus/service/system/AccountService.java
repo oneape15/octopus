@@ -3,6 +3,7 @@ package com.oneape.octopus.service.system;
 import com.oneape.octopus.domain.system.UserDO;
 import com.oneape.octopus.dto.system.AppType;
 import com.oneape.octopus.dto.system.UserDTO;
+import com.oneape.octopus.dto.system.UserStatus;
 import com.oneape.octopus.service.BaseService;
 
 import java.util.List;
@@ -88,27 +89,11 @@ public interface AccountService extends BaseService<UserDO> {
     Map<String, List<Integer>> getResOptPermission(List<Long> roleIds);
 
     /**
-     * Add new User
-     *
-     * @param user UserDO
-     * @return int
-     */
-    int addUser(UserDO user);
-
-    /**
-     * Delete user list.
-     *
-     * @param userIds List
-     * @return int
-     */
-    int removeUsers(List<Long> userIds);
-
-    /**
      * Change the user status
      *
      * @param userId Long userId
-     * @param status Integer
+     * @param status UserStatus
      * @return 1 - success; 0 - fail.
      */
-    int changeUserStatus(Long userId, Integer status);
+    int changeUserStatus(Long userId, UserStatus status);
 }

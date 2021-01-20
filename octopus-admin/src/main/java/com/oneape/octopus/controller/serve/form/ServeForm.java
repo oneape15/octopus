@@ -23,8 +23,10 @@ public class ServeForm extends BaseForm implements Serializable {
     private Long    id;
     @NotNull(message = "The group Id is empty.", groups = {AddCheck.class, EditCheck.class})
     private Long    groupId;
-    @NotBlank(message = "The serve name is empty.", groups = {AddCheck.class, EditCheck.class})
+    @NotBlank(message = "The serve name is empty.", groups = {AddCheck.class, EditCheck.class, CopyCheck.class})
     private String  name;
+    @NotBlank(message = "The serve code is empty.", groups = {AddCheck.class, EditCheck.class, CopyCheck.class})
+    private String  code;
     @ServeTypeNotNull(message = "Invalid serveType value.", groups = {AddCheck.class, EditCheck.class})
     private String  serveType;
     @VisualTypeNotNull(message = "Invalid visualType value.", groups = {AddCheck.class, EditCheck.class})
@@ -46,6 +48,9 @@ public class ServeForm extends BaseForm implements Serializable {
     }
 
     public interface KeyCheck {
+    }
+
+    public interface CopyCheck {
     }
 
     public ServeInfoDO toDO() {

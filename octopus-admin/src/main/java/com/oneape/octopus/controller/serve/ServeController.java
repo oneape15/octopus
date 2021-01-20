@@ -60,7 +60,8 @@ public class ServeController {
      * Copy a new service with the specified service as the template.
      */
     @PostMapping("/copy/{serveId}")
-    public ApiResult<String> doCopyServe(@PathVariable(name = "serverId") Long serveId) {
+    public ApiResult<String> doCopyServe(@PathVariable(name = "serverId") Long serveId,
+                                         @RequestBody @Validated(value = ServeForm.CopyCheck.class) ServeForm form) {
         int status = serveInfoService.copyById(serveId, null);
         if (status > 0) {
             return ApiResult.ofData("Deleted serve information successfully.");
@@ -73,7 +74,8 @@ public class ServeController {
      */
     @PostMapping("/copy/{serveId}/{versionCode}")
     public ApiResult<String> doCopyServeByVersionCode(@PathVariable(name = "serverId") Long serveId,
-                                                      @PathVariable(name = "versionCode") String versionCode) {
+                                                      @PathVariable(name = "versionCode") String versionCode,
+                                                      @RequestBody @Validated(value = ServeForm.CopyCheck.class) ServeForm form) {
         int status = serveInfoService.copyById(serveId, versionCode);
         if (status > 0) {
             return ApiResult.ofData("Deleted serve information successfully.");
@@ -111,6 +113,7 @@ public class ServeController {
      * @param serveId Long
      * @param verCode String
      */
+    @PostMapping("/rollback/{serveId}/{verCode}")
     public ApiResult rollbackServe(@PathVariable(name = "serveId") Long serveId, @PathVariable(name = "verCode") String verCode) {
         int status = serveInfoService.rollbackServe(serveId, verCode);
         if (status > 0) {
@@ -135,7 +138,7 @@ public class ServeController {
     }
 
     /**
-     * Paging query serve information.
+     * Get serve information by id.
      */
     @GetMapping("/get/{serveId}")
     public ApiResult<ServeInfoDO> getById(@PathVariable(name = "serveId") Long serveId) {

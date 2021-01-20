@@ -18,7 +18,7 @@ public class RoleDO extends BaseDO {
      */
     private String  code;
     /**
-     * Role type: 0-normal; 1 - Default role; 3 - System role.
+     * Role type: 0-normal; 1 - Default role; 2 - System role.
      */
     private Integer type;
     /**

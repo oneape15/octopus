@@ -17,6 +17,10 @@ public enum ServeType {
      */
     INTERFACE("INTERFACE", "The interface type"),
     /**
+     * Aggregate interface.
+     */
+    AGG("AGG", "Aggregate interface"),
+    /**
      * List of Value
      */
     LOV("LOV", "List Of Value");

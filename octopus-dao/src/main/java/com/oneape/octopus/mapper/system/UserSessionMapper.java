@@ -43,4 +43,15 @@ public interface UserSessionMapper {
             "SELECT * FROM " + UserSessionSqlProvider.TABLE_NAME + " WHERE user_id = #{userId} AND app_type = #{appType}"
     })
     UserSessionDO findByUserId(@Param("userId") Long userId, @Param("appType") Integer appType);
+
+    /**
+     * set the user token to expire.
+     *
+     * @param userId Long
+     * @return int
+     */
+    @UpdateProvider(type = UserSessionSqlProvider.class, method = "setToken2expire")
+    int setToken2expire(@Param("userId") Long userId);
+
+
 }

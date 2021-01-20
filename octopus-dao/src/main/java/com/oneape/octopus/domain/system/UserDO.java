@@ -2,6 +2,7 @@ package com.oneape.octopus.domain.system;
 
 import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.domain.BaseDO;
+import com.oneape.octopus.dto.system.UserStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -16,36 +17,36 @@ public class UserDO extends BaseDO {
     /**
      * login name
      */
-    private           String  username;
+    private           String     username;
     /**
      * The user nickname
      */
-    private           String  nickname;
+    private           String     nickname;
     /**
      * The user login password.
      */
-    private transient String  password;
+    private transient String     password;
     /**
      * avatar
      */
-    private           String  avatar;
+    private           String     avatar;
     /**
      * cell-phone number
      */
-    private           String  phone;
+    private           String     phone;
     /**
      * email address.
      */
-    private           String  email;
+    private           String     email;
     /**
      * The department Id of the user.
      */
     @EntityColumn(name = "dept_id")
-    private           Long  deptId;
+    private           Long       deptId;
     /**
      * Account status 0 - normal; 1 - lock.
      */
-    private           Integer status;
+    private           UserStatus status;
 
     /**
      * User's gender. 0 - female; 1 - man

@@ -32,9 +32,9 @@ public class ResourceController {
         return ApiResult.ofError(StateCode.BizError, "Save resource fail.");
     }
 
-    @PostMapping("/del")
-    public ApiResult<String> doDelRes(@RequestBody @Validated(value = ResForm.KeyCheck.class) ResForm form) {
-        int status = resourceService.deleteById(form.getId());
+    @PostMapping("/del/{resId}")
+    public ApiResult<String> doDelRes(@PathVariable(name = "resId") Long resId) {
+        int status = resourceService.deleteById(resId);
         if (status > 0) {
             return ApiResult.ofData("Deleted resource successfully");
         }
@@ -48,13 +48,4 @@ public class ResourceController {
     public ApiResult<List<Pair<Integer, String>>> getAllMask() {
         return ApiResult.ofData(MaskUtils.allMask());
     }
-
-    /**
-     * Gets the specified role resource permission
-     */
-    @GetMapping("/get/{roleId}")
-    public ApiResult<Map<Long, List<Integer>>> getResByRoleId(@PathVariable(name = "roleId") Long roleId) {
-        return ApiResult.ofData(resourceService.getByRoleId(roleId));
-    }
-
 }

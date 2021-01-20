@@ -14,6 +14,7 @@ import com.oneape.octopus.domain.system.UserSessionDO;
 import com.oneape.octopus.dto.system.AppType;
 import com.oneape.octopus.dto.system.ResourceDTO;
 import com.oneape.octopus.dto.system.UserDTO;
+import com.oneape.octopus.dto.system.UserStatus;
 import com.oneape.octopus.mapper.system.UserMapper;
 import com.oneape.octopus.mapper.system.UserSessionMapper;
 import com.oneape.octopus.service.system.AccountService;
@@ -62,6 +63,7 @@ public class AccountServiceImpl implements AccountService {
      * @param model T
      * @return int 1 - success; 0 - fail.
      */
+    @Transactional
     @Override
     public int save(UserDO model) {
         Preconditions.checkNotNull(model, "The user information is null.");
@@ -83,8 +85,25 @@ public class AccountServiceImpl implements AccountService {
         String pwdMd5 = MD5Utils.saltUserPassword(model.getUsername(), rawPwd, null);
         model.setPassword(pwdMd5);
         int status = userMapper.insert(model);
-        if (status > 0) {
+        if (status > 0 && StringUtils.isNotBlank(model.getEmail())) {
             model.setPassword(rawPwd);
+
+            // send the success email.
+            try {
+                String template_name = "templates/email/sys-reg-success.html";
+                String content = getFileContent(template_name);
+
+                // The reason for not using {@link MessageFormat.format} here is that the string {display:none} exists in style.
+                content = StringUtils.replace(content, "{0}", model.getNickname());
+                content = StringUtils.replace(content, "{1}", "");
+                content = StringUtils.replace(content, "{2}", model.getUsername());
+                content = StringUtils.replace(content, "{3}", model.getPassword());
+
+                mailService.sendSimpleMail(model.getEmail(), "OCTOPUS", content);
+            } catch (Exception e) {
+                log.error("Failed to send email~", e);
+                throw new BizException("Failed to send email:" + model.getEmail());
+            }
         }
 
         return status;
@@ -236,7 +255,13 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public String login(String username, String password, AppType appType) {
         UserDO udo = getByUsername(username);
-        if (udo == null || !StringUtils.equalsIgnoreCase(password, udo.getPassword())) {
+        if (udo == null) {
+            throw new BizException("Error username or password.");
+        }
+        if (udo.getStatus() != UserStatus.NORMAL) {
+            throw new BizException("The user is inactive or locked");
+        }
+        if (!StringUtils.equalsIgnoreCase(password, udo.getPassword())) {
             throw new BizException("Error username or password.");
         }
 
@@ -376,37 +401,6 @@ public class AccountServiceImpl implements AccountService {
         return ret;
     }
 
-    /**
-     * Create a new User.
-     *
-     * @param user UserDO
-     * @return int
-     */
-    @Override
-    public int addUser(UserDO user) {
-        int status = save(user);
-        if (status < OctopusConstant.SUCCESS) {
-            return OctopusConstant.FAIL;
-        }
-
-        try {
-            String template_name = "templates/email/sys-reg-success.html";
-            String content = getFileContent(template_name);
-
-            // The reason for not using {@link MessageFormat.format} here is that the string {display:none} exists in style.
-            content = StringUtils.replace(content, "{0}", user.getNickname());
-            content = StringUtils.replace(content, "{1}", "");
-            content = StringUtils.replace(content, "{2}", user.getUsername());
-            content = StringUtils.replace(content, "{3}", user.getPassword());
-
-            mailService.sendSimpleMail(user.getEmail(), "OCTOPUS", content);
-        } catch (Exception e) {
-            log.error("Failed to send email~", e);
-            throw new BizException("Failed to send email:" + user.getEmail());
-        }
-        return status;
-    }
-
     private String getFileContent(String template_name) throws Exception {
         InputStream is = ClassLoader.getSystemResourceAsStream(template_name);
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(is));
@@ -439,42 +433,29 @@ public class AccountServiceImpl implements AccountService {
     }
 
     /**
-     * Delete user list.
-     *
-     * @param userIds List
-     * @return int
-     */
-    @Override
-    public int removeUsers(List<Long> userIds) {
-        if (CollectionUtils.isEmpty(userIds)) {
-            return 1;
-        }
-        Long curUserId = SessionThreadLocal.getUserId();
-        if (curUserId == null) {
-            throw new BizException("The operation without permission.");
-        }
-
-        if (userIds.contains(curUserId)) {
-            throw new BizException("You cannot delete yourself~");
-        }
-        return userMapper.delByIds(userIds, curUserId);
-    }
-
-    /**
      * Change the user status
      *
      * @param userId Long userId
-     * @param status Integer
+     * @param status UserStatus
      * @return 1 - success; 0 - fail.
      */
+    @Transactional
     @Override
-    public int changeUserStatus(Long userId, Integer status) {
+    public int changeUserStatus(Long userId, UserStatus status) {
         Preconditions.checkNotNull(userMapper.findById(userId), "The user is not exist.");
-
+        if (userId.equals(SessionThreadLocal.getUserId())) {
+            throw new BizException("You are not allowed to operate on yourself.");
+        }
         UserDO userDO = new UserDO();
         userDO.setStatus(status);
         userDO.setId(userId);
 
-        return userMapper.update(userDO);
+        int ret = userMapper.update(userDO);
+
+        // Check if the user is logged in and, if so, set the token to expire.
+        if (ret > 0) {
+            userSessionMapper.setToken2expire(userId);
+        }
+        return ret;
     }
 }

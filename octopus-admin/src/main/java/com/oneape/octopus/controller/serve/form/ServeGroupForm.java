@@ -33,13 +33,13 @@ public class ServeGroupForm implements Serializable {
     private String comment;
 
     // add children count size.
-    private Integer addChildrenSize = 0;
+    private boolean addChildrenSize = false;
     // add archive node.
-    private Integer addArchiveNode  = 0;
+    private boolean addArchiveNode  = false;
     // add root node.
-    private Integer addRootNode     = 0;
+    private boolean addRootNode     = false;
     // add personal node.
-    private Integer addPersonalNode = 0;
+    private boolean addPersonalNode = false;
 
     public interface AddCheck {
     }
@@ -57,21 +57,5 @@ public class ServeGroupForm implements Serializable {
         ServeGroupDO rdo = new ServeGroupDO();
         BeanUtils.copyProperties(this, rdo);
         return rdo;
-    }
-
-    public boolean isAddChildrenSize() {
-        return addChildrenSize != null && addChildrenSize > 0;
-    }
-
-    public boolean isAddArchiveNode() {
-        return addArchiveNode != null && addArchiveNode > 0;
-    }
-
-    public boolean isAddRootNode() {
-        return addRootNode != null && addArchiveNode > 0;
-    }
-
-    public boolean isAddPersonalNode() {
-        return addPersonalNode != null && addPersonalNode > 0;
     }
 }

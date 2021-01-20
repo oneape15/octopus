@@ -3,12 +3,12 @@ package com.oneape.octopus.controller.system;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.commons.cause.StateCode;
-import com.oneape.octopus.commons.cause.UnauthorizedException;
 import com.oneape.octopus.controller.SessionThreadLocal;
 import com.oneape.octopus.controller.system.form.UserForm;
 import com.oneape.octopus.domain.system.UserDO;
 import com.oneape.octopus.dto.system.AppType;
 import com.oneape.octopus.dto.system.UserDTO;
+import com.oneape.octopus.dto.system.UserStatus;
 import com.oneape.octopus.model.vo.ApiResult;
 import com.oneape.octopus.service.system.AccountService;
 import org.apache.commons.lang3.StringUtils;
@@ -66,19 +66,6 @@ public class AccountController {
     }
 
     /**
-     * New registered user information
-     */
-    @PostMapping("/reg")
-    public ApiResult<String> regUser(@RequestBody @Validated(value = UserForm.RegCheck.class) UserForm form) {
-        int status = accountService.addUser(form.toDO());
-        if (status <= 0) {
-            return ApiResult.ofError(StateCode.RegError);
-        }
-
-        return ApiResult.ofMessage("registered success.");
-    }
-
-    /**
      * Paging for user information
      */
     @PostMapping("/list")
@@ -111,9 +98,9 @@ public class AccountController {
     /**
      * Delete user.
      */
-    @PostMapping("/delUser")
-    public ApiResult<String> removeUser(@RequestBody @Validated(value = UserForm.DelCheck.class) UserForm form) {
-        int status = accountService.removeUsers(form.getUserIds());
+    @PostMapping("/del/{userId}")
+    public ApiResult<String> removeUser(@PathVariable(name = "userId") Long userId) {
+        int status = accountService.deleteById(userId);
         if (status > 0) {
             return ApiResult.ofData("Delete user successfully.");
         }
@@ -121,32 +108,20 @@ public class AccountController {
     }
 
     /**
-     * Add user.
+     * Save user
      */
-    @PostMapping("/addUser")
-    public ApiResult<String> addUser(@RequestBody @Validated(value = UserForm.AddCheck.class) UserForm form) {
-        int status = accountService.addUser(form.toDO());
+    @PostMapping("/save")
+    public ApiResult<String> saveUser(@RequestBody @Validated(value = UserForm.SaveCheck.class) UserForm form) {
+        int status = accountService.save(form.toDO());
         if (status > 0) {
             return ApiResult.ofData("Add user successfully.");
         }
         return ApiResult.ofError(StateCode.BizError, "Add user fail.");
     }
 
-    /**
-     * Modified user information.
-     */
-    @PostMapping("/updateUser")
-    public ApiResult<String> updateUser(@RequestBody @Validated(value = UserForm.AddCheck.class) UserForm form) {
-        int status = accountService.save(form.toDO());
-        if (status > 0) {
-            return ApiResult.ofData("Modified user information successfully.");
-        }
-        return ApiResult.ofError(StateCode.BizError, "Modified user information fail.");
-    }
-
     @PostMapping("/lockUser/{userId}")
     public ApiResult lockUser(@PathVariable(name = "userId") Long userId) {
-        int status = accountService.changeUserStatus(userId, 1);
+        int status = accountService.changeUserStatus(userId, UserStatus.LOCK);
         if (status > 0) {
             return ApiResult.ofData("Successfully lock the user.");
         }
@@ -155,7 +130,7 @@ public class AccountController {
 
     @PostMapping("/unlockUser/{userId}")
     public ApiResult unlockUser(@PathVariable(name = "userId") Long userId) {
-        int status = accountService.changeUserStatus(userId, 0);
+        int status = accountService.changeUserStatus(userId, UserStatus.NORMAL);
         if (status > 0) {
             return ApiResult.ofData("Successfully unlock the user.");
         }

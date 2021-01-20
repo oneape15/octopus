@@ -45,14 +45,14 @@ public class ExceptionAdvice {
     }
 
     /**
-     * 400 - Bad Request
+     * method argument not valid exception.
      */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.OK)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiResult<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error("Parameter validation fails:{}", e.getMessage(), e);
         String message = getErrorMessage(e.getBindingResult());
-        return ApiResult.ofError(StateCode.BadRequest, message);
+        return ApiResult.ofError(StateCode.BizError, message);
     }
 
     /**

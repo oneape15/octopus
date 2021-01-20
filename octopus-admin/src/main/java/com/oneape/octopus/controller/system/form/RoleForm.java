@@ -15,24 +15,21 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class RoleForm extends BaseForm implements Serializable {
-    @NotNull(message = "The primary key is null.", groups = {EditCheck.class, KeyCheck.class})
+    @NotNull(message = "The primary key is null.", groups = {KeyCheck.class})
     private Long    id;
-    @NotBlank(message = "The role name is empty.", groups = {AddCheck.class, EditCheck.class})
+    @NotBlank(message = "The role name is empty.", groups = {SaveCheck.class})
     private String  name;
-    @NotBlank(message = "The role code is empty.", groups = {AddCheck.class, EditCheck.class})
+    @NotBlank(message = "The role code is empty.", groups = {SaveCheck.class})
     private String  code;
     // Role type: 0-normal; 1 - Default role; 3 - System role.
-    @NotNull(message = "The role type is empty.", groups = {AddCheck.class, EditCheck.class})
+    @NotNull(message = "The role type is empty.", groups = {SaveCheck.class})
     private Integer type;
     // The role description.
     private String  comment;
 
     private List<RoleRlSchemaDO> schemaDOList;
 
-    public interface AddCheck {
-    }
-
-    public interface EditCheck {
+    public interface SaveCheck {
     }
 
     public interface KeyCheck {

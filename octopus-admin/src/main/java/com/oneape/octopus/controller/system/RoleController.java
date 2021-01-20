@@ -3,10 +3,11 @@ package com.oneape.octopus.controller.system;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.commons.cause.StateCode;
+import com.oneape.octopus.commons.enums.Archive;
 import com.oneape.octopus.controller.system.form.RoleForm;
 import com.oneape.octopus.domain.system.RoleDO;
 import com.oneape.octopus.model.vo.ApiResult;
-import com.oneape.octopus.commons.enums.Archive;
+import com.oneape.octopus.service.system.ResourceService;
 import com.oneape.octopus.service.system.RoleService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,10 +25,12 @@ import java.util.Set;
 @RequestMapping("/role")
 public class RoleController {
     @Resource
-    private RoleService roleService;
+    private RoleService     roleService;
+    @Resource
+    private ResourceService resourceService;
 
     @PostMapping("/save")
-    public ApiResult<String> doSaveRole(@RequestBody @Validated(value = RoleForm.AddCheck.class) RoleForm form) {
+    public ApiResult<String> doSaveRole(@RequestBody @Validated(value = RoleForm.SaveCheck.class) RoleForm form) {
         int status = roleService.save(form.toDO());
         if (status > 0) {
             return ApiResult.ofData("Save role successfully.");
@@ -36,9 +39,9 @@ public class RoleController {
     }
 
 
-    @PostMapping("/del")
-    public ApiResult<String> doDelRole(@RequestBody @Validated(value = RoleForm.KeyCheck.class) RoleForm form) {
-        int status = roleService.deleteById(form.getId());
+    @PostMapping("/del/{roleId}")
+    public ApiResult<String> doDelRole(@PathVariable(name = "roleId") Long roleId) {
+        int status = roleService.deleteById(roleId);
         if (status > 0) {
             return ApiResult.ofData("Deleted role successfully.");
         }
@@ -69,7 +72,7 @@ public class RoleController {
     /**
      * Get all role.
      */
-    @PostMapping("/all")
+    @GetMapping("/all")
     public ApiResult<List<RoleDO>> getAllRoles() {
         return ApiResult.ofData(roleService.find(new RoleDO()));
     }
