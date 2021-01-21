@@ -2,13 +2,17 @@ package com.oneape.octopus.job;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.config.ApplicationContextProvider;
+import com.oneape.octopus.domain.schema.TableColumnDO;
 import com.oneape.octopus.service.schema.SchemaService;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+
+import java.util.List;
 
 /**
  * Created by oneape<oneape15@163.com>
@@ -38,14 +42,14 @@ public class SchemaTableSyncJob implements Job {
             return;
         }
 
-        int status = 0;
+        List<TableColumnDO> list = null;
         try {
-            status = schemaService.fetchAndSaveTableColumnInfo(dsId, tableName);
+            list = schemaService.fetchAndSaveTableColumnInfo(dsId, tableName);
         } catch (Exception e) {
             log.error("Pulls the specified table information and saves it error!", e);
         }
 
-        log.info("sync table info : {}-{}, {}!", dsId, tableName, status > 0 ? "success" : "fail");
+        log.info("sync table info : {}-{}, {}!", dsId, tableName, CollectionUtils.isNotEmpty(list) ? "success" : "fail");
 
     }
 }

@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
 
 import java.util.List;
+import java.util.Set;
 
 public class TableColumnSqlProvider extends BaseSqlProvider<TableColumnDO> {
     public static final String TABLE_NAME = "table_column";
@@ -24,7 +25,7 @@ public class TableColumnSqlProvider extends BaseSqlProvider<TableColumnDO> {
         return TABLE_NAME;
     }
 
-    public String dropColumnBy(@Param("dsId") Long dsId, @Param("tableName") String tableName, @Param("columns") List<String> columns) {
+    public String dropColumnBy(@Param("dsId") Long dsId, @Param("tableName") String tableName, @Param("columns") Set<String> columns) {
         Preconditions.checkArgument(CollectionUtils.isNotEmpty(columns), "The data table  column name cannot be empty.");
         return new SQL()
                 .UPDATE(getTableName())

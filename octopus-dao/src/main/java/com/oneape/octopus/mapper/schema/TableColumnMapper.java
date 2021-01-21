@@ -6,6 +6,7 @@ import com.oneape.octopus.domain.schema.TableColumnDO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by oneape<oneape15@163.com>
@@ -65,7 +66,7 @@ public interface TableColumnMapper {
      * @return int
      */
     @UpdateProvider(type = TableColumnSqlProvider.class, method = "dropColumnBy")
-    int dropColumnBy(@Param("dsId") Long dsId, @Param("tableName") String tableName, @Param("columns") List<String> columns);
+    int dropColumnBy(@Param("dsId") Long dsId, @Param("tableName") String tableName, @Param("columns") Set<String> columns);
 
     /**
      * @param dsId      Long

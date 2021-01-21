@@ -67,8 +67,7 @@ public class DefaultQueryFactory implements QueryFactory {
      */
     @Override
     public List<String> allDatabase(DatasourceInfo dsi) {
-        try {
-            Connection conn = datasourceFactory.getConnection(dsi);
+        try (Connection conn = datasourceFactory.getConnection(dsi)) {
             Actuator actuator = ActuatorFactory.build(conn, dsi.getDatasourceType());
             return actuator.allDatabase();
         } catch (BizException be) {
@@ -88,7 +87,7 @@ public class DefaultQueryFactory implements QueryFactory {
      */
     @Override
     public List<SchemaTable> allTables(DatasourceInfo dsi, String schema) {
-        try {
+        try (Connection conn = datasourceFactory.getConnection(dsi)) {
             String cacheKey = KEY_TABLE + datasourceFactory.getDatasourceKey(dsi) + "_" + schema;
 
             List<SchemaTable> tables = tableCache.getIfPresent(cacheKey);
@@ -96,7 +95,7 @@ public class DefaultQueryFactory implements QueryFactory {
                 return tables;
             }
 
-            Actuator actuator = ActuatorFactory.build(datasourceFactory.getConnection(dsi), dsi.getDatasourceType());
+            Actuator actuator = ActuatorFactory.build(conn, dsi.getDatasourceType());
             tables = actuator.allTables(schema);
             if (CollectionUtils.isNotEmpty(tables)) {
                 tableCache.put(cacheKey, tables);
@@ -120,14 +119,14 @@ public class DefaultQueryFactory implements QueryFactory {
      */
     @Override
     public List<SchemaTableField> allFields(DatasourceInfo dsi, String schema) {
-        try {
+        try (Connection conn = datasourceFactory.getConnection(dsi)) {
             String cacheKey = KEY_FIELD + datasourceFactory.getDatasourceKey(dsi) + "_" + schema + "_ALL";
             List<SchemaTableField> fields = fieldCache.getIfPresent(cacheKey);
             if (CollectionUtils.isNotEmpty(fields)) {
                 return fields;
             }
 
-            Actuator actuator = ActuatorFactory.build(datasourceFactory.getConnection(dsi), dsi.getDatasourceType());
+            Actuator actuator = ActuatorFactory.build(conn, dsi.getDatasourceType());
             fields = actuator.allFields(schema);
 
             if (CollectionUtils.isNotEmpty(fields)) {
@@ -153,14 +152,14 @@ public class DefaultQueryFactory implements QueryFactory {
      */
     @Override
     public List<SchemaTableField> fieldOfTable(DatasourceInfo dsi, String schema, String tableName) {
-        try {
+        try (Connection conn = datasourceFactory.getConnection(dsi)) {
             String cacheKey = KEY_FIELD + datasourceFactory.getDatasourceKey(dsi) + "_" + schema + "_" + tableName;
             List<SchemaTableField> fields = fieldCache.getIfPresent(cacheKey);
             if (CollectionUtils.isNotEmpty(fields)) {
                 return fields;
             }
 
-            Actuator actuator = ActuatorFactory.build(datasourceFactory.getConnection(dsi), dsi.getDatasourceType());
+            Actuator actuator = ActuatorFactory.build(conn, dsi.getDatasourceType());
             fields = actuator.fieldOfTable(schema, tableName);
 
             if (CollectionUtils.isNotEmpty(fields)) {
@@ -184,8 +183,8 @@ public class DefaultQueryFactory implements QueryFactory {
      */
     @Override
     public Result runSql(DatasourceInfo dsi, String ddlSql) {
-        try {
-            Actuator actuator = ActuatorFactory.build(datasourceFactory.getConnection(dsi), dsi.getDatasourceType());
+        try (Connection conn = datasourceFactory.getConnection(dsi)) {
+            Actuator actuator = ActuatorFactory.build(conn, dsi.getDatasourceType());
             return actuator.runSql(ddlSql);
         } catch (BizException be) {
             throw be;
@@ -217,8 +216,8 @@ public class DefaultQueryFactory implements QueryFactory {
      */
     @Override
     public Result execSql(DatasourceInfo dsi, ExecParam param, CellProcess<Cell, Object> process) {
-        try {
-            Actuator actuator = ActuatorFactory.build(datasourceFactory.getConnection(dsi), dsi.getDatasourceType());
+        try (Connection conn = datasourceFactory.getConnection(dsi)) {
+            Actuator actuator = ActuatorFactory.build(conn, dsi.getDatasourceType());
             return actuator.execSql(param, process);
         } catch (BizException be) {
             throw be;
@@ -250,8 +249,8 @@ public class DefaultQueryFactory implements QueryFactory {
      */
     @Override
     public Result exportData(DatasourceInfo dsi, ExportDataParam param, CellProcess<Cell, Object> process) {
-        try {
-            Actuator actuator = ActuatorFactory.build(datasourceFactory.getConnection(dsi), dsi.getDatasourceType());
+        try (Connection conn = datasourceFactory.getConnection(dsi)) {
+            Actuator actuator = ActuatorFactory.build(conn, dsi.getDatasourceType());
             return actuator.exportData(param, process);
         } catch (BizException be) {
             throw be;

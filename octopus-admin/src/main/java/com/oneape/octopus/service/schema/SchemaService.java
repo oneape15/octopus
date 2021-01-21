@@ -33,7 +33,7 @@ public interface SchemaService {
      * @param tableName String
      * @return List
      */
-    int fetchAndSaveTableColumnInfo(Long dsId, String tableName);
+    List<TableColumnDO> fetchAndSaveTableColumnInfo(Long dsId, String tableName);
 
     /**
      * @param dsId      Long

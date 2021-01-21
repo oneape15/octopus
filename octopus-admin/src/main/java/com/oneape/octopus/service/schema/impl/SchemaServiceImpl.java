@@ -21,14 +21,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by oneape<oneape15@163.com>
@@ -53,6 +53,8 @@ public class SchemaServiceImpl implements SchemaService {
     private DatasourceService   datasourceService;
     @Resource
     private QuartzTaskService   quartzTaskService;
+    @Resource
+    private RedissonClient      redissonClient;
 
     /**
      * Update table information.
@@ -67,8 +69,8 @@ public class SchemaServiceImpl implements SchemaService {
         TableSchemaDO model = new TableSchemaDO();
         model.setId(ts.getId());
         model.setAlias(ts.getAlias());
+        model.setSync(ts.getSync());
         model.setCron(ts.getCron());
-        model.setSyncTime(ts.getSyncTime());
         model.setComment(ts.getComment());
         int status = tableSchemaMapper.update(model);
         if (status > 0) {
@@ -104,46 +106,57 @@ public class SchemaServiceImpl implements SchemaService {
             throw new BizException("Failed to get database name~");
         }
 
-        List<SchemaTable> schemaTableList = queryFactory.allTables(dsi, schema);
-        if (CollectionUtils.isEmpty(schemaTableList)) {
-            log.info("database name: {}, There is no data table", schema);
+        RLock lock = redissonClient.getLock("FETCH_TABLE_" + dsId);
+        if (lock.isLocked()) {
+            throw new BizException("Get Lock fail.");
+        }
+
+        try {
+            lock.lock(5, TimeUnit.MINUTES);
+
+            List<SchemaTable> schemaTableList = queryFactory.allTables(dsi, schema);
+            if (CollectionUtils.isEmpty(schemaTableList)) {
+                log.info("database name: {}, There is no data table", schema);
+                return 1;
+            }
+
+            List<String> existTableNames = tableSchemaMapper.getTableNameList(dsId);
+
+            List<TableSchemaDO> needInsertList = new ArrayList<>();
+            List<String> allTables = new ArrayList<>();
+            for (SchemaTable ti : schemaTableList) {
+                String tableName = ti.getName();
+
+                allTables.add(tableName);
+                if (existTableNames.contains(tableName)) {
+                    continue;
+                }
+
+                TableSchemaDO tsdo = new TableSchemaDO();
+                tsdo.setSchemaName(schema);
+                tsdo.setDatasourceId(dsId);
+                tsdo.setName(tableName);
+                tsdo.setView(ti.getView());
+                if (StringUtils.isNotBlank(ti.getComment())) {
+                    tsdo.setComment(ti.getComment());
+                }
+                needInsertList.add(tsdo);
+            }
+
+            // save table info to db.
+            batchInsertTableInfo(needInsertList);
+
+            // Deletes a data table that no longer exists.
+            existTableNames.removeAll(allTables);
+            if (CollectionUtils.isNotEmpty(existTableNames)) {
+                tableSchemaMapper.dropTableBy(dsId, existTableNames);
+            }
+
+            log.info("Pulls the specified data source information and saves it success!");
             return 1;
+        } finally {
+            lock.unlock();
         }
-
-        List<String> existTableNames = tableSchemaMapper.getTableNameList(dsId);
-
-        List<TableSchemaDO> needInsertList = new ArrayList<>();
-        List<String> allTables = new ArrayList<>();
-        for (SchemaTable ti : schemaTableList) {
-            String tableName = ti.getName();
-
-            allTables.add(tableName);
-            if (existTableNames.contains(tableName)) {
-                continue;
-            }
-
-            TableSchemaDO tsdo = new TableSchemaDO();
-            tsdo.setSchemaName(schema);
-            tsdo.setDatasourceId(dsId);
-            tsdo.setName(tableName);
-            tsdo.setView(ti.getView());
-            if (StringUtils.isNotBlank(ti.getComment())) {
-                tsdo.setComment(ti.getComment());
-            }
-            needInsertList.add(tsdo);
-        }
-
-        // save table info to db.
-        batchInsertTableInfo(needInsertList);
-
-        // Deletes a data table that no longer exists.
-        existTableNames.removeAll(allTables);
-        if (CollectionUtils.isNotEmpty(existTableNames)) {
-            tableSchemaMapper.dropTableBy(dsId, existTableNames);
-        }
-
-        log.info("Pulls the specified data source information and saves it success!");
-        return 1;
     }
 
     /**
@@ -151,8 +164,9 @@ public class SchemaServiceImpl implements SchemaService {
      * @param tableName String
      * @return List
      */
+    @Transactional
     @Override
-    public int fetchAndSaveTableColumnInfo(Long dsId, String tableName) {
+    public List<TableColumnDO> fetchAndSaveTableColumnInfo(Long dsId, String tableName) {
         Preconditions.checkArgument(StringUtils.isNotBlank(tableName), "The table name is null.");
         DatasourceInfo dsi = Preconditions.checkNotNull(datasourceService.getDatasourceInfoById(dsId), "The data source does not exist。 dsId: " + dsId);
 
@@ -162,43 +176,77 @@ public class SchemaServiceImpl implements SchemaService {
             throw new BizException("Failed to get database name~");
         }
 
-        List<SchemaTableField> fieldList = queryFactory.fieldOfTable(dsi, schema, tableName);
-        List<String> existColumnNames = tableColumnMapper.getTableColumnNameList(dsId, tableName);
+        RLock lock = redissonClient.getLock("FETCH_COLUMN_" + dsId + "_" + tableName);
+        if (lock.isLocked()) {
+            throw new BizException("Get Lock fail.");
+        }
 
-        List<TableColumnDO> needInsertList = new ArrayList<>();
-        List<String> allColumns = new ArrayList<>();
-        for (SchemaTableField fi : fieldList) {
-            String columnName = fi.getName();
+        try {
+            lock.lock(5, TimeUnit.MINUTES);
+            List<SchemaTableField> fieldList = queryFactory.fieldOfTable(dsi, schema, tableName);
 
-            allColumns.add(columnName);
-            if (existColumnNames.contains(columnName)) {
-                continue;
+            // Get have exist column List
+            List<TableColumnDO> existColumnList = tableColumnMapper.getTableColumnList(dsId, tableName);
+            Map<String, TableColumnDO> existName2DoMap = new HashMap<>();
+            if (CollectionUtils.isNotEmpty(existColumnList)) {
+                existColumnList.forEach(c -> existName2DoMap.put(c.getName(), c));
             }
 
-            TableColumnDO tcdo = new TableColumnDO();
-            tcdo.setDatasourceId(dsId);
-            tcdo.setTableName(tableName);
-            tcdo.setName(columnName);
-            tcdo.setDataType(fi.getDataType().name());
-            tcdo.setClassify(fi.getPrimaryKey() ? 1 : 0);
-            tcdo.setHeat(0L);
-            tcdo.setStatus(0);
-            tcdo.setComment(fi.getComment());
+            List<TableColumnDO> needInsertList = new ArrayList<>();
+            List<TableColumnDO> needUpdateList = new ArrayList<>();
 
-            needInsertList.add(tcdo);
+            List<TableColumnDO> retList = new ArrayList<>();
+            List<String> allColumns = new ArrayList<>();
+
+            for (SchemaTableField fi : fieldList) {
+                String columnName = fi.getName();
+
+                allColumns.add(columnName);
+                if (existName2DoMap.containsKey(columnName)) {
+                    // old column need update data type.
+                    TableColumnDO oldDo = existName2DoMap.get(columnName);
+                    if (!StringUtils.equalsIgnoreCase(fi.getDataType().name(), oldDo.getDataType())) {
+                        oldDo.setDataType(fi.getDataType().name());
+                        needUpdateList.add(oldDo);
+                        retList.add(oldDo);
+                    }
+                    continue;
+                }
+
+                // new column
+                TableColumnDO tcdo = new TableColumnDO();
+                tcdo.setDatasourceId(dsId);
+                tcdo.setTableName(tableName);
+                tcdo.setName(columnName);
+                tcdo.setDataType(fi.getDataType().name());
+                tcdo.setClassify(fi.getPrimaryKey() ? 1 : 0);
+                tcdo.setHeat(0L);
+                tcdo.setStatus(0);
+                tcdo.setComment(fi.getComment());
+
+                needInsertList.add(tcdo);
+
+                retList.add(tcdo);
+
+            }
+
+            // save table column info to db.
+            batchInsertTableColumnInfo(needInsertList);
+            // update table column info to db.
+            batchUpdateTableColumnInfo(needUpdateList);
+
+            // Deletes the data table column that no longer exists.
+            Set<String> existKeys = existName2DoMap.keySet();
+            existKeys.removeAll(allColumns);
+            if (CollectionUtils.isNotEmpty(existKeys)) {
+                tableColumnMapper.dropColumnBy(dsId, tableName, existKeys);
+            }
+
+            log.info("Pulls the specified data source information and saves it success!");
+            return retList;
+        } finally {
+            lock.unlock();
         }
-
-        // save table column info to db.
-        batchInsertTableColumnInfo(needInsertList);
-
-        // Deletes the data table column that no longer exists.
-        existColumnNames.removeAll(allColumns);
-        if (CollectionUtils.isNotEmpty(existColumnNames)) {
-            tableColumnMapper.dropColumnBy(dsId, tableName, existColumnNames);
-        }
-
-        log.info("Pulls the specified data source information and saves it success!");
-        return 1;
     }
 
     /**
@@ -206,10 +254,15 @@ public class SchemaServiceImpl implements SchemaService {
      * @param tableName String
      * @return List
      */
+    @Transactional
     @Override
     public List<TableColumnDO> fetchTableColumnList(Long dsId, String tableName) {
         Preconditions.checkNotNull(datasourceService.findById(dsId), "The data source does not exist");
-        return tableColumnMapper.getTableColumnList(dsId, tableName);
+        List<TableColumnDO> list = tableColumnMapper.getTableColumnList(dsId, tableName);
+        if (CollectionUtils.isEmpty(list)) {
+            list = fetchAndSaveTableColumnInfo(dsId, tableName);
+        }
+        return list;
     }
 
     /**
@@ -338,6 +391,31 @@ public class SchemaServiceImpl implements SchemaService {
             throw new BizException("Batch insert table column information exception");
         } finally {
             log.debug("Batch insert table column information: {} rows.", count);
+            session.close();
+        }
+    }
+
+    /**
+     * Batch update table column information
+     *
+     * @param columnDOs List
+     */
+    private void batchUpdateTableColumnInfo(List<TableColumnDO> columnDOs) {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH);
+        int count = 0;
+        try {
+            TableColumnMapper mapper = session.getMapper(TableColumnMapper.class);
+            for (TableColumnDO stdo : columnDOs) {
+                mapper.update(stdo);
+                count++;
+            }
+            session.commit();
+        } catch (Exception e) {
+            log.error("Batch update table column information exception", e);
+            session.rollback();
+            throw new BizException("Batch update table column information exception");
+        } finally {
+            log.debug("Batch update table column information: {} rows.", count);
             session.close();
         }
     }

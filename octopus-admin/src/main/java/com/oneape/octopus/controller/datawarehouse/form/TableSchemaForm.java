@@ -3,6 +3,7 @@ package com.oneape.octopus.controller.datawarehouse.form;
 import com.oneape.octopus.commons.validation.IntValueRangeDetection;
 import com.oneape.octopus.domain.schema.TableSchemaDO;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -40,10 +41,7 @@ public class TableSchemaForm implements Serializable {
 
     public TableSchemaDO toDO() {
         TableSchemaDO tsdo = new TableSchemaDO();
-        tsdo.setId(id);
-        tsdo.setCron(cron);
-        tsdo.setAlias(alias);
-        tsdo.setComment(comment);
+        BeanUtils.copyProperties(this, tsdo);
         return tsdo;
     }
 }

@@ -7,6 +7,7 @@ import com.oneape.octopus.domain.schema.TableSchemaDO;
 import com.oneape.octopus.model.vo.ApiResult;
 import com.oneape.octopus.service.schema.SchemaService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,8 +39,8 @@ public class SchemaController {
 
     @GetMapping(value = "/reload/{dsId}/{tableName}")
     public ApiResult fetchTableInfo(@PathVariable(name = "dsId") Long dsId, @PathVariable(name = "tableName") String tableName) {
-        int status = schemaService.fetchAndSaveTableColumnInfo(dsId, tableName);
-        if (status <= 0) {
+        List<TableColumnDO> list = schemaService.fetchAndSaveTableColumnInfo(dsId, tableName);
+        if (CollectionUtils.isNotEmpty(list)) {
             return ApiResult.ofMessage("Pull table Schema fail!");
         }
         return ApiResult.ofData("Pull table Schema successfully!");
@@ -70,7 +71,7 @@ public class SchemaController {
     }
 
     @PostMapping(value = "/table/changeInfo")
-    public ApiResult changeTableInfo(@RequestBody @Validated(value = TableSchemaForm.InfoCheck.class) TableSchemaForm form) {
+    public ApiResult<String> changeTableInfo(@RequestBody @Validated(value = TableSchemaForm.InfoCheck.class) TableSchemaForm form) {
         int status = schemaService.updateTableSchemaInfo(form.toDO());
         if (status <= 0) {
             return ApiResult.ofMessage("Modify the table information fail!");

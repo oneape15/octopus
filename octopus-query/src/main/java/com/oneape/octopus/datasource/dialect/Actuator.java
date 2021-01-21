@@ -322,7 +322,7 @@ public abstract class Actuator {
             // set the param
             int len = params.length;
             for (int i = 1; i <= len; i++) {
-                ps.setString(i, params[i]);
+                ps.setString(i, params[i - 1]);
             }
 
             try (ResultSet rs = ps.executeQuery()) {
