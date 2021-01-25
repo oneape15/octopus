@@ -22,6 +22,10 @@ public class RoleDO extends BaseDO {
      */
     private Integer type;
     /**
+     * Role state 0- normal, 1- locked.
+     */
+    private Integer status;
+    /**
      * description.
      */
     private String  comment;

@@ -24,9 +24,9 @@ public class UserForm extends BaseForm implements Serializable {
     @NotBlank(message = "The user email address is empty.", groups = {SaveCheck.class})
     private String email;
 
-    private String  phone;
-    private String  nickname;
-    private String  avatar;
+    private String phone;
+    private String nickname;
+    private String avatar;
 
     private UserStatus status;
     private Integer    gender;
@@ -34,6 +34,8 @@ public class UserForm extends BaseForm implements Serializable {
 
     @NotNull(message = "The userId List is empty.", groups = {DelCheck.class})
     private List<Long> userIds;
+
+    private List<Long> roleIds;
 
     public interface SaveCheck {
     }

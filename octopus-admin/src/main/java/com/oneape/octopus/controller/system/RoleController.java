@@ -2,11 +2,13 @@ package com.oneape.octopus.controller.system;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.base.Preconditions;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.enums.Archive;
 import com.oneape.octopus.controller.system.form.RoleForm;
 import com.oneape.octopus.domain.system.RoleDO;
 import com.oneape.octopus.model.vo.ApiResult;
+import com.oneape.octopus.service.system.AccountService;
 import com.oneape.octopus.service.system.ResourceService;
 import com.oneape.octopus.service.system.RoleService;
 import org.springframework.validation.annotation.Validated;
@@ -26,6 +28,8 @@ import java.util.Set;
 public class RoleController {
     @Resource
     private RoleService     roleService;
+    @Resource
+    private AccountService  accountService;
     @Resource
     private ResourceService resourceService;
 
@@ -77,6 +81,20 @@ public class RoleController {
         return ApiResult.ofData(roleService.find(new RoleDO()));
     }
 
+
+    /**
+     * get the role list of the user
+     *
+     * @param userId Long
+     * @return List
+     */
+    @GetMapping("/getByUserId/{userId}")
+    public ApiResult<List<RoleDO>> getByUserId(@PathVariable(name = "userId") Long userId) {
+        Preconditions.checkNotNull(accountService.findById(userId), "The user id is not exist.");
+        List<RoleDO> list = roleService.findRoleByUserId(userId);
+
+        return ApiResult.ofData(list);
+    }
 
     /**
      * Save the data permission information owned by the role

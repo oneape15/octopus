@@ -34,6 +34,15 @@ public interface UserRlRoleMapper {
      * @return int 1 - success; 0 - fail.
      */
     @UpdateProvider(type = UserRlRoleSqlProvider.class, method = "deleteById")
+    int deleteById(UserRlRoleDO model);
+
+    /**
+     * Delete data by Model (soft delete, update archive state).
+     *
+     * @param model T
+     * @return int 1 - success; 0 - fail.
+     */
+    @UpdateProvider(type = UserRlRoleSqlProvider.class, method = "delete")
     int delete(UserRlRoleDO model);
 
     /**

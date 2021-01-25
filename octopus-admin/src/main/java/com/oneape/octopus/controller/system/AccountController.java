@@ -137,4 +137,13 @@ public class AccountController {
         return ApiResult.ofError(StateCode.BizError, "Failed to unlock user.");
     }
 
+    @PostMapping("/saveUserRole")
+    public ApiResult saveUserRole(@RequestBody @Validated(value = UserForm.KeyCheck.class) UserForm form) {
+        int status = accountService.saveUserRole(form.getId(), form.getRoleIds());
+        if (status > 0) {
+            return ApiResult.ofData("Successfully unlock the user.");
+        }
+        return ApiResult.ofError(StateCode.BizError, "Failed to unlock user.");
+    }
+
 }

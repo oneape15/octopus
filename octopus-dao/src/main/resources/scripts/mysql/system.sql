@@ -131,6 +131,8 @@ CREATE TABLE `sys_role`
   COMMENT 'The role code',
   `type`     TINYINT(1)   NOT NULL
   COMMENT 'Role type: 0-normal; 1 - Default role; 3 - System role.',
+  `status`   TINYINT(1)   NOT NULL DEFAULT 0
+  COMMENT 'Role state 0- normal, 1- locked',
   `comment`  VARCHAR(256) NULL
   COMMENT 'description',
   `archive`  TINYINT(1)   NOT NULL DEFAULT 0
@@ -183,10 +185,10 @@ CREATE TABLE `sys_resource`
   COMMENT 'primary key',
   `parent_id` BIGINT(20)   NOT NULL
   COMMENT 'The parent node id',
-  `level`     INT(11)      NOT NULL
-  COMMENT 'The resource level, the init value is 1.',
   `name`      VARCHAR(128) NOT NULL
   COMMENT 'The resource name',
+  `code`      VARCHAR(128) NOT NULL
+  COMMENT 'The resource code.',
   `icon`      VARCHAR(512) NULL
   COMMENT 'The resource icon',
   `type`      TINYINT(1)   NOT NULL

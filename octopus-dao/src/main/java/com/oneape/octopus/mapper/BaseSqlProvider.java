@@ -168,7 +168,9 @@ public abstract class BaseSqlProvider<T extends BaseDO> {
                 if (StringUtils.isBlank(columnName)) {
                     columnName = field.getName();
                 }
-                whereSql.add("`" + columnName + "` = #{" + field.getName() + "}");
+                if (!StringUtils.equals(FIELD_MODIFIED, columnName) && !StringUtils.equals(FIELD_MODIFIER, columnName)) {
+                    whereSql.add("`" + columnName + "` = #{" + field.getName() + "}");
+                }
             }
         });
 

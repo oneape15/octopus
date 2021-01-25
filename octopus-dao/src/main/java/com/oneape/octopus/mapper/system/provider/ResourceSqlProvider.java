@@ -31,7 +31,7 @@ public class ResourceSqlProvider extends BaseSqlProvider<ResourceDO> {
                 .WHERE("res." + FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
                         "rl." + FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
                         "rl.role_id IN (" + Joiner.on(",").join(roleIds) + ")")
-                .ORDER_BY("level ASC", "sortId ASC")
+                .ORDER_BY("res.sort_id ASC")
                 .toString();
     }
 

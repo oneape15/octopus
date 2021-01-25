@@ -20,7 +20,7 @@ import java.util.*;
  */
 @Slf4j
 public class DslParser {
-    private final static String LINE_COMMENT       = "--";
+    private final static String LINE_COMMENT       = "-- ";
     private static final String SEQ_COMMA_START    = "/*";
     private static final String SEQ_COMMA_END      = "*/";
     private static final int    SEQ_COMMA_CHAR_LEN = SEQ_COMMA_END.length();

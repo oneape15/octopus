@@ -96,4 +96,13 @@ public interface AccountService extends BaseService<UserDO> {
      * @return 1 - success; 0 - fail.
      */
     int changeUserStatus(Long userId, UserStatus status);
+
+    /**
+     * save user role.
+     *
+     * @param userId  Long
+     * @param roleIds List
+     * @return 1 - success; 0 - fail.
+     */
+    int saveUserRole(Long userId, List<Long> roleIds);
 }

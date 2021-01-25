@@ -10,20 +10,26 @@ import com.oneape.octopus.commons.value.MaskUtils;
 import com.oneape.octopus.controller.SessionThreadLocal;
 import com.oneape.octopus.domain.system.RoleDO;
 import com.oneape.octopus.domain.system.UserDO;
+import com.oneape.octopus.domain.system.UserRlRoleDO;
 import com.oneape.octopus.domain.system.UserSessionDO;
 import com.oneape.octopus.dto.system.AppType;
 import com.oneape.octopus.dto.system.ResourceDTO;
 import com.oneape.octopus.dto.system.UserDTO;
 import com.oneape.octopus.dto.system.UserStatus;
 import com.oneape.octopus.mapper.system.UserMapper;
+import com.oneape.octopus.mapper.system.UserRlRoleMapper;
 import com.oneape.octopus.mapper.system.UserSessionMapper;
 import com.oneape.octopus.service.system.AccountService;
 import com.oneape.octopus.service.system.MailService;
 import com.oneape.octopus.service.system.ResourceService;
 import com.oneape.octopus.service.system.RoleService;
+import com.oneape.octopus.service.uid.UIDGeneratorService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
@@ -36,24 +42,28 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class AccountServiceImpl implements AccountService {
 
     @Resource
-    private UserMapper        userMapper;
+    private UserMapper          userMapper;
     @Resource
-    private UserSessionMapper userSessionMapper;
-
+    private UserSessionMapper   userSessionMapper;
     @Resource
-    private RoleService     roleService;
+    private SqlSessionFactory   sqlSessionFactory;
     @Resource
-    private ResourceService resourceService;
+    private UIDGeneratorService uidGeneratorService;
     @Resource
-    private MailService     mailService;
+    private RoleService         roleService;
     @Resource
-    private RedissonClient  redissonClient;
+    private ResourceService     resourceService;
+    @Resource
+    private MailService         mailService;
+    @Resource
+    private RedissonClient      redissonClient;
 
     /**
      * save data to table.
@@ -457,5 +467,60 @@ public class AccountServiceImpl implements AccountService {
             userSessionMapper.setToken2expire(userId);
         }
         return ret;
+    }
+
+    /**
+     * save user role.
+     *
+     * @param userId  Long
+     * @param roleIds List
+     * @return 1 - success; 0 - fail.
+     */
+    @Override
+    public int saveUserRole(Long userId, List<Long> roleIds) {
+        Preconditions.checkNotNull(userMapper.findById(userId), "The user is not exist.");
+        List<Long> needInsertRoleIds = new ArrayList<>();
+        List<Long> needDeleteRoleIds = new ArrayList<>();
+
+        List<RoleDO> roleDOs = roleService.findRoleByUserId(userId);
+        if (CollectionUtils.isNotEmpty(roleDOs)) {
+            // Gets the existing role ID
+            List<Long> existRoleIds = roleDOs.stream().map(RoleDO::getId).collect(Collectors.toList());
+
+            needDeleteRoleIds = existRoleIds.stream().filter(rId -> !roleIds.contains(rId)).collect(Collectors.toList());
+            needInsertRoleIds = roleIds.stream().filter(rId -> !existRoleIds.contains(rId)).collect(Collectors.toList());
+        } else {
+            needInsertRoleIds.addAll(roleIds);
+        }
+
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH);
+        int count = 0;
+        try {
+            UserRlRoleMapper mapper = session.getMapper(UserRlRoleMapper.class);
+            // add option
+            for (Long roleId : needInsertRoleIds) {
+                UserRlRoleDO u2rDo = new UserRlRoleDO(userId, roleId);
+                u2rDo.setId(uidGeneratorService.getUid());
+                mapper.insert(u2rDo);
+                count++;
+            }
+
+            // delete option
+            for (Long roleId : needDeleteRoleIds) {
+                UserRlRoleDO u2rDo = new UserRlRoleDO(userId, roleId);
+                mapper.delete(u2rDo);
+            }
+
+            session.commit();
+        } catch (Exception e) {
+            log.error("Batch insert data table information exception", e);
+            session.rollback();
+            throw new BizException("Batch insert data table information exception");
+        } finally {
+            log.debug("Batch insert data table information: {} rows.", count);
+            session.close();
+        }
+
+        return 1;
     }
 }
