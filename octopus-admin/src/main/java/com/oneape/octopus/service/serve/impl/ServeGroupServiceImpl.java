@@ -13,6 +13,7 @@ import com.oneape.octopus.dto.serve.ServeGroupSizeDTO;
 import com.oneape.octopus.mapper.serve.ServeGroupMapper;
 import com.oneape.octopus.mapper.serve.ServeInfoMapper;
 import com.oneape.octopus.mapper.serve.ServeRlGroupMapper;
+import com.oneape.octopus.service.DefaultTreeService;
 import com.oneape.octopus.service.serve.ServeGroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -30,7 +31,7 @@ import java.util.*;
  */
 @Slf4j
 @Service
-public class ServeGroupServiceImpl implements ServeGroupService {
+public class ServeGroupServiceImpl extends DefaultTreeService implements ServeGroupService {
     @Resource
     private ServeInfoMapper    serveInfoMapper;
     @Resource
@@ -253,34 +254,8 @@ public class ServeGroupServiceImpl implements ServeGroupService {
                 }
             });
 
-            List<TreeNodeVO> rootNodes = new ArrayList<>();
-
             // build tree
-            while (CollectionUtils.isNotEmpty(parentIds)) {
-                List<Long> leafNodeIds = new ArrayList<>();
-                List<Long> needRemoveParentIds = new ArrayList<>();
-                groupIds.stream().filter(id -> !parentIds.contains(id)).forEach(id -> {
-                    Long parentId = id2parentIdMap.get(id);
-
-                    leafNodeIds.add(id);
-                    needRemoveParentIds.add(parentId);
-
-                    TreeNodeVO node = id2NodeMap.remove(id);
-                    TreeNodeVO parentNode = id2NodeMap.get(parentId);
-                    if (FixServeGroupType.ROOT.getId().equals(parentId)) {
-                        rootNodes.add(node);
-                    } else if (parentNode != null && node != null) {
-                        Integer size = parentNode.getLeafSize() + node.getLeafSize();
-                        parentNode.setLeafSize(size);
-                        parentNode.addChild(node);
-                        id2NodeMap.put(parentId, parentNode);
-                    }
-                });
-
-                // remove the children info.
-                groupIds.removeAll(leafNodeIds);
-                parentIds.removeAll(needRemoveParentIds);
-            }
+            List<TreeNodeVO> rootNodes = buildTree(parentIds, groupIds, id2parentIdMap, id2NodeMap);
 
             nodes.addAll(rootNodes);
             nodes.addAll(id2NodeMap.values());
@@ -308,10 +283,7 @@ public class ServeGroupServiceImpl implements ServeGroupService {
 
         // root node deal.
         if (addRootNode) {
-            TreeNodeVO rootNode = new TreeNodeVO(FixServeGroupType.ROOT);
-            rootNode.addChildren(nodes);
-            nodes.clear();
-            nodes.add(rootNode);
+            wrapRootNode(nodes);
         }
 
         return nodes;

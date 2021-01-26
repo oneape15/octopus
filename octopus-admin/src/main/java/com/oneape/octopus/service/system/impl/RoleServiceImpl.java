@@ -58,7 +58,12 @@ public class RoleServiceImpl implements RoleService {
     public int save(RoleDO model) {
         Preconditions.checkNotNull(model, "The role information is null.");
         Preconditions.checkArgument(StringUtils.isNoneBlank(model.getName(), model.getCode()), "The role name or code is empty.");
-        Preconditions.checkArgument(StringUtils.isNoneBlank(model.getName(), model.getCode()), "The role name or code is empty.");
+
+        boolean isEdit = false;
+        if (model.getId() != null) {
+            Preconditions.checkNotNull(findById(model.getId()), "The role id is not exists.");
+            isEdit = true;
+        }
 
         // Determine if the code or name is repeated.
         int count = roleMapper.getSameNameOrCodeRole(model.getName(), model.getCode(), model.getId());
@@ -66,7 +71,7 @@ public class RoleServiceImpl implements RoleService {
             throw new BizException("The name or code for the role already exists.");
         }
 
-        if (model.getId() != null) {
+        if (isEdit) {
             return roleMapper.update(model);
         }
         return roleMapper.insert(model);
@@ -80,7 +85,8 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public RoleDO findById(Long id) {
-        return null;
+        Preconditions.checkNotNull(id, "The role id is null.");
+        return roleMapper.findById(id);
     }
 
     /**

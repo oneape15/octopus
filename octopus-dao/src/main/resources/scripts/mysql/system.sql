@@ -50,6 +50,38 @@ CREATE TABLE `sys_common_info`
   DEFAULT CHARACTER SET = utf8
   COLLATE = utf8_general_ci;
 
+-- Organizational structure information table.
+CREATE TABLE `sys_org`
+(
+  `id`                BIGINT(20)   NOT NULL
+  COMMENT 'primary key',
+  `parent_id`         BIGINT(20)   NOT NULL DEFAULT 0
+  COMMENT 'The parent node id',
+  `code`              VARCHAR(128) NULL
+  COMMENT 'Organizational architecture is uniquely coded.',
+  `name`              VARCHAR(256) NOT NULL
+  COMMENT 'Organizational architecture is uniquely name.',
+  `dept_head_user_id` BIGINT(20)   NULL
+  COMMENT 'ID of department head',
+  `comment`           VARCHAR(256) NULL
+  COMMENT 'description',
+  `archive`           TINYINT(1)   NOT NULL DEFAULT 0
+  COMMENT '0 - normal data; 1 - have archive (soft delete)',
+  `created`           BIGINT(20)   NOT NULL
+  COMMENT 'create time ',
+  `creator`           BIGINT(20)   NOT NULL
+  COMMENT 'Data record creator',
+  `modified`          BIGINT(20)   NULL     DEFAULT NULL
+  COMMENT 'Last updated time',
+  `modifier`          BIGINT(20)   NULL     DEFAULT NULL
+  COMMENT 'Data record  modifier',
+  PRIMARY KEY (`id`)
+)
+  ENGINE = InnoDB
+  COMMENT 'Organizational structure information table.'
+  DEFAULT CHARACTER SET = utf8
+  COLLATE = utf8_general_ci;
+
 --  System user information table.
 CREATE TABLE `sys_user`
 (
@@ -83,6 +115,32 @@ CREATE TABLE `sys_user`
 )
   ENGINE = InnoDB
   COMMENT 'System user information table'
+  DEFAULT CHARACTER SET = utf8
+  COLLATE = utf8_general_ci;
+
+-- User - Org association table
+CREATE TABLE `sys_user_rl_org`
+(
+  `id`       BIGINT(20) NOT NULL
+  COMMENT 'primary key',
+  `user_id`  BIGINT(20) NOT NULL
+  COMMENT 'The user id',
+  `org_id`   BIGINT(20) NOT NULL
+  COMMENT 'The org id',
+  `archive`  TINYINT(1) NOT NULL DEFAULT 0
+  COMMENT '0 - normal data; 1 - have archive (soft delete)',
+  `created`  BIGINT(20) NOT NULL
+  COMMENT 'create time ',
+  `creator`  BIGINT(20) NOT NULL
+  COMMENT 'Data record creator',
+  `modified` BIGINT(20) NULL     DEFAULT NULL
+  COMMENT 'Last updated time',
+  `modifier` BIGINT(20) NULL     DEFAULT NULL
+  COMMENT 'Data record  modifier',
+  PRIMARY KEY (`id`)
+)
+  ENGINE = InnoDB
+  COMMENT 'User - Org association table.'
   DEFAULT CHARACTER SET = utf8
   COLLATE = utf8_general_ci;
 

@@ -9,7 +9,6 @@ import com.oneape.octopus.controller.system.form.RoleForm;
 import com.oneape.octopus.domain.system.RoleDO;
 import com.oneape.octopus.model.vo.ApiResult;
 import com.oneape.octopus.service.system.AccountService;
-import com.oneape.octopus.service.system.ResourceService;
 import com.oneape.octopus.service.system.RoleService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +29,6 @@ public class RoleController {
     private RoleService     roleService;
     @Resource
     private AccountService  accountService;
-    @Resource
-    private ResourceService resourceService;
 
     @PostMapping("/save")
     public ApiResult<String> doSaveRole(@RequestBody @Validated(value = RoleForm.SaveCheck.class) RoleForm form) {
@@ -41,7 +38,6 @@ public class RoleController {
         }
         return ApiResult.ofError(StateCode.BizError, "Save role fail.");
     }
-
 
     @PostMapping("/del/{roleId}")
     public ApiResult<String> doDelRole(@PathVariable(name = "roleId") Long roleId) {

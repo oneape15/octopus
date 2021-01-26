@@ -43,7 +43,7 @@ CREATE TABLE `serve_group`
 (
   `id`         BIGINT(20)   NOT NULL
   COMMENT 'primary key',
-  `parent_id`  BIGINT(20)   NOT NULL
+  `parent_id`  BIGINT(20)   NOT NULL DEFAULT 0
   COMMENT 'The parent node id',
   `name`       VARCHAR(64)  NOT NULL
   COMMENT 'group name.',
