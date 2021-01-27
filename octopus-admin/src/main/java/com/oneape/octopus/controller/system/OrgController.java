@@ -4,6 +4,7 @@ import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.vo.TreeNodeVO;
 import com.oneape.octopus.controller.system.form.OrgForm;
 import com.oneape.octopus.domain.system.OrganizationDO;
+import com.oneape.octopus.domain.system.UserDO;
 import com.oneape.octopus.model.vo.ApiResult;
 import com.oneape.octopus.service.system.OrganizationService;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +28,9 @@ public class OrgController {
     @Resource
     private OrganizationService orgService;
 
+    /**
+     * Save the organization information.
+     */
     @PostMapping("/save")
     public ApiResult<String> doSaveOrg(@RequestBody @Validated(value = OrgForm.SaveCheck.class) OrgForm form) {
         int status = orgService.save(form.toDO());
@@ -36,6 +40,9 @@ public class OrgController {
         return ApiResult.ofError(StateCode.BizError, "Save Org fail.");
     }
 
+    /**
+     * Deleted the organization information based on org id.
+     */
     @PostMapping("/del/{orgId}")
     public ApiResult<String> doDelOrg(@PathVariable(name = "orgId") Long orgId) {
         int status = orgService.deleteById(orgId);
@@ -45,10 +52,22 @@ public class OrgController {
         return ApiResult.ofError(StateCode.BizError, "Deleted org fail.");
     }
 
+    /**
+     * Query the organization information based on org id.
+     */
     @GetMapping("/get/{orgId}")
     public ApiResult<OrganizationDO> getOrg(@PathVariable(name = "orgId") Long orgId) {
         OrganizationDO orgDo = orgService.findById(orgId);
         return ApiResult.ofData(orgDo);
+    }
+
+    /**
+     * Query the list of users based on org id.
+     */
+    @GetMapping("/getUsers/{orgId}")
+    public ApiResult<List<UserDO>> getUserByOrgId(@PathVariable(name = "orgId") Long orgId) {
+        List<UserDO> userDOs = orgService.getUserListByOrgId(orgId);
+        return ApiResult.ofData(userDOs);
     }
 
     /**

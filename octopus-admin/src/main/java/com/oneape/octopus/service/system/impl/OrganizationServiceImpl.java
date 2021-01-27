@@ -6,6 +6,7 @@ import com.oneape.octopus.commons.enums.FixServeGroupType;
 import com.oneape.octopus.commons.value.TypeValueUtils;
 import com.oneape.octopus.commons.vo.TreeNodeVO;
 import com.oneape.octopus.domain.system.OrganizationDO;
+import com.oneape.octopus.domain.system.UserDO;
 import com.oneape.octopus.dto.system.OrgUserSizeDTO;
 import com.oneape.octopus.mapper.system.OrganizationMapper;
 import com.oneape.octopus.mapper.system.UserRlOrgMapper;
@@ -171,5 +172,17 @@ public class OrganizationServiceImpl extends DefaultTreeService implements Organ
         }
 
         return nodes;
+    }
+
+    /**
+     * Query the list of users based on org id.
+     *
+     * @param orgId Long
+     * @return List
+     */
+    @Override
+    public List<UserDO> getUserListByOrgId(Long orgId) {
+        Preconditions.checkNotNull(orgMapper.findById(orgId), "The organization ID does not exist.");
+        return userRlOrgMapper.getUserByOrgId(orgId);
     }
 }

@@ -2,6 +2,7 @@ package com.oneape.octopus.service.system;
 
 import com.oneape.octopus.commons.vo.TreeNodeVO;
 import com.oneape.octopus.domain.system.OrganizationDO;
+import com.oneape.octopus.domain.system.UserDO;
 import com.oneape.octopus.service.BaseService;
 
 import java.util.List;
@@ -22,5 +23,13 @@ public interface OrganizationService extends BaseService<OrganizationDO> {
      * @return List
      */
     List<TreeNodeVO> genTree(boolean addNodeSize, boolean addRootNode, List<Long> disabledKeys);
+
+    /**
+     * Query the list of users based on org id.
+     *
+     * @param orgId Long
+     * @return List
+     */
+    List<UserDO> getUserListByOrgId(Long orgId);
 
 }

@@ -1,5 +1,6 @@
 package com.oneape.octopus.mapper.system;
 
+import com.oneape.octopus.domain.system.UserDO;
 import com.oneape.octopus.domain.system.UserRlOrgDO;
 import com.oneape.octopus.dto.system.OrgUserSizeDTO;
 import com.oneape.octopus.mapper.BaseSqlProvider;
@@ -105,4 +106,13 @@ public interface UserRlOrgMapper {
      */
     @SelectProvider(type = UserRlOrgSqlProvider.class, method = "getOrgLinkUserSize")
     List<OrgUserSizeDTO> getOrgLinkUserSize(@Param("orgIds") List<Long> orgIds);
+
+    /**
+     * Query the list of users based on org id.
+     *
+     * @param orgId Long
+     * @return List
+     */
+    @SelectProvider(type = UserRlOrgSqlProvider.class, method = "getUserByOrgId")
+    List<UserDO> getUserByOrgId(@Param("orgId") Long orgId);
 }

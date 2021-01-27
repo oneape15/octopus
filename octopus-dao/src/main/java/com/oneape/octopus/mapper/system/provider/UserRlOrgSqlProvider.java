@@ -56,4 +56,19 @@ public class UserRlOrgSqlProvider extends BaseSqlProvider<UserRlOrgDO> {
                 .GROUP_BY("org_id")
                 .toString();
     }
+
+    public String getUserByOrgId(@Param("orgId") Long orgId) {
+        String userIdSql = new SQL()
+                .SELECT_DISTINCT("user_id")
+                .FROM(TABLE_NAME)
+                .WHERE(BaseSqlProvider.FIELD_ARCHIVE + " = " + Archive.NORMAL.value(), "org_id = #{orgId}")
+                .toString();
+        return new SQL()
+                .SELECT("*")
+                .FROM(UserSqlProvider.TABLE_NAME)
+                .WHERE(BaseSqlProvider.FIELD_ARCHIVE + " = " + Archive.NORMAL.value(),
+                        " id IN (" + userIdSql + ")")
+                .ORDER_BY("nickname desc")
+                .toString();
+    }
 }
