@@ -136,3 +136,4 @@ CREATE TABLE `table_column`
   COMMENT 'Table field information table'
   DEFAULT CHARACTER SET = utf8
   COLLATE = utf8_general_ci;
+

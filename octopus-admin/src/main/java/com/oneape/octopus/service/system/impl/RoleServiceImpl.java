@@ -3,6 +3,7 @@ package com.oneape.octopus.service.system.impl;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.value.MaskUtils;
+import com.oneape.octopus.config.I18nMsgConfig;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.mapper.system.RoleMapper;
 import com.oneape.octopus.mapper.system.RoleRlResourceMapper;
@@ -268,7 +269,7 @@ public class RoleServiceImpl implements RoleService {
         } catch (Exception e) {
             log.error("Save role and data table information in bulk exception.", e);
             session.rollback();
-            throw new BizException("Save role and data table information in bulk exception.", e);
+            throw new BizException(I18nMsgConfig.getMessage("global.batch.insert.error"), e);
         } finally {
             session.close();
         }

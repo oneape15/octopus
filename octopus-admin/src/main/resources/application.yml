@@ -13,6 +13,10 @@ spring:
       - Token
       - Content-type
     allow-credentials: true
+  # Represent the i18n folder in the classpath with the file prefix messages
+  messages:
+    basename: i18n.messages
+    encoding: UTF-8
 
 mail:
   smtp-server:

@@ -8,12 +8,18 @@ import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.oneape.octopus.config.props.CorsProperties;
 import com.oneape.octopus.interceptor.TokenVerifyInterceptor;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.lang.Nullable;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -21,12 +27,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.MessageInterpolator;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurationSupport {
+    private static final String LANG = "lang";
+
     @Resource
     private CorsProperties corsProperties;
 
@@ -39,6 +52,28 @@ public class WebConfig extends WebMvcConfigurationSupport {
             arr = tmps.toArray(new String[tmps.size()]);
         }
         return arr;
+    }
+
+    /**
+     * Override this method to provide a custom {@link Validator}.
+     */
+    @Override
+    protected Validator getValidator() {
+        LocalValidatorFactoryBean lvfb = new LocalValidatorFactoryBean();
+
+        lvfb.setMessageInterpolator(new ResourceBundleMessageInterpolator() {
+            @Override
+            public String interpolate(Context context, Locale locale, String term) {
+                String msg = StringUtils.trim(term);
+                if (msg.startsWith("{") && msg.endsWith("}")) {
+                    msg = I18nValidationConfig.getMessage(StringUtils.substring(msg, 1, msg.length() - 1));
+                }
+
+                return super.interpolate(context, locale, msg);
+            }
+        });
+
+        return lvfb;
     }
 
     @Override
@@ -133,7 +168,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 
         // 国际化
         LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
-        localeChangeInterceptor.setParamName("lang");
+        localeChangeInterceptor.setParamName(LANG);
         registry.addInterceptor(localeChangeInterceptor);
         super.addInterceptors(registry);
     }
@@ -165,5 +200,38 @@ public class WebConfig extends WebMvcConfigurationSupport {
         resolver.setMaxUploadSize(102400000);
         resolver.setMaxInMemorySize(4096);
         return resolver;
+    }
+
+    @Bean
+    public LocaleResolver localeResolver() {
+        final String DELIMITER = "_";
+        final String LANG_SESSION = "lang_session";
+        return new LocaleResolver() {
+            @Override
+            public Locale resolveLocale(HttpServletRequest req) {
+                String lang = req.getHeader(LANG);
+
+                // default language is CHINA
+                Locale locale = Locale.CHINA;
+                if (StringUtils.isNotBlank(lang) && StringUtils.contains(lang, DELIMITER)) {
+                    String[] languages = StringUtils.split(lang, DELIMITER);
+                    locale = new Locale(languages[0], languages[1]);
+                    HttpSession session = req.getSession();
+                    session.setAttribute(LANG_SESSION, locale);
+                } else {
+                    HttpSession session = req.getSession();
+                    Locale localeInSession = (Locale) session.getAttribute(LANG_SESSION);
+                    if (localeInSession != null) {
+                        locale = localeInSession;
+                    }
+                }
+                return locale;
+            }
+
+            @Override
+            public void setLocale(HttpServletRequest req, @Nullable HttpServletResponse resp, @Nullable Locale locale) {
+
+            }
+        };
     }
 }

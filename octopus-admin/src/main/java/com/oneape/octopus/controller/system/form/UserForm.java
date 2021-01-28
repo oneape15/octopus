@@ -15,13 +15,13 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class UserForm extends BaseForm implements Serializable {
-    @NotNull(message = "The user id is empty.", groups = {KeyCheck.class})
+    @NotNull(message = "{UserForm.NotNull.id}", groups = {KeyCheck.class})
     private Long   id;
-    @NotBlank(message = "The username is empty.", groups = {LoginCheck.class, RegCheck.class, SaveCheck.class})
+    @NotBlank(message = "{UserForm.NotBlank.username}", groups = {LoginCheck.class, RegCheck.class, SaveCheck.class})
     private String username;
-    @NotBlank(message = "The password is empty.", groups = {LoginCheck.class, RegCheck.class})
+    @NotBlank(message = " {UserForm.NotBlank.password}", groups = {LoginCheck.class, RegCheck.class})
     private String password;
-    @NotBlank(message = "The user email address is empty.", groups = {SaveCheck.class})
+    @NotBlank(message = "{UserForm.NotBlank.email}", groups = {SaveCheck.class})
     private String email;
 
     private String phone;
@@ -32,7 +32,7 @@ public class UserForm extends BaseForm implements Serializable {
     private Integer    gender;
     private String     type;
 
-    @NotNull(message = "The userId List is empty.", groups = {DelCheck.class})
+    @NotNull(message = "{UserForm.NotNull.userIds}", groups = {DelCheck.class})
     private List<Long> userIds;
 
     private List<Long> roleIds;

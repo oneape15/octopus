@@ -7,6 +7,7 @@ import com.oneape.octopus.commons.constant.OctopusConstant;
 import com.oneape.octopus.commons.security.MD5Utils;
 import com.oneape.octopus.commons.value.CodeBuilderUtils;
 import com.oneape.octopus.commons.value.MaskUtils;
+import com.oneape.octopus.config.I18nMsgConfig;
 import com.oneape.octopus.controller.SessionThreadLocal;
 import com.oneape.octopus.domain.system.RoleDO;
 import com.oneape.octopus.domain.system.UserDO;
@@ -266,13 +267,13 @@ public class AccountServiceImpl implements AccountService {
     public String login(String username, String password, AppType appType) {
         UserDO udo = getByUsername(username);
         if (udo == null) {
-            throw new BizException("Error username or password.");
+            throw new BizException(I18nMsgConfig.getMessage("account.login.info.error"));
         }
         if (udo.getStatus() != UserStatus.NORMAL) {
-            throw new BizException("The user is inactive or locked");
+            throw new BizException(I18nMsgConfig.getMessage("account.login.inactive"));
         }
         if (!StringUtils.equalsIgnoreCase(password, udo.getPassword())) {
-            throw new BizException("Error username or password.");
+             throw new BizException(I18nMsgConfig.getMessage("account.login.info.error"));
         }
 
         // crate a new token.
@@ -282,13 +283,13 @@ public class AccountServiceImpl implements AccountService {
         try {
             token = MD5Utils.getMD5(rawStr);
         } catch (Exception e) {
-            log.error("Create session Token fail.", e);
+            log.error(I18nMsgConfig.getMessage("account.login.token.fail"), e);
             return null;
         }
 
         RLock lock = redissonClient.getLock("USER_LOGIN_" + udo.getId() + "_" + appType);
         if (lock.isLocked()) {
-            throw new BizException("Get Lock fail.");
+            throw new BizException(I18nMsgConfig.getMessage("global.get.lock.fail"));
         }
 
         int status;
@@ -330,7 +331,7 @@ public class AccountServiceImpl implements AccountService {
     public int logout(Long userId, AppType appType) {
         RLock lock = redissonClient.getLock("USER_LOGOUT_" + userId + "_" + appType);
         if (lock.isLocked()) {
-            throw new BizException("Get Lock fail.");
+            throw new BizException(I18nMsgConfig.getMessage("global.get.lock.fail"));
         }
 
         int status;
@@ -355,8 +356,8 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public int resetPwd(Long userId) {
-        Preconditions.checkNotNull(userId, "The user id is empty.");
-        UserDO user = Preconditions.checkNotNull(userMapper.findById(userId), "The user information is null.");
+        Preconditions.checkNotNull(userId, I18nMsgConfig.getMessage("account.userId.null"));
+        UserDO user = Preconditions.checkNotNull(userMapper.findById(userId), I18nMsgConfig.getMessage("account.user.null"));
 
         // Randomly generate a password.
         String pwd = CodeBuilderUtils.randomStr(6);
@@ -377,8 +378,9 @@ public class AccountServiceImpl implements AccountService {
 
                 mailService.sendSimpleMail(user.getEmail(), "OCTOPUS", content);
             } catch (Exception e) {
-                log.error("Failed to send email~", e);
-                throw new BizException("Failed to send email:" + user.getEmail());
+                String msg = I18nMsgConfig.getMessage("global.send.email.fail", user.getEmail());
+                log.error(msg, e);
+                throw new BizException(msg);
             }
         }
         return status;
@@ -452,9 +454,9 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     @Override
     public int changeUserStatus(Long userId, UserStatus status) {
-        Preconditions.checkNotNull(userMapper.findById(userId), "The user is not exist.");
+        Preconditions.checkNotNull(userMapper.findById(userId), I18nMsgConfig.getMessage("account.user.null"));
         if (userId.equals(SessionThreadLocal.getUserId())) {
-            throw new BizException("You are not allowed to operate on yourself.");
+            throw new BizException(I18nMsgConfig.getMessage("account.user.option.self"));
         }
         UserDO userDO = new UserDO();
         userDO.setStatus(status);
@@ -478,7 +480,7 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public int saveUserRole(Long userId, List<Long> roleIds) {
-        Preconditions.checkNotNull(userMapper.findById(userId), "The user is not exist.");
+        Preconditions.checkNotNull(userMapper.findById(userId), I18nMsgConfig.getMessage("account.user.null"));
         List<Long> needInsertRoleIds = new ArrayList<>();
         List<Long> needDeleteRoleIds = new ArrayList<>();
 
@@ -515,7 +517,7 @@ public class AccountServiceImpl implements AccountService {
         } catch (Exception e) {
             log.error("Batch insert data table information exception", e);
             session.rollback();
-            throw new BizException("Batch insert data table information exception");
+            throw new BizException(I18nMsgConfig.getMessage("global.batch.insert.error"));
         } finally {
             log.debug("Batch insert data table information: {} rows.", count);
             session.close();

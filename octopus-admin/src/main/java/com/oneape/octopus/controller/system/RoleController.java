@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.enums.Archive;
+import com.oneape.octopus.config.I18nMsgConfig;
 import com.oneape.octopus.controller.system.form.RoleForm;
 import com.oneape.octopus.domain.system.RoleDO;
 import com.oneape.octopus.model.vo.ApiResult;
@@ -34,18 +35,18 @@ public class RoleController {
     public ApiResult<String> doSaveRole(@RequestBody @Validated(value = RoleForm.SaveCheck.class) RoleForm form) {
         int status = roleService.save(form.toDO());
         if (status > 0) {
-            return ApiResult.ofData("Save role successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("role.save.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Save role fail.");
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("role.save.fail"));
     }
 
     @PostMapping("/del/{roleId}")
     public ApiResult<String> doDelRole(@PathVariable(name = "roleId") Long roleId) {
         int status = roleService.deleteById(roleId);
         if (status > 0) {
-            return ApiResult.ofData("Deleted role successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("role.del.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Deleted role fail.");
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("role.del.fail"));
     }
 
     /**
@@ -86,7 +87,7 @@ public class RoleController {
      */
     @GetMapping("/getByUserId/{userId}")
     public ApiResult<List<RoleDO>> getByUserId(@PathVariable(name = "userId") Long userId) {
-        Preconditions.checkNotNull(accountService.findById(userId), "The user id is not exist.");
+        Preconditions.checkNotNull(accountService.findById(userId), I18nMsgConfig.getMessage("account.user.null"));
         List<RoleDO> list = roleService.findRoleByUserId(userId);
 
         return ApiResult.ofData(list);
@@ -101,8 +102,8 @@ public class RoleController {
     public ApiResult saveSchemaPermission(@RequestBody @Validated(value = RoleForm.KeyCheck.class) RoleForm form) {
         int status = roleService.batchSaveRoleRlSchema(form.getId(), form.getSchemaDOList());
         if (status > 0) {
-            return ApiResult.ofData("Save role and data table information  successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("role.saveSchema.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Save role and data table information fail.");
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("role.saveSchema.fail"));
     }
 }

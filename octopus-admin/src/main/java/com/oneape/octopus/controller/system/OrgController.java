@@ -20,7 +20,6 @@ import java.util.List;
  * Created 2021-01-25 14:27.
  * Modify:
  */
-
 @RestController
 @RequestMapping("/org")
 public class OrgController {

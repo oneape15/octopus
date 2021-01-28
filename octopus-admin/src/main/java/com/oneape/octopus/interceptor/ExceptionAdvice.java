@@ -5,6 +5,7 @@ import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.cause.UnauthorizedException;
 import com.oneape.octopus.model.vo.ApiResult;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
@@ -68,10 +69,10 @@ public class ExceptionAdvice {
 
     private String getErrorMessage(BindingResult result) {
         FieldError error = result.getFieldError();
-        String field = error.getField();
-        String code = error.getDefaultMessage();
+//        String field = error.getField();
+//        String code = error.getDefaultMessage();
 
-        return String.format("%s:%s", field, code);
+        return StringUtils.trim(error.getDefaultMessage());
     }
 
     /**
