@@ -12,23 +12,30 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.2.RELEASE</version>
+        <version>2.4.2</version>
     </parent>
 
     <modules>
         <module>octopus-admin</module>
+        <module>octopus-wharf</module>
+        <module>octopus-api</module>
+        <module>octopus-gateway</module>
         <module>octopus-query</module>
         <module>octopus-parsing</module>
         <module>octopus-commons</module>
-        <module>octopus-wharf</module>
         <module>octopus-dao</module>
-        <module>octopus-customer</module>
     </modules>
 
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <spring-cloud.version>2020.0.1</spring-cloud.version>
+        <spring-cloud-starter-eureka-server.version>1.4.7.RELEASE</spring-cloud-starter-eureka-server.version>
+        <spring-cloud-starter-gateway.version>3.0.1</spring-cloud-starter-gateway.version>
+        <spring-boot-starter-webflux.version>2.4.2</spring-boot-starter-webflux.version>
+
         <lombok.version>1.18.10</lombok.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
@@ -53,6 +60,7 @@
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
         <druid.version>1.1.22</druid.version>
         <redisson.version>3.12.3</redisson.version>
+        <hibernate-validator.version>7.0.0.Final</hibernate-validator.version>
 
         <octopus-commons.version>1.0-SNAPSHOT</octopus-commons.version>
         <octopus-dao.version>1.0-SNAPSHOT</octopus-dao.version>
@@ -74,6 +82,33 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>runtime</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-eureka-server -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-eureka-server</artifactId>
+                <version>${spring-cloud-starter-eureka-server.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-gateway -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-gateway</artifactId>
+                <version>${spring-cloud-starter-gateway.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-webflux -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-webflux</artifactId>
+                <version>${spring-boot-starter-webflux.version}</version>
+            </dependency>
+
+
+            <dependency>
                 <groupId>com.oneape</groupId>
                 <artifactId>octopus-commons</artifactId>
                 <version>${octopus-commons.version}</version>
@@ -93,6 +128,7 @@
                 <artifactId>octopus-parsing</artifactId>
                 <version>${octopus-parsing.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
@@ -113,6 +149,12 @@
                 <groupId>javax.persistence</groupId>
                 <artifactId>persistence-api</artifactId>
                 <version>${persistence-api.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate-validator}</version>
             </dependency>
 
             <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
@@ -244,6 +286,7 @@
                 <artifactId>spring-boot-starter-quartz</artifactId>
                 <version>2.3.4.RELEASE</version>
             </dependency>
+
             <!-- https://mvnrepository.com/artifact/org.redisson/redisson -->
             <dependency>
                 <groupId>org.redisson</groupId>
