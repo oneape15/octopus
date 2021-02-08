@@ -17,10 +17,28 @@ public class GatewayRouteDO extends BaseDO {
      */
     @EntityColumn(name = "route_id")
     private String  routeId;
+    /**
+     * The URI that the routing rule forwards
+     */
     private String  uri;
+    /**
+     * Routing assertion collection configuration
+     */
     private String  predicates;
+    /**
+     * Routing filter collection configuration
+     */
     private String  filters;
+    /**
+     * Route execution sequence
+     */
     private Integer order;
-
-    private String metadata;
+    /**
+     * state, 0 - invalid; 1 - valid
+     */
+    private Integer state;
+    /**
+     * metadata configuration information.
+     */
+    private String  metadata;
 }

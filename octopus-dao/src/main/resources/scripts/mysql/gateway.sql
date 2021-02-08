@@ -11,6 +11,8 @@ CREATE TABLE `gateway_route`
   COMMENT 'Predicate configuration information.',
   `filters`    VARCHAR(1024) NULL
   COMMENT 'Filter configuration information.',
+  `state`      TINYINT(1)    NOT NULL DEFAULT 0
+  COMMENT 'route state 0 - invalid; 1 - valid.',
   `metadata`   VARCHAR(512)  NULL
   COMMENT 'Metadata configuration information.',
   `order`      INT(11)       NOT NULL

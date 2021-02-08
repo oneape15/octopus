@@ -20,10 +20,10 @@ import java.util.List;
 @Component
 public class RedisRouteDefinitionRepository implements RouteDefinitionRepository {
 
-    public static final String GATEWAY_ROUTES = "geteway_routes";
+    public static final String GATEWAY_ROUTES = "gateway_routes";
 
     @Resource
-    private RedissonClient redissonClient;
+    private RedissonClient      redissonClient;
 
     @Override
     public Flux<RouteDefinition> getRouteDefinitions() {
