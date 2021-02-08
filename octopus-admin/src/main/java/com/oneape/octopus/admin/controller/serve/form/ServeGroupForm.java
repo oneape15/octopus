@@ -19,13 +19,14 @@ public class ServeGroupForm implements Serializable {
     /**
      * The parent node id.
      */
-    @NotNull(message = "The parent group Id is empty.", groups = {EditCheck.class, AddCheck.class})
+    @NotNull(message = "{ServeGroupForm.NotNull.parentId}", groups = {EditCheck.class, AddCheck.class})
     private Long   parentId;
-    @NotNull(message = "The serve group Id is empty.", groups = {EditCheck.class, KeyCheck.class})
+    @NotNull(message = "{ServeGroupForm.NotNull.id}", groups = {EditCheck.class, KeyCheck.class})
     private Long   id;
-    @NotBlank(message = "The serve group name is empty.", groups = {AddCheck.class, EditCheck.class})
+    @NotBlank(message = "{ServeGroupForm.NotBlank.name}", groups = {AddCheck.class, EditCheck.class})
     private String name;
-    @ServeTypeNotNull(message = "Invalid ServeType value.", groups = {AddCheck.class, EditCheck.class, TreeCheck.class})
+    @ServeTypeNotNull(message = "{ServeGroupForm.ServeTypeNotNull.serveType}",
+            groups = {AddCheck.class, EditCheck.class, TreeCheck.class})
     private String serveType;
 
     private String icon;

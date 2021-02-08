@@ -2,6 +2,7 @@ package com.oneape.octopus.admin.service.serve.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
+import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.commons.algorithm.Digraph;
 import com.oneape.octopus.commons.algorithm.DirectedCycle;
 import com.oneape.octopus.commons.cause.BizException;
@@ -59,7 +60,7 @@ public class ServeInfoServiceImpl implements ServeInfoService {
     @Transactional
     @Override
     public int save(ServeInfoDO model) {
-        throw new RuntimeException("unrealized");
+        throw new RuntimeException(I18nMsgConfig.getMessage("global.unrealized"));
     }
 
     /**
@@ -74,29 +75,37 @@ public class ServeInfoServiceImpl implements ServeInfoService {
     @Transactional
     @Override
     public int save(ServeInfoDO model, Long groupId) {
-        Preconditions.checkNotNull(model, "The serve object is null.");
-        Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "The serve name is empty.");
-        ServeGroupDO sgDo = Preconditions.checkNotNull(serveGroupMapper.findById(groupId), "The group id is invalid.");
-        Preconditions.checkArgument(StringUtils.equals(model.getServeType(), sgDo.getServeType()), "The serve type is equal.");
+        Preconditions.checkNotNull(model, I18nMsgConfig.getMessage("serve.info.null"));
+        Preconditions.checkArgument(
+                StringUtils.isNotBlank(model.getName()),
+                I18nMsgConfig.getMessage("serve.name.empty"));
+        ServeGroupDO sgDo = Preconditions.checkNotNull(
+                serveGroupMapper.findById(groupId),
+                I18nMsgConfig.getMessage("serve.group.id.invalid"));
+        Preconditions.checkArgument(
+                StringUtils.equals(model.getServeType(), sgDo.getServeType()),
+                I18nMsgConfig.getMessage("serve.type.notEqual"));
 
         // whether is updating.
         boolean isUpdate = false;
         if (model.getId() != null && model.getId() > 0) {
             boolean valid = checkServeId(model.getId());
             if (!valid) {
-                throw new BizException("The serve id is invalid.");
+                throw new BizException(I18nMsgConfig.getMessage("serve.id.invalid"));
             }
             isUpdate = true;
         }
 
         RLock lock = redissonClient.getLock("SERVE_SAVE_" + model.getName() + (isUpdate ? model.getId() : "1"));
         if (lock.isLocked()) {
-            throw new BizException("Get Lock fail.");
+            throw new BizException(I18nMsgConfig.getMessage("global.get.lock.fail"));
         }
         try {
             lock.lock(2, TimeUnit.MINUTES);
 
-            Preconditions.checkArgument(serveInfoMapper.hasSameName(model.getName(), isUpdate ? model.getId() : null) <= 0, "Name already exists.");
+            Preconditions.checkArgument(
+                    serveInfoMapper.hasSameName(model.getName(), isUpdate ? model.getId() : null) <= 0,
+                    I18nMsgConfig.getMessage("serve.name.exist"));
             // Checks if the configuration is correct
             if (StringUtils.isNotBlank(model.getConfigText())
                     && !StringUtils.equals(model.getConfigText(), "{}")) {
@@ -135,15 +144,16 @@ public class ServeInfoServiceImpl implements ServeInfoService {
      */
     @Override
     public int copyById(Long serveId, String verCode) {
-        Preconditions.checkNotNull(serveId, "The serve primary key Id is empty.");
+        Preconditions.checkNotNull(serveId, I18nMsgConfig.getMessage("serve.id.null"));
         ServeInfoDO siDo;
         if (StringUtils.isNotBlank(verCode)) {
-            ServeVersionDO svDo = Preconditions.checkNotNull(serveVersionMapper.findBy(serveId, verCode),
-                    "Specifies that the version information is empty.");
+            ServeVersionDO svDo = Preconditions.checkNotNull(
+                    serveVersionMapper.findBy(serveId, verCode),
+                    I18nMsgConfig.getMessage("serve.version.empty"));
             siDo = JSON.parseObject(svDo.getServeConfig(), ServeInfoDO.class);
 
         } else {
-            siDo = Preconditions.checkNotNull(findById(serveId), "The serve id is invalid.");
+            siDo = Preconditions.checkNotNull(findById(serveId), I18nMsgConfig.getMessage("serve.id.invalid"));
         }
 
         siDo.setCode(CodeBuilderUtils.randomStr(CODE_LEN));
@@ -168,11 +178,11 @@ public class ServeInfoServiceImpl implements ServeInfoService {
     @Override
     @Transactional
     public int deleteById(Long id) {
-        Preconditions.checkNotNull(id, "The serve primary key Id is empty.");
-        ServeInfoDO siDo = Preconditions.checkNotNull(findById(id), "The serve id is invalid.");
+        Preconditions.checkNotNull(id, I18nMsgConfig.getMessage("serve.id.null"));
+        ServeInfoDO siDo = Preconditions.checkNotNull(findById(id), I18nMsgConfig.getMessage("serve.id.invalid"));
         ServeStatusType sst = ServeStatusType.getByCode(siDo.getStatus());
         if (sst != null && sst != ServeStatusType.ARCHIVE) {
-            throw new BizException("The serve deletion is not allowed.");
+            throw new BizException(I18nMsgConfig.getMessage("serve.del.restrict"));
         }
 
         return serveInfoMapper.delete(new ServeInfoDO(id));
@@ -186,7 +196,7 @@ public class ServeInfoServiceImpl implements ServeInfoService {
      */
     @Override
     public ServeInfoDO findById(Long id) {
-        Preconditions.checkArgument(id != null && id > 0, "The serve id is invalid.");
+        Preconditions.checkArgument(id != null && id > 0, I18nMsgConfig.getMessage("serve.id.invalid"));
         return serveInfoMapper.findById(id);
     }
 
@@ -198,7 +208,7 @@ public class ServeInfoServiceImpl implements ServeInfoService {
      */
     @Override
     public List<ServeInfoDO> find(ServeInfoDO model) {
-        Preconditions.checkNotNull(model, "The serve object is null.");
+        Preconditions.checkNotNull(model, I18nMsgConfig.getMessage("serve.info.null"));
         return serveInfoMapper.list(model);
     }
 
@@ -222,7 +232,9 @@ public class ServeInfoServiceImpl implements ServeInfoService {
      */
     @Override
     public int publishServe(Long serveId) {
-        ServeInfoDO siDo = Preconditions.checkNotNull(serveInfoMapper.findById(serveId), "The serve id is invalid.");
+        ServeInfoDO siDo = Preconditions.checkNotNull(
+                serveInfoMapper.findById(serveId),
+                I18nMsgConfig.getMessage("serve.id.invalid"));
 
         return 0;
     }
@@ -237,8 +249,9 @@ public class ServeInfoServiceImpl implements ServeInfoService {
     @Transactional
     @Override
     public int rollbackServe(Long serveId, String verCode) {
-        ServeVersionDO svDo = Preconditions.checkNotNull(serveVersionMapper.findBy(serveId, verCode),
-                "Specifies that the version information is empty.");
+        ServeVersionDO svDo = Preconditions.checkNotNull(
+                serveVersionMapper.findBy(serveId, verCode),
+                I18nMsgConfig.getMessage("serve.version.empty"));
         ServeInfoDO siDo = JSON.parseObject(svDo.getServeConfig(), ServeInfoDO.class);
         siDo.setStatus(ServeStatusType.PUBLISH.name());
         int status = serveInfoMapper.update(siDo);
@@ -263,9 +276,15 @@ public class ServeInfoServiceImpl implements ServeInfoService {
     @Transactional
     @Override
     public int moveServe(Long serveId, Long groupId) {
-        ServeInfoDO siDo = Preconditions.checkNotNull(serveInfoMapper.findById(serveId), "The serve id is invalid.");
-        ServeGroupDO sgDo = Preconditions.checkNotNull(serveGroupMapper.findById(groupId), "The group id is invalid.");
-        Preconditions.checkArgument(StringUtils.equals(siDo.getServeType(), sgDo.getServeType()), "The serve type is equal.");
+        ServeInfoDO siDo = Preconditions.checkNotNull(
+                serveInfoMapper.findById(serveId),
+                I18nMsgConfig.getMessage("serve.id.invalid"));
+        ServeGroupDO sgDo = Preconditions.checkNotNull(
+                serveGroupMapper.findById(groupId),
+                I18nMsgConfig.getMessage("serve.group.id.invalid"));
+        Preconditions.checkArgument(
+                StringUtils.equals(siDo.getServeType(), sgDo.getServeType()),
+                I18nMsgConfig.getMessage("serve.type.notEqual"));
 
         return serveRlGroupMapper.updateGroupIdByServeId(serveId, groupId);
     }
@@ -309,12 +328,18 @@ public class ServeInfoServiceImpl implements ServeInfoService {
         // Whether an argument with the same name exists.
         List<String> names = new ArrayList<>();
         for (ServeParamDTO p : params) {
-            Preconditions.checkArgument(StringUtils.isNotBlank(p.getName()), "The serve param name is empty.");
-            Preconditions.checkArgument(StringUtils.isNotBlank(p.getDataType()), "The serve param dataType is empty.");
-            Preconditions.checkArgument(p.getType() != null, "The serve param type is empty.");
+            Preconditions.checkArgument(
+                    StringUtils.isNotBlank(p.getName()),
+                    I18nMsgConfig.getMessage("serve.param.name.empty"));
+            Preconditions.checkArgument(
+                    StringUtils.isNotBlank(p.getDataType()),
+                    I18nMsgConfig.getMessage("serve.param.dataType.empty"));
+            Preconditions.checkArgument(
+                    p.getType() != null,
+                    I18nMsgConfig.getMessage("serve.param.type.empty"));
 
             if (names.contains(p.getName())) {
-                throw new BizException("There are multiple parameters named: " + p.getName());
+                throw new BizException(I18nMsgConfig.getMessage("serve.param.name.multi", p.getName()));
             } else {
                 names.add(p.getName());
             }
@@ -329,7 +354,7 @@ public class ServeInfoServiceImpl implements ServeInfoService {
         DirectedCycle<String> directedCycle = new DirectedCycle<>(digraph);
         if (directedCycle.hasCycle()) {
             String s = OptStringUtils.iterator2String(directedCycle.cycle());
-            throw new BizException("Parameters are interdependent: " + s);
+            throw new BizException(I18nMsgConfig.getMessage("serve.param.interdependent", s));
         }
     }
 

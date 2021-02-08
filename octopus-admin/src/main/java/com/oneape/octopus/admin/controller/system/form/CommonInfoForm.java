@@ -15,13 +15,13 @@ public class CommonInfoForm extends BaseForm implements Serializable {
     private Long   id;
     private Long   parentId;
     // Basic information classification
-    @NotBlank(message = "The common information classify is empty.", groups = {InfoCheck.class})
+    @NotBlank(message = "{CommonInfoForm.NotBlank.classify}", groups = {InfoCheck.class})
     private String classify;
     // The common information key.
-    @NotBlank(message = "The common information key is empty.", groups = {InfoCheck.class})
+    @NotBlank(message = "{CommonInfoForm.NotBlank.key}", groups = {InfoCheck.class})
     private String key;
     // The common information value.
-    @NotBlank(message = "The common information value is empty.", groups = {InfoCheck.class})
+    @NotBlank(message = "{CommonInfoForm.NotBlank.value}", groups = {InfoCheck.class})
     private String value;
 
     public interface InfoCheck {

@@ -19,17 +19,17 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ServeForm extends BaseForm implements Serializable {
-    @NotNull(message = "The serve Id is empty.", groups = {EditCheck.class, KeyCheck.class})
+    @NotNull(message = "{ServeForm.NotNull.id}", groups = {EditCheck.class, KeyCheck.class})
     private Long    id;
-    @NotNull(message = "The group Id is empty.", groups = {AddCheck.class, EditCheck.class})
+    @NotNull(message = "{ServeForm.NotNull.groupId}", groups = {AddCheck.class, EditCheck.class})
     private Long    groupId;
-    @NotBlank(message = "The serve name is empty.", groups = {AddCheck.class, EditCheck.class, CopyCheck.class})
+    @NotBlank(message = "{ServeForm.NotBlank.name}", groups = {AddCheck.class, EditCheck.class, CopyCheck.class})
     private String  name;
-    @NotBlank(message = "The serve code is empty.", groups = {AddCheck.class, EditCheck.class, CopyCheck.class})
+    @NotBlank(message = "{ServeForm.NotBlank.code}", groups = {AddCheck.class, EditCheck.class, CopyCheck.class})
     private String  code;
-    @ServeTypeNotNull(message = "Invalid serveType value.", groups = {AddCheck.class, EditCheck.class})
+    @ServeTypeNotNull(message = "{ServeForm.ServeTypeNotNull.serveType}", groups = {AddCheck.class, EditCheck.class})
     private String  serveType;
-    @VisualTypeNotNull(message = "Invalid visualType value.", groups = {AddCheck.class, EditCheck.class})
+    @VisualTypeNotNull(message = "{ServeForm.VisualTypeNotNull.visualType}", groups = {AddCheck.class, EditCheck.class})
     private Integer visualType;
 
     private Long   sortId;

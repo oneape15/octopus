@@ -15,13 +15,13 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class OrgForm extends BaseForm implements Serializable {
-    @NotNull(message = "The primary key is null.", groups = {KeyCheck.class})
+    @NotNull(message = "{OrgForm.NotNull.id}", groups = {KeyCheck.class})
     private Long   id;
-    @NotNull(message = "The parent node is is empty.", groups = {SaveCheck.class})
+    @NotNull(message = "{OrgForm.NotNull.parentId}", groups = {SaveCheck.class})
     private Long   parentId;
-    @NotBlank(message = "The org code is empty.", groups = {SaveCheck.class})
+    @NotBlank(message = "{OrgForm.NotBlank.code}", groups = {SaveCheck.class})
     private String code;
-    @NotBlank(message = "The org name is empty.", groups = {SaveCheck.class})
+    @NotBlank(message = "{OrgForm.NotBlank.name}", groups = {SaveCheck.class})
     private String name;
     // The role description.
     private String comment;

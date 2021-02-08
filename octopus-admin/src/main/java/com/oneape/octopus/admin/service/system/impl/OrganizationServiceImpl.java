@@ -1,6 +1,7 @@
 package com.oneape.octopus.admin.service.system.impl;
 
 import com.google.common.base.Preconditions;
+import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.enums.FixServeGroupType;
 import com.oneape.octopus.commons.value.TypeValueUtils;
@@ -44,26 +45,28 @@ public class OrganizationServiceImpl extends DefaultTreeService implements Organ
      */
     @Override
     public int save(OrganizationDO model) {
-        Preconditions.checkNotNull(model, "The org information is null.");
-        Preconditions.checkArgument(StringUtils.isNoneBlank(model.getName(), model.getCode()), "The org name or code is empty.");
+        Preconditions.checkNotNull(model, I18nMsgConfig.getMessage("org.info.null"));
+        Preconditions.checkArgument(
+                StringUtils.isNoneBlank(model.getName(), model.getCode()),
+                I18nMsgConfig.getMessage("org.nameOrCode.empty"));
 
         // set the default parent node id.
         if (model.getParentId() == null || model.getParentId() <= 0) {
             model.setParentId(0L);
         } else {
-            Preconditions.checkNotNull(findById(model.getParentId()), "The parent node is not exist.");
+            Preconditions.checkNotNull(findById(model.getParentId()), I18nMsgConfig.getMessage("org.parent.invalid"));
         }
 
         boolean isEdit = false;
         if (model.getId() != null) {
-            Preconditions.checkNotNull(findById(model.getId()), "The org id is not exists.");
+            Preconditions.checkNotNull(findById(model.getId()), I18nMsgConfig.getMessage("org.id.invalid"));
             isEdit = true;
         }
 
         // Determine if the code or name is repeated.
         int count = orgMapper.getSameNameOrCodeRole(model.getName(), model.getCode(), model.getId());
         if (count > 0) {
-            throw new BizException("The name or code for the org already exists.");
+            throw new BizException(I18nMsgConfig.getMessage("org.nameOrCode.exist"));
         }
 
         if (isEdit) {
@@ -80,7 +83,8 @@ public class OrganizationServiceImpl extends DefaultTreeService implements Organ
      */
     @Override
     public int deleteById(Long id) {
-        Preconditions.checkArgument(userRlOrgMapper.getUseSize(id) <= 0, "here are still users under the organization, can not be deleted");
+        Preconditions.checkArgument(userRlOrgMapper.getUseSize(id) <= 0,
+                I18nMsgConfig.getMessage("org.del.restrict"));
         return orgMapper.deleteById(new OrganizationDO(id));
     }
 
@@ -182,7 +186,7 @@ public class OrganizationServiceImpl extends DefaultTreeService implements Organ
      */
     @Override
     public List<UserDO> getUserListByOrgId(Long orgId) {
-        Preconditions.checkNotNull(orgMapper.findById(orgId), "The organization ID does not exist.");
+        Preconditions.checkNotNull(orgMapper.findById(orgId), I18nMsgConfig.getMessage("org.id.invalid"));
         return userRlOrgMapper.getUserByOrgId(orgId);
     }
 }

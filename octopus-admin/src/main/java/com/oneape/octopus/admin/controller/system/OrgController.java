@@ -1,5 +1,6 @@
 package com.oneape.octopus.admin.controller.system;
 
+import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.vo.TreeNodeVO;
 import com.oneape.octopus.admin.controller.system.form.OrgForm;
@@ -34,9 +35,9 @@ public class OrgController {
     public ApiResult<String> doSaveOrg(@RequestBody @Validated(value = OrgForm.SaveCheck.class) OrgForm form) {
         int status = orgService.save(form.toDO());
         if (status > 0) {
-            return ApiResult.ofData("Save Org successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("org.save.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Save Org fail.");
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("org.save.fail"));
     }
 
     /**
@@ -46,9 +47,9 @@ public class OrgController {
     public ApiResult<String> doDelOrg(@PathVariable(name = "orgId") Long orgId) {
         int status = orgService.deleteById(orgId);
         if (status > 0) {
-            return ApiResult.ofData("Deleted org successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("org.del.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Deleted org fail.");
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("org.del.fail"));
     }
 
     /**

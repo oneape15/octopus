@@ -1,6 +1,7 @@
 package com.oneape.octopus.admin.service.serve.impl;
 
 import com.google.common.base.Preconditions;
+import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.cause.UnauthorizedException;
 import com.oneape.octopus.commons.enums.FixServeGroupType;
@@ -49,18 +50,22 @@ public class ServeGroupServiceImpl extends DefaultTreeService implements ServeGr
      */
     @Override
     public int save(ServeGroupDO model) {
-        Preconditions.checkNotNull(model, "The group object is null.");
-        Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "The group name is empty.");
-        Preconditions.checkArgument(StringUtils.isNotBlank(model.getServeType()), "The group serve type is invalid.");
+        Preconditions.checkNotNull(model, I18nMsgConfig.getMessage("serve.group.null"));
+        Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()),
+                I18nMsgConfig.getMessage("serve.group.name.empty"));
+        Preconditions.checkArgument(StringUtils.isNotBlank(model.getServeType()),
+                I18nMsgConfig.getMessage("serve.group.type.invalid"));
 
         // whether is updating.
         boolean isUpdate = false;
         if (model.getId() != null && model.getId() > 0) {
-            Preconditions.checkNotNull(findById(model.getId()), "The group id is invalid.");
+            Preconditions.checkNotNull(findById(model.getId()),
+                    I18nMsgConfig.getMessage("serve.group.id.invalid"));
             isUpdate = true;
         }
 
-        Preconditions.checkArgument(!hasSameName(model.getName(), isUpdate ? model.getId() : null), "The group name has exist.");
+        Preconditions.checkArgument(!hasSameName(model.getName(), isUpdate ? model.getId() : null),
+                I18nMsgConfig.getMessage("serve.group.name.exist"));
 
         if (isUpdate) {
             // not allow edit the parent id in here.
@@ -72,8 +77,10 @@ public class ServeGroupServiceImpl extends DefaultTreeService implements ServeGr
             // check the parent id.
             Long parentId = TypeValueUtils.getOrDefault(model.getParentId(), FixServeGroupType.ROOT.getId());
             if (!FixServeGroupType.ROOT.getId().equals(parentId)) {
-                Preconditions.checkNotNull(serveGroupMapper.findById(parentId), "The parent group id is invalid.");
-                Preconditions.checkArgument(calcTreeDepth(parentId) > GROUP_MAX_DEPTH, "The group tree Max depth is " + GROUP_MAX_DEPTH);
+                Preconditions.checkNotNull(serveGroupMapper.findById(parentId),
+                        I18nMsgConfig.getMessage("serve.group.parentId.invalid"));
+                Preconditions.checkArgument(calcTreeDepth(parentId) <= GROUP_MAX_DEPTH,
+                        I18nMsgConfig.getMessage("serve.group.treeMaxDepth", GROUP_MAX_DEPTH));
             }
 
             return serveGroupMapper.insert(model);
@@ -90,7 +97,7 @@ public class ServeGroupServiceImpl extends DefaultTreeService implements ServeGr
     public int deleteById(Long id) {
         if (id == null || id < 0) return 1;
         Preconditions.checkArgument(serveRlGroupMapper.countGroupLinkServeSize(id) <= 0,
-                "The group mounted under the serve does not allow deletion.");
+                I18nMsgConfig.getMessage("serve.group.del.restrict"));
         return serveGroupMapper.delete(new ServeGroupDO(id));
     }
 
@@ -126,15 +133,19 @@ public class ServeGroupServiceImpl extends DefaultTreeService implements ServeGr
     @Transactional
     @Override
     public int moveGroup(Long groupId, Long newParentId) {
-        Preconditions.checkNotNull(serveGroupMapper.findById(groupId), "The group Id is Invalid.");
+        Preconditions.checkNotNull(
+                serveGroupMapper.findById(groupId),
+                I18nMsgConfig.getMessage("serve.group.id.invalid"));
         if (!FixServeGroupType.ROOT.getId().equals(newParentId)) {
-            Preconditions.checkNotNull(serveGroupMapper.findById(newParentId), "The parent group Id is Invalid.");
+            Preconditions.checkNotNull(
+                    serveGroupMapper.findById(newParentId),
+                    I18nMsgConfig.getMessage("serve.group.parentId.invalid"));
         }
 
         Integer parentDepth = calcTreeDepth(newParentId);
         Integer selfDepth = calcChildrenTreeMaxDepth(groupId);
         if (parentDepth + selfDepth > GROUP_MAX_DEPTH) {
-            throw new BizException("The group tree Max depth is " + GROUP_MAX_DEPTH);
+            throw new BizException(I18nMsgConfig.getMessage("serve.group.treeMaxDepth", GROUP_MAX_DEPTH));
         }
 
         return serveGroupMapper.changeParentId(groupId, newParentId);
@@ -205,7 +216,7 @@ public class ServeGroupServiceImpl extends DefaultTreeService implements ServeGr
      */
     @Override
     public List<TreeNodeVO> genServeGroupTree(ServeType serveType, boolean addNodeSize, boolean addRootNode, boolean addArchiveNode, boolean addPersonalNode) {
-        Preconditions.checkNotNull(serveType, "The serveType is invalid.");
+        Preconditions.checkNotNull(serveType, I18nMsgConfig.getMessage("serve.type.invalid"));
         Long userId = SessionThreadLocal.getUserId();
         if (userId == null) {
             throw new UnauthorizedException();

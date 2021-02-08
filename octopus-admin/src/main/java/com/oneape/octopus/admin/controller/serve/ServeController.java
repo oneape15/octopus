@@ -2,6 +2,7 @@ package com.oneape.octopus.admin.controller.serve;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.enums.ReportParamType;
 import com.oneape.octopus.commons.enums.ServeType;
@@ -40,9 +41,9 @@ public class ServeController {
         ServeInfoDO infoDO = form.toDO();
         int status = serveInfoService.save(infoDO, form.getGroupId());
         if (status > 0) {
-            return ApiResult.ofData("Saved serve information successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("serve.save.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Saved serve information fail.");
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("serve.save.fail"));
     }
 
     /**
@@ -52,9 +53,9 @@ public class ServeController {
     public ApiResult<String> doDelServe(@PathVariable(name = "serverId") Long serveId) {
         int status = serveInfoService.deleteById(serveId);
         if (status > 0) {
-            return ApiResult.ofData("Deleted serve information successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("serve.del.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Deleted serve information fail.");
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("serve.del.fail"));
     }
 
     /**
@@ -65,9 +66,9 @@ public class ServeController {
                                          @RequestBody @Validated(value = ServeForm.CopyCheck.class) ServeForm form) {
         int status = serveInfoService.copyById(serveId, null);
         if (status > 0) {
-            return ApiResult.ofData("Deleted serve information successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("serve.copy.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Deleted serve information fail.");
+        return ApiResult.ofError(StateCode.BizError,I18nMsgConfig.getMessage("serve.copy.fail"));
     }
 
     /**
@@ -79,9 +80,9 @@ public class ServeController {
                                                       @RequestBody @Validated(value = ServeForm.CopyCheck.class) ServeForm form) {
         int status = serveInfoService.copyById(serveId, versionCode);
         if (status > 0) {
-            return ApiResult.ofData("Deleted serve information successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("serve.copy.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Deleted serve information fail.");
+        return ApiResult.ofError(StateCode.BizError,I18nMsgConfig.getMessage("serve.copy.fail"));
     }
 
     /**
@@ -103,9 +104,9 @@ public class ServeController {
     public ApiResult publishServe(@PathVariable(name = "serveId") Long serveId) {
         int status = serveInfoService.publishServe(serveId);
         if (status > 0) {
-            return ApiResult.ofData("Publish serve successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("serve.publish.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Publish serve fail.");
+        return ApiResult.ofError(StateCode.BizError,I18nMsgConfig.getMessage("serve.publish.fail"));
     }
 
     /**
@@ -118,9 +119,9 @@ public class ServeController {
     public ApiResult rollbackServe(@PathVariable(name = "serveId") Long serveId, @PathVariable(name = "verCode") String verCode) {
         int status = serveInfoService.rollbackServe(serveId, verCode);
         if (status > 0) {
-            return ApiResult.ofData("Rolls back serve successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("serve.rollback.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Rolls back serve fail.");
+        return ApiResult.ofError(StateCode.BizError,I18nMsgConfig.getMessage("serve.rollback.fail"));
     }
 
     /**
@@ -133,9 +134,9 @@ public class ServeController {
     public ApiResult moveServe(@PathVariable(name = "serveId") Long serveId, @PathVariable(name = "groupId") Long groupId) {
         int status = serveInfoService.moveServe(serveId, groupId);
         if (status > 0) {
-            return ApiResult.ofData("Move successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("serve.move.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Move fail.");
+        return ApiResult.ofError(StateCode.BizError,I18nMsgConfig.getMessage("serve.move.fail"));
     }
 
     /**
@@ -187,9 +188,9 @@ public class ServeController {
     public ApiResult saveGroup(@RequestBody @Validated(value = ServeGroupForm.AddCheck.class) ServeGroupForm from) {
         int status = serveGroupService.save(from.toDO());
         if (status > 0) {
-            return ApiResult.ofData("Saved serve group information successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("serve.group.save.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Saved serve group information fail.");
+        return ApiResult.ofError(StateCode.BizError,I18nMsgConfig.getMessage("serve.group.save.fail"));
     }
 
     /**
@@ -202,9 +203,9 @@ public class ServeController {
     public ApiResult moveGroup(@PathVariable(name = "groupId") Long groupId, @PathVariable(name = "newParentId") Long newParentId) {
         int status = serveGroupService.moveGroup(groupId, newParentId);
         if (status > 0) {
-            return ApiResult.ofData("Move serve group successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("serve.group.move.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Move serve group fail.");
+        return ApiResult.ofError(StateCode.BizError,I18nMsgConfig.getMessage("serve.group.move.fail"));
     }
 
     /**
@@ -214,9 +215,9 @@ public class ServeController {
     public ApiResult<String> doDelServeGroup(@PathVariable(name = "groupId") Long groupId) {
         int status = serveGroupService.deleteById(groupId);
         if (status > 0) {
-            return ApiResult.ofData("Deleted serve group information successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("serve.group.del.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Deleted serve group information fail.");
+        return ApiResult.ofError(StateCode.BizError,I18nMsgConfig.getMessage("serve.group.del.fail"));
     }
 
     /**

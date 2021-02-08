@@ -57,19 +57,19 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public int save(RoleDO model) {
-        Preconditions.checkNotNull(model, "The role information is null.");
-        Preconditions.checkArgument(StringUtils.isNoneBlank(model.getName(), model.getCode()), "The role name or code is empty.");
+        Preconditions.checkNotNull(model, I18nMsgConfig.getMessage("role.info.null"));
+        Preconditions.checkArgument(StringUtils.isNoneBlank(model.getName(), model.getCode()), I18nMsgConfig.getMessage("role.nameOrCode.empty"));
 
         boolean isEdit = false;
         if (model.getId() != null) {
-            Preconditions.checkNotNull(findById(model.getId()), "The role id is not exists.");
+            Preconditions.checkNotNull(findById(model.getId()), I18nMsgConfig.getMessage("role.id.invalid"));
             isEdit = true;
         }
 
         // Determine if the code or name is repeated.
         int count = roleMapper.getSameNameOrCodeRole(model.getName(), model.getCode(), model.getId());
         if (count > 0) {
-            throw new BizException("The name or code for the role already exists.");
+            throw new BizException(I18nMsgConfig.getMessage("role.nameOrCode.exist"));
         }
 
         if (isEdit) {
@@ -86,7 +86,7 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public RoleDO findById(Long id) {
-        Preconditions.checkNotNull(id, "The role id is null.");
+        Preconditions.checkNotNull(id, I18nMsgConfig.getMessage("role.id.invalid"));
         return roleMapper.findById(id);
     }
 
@@ -98,11 +98,11 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public int deleteById(Long id) {
-        Preconditions.checkNotNull(id, "The role primary key is empty.");
+        Preconditions.checkNotNull(id, I18nMsgConfig.getMessage("role.id.invalid"));
 
         int size = userRlRoleMapper.getUseSize(id);
         if (size > 0) {
-            throw new BizException("The current role is still in use and cannot be deleted.");
+            throw new BizException(I18nMsgConfig.getMessage("role.delete.restrict"));
         }
         return roleMapper.delete(new RoleDO(id));
     }
@@ -185,12 +185,19 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public int saveRoleRlSchema(RoleRlSchemaDO rrsdo) {
-        Preconditions.checkNotNull(rrsdo, "The object is null.");
-        Preconditions.checkArgument(StringUtils.isNotBlank(rrsdo.getTableName()), "The schema table is empty.");
-        Preconditions.checkArgument(rrsdo.getExpireTime() != null && rrsdo.getExpireTime() > System.currentTimeMillis(),
-                "Invalid expiration time.");
-        Preconditions.checkNotNull(roleMapper.findById(rrsdo.getId()), "The role is not exist.");
-        Preconditions.checkArgument(datasourceService.isExistDsId(rrsdo.getDatasourceId()), "The datasource is not exist.");
+        Preconditions.checkNotNull(rrsdo, I18nMsgConfig.getMessage("global.object.null"));
+        Preconditions.checkArgument(
+                StringUtils.isNotBlank(rrsdo.getTableName()),
+                I18nMsgConfig.getMessage("global.schemaTable.empty"));
+        Preconditions.checkArgument(
+                rrsdo.getExpireTime() != null && rrsdo.getExpireTime() > System.currentTimeMillis(),
+                I18nMsgConfig.getMessage("global.expireTime.invalid"));
+        Preconditions.checkNotNull(
+                roleMapper.findById(rrsdo.getId()),
+                I18nMsgConfig.getMessage("role.id.invalid"));
+        Preconditions.checkArgument(
+                datasourceService.isExistDsId(rrsdo.getDatasourceId()),
+                I18nMsgConfig.getMessage("datasource.id.invalid"));
 
         int status;
         if (rrsdo.getId() != null) {
@@ -211,7 +218,7 @@ public class RoleServiceImpl implements RoleService {
     @Transactional
     @Override
     public int batchSaveRoleRlSchema(Long roleId, List<RoleRlSchemaDO> list) {
-        Preconditions.checkNotNull(roleMapper.findById(roleId), "The role is not exist.");
+        Preconditions.checkNotNull(roleMapper.findById(roleId), I18nMsgConfig.getMessage("role.id.invalid"));
         if (CollectionUtils.isEmpty(list)) {
             return roleRlSchemaMapper.deleteByRoleId(roleId);
         }
@@ -227,10 +234,15 @@ public class RoleServiceImpl implements RoleService {
         List<String> existList = new ArrayList<>();
 
         for (RoleRlSchemaDO rrsdo : list) {
-            Preconditions.checkArgument(rrsdo.getDatasourceId() != null && rrsdo.getDatasourceId() > 0, "The datasource is invalid.");
-            Preconditions.checkArgument(StringUtils.isNotBlank(rrsdo.getTableName()), "The schema table is empty.");
-            Preconditions.checkArgument(rrsdo.getExpireTime() != null && rrsdo.getExpireTime() > System.currentTimeMillis(),
-                    "Invalid expiration time.");
+            Preconditions.checkArgument(
+                    rrsdo.getDatasourceId() != null && rrsdo.getDatasourceId() > 0,
+                    I18nMsgConfig.getMessage("datasource.id.invalid"));
+            Preconditions.checkArgument(
+                    StringUtils.isNotBlank(rrsdo.getTableName()),
+                    I18nMsgConfig.getMessage("global.schemaTable.empty"));
+            Preconditions.checkArgument(
+                    rrsdo.getExpireTime() != null && rrsdo.getExpireTime() > System.currentTimeMillis(),
+                    I18nMsgConfig.getMessage("global.expireTime.invalid"));
 
             rrsdo.setRoleId(roleId);
             String key = rrsdo.getDatasourceId() + "_" + rrsdo.getTableName();

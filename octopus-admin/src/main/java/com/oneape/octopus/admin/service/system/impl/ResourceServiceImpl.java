@@ -1,6 +1,7 @@
 package com.oneape.octopus.admin.service.system.impl;
 
 import com.google.common.base.Preconditions;
+import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.commons.value.MaskUtils;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.constant.OctopusConstant;
@@ -40,26 +41,29 @@ public class ResourceServiceImpl implements ResourceService {
     @Transactional
     @Override
     public int save(ResourceDO model) {
-        Preconditions.checkNotNull(model, "The resource  is empty.");
-        Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "The resource name is empty.");
+        Preconditions.checkNotNull(model, I18nMsgConfig.getMessage("resource.info.null"));
+        Preconditions.checkArgument(
+                StringUtils.isNotBlank(model.getName()),
+                I18nMsgConfig.getMessage("resource.name.empty"));
         if (model.getId() != null) {
-            Preconditions.checkNotNull(resourceMapper.findById(model.getId()), "The resource is not exist.");
+            Preconditions.checkNotNull(
+                    resourceMapper.findById(model.getId()),
+                    I18nMsgConfig.getMessage("resource.id.invalid"));
         }
 
         Long parentId = model.getParentId();
         if (parentId == null) {
             parentId = OctopusConstant.DEFAULT_VALUE;
         }
+
         if (parentId > OctopusConstant.DEFAULT_VALUE) {
-            ResourceDO resource = resourceMapper.findById(model.getParentId());
-            if (resource == null) {
-                throw new BizException("Superior resources do not exist.");
-            }
+            Preconditions.checkNotNull(
+                    resourceMapper.findById(model.getParentId()),
+                    I18nMsgConfig.getMessage("resource.parent.null"));
 
             Preconditions.checkArgument(
                     resourceMapper.getSameBy(parentId, model.getName(), model.getId()) == 0,
-                    "A resource with the same name exists."
-            );
+                    I18nMsgConfig.getMessage("resource.name.exist"));
         }
 
         if (model.getId() != null) {
@@ -98,7 +102,7 @@ public class ResourceServiceImpl implements ResourceService {
      */
     @Override
     public int deleteById(Long id) {
-        Preconditions.checkNotNull(id, "The primary Key is empty.");
+        Preconditions.checkNotNull(id, I18nMsgConfig.getMessage("resource.id.invalid"));
 
         int status = resourceMapper.delete(new ResourceDO(id));
         if (status > OctopusConstant.FAIL) {

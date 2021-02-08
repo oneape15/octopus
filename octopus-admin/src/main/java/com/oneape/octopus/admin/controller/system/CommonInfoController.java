@@ -2,6 +2,7 @@ package com.oneape.octopus.admin.controller.system;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.admin.controller.system.form.CommonInfoForm;
 import com.oneape.octopus.domain.system.CommonInfoDO;
@@ -23,18 +24,18 @@ public class CommonInfoController {
     public ApiResult<String> doSaveCommonInfo(@RequestBody @Validated(value = CommonInfoForm.InfoCheck.class) CommonInfoForm form) {
         int status = commonInfoService.save(form.toDO());
         if (status > 0) {
-            return ApiResult.ofData("Save base information successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("comm.save.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Save base information fail.");
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("comm.save.fail"));
     }
 
     @GetMapping("/del/{id}")
     public ApiResult<String> doDelCommonInfo(@PathVariable(name = "id") Long id) {
         int status = commonInfoService.deleteById(id);
         if (status > 0) {
-            return ApiResult.ofData("Deleted base information successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("comm.del.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Deleted base information fail.");
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("comm.del.fail"));
     }
 
     @PostMapping("/list")

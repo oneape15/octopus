@@ -13,16 +13,16 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class DatasourceForm extends BaseForm implements Serializable {
-    @NotNull(message = "The data source primary key id is empty.", groups = {EditCheck.class, KeyCheck.class})
+    @NotNull(message = "{DatasourceForm.NotNull.id}", groups = {EditCheck.class, KeyCheck.class})
     private Long    id;
-    @NotBlank(message = "The data source name is empty.", groups = {AddCheck.class, EditCheck.class})
+    @NotBlank(message = "{DatasourceForm.NotBlank.name}", groups = {AddCheck.class, EditCheck.class})
     private String  name;
-    @NotBlank(message = "The data source type is empty.", groups = {AddCheck.class, EditCheck.class})
+    @NotBlank(message = "{DatasourceForm.NotBlank.type}", groups = {AddCheck.class, EditCheck.class})
     private String  type;
     private Integer status;
-    @NotBlank(message = "The data source URL is empty.", groups = {AddCheck.class, EditCheck.class})
+    @NotBlank(message = "{DatasourceForm.NotBlank.jdbcUrl}", groups = {AddCheck.class, EditCheck.class})
     private String  jdbcUrl;
-    @NotBlank(message = "The data source login name is empty.", groups = {AddCheck.class, EditCheck.class})
+    @NotBlank(message = "{DatasourceForm.NotBlank.username}", groups = {AddCheck.class, EditCheck.class})
     private String  username;
     private String  password;
     private Integer sync;

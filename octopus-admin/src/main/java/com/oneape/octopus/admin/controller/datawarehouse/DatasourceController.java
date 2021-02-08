@@ -3,6 +3,7 @@ package com.oneape.octopus.admin.controller.datawarehouse;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.base.Preconditions;
+import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.admin.controller.datawarehouse.form.DatasourceForm;
 import com.oneape.octopus.commons.dto.DataType;
@@ -42,9 +43,9 @@ public class DatasourceController {
         if (ret.isSuccess()) {
             int status = datasourceService.save(form.toDO());
             if (status > 0) {
-                return ApiResult.ofData("Data source save successfully.");
+                return ApiResult.ofData(I18nMsgConfig.getMessage("ds.save.success"));
             }
-            return ApiResult.ofError(StateCode.BizError, "Data source save fail.");
+            return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("ds.save.fail"));
         }
         return ret;
     }
@@ -53,29 +54,29 @@ public class DatasourceController {
     public ApiResult<String> doDelDs(@PathVariable(name = "id") Long id) {
         int status = datasourceService.deleteById(id);
         if (status > 0) {
-            return ApiResult.ofData("Data source deleted successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("ds.del.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Data source deleted fail.");
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("ds.del.fail"));
     }
 
     @PostMapping("/changeStatus")
     public ApiResult<String> doChangeStatus(@RequestBody @Validated(value = DatasourceForm.KeyCheck.class) DatasourceForm form) {
         boolean status = datasourceService.changeStatus(form.getId(), form.getStatus());
         if (status) {
-            return ApiResult.ofData("Data source status change successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("ds.changeStatus.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Data source status change fail.");
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("ds.changeStatus.fail"));
     }
 
     @PostMapping("/syncSchema")
     public ApiResult<String> syncSchema(@RequestBody @Validated(value = DatasourceForm.KeyCheck.class) DatasourceForm form) {
-        Preconditions.checkNotNull(datasourceService.findById(form.getId()), "The data source id is invalid.");
+        Preconditions.checkNotNull(datasourceService.findById(form.getId()), I18nMsgConfig.getMessage("ds.id.invalid"));
         int status = schemaService.fetchAndSaveDatabaseInfo(form.getId());
         if (status > 0) {
-            return ApiResult.ofData("Sync dataSource schema success.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("ds.sync.success"));
         }
 
-        return ApiResult.ofError(StateCode.BizError, "Sync dataSource schema fail.");
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("ds.sync.fail"));
     }
 
     @PostMapping(value = "/list")
@@ -122,9 +123,9 @@ public class DatasourceController {
         dsi.setTestSql(StringUtils.isBlank(form.getTestSql()) ? "select 1" : form.getTestSql());
         boolean success = datasourceFactory.testDatasource(dsi);
         if (success) {
-            return ApiResult.ofData("The database connection test was successful.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("ds.test.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "The database connection test was fail.");
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("ds.test.fail"));
     }
 
 

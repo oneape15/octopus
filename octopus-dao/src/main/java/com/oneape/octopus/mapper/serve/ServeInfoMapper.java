@@ -1,9 +1,8 @@
 package com.oneape.octopus.mapper.serve;
 
-import com.oneape.octopus.commons.enums.ServeStatusType;
+import com.oneape.octopus.domain.serve.ServeInfoDO;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.mapper.serve.provider.ServeInfoSqlProvider;
-import com.oneape.octopus.domain.serve.ServeInfoDO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

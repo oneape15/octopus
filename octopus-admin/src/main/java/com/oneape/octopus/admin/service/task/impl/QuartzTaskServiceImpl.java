@@ -2,6 +2,7 @@ package com.oneape.octopus.admin.service.task.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
+import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.domain.task.QuartzTaskDO;
 import com.oneape.octopus.mapper.task.QuartzTaskMapper;
@@ -70,26 +71,29 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
     @Transactional
     @Override
     public int save(QuartzTaskDO model) {
-        Preconditions.checkNotNull(model, "Task information is empty!");
-        Preconditions.checkArgument(StringUtils.isNotBlank(model.getTaskName()), "Task name is empty!");
-        Preconditions.checkArgument(StringUtils.isNotBlank(model.getCron()), "Cron expression is empty!");
-        Preconditions.checkArgument(CronExpression.isValidExpression(model.getCron()), "CRON expression is illegal!");
+        Preconditions.checkNotNull(model, I18nMsgConfig.getMessage("task.info.null"));
+        Preconditions.checkArgument(StringUtils.isNotBlank(model.getTaskName()),
+                I18nMsgConfig.getMessage("task.name.empty"));
+        Preconditions.checkArgument(StringUtils.isNotBlank(model.getCron()),
+                I18nMsgConfig.getMessage("task.cron.empty"));
+        Preconditions.checkArgument(CronExpression.isValidExpression(model.getCron()),
+                I18nMsgConfig.getMessage("task.cron.illegal"));
         Preconditions.checkArgument(
                 (model.getStatus() != null) && (model.getStatus() == 0 || model.getStatus() == 1),
-                "The task status is empty or the value is incorrect."
-        );
+                I18nMsgConfig.getMessage("task.status.invalid"));
 
         boolean isEdit = model.getId() != null;
         QuartzTaskDO oldTaskDO = null;
         if (isEdit) {
-            oldTaskDO = Preconditions.checkNotNull(quartzTaskMapper.findById(model.getId()), "Task id is illegal!");
+            oldTaskDO = Preconditions.checkNotNull(
+                    quartzTaskMapper.findById(model.getId()),
+                    I18nMsgConfig.getMessage("task.id.invalid"));
         }
 
         // Checks if the task name already exists.
         Preconditions.checkArgument(
                 quartzTaskMapper.hasSameTaskName(model.getTaskName(), isEdit ? model.getId() : null) <= 0,
-                "The task name has exists."
-        );
+                I18nMsgConfig.getMessage("task.name.exist"));
 
         if (StringUtils.isBlank(model.getGroupName())) {
             model.setGroupName("DEFAULT_GROUP");
@@ -141,7 +145,8 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
      */
     @Override
     public int runOnce(Long taskId) {
-        QuartzTaskDO taskDO = Preconditions.checkNotNull(quartzTaskMapper.findById(taskId), "Task id is illegal!");
+        QuartzTaskDO taskDO = Preconditions.checkNotNull(quartzTaskMapper.findById(taskId),
+                I18nMsgConfig.getMessage("task.id.invalid"));
         JobKey jobKey = JobKey.jobKey(taskDO.getTaskName(), taskDO.getGroupName());
         try {
             // Get the JobDataMap，write the data.
@@ -164,7 +169,8 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
      */
     @Override
     public int deleteById(Long id) {
-        QuartzTaskDO taskDO = Preconditions.checkNotNull(quartzTaskMapper.findById(id), "Task id is illegal!");
+        QuartzTaskDO taskDO = Preconditions.checkNotNull(quartzTaskMapper.findById(id),
+                I18nMsgConfig.getMessage("task.id.invalid"));
         int status = quartzTaskMapper.delete(taskDO);
 
         // Delete scheduling tasks.
@@ -184,11 +190,11 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
      */
     @Override
     public int updateTaskStatus(Long taskId, Integer status) {
-        QuartzTaskDO taskDO = Preconditions.checkNotNull(quartzTaskMapper.findById(taskId), "Task id is illegal!");
+        QuartzTaskDO taskDO = Preconditions.checkNotNull(quartzTaskMapper.findById(taskId),
+                I18nMsgConfig.getMessage("task.id.invalid"));
         Preconditions.checkArgument(
                 status != null && (status == 0 || status == 1),
-                "The task status is empty or the value is incorrect."
-        );
+                I18nMsgConfig.getMessage("task.status.invalid"));
 
         if (Integer.compare(taskDO.getStatus(), status) == 0) {
             return 1;
@@ -206,7 +212,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
      */
     @Override
     public List<QuartzTaskDO> find(QuartzTaskDO model) {
-        Preconditions.checkNotNull(model, "The task information is empty!");
+        Preconditions.checkNotNull(model, I18nMsgConfig.getMessage("task.info.null"));
         return quartzTaskMapper.list(model);
     }
 
@@ -218,7 +224,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
      */
     @Override
     public QuartzTaskDO findById(Long taskId) {
-        Preconditions.checkNotNull(taskId, "Task id is illegal!");
+        Preconditions.checkNotNull(taskId, I18nMsgConfig.getMessage("task.id.invalid"));
         return quartzTaskMapper.findById(taskId);
     }
 
@@ -230,7 +236,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
      */
     @Override
     public void addJob2Schedule(QuartzTaskDO taskDO, Map<String, Object> jobDataMap) {
-        Preconditions.checkNotNull(taskDO, "The task information is empty!");
+        Preconditions.checkNotNull(taskDO, I18nMsgConfig.getMessage("task.info.null"));
         Preconditions.checkArgument(!StringUtils.isAnyBlank(taskDO.getGroupName(), taskDO.getTaskName()), "The task name or task group is empty!");
 
         String taskName = taskDO.getTaskName();
@@ -271,7 +277,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
             log.info("Add task : {}-{}({}) success!", taskGroup, taskName, cron);
         } catch (Exception e) {
             log.error("Add task : {}-{}({}) fail! msg: {}", taskGroup, taskName, cron, e);
-            throw new BizException("Add task fail: " + taskGroup + "-" + taskName + "(" + cron + ")", e);
+            throw new BizException(I18nMsgConfig.getMessage("task.add.fail", taskGroup + "-" + taskName + "(" + cron + ")"), e);
         }
     }
 
@@ -283,7 +289,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
      */
     @Override
     public void updateJob2Schedule(QuartzTaskDO taskDO, Map<String, Object> jobDataMap) {
-        Preconditions.checkNotNull(taskDO, "The task information is empty!");
+        Preconditions.checkNotNull(taskDO, I18nMsgConfig.getMessage("task.info.null"));
         Preconditions.checkArgument(!StringUtils.isAnyBlank(taskDO.getGroupName(), taskDO.getTaskName()), "The task name or task group is empty!");
 
         String taskName = taskDO.getTaskName();
@@ -323,7 +329,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
             log.info("Update task : {}-{}({}) success!", taskGroup, taskName, cron);
         } catch (Exception e) {
             log.error("Update task : {}-{}({}) fail! msg: {}", taskGroup, taskName, cron, e);
-            throw new BizException("Update task fail: " + taskGroup + "-" + taskName + "(" + cron + ")", e);
+            throw new BizException(I18nMsgConfig.getMessage("task.update.fail", taskGroup + "-" + taskName + "(" + cron + ")"), e);
         }
     }
 
@@ -334,7 +340,7 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
      */
     @Override
     public void deleteJob2Schedule(QuartzTaskDO taskDO) {
-        Preconditions.checkNotNull(taskDO, "The task information is empty!");
+        Preconditions.checkNotNull(taskDO, I18nMsgConfig.getMessage("task.info.null"));
         Preconditions.checkArgument(!StringUtils.isAnyBlank(taskDO.getGroupName(), taskDO.getTaskName()), "The task name or task group is empty!");
 
         TriggerKey triggerKey = TriggerKey.triggerKey(taskDO.getTaskName(), taskDO.getGroupName());
@@ -346,7 +352,9 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
             log.info("Remove task: {} success!", JSON.toJSONString(triggerKey));
         } catch (SchedulerException e) {
             log.error("Remove task : {}-{}({}) fail! msg: {}", JSON.toJSONString(taskDO), e);
-            throw new BizException("Remove task fail! ", e);
+            throw new BizException(
+                    I18nMsgConfig.getMessage("task.remove.fail", taskDO.getGroupName() + "-" + taskDO.getTaskName() + "(" + taskDO.getCron() + ")"),
+                    e);
         }
     }
 

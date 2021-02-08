@@ -1,6 +1,7 @@
 package com.oneape.octopus.admin.service.schema.impl;
 
 import com.google.common.base.Preconditions;
+import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.admin.job.SchemaTableSyncJob;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.datasource.QueryFactory;
@@ -65,7 +66,9 @@ public class SchemaServiceImpl implements SchemaService {
      */
     @Override
     public int updateTableSchemaInfo(TableSchemaDO ts) {
-        TableSchemaDO oldDo = Preconditions.checkNotNull(tableSchemaMapper.findById(ts.getId()), "The schema information is invalid.");
+        TableSchemaDO oldDo = Preconditions.checkNotNull(
+                tableSchemaMapper.findById(ts.getId()),
+                I18nMsgConfig.getMessage("ds.schema.id.invalid"));
 
         TableSchemaDO model = new TableSchemaDO();
         model.setId(ts.getId());
@@ -104,12 +107,12 @@ public class SchemaServiceImpl implements SchemaService {
         // Get the database name
         String schema = queryFactory.getSchema(dsi);
         if (StringUtils.isBlank(schema)) {
-            throw new BizException("Failed to get database name~");
+            throw new BizException(I18nMsgConfig.getMessage("ds.schema.getDatabaseName.fail"));
         }
 
         RLock lock = redissonClient.getLock("FETCH_TABLE_" + dsId);
         if (lock.isLocked()) {
-            throw new BizException("Get Lock fail.");
+            throw new BizException(I18nMsgConfig.getMessage("global.get.lock.fail"));
         }
 
         try {
@@ -168,18 +171,21 @@ public class SchemaServiceImpl implements SchemaService {
     @Transactional
     @Override
     public List<TableColumnDO> fetchAndSaveTableColumnInfo(Long dsId, String tableName) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(tableName), "The table name is null.");
-        DatasourceInfo dsi = Preconditions.checkNotNull(datasourceService.getDatasourceInfoById(dsId), "The data source does not exist。 dsId: " + dsId);
+        Preconditions.checkArgument(StringUtils.isNotBlank(tableName),
+                I18nMsgConfig.getMessage("ds.tableName.null"));
+        DatasourceInfo dsi = Preconditions.checkNotNull(
+                datasourceService.getDatasourceInfoById(dsId),
+                I18nMsgConfig.getMessage("ds.id.invalid"));
 
         // Get the database name
         String schema = queryFactory.getSchema(dsi);
         if (StringUtils.isBlank(schema)) {
-            throw new BizException("Failed to get database name~");
+            throw new BizException(I18nMsgConfig.getMessage("ds.schema.getDatabaseName.fail"));
         }
 
         RLock lock = redissonClient.getLock("FETCH_COLUMN_" + dsId + "_" + tableName);
         if (lock.isLocked()) {
-            throw new BizException("Get Lock fail.");
+            throw new BizException(I18nMsgConfig.getMessage("global.get.lock.fail"));
         }
 
         try {
@@ -258,7 +264,8 @@ public class SchemaServiceImpl implements SchemaService {
     @Transactional
     @Override
     public List<TableColumnDO> fetchTableColumnList(Long dsId, String tableName) {
-        Preconditions.checkNotNull(datasourceService.findById(dsId), "The data source does not exist");
+        Preconditions.checkNotNull(datasourceService.findById(dsId),
+                I18nMsgConfig.getMessage("ds.id.invalid"));
         List<TableColumnDO> list = tableColumnMapper.getTableColumnList(dsId, tableName);
         if (CollectionUtils.isEmpty(list)) {
             list = fetchAndSaveTableColumnInfo(dsId, tableName);
@@ -272,7 +279,8 @@ public class SchemaServiceImpl implements SchemaService {
      */
     @Override
     public List<TableSchemaDO> fetchTableList(Long dsId) {
-        Preconditions.checkNotNull(datasourceService.findById(dsId), "The data source does not exist");
+        Preconditions.checkNotNull(datasourceService.findById(dsId),
+                I18nMsgConfig.getMessage("ds.id.invalid"));
         return tableSchemaMapper.list(new TableSchemaDO(dsId));
     }
 
@@ -285,8 +293,10 @@ public class SchemaServiceImpl implements SchemaService {
     @Transactional
     @Override
     public int changeTableColumnInfo(TableColumnDO tcDo) {
-        Preconditions.checkNotNull(tcDo, "The column object is null.");
-        Preconditions.checkArgument(tcDo.getId() != null, "The  primary key of column is null.");
+        Preconditions.checkNotNull(tcDo,
+                I18nMsgConfig.getMessage("ds.column.info.null"));
+        Preconditions.checkArgument(tcDo.getId() != null,
+                I18nMsgConfig.getMessage("ds.column.id.null"));
         return tableColumnMapper.update(tcDo);
     }
 
@@ -389,7 +399,7 @@ public class SchemaServiceImpl implements SchemaService {
         } catch (Exception e) {
             log.error("Batch insert table column information exception", e);
             session.rollback();
-            throw new BizException("Batch insert table column information exception");
+            throw new BizException(I18nMsgConfig.getMessage("ds.batch.insert.column.error"));
         } finally {
             log.debug("Batch insert table column information: {} rows.", count);
             session.close();
@@ -414,7 +424,7 @@ public class SchemaServiceImpl implements SchemaService {
         } catch (Exception e) {
             log.error("Batch update table column information exception", e);
             session.rollback();
-            throw new BizException("Batch update table column information exception");
+            throw new BizException(I18nMsgConfig.getMessage("ds.batch.update.column.error"));
         } finally {
             log.debug("Batch update table column information: {} rows.", count);
             session.close();
@@ -440,7 +450,7 @@ public class SchemaServiceImpl implements SchemaService {
         } catch (Exception e) {
             log.error("Batch insert data table information exception", e);
             session.rollback();
-            throw new BizException("Batch insert data table information exception");
+            throw new BizException(I18nMsgConfig.getMessage("ds.batch.insert.table.error"));
         } finally {
             log.debug("Batch insert data table information: {} rows.", count);
             session.close();

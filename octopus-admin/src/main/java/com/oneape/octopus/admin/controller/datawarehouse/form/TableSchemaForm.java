@@ -15,7 +15,7 @@ import java.io.Serializable;
  */
 @Data
 public class TableSchemaForm implements Serializable {
-    @NotNull(message = "The table primary key is null.", groups = {InfoCheck.class})
+    @NotNull(message = "{global.pKey.empty}", groups = {InfoCheck.class})
     private Long    id;
     /**
      * Data table alias.

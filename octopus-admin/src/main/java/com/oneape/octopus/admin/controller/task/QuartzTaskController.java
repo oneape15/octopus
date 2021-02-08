@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.base.Preconditions;
+import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.enums.QuartzTaskType;
 import com.oneape.octopus.admin.controller.task.from.TaskForm;
@@ -53,18 +54,18 @@ public class QuartzTaskController {
     public ApiResult saveTask(@RequestBody @Validated(value = TaskForm.AddCheck.class) TaskForm form) {
         int status = quartzTaskService.save(formatTaskDO(form));
         if (status > 0) {
-            return ApiResult.ofMessage("Saved task information successfully.");
+            return ApiResult.ofMessage(I18nMsgConfig.getMessage("task.save.success"));
         }
-        return ApiResult.ofError(-1, "Saved task information fail.");
+        return ApiResult.ofError(-1, I18nMsgConfig.getMessage("task.save.fail"));
     }
 
     @PostMapping(value = "/delete/{taskId}")
     public ApiResult deleteTask(@PathVariable(name = "taskId") Long taskId) {
         int status = quartzTaskService.deleteById(taskId);
         if (status > 0) {
-            return ApiResult.ofMessage("Deleted task information successfully.");
+            return ApiResult.ofMessage(I18nMsgConfig.getMessage("task.del.success"));
         }
-        return ApiResult.ofError(-1, "Deleted task information fail.");
+        return ApiResult.ofError(-1, I18nMsgConfig.getMessage("task.del.fail"));
     }
 
     @PostMapping(value = "/get/{taskId}")
@@ -76,18 +77,18 @@ public class QuartzTaskController {
     public ApiResult runOnceTask(@PathVariable(name = "taskId") Long taskId) {
         int status = quartzTaskService.runOnce(taskId);
         if (status > 0) {
-            return ApiResult.ofMessage("Run task successful.");
+            return ApiResult.ofMessage(I18nMsgConfig.getMessage("task.run.success"));
         }
-        return ApiResult.ofError(-1, "Run task fail.");
+        return ApiResult.ofError(-1, I18nMsgConfig.getMessage("task.run.fail"));
     }
 
     @PostMapping(value = "/changeStatus/{taskId}/{status}")
     public ApiResult changeTaskStatus(@PathVariable(name = "taskId") Long taskId, @PathVariable(name = "status") Integer status) {
         int retStatus = quartzTaskService.updateTaskStatus(taskId, status);
         if (retStatus > 0) {
-            return ApiResult.ofMessage("Task status update successful.");
+            return ApiResult.ofMessage(I18nMsgConfig.getMessage("task.changeStatus.success"));
         }
-        return ApiResult.ofError(-1, "Task status update fail.");
+        return ApiResult.ofError(-1, I18nMsgConfig.getMessage("task.changeStatus.fail"));
     }
 
     /**
@@ -101,10 +102,10 @@ public class QuartzTaskController {
         if (form.getParams() != null) {
             QuartzTaskParamDTO paramDTO = form.getParams();
             String runType = paramDTO.getRunType();
-            Preconditions.checkArgument(StringUtils.isNotBlank(runType), "The task run type is empty.");
+            Preconditions.checkArgument(StringUtils.isNotBlank(runType), I18nMsgConfig.getMessage("task.runType.empty"));
             runType = StringUtils.upperCase(runType);
             if (!QuartzTaskType.isValidType(runType)) {
-                throw new BizException("The run type value should be one of [SERVE, RAW_SQL, SIMPLE_EMAIL].");
+                throw new BizException(I18nMsgConfig.getMessage("task.runType.invalid"));
             }
             paramDTO.setRunType(runType);
             if (StringUtils.isBlank(form.getJobClass())) {
@@ -115,14 +116,17 @@ public class QuartzTaskController {
             if (taskType == QuartzTaskType.RAW_SQL) {
                 Preconditions.checkArgument(
                         CollectionUtils.isNotEmpty(datasourceService.findByName(paramDTO.getDsName())),
-                        "The data source name field dsName is invalid."
-                );
+                        I18nMsgConfig.getMessage("task.dsName.invalid"));
                 Preconditions.checkArgument(StringUtils.isNotBlank(paramDTO.getRawSql()));
             } else if (taskType == QuartzTaskType.SERVE) {
-                Preconditions.checkNotNull(serveInfoService.findById(paramDTO.getServeId()), "The serveId field is invalid.");
+                Preconditions.checkNotNull(
+                        serveInfoService.findById(paramDTO.getServeId()),
+                        I18nMsgConfig.getMessage("serve.id.invalid"));
             }
 
-            Preconditions.checkArgument(CollectionUtils.isNotEmpty(paramDTO.getEmailTos()), "Mailbox access is empty.");
+            Preconditions.checkArgument(
+                    CollectionUtils.isNotEmpty(paramDTO.getEmailTos()),
+                    I18nMsgConfig.getMessage("global.mailbox.invalid"));
 
             taskDO.setParams(JSON.toJSONString(paramDTO));
         }

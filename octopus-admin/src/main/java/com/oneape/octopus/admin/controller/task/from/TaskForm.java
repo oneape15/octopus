@@ -15,17 +15,17 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 public class TaskForm extends BaseForm {
-    @NotNull(message = "The task id is empty.", groups = {EditCheck.class})
+    @NotNull(message = "{TaskForm.NotNull.id}", groups = {EditCheck.class})
     private Long               id;
-    @NotBlank(message = "The task name is empty.", groups = {AddCheck.class, EditCheck.class})
+    @NotBlank(message = "{TaskForm.NotBlank.taskName}", groups = {AddCheck.class, EditCheck.class})
     private String             taskName;
     private String             jobClass;
-    @NotBlank(message = "Cron expression is empty!", groups = {AddCheck.class, EditCheck.class})
+    @NotBlank(message = "{TaskForm.NotBlank.cron}", groups = {AddCheck.class, EditCheck.class})
     private String             cron;
     // status 0 - block up; 1 - invoke
     private Integer            status;
     // The task parameters.
-    @NotNull(message = "The task", groups = {AddCheck.class})
+    @NotNull(message = "{TaskForm.NotNull.params}", groups = {AddCheck.class})
     private QuartzTaskParamDTO params;
 
     public interface AddCheck {

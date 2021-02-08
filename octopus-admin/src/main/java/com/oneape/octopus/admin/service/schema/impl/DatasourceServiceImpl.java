@@ -1,6 +1,7 @@
 package com.oneape.octopus.admin.service.schema.impl;
 
 import com.google.common.base.Preconditions;
+import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.enums.Archive;
 import com.oneape.octopus.commons.security.PBEUtils;
@@ -46,13 +47,14 @@ public class DatasourceServiceImpl implements DatasourceService {
     @Transactional
     @Override
     public int save(DatasourceDO model) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()), "The data source name is empty.");
+        Preconditions.checkArgument(StringUtils.isNotBlank(model.getName()),
+                I18nMsgConfig.getMessage("ds.name.empty"));
         if (model.getId() <= 0) {
             model.setId(null);
         }
         int hasSame = datasourceMapper.getSameBy(model.getName(), model.getId());
         if (hasSame > 0) {
-            throw new BizException("The same data source name exists.");
+            throw new BizException(I18nMsgConfig.getMessage("ds.name.exist"));
         }
 
         // Encrypt the password
@@ -64,7 +66,8 @@ public class DatasourceServiceImpl implements DatasourceService {
         String oldCron = null;
         DatasourceDO oldDdo = null;
         if (model.getId() != null) {
-            oldDdo = Preconditions.checkNotNull(datasourceMapper.findById(model.getId()), "The data source id is invalid.");
+            oldDdo = Preconditions.checkNotNull(datasourceMapper.findById(model.getId()),
+                    I18nMsgConfig.getMessage("ds.id.invalid"));
             oldCron = oldDdo.getCron();
             status = datasourceMapper.update(model);
         } else {
@@ -99,7 +102,7 @@ public class DatasourceServiceImpl implements DatasourceService {
      */
     @Override
     public int deleteById(Long id) {
-        Preconditions.checkNotNull(id, "The primary Key is empty.");
+        Preconditions.checkNotNull(id, I18nMsgConfig.getMessage("global.pKey.empty"));
         return datasourceMapper.delete(new DatasourceDO(id));
     }
 
@@ -111,7 +114,7 @@ public class DatasourceServiceImpl implements DatasourceService {
      */
     @Override
     public List<DatasourceDO> find(DatasourceDO datasource) {
-        Preconditions.checkNotNull(datasource, "The data source Object is empty.");
+        Preconditions.checkNotNull(datasource, I18nMsgConfig.getMessage("ds.info.null"));
         datasource.setArchive(Archive.NORMAL.value());
         List<DatasourceDO> ddos = datasourceMapper.list(datasource);
         if (ddos == null) {
@@ -174,7 +177,9 @@ public class DatasourceServiceImpl implements DatasourceService {
      */
     @Override
     public boolean changeStatus(Long dsId, Integer status) {
-        Preconditions.checkNotNull(datasourceMapper.findById(dsId), "The data source id is invalid.");
+        Preconditions.checkNotNull(
+                datasourceMapper.findById(dsId),
+                I18nMsgConfig.getMessage("ds.id.invalid"));
         DatasourceDO ddo = new DatasourceDO();
         ddo.setId(dsId);
         ddo.setStatus(status);

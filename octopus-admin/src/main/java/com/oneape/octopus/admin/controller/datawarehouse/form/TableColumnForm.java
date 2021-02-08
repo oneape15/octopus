@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 @Data
 public class TableColumnForm implements Serializable {
-    @NotNull(message = "The column primary key is null.", groups = {InfoCheck.class})
+    @NotNull(message = "{global.pKey.empty}", groups = {InfoCheck.class})
     private Long   id;
     private String dataType;
     private String alias;

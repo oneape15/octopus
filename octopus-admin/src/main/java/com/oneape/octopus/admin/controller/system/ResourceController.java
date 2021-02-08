@@ -1,5 +1,6 @@
 package com.oneape.octopus.admin.controller.system;
 
+import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.commons.value.MaskUtils;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.value.Pair;
@@ -26,18 +27,18 @@ public class ResourceController {
     public ApiResult<String> doSaveRes(@RequestBody @Validated(value = ResForm.AddCheck.class) ResForm form) {
         int status = resourceService.save(form.toDO());
         if (status > 0) {
-            return ApiResult.ofData("Save resource successfully.");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("resource.save.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Save resource fail.");
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("resource.save.fail"));
     }
 
     @PostMapping("/del/{resId}")
     public ApiResult<String> doDelRes(@PathVariable(name = "resId") Long resId) {
         int status = resourceService.deleteById(resId);
         if (status > 0) {
-            return ApiResult.ofData("Deleted resource successfully");
+            return ApiResult.ofData(I18nMsgConfig.getMessage("resource.del.success"));
         }
-        return ApiResult.ofError(StateCode.BizError, "Deleted resource fail.");
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("resource.del.fail"));
     }
 
     /**

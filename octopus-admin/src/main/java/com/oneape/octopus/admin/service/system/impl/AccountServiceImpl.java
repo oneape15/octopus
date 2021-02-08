@@ -77,8 +77,10 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     @Override
     public int save(UserDO model) {
-        Preconditions.checkNotNull(model, "The user information is null.");
-        Preconditions.checkArgument(StringUtils.isNotBlank(model.getUsername()), "The username is empty.");
+        Preconditions.checkNotNull(model, I18nMsgConfig.getMessage("account.user.null"));
+        Preconditions.checkArgument(
+                StringUtils.isNotBlank(model.getUsername()),
+                I18nMsgConfig.getMessage("account.username.empty"));
 
         if (model.getId() != null) {
             // the username and password can't edit.
@@ -88,7 +90,9 @@ public class AccountServiceImpl implements AccountService {
             return userMapper.update(model);
         }
 
-        Preconditions.checkArgument(userMapper.sameNameCheck(model.getUsername(), null) == 0, "The username already exists.");
+        Preconditions.checkArgument(
+                userMapper.sameNameCheck(model.getUsername(), null) == 0,
+                I18nMsgConfig.getMessage("account.username.exist"));
         String rawPwd = model.getPassword();
         if (StringUtils.isBlank(rawPwd)) {
             rawPwd = CodeBuilderUtils.randomStr(6);
@@ -113,7 +117,7 @@ public class AccountServiceImpl implements AccountService {
                 mailService.sendSimpleMail(model.getEmail(), "OCTOPUS", content);
             } catch (Exception e) {
                 log.error("Failed to send email~", e);
-                throw new BizException("Failed to send email:" + model.getEmail());
+                throw new BizException(I18nMsgConfig.getMessage("global.send.email.fail", model.getEmail()));
             }
         }
 
@@ -140,7 +144,7 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     @Override
     public int deleteById(Long id) {
-        Preconditions.checkNotNull(id, "The user id is empty.");
+        Preconditions.checkNotNull(id, I18nMsgConfig.getMessage("account.userId.null"));
 
         int status = userMapper.delete(new UserDO(id));
         // Delete the relationship between the user and the role
@@ -159,25 +163,24 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public UserDTO getUserInfoByToken(String token) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(token), "Session Token is null.");
+        Preconditions.checkArgument(StringUtils.isNotBlank(token), I18nMsgConfig.getMessage("account.token.invalid"));
         // Get user information according to token
         UserSessionDO us = userSessionMapper.findByToken(token);
 
         // Authentication token
         if (us == null) {
-            throw new UnauthorizedException("Invalid Token");
+            throw new UnauthorizedException(I18nMsgConfig.getMessage("account.token.invalid"));
         }
 
         Long expireAt = us.getExpireAt();
 
         if (expireAt == null || expireAt <= System.currentTimeMillis()) {
-            throw new UnauthorizedException("Login timeout, please login again");
+            throw new UnauthorizedException(I18nMsgConfig.getMessage("account.login.timeout"));
         }
 
-        UserDO udo = userMapper.findById(us.getUserId());
-        if (udo == null) {
-            throw new UnauthorizedException("The user does not exist or is locked.");
-        }
+        UserDO udo = Preconditions.checkNotNull(
+                findById(us.getUserId()),
+                I18nMsgConfig.getMessage("account.user.nullOrLock"));
 
         // get user full information.
         return getFullInformationById(udo.getId());
@@ -201,10 +204,9 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public UserDTO getFullInformationById(Long userId) {
-        UserDO udo = userMapper.findById(userId);
-        if (udo == null) {
-            throw new UnauthorizedException("The user does not exist or is locked.");
-        }
+        UserDO udo = Preconditions.checkNotNull(
+                findById(userId),
+                I18nMsgConfig.getMessage("account.user.nullOrLock"));
 
         UserDTO dto = new UserDTO();
         BeanUtils.copyProperties(udo, dto);
@@ -273,7 +275,7 @@ public class AccountServiceImpl implements AccountService {
             throw new BizException(I18nMsgConfig.getMessage("account.login.inactive"));
         }
         if (!StringUtils.equalsIgnoreCase(password, udo.getPassword())) {
-             throw new BizException(I18nMsgConfig.getMessage("account.login.info.error"));
+            throw new BizException(I18nMsgConfig.getMessage("account.login.info.error"));
         }
 
         // crate a new token.
