@@ -1,9 +1,9 @@
 package com.oneape.octopus.admin.config;
 
-import com.oneape.octopus.datasource.DatasourceFactory;
-import com.oneape.octopus.datasource.DefaultDatasourceFactory;
-import com.oneape.octopus.datasource.DefaultQueryFactory;
-import com.oneape.octopus.datasource.QueryFactory;
+import com.oneape.octopus.query.DatasourceFactory;
+import com.oneape.octopus.query.DefaultDatasourceFactory;
+import com.oneape.octopus.query.DefaultQueryFactory;
+import com.oneape.octopus.query.QueryFactory;
 import com.oneape.octopus.parse.ParsingFactory;
 import com.oneape.octopus.parse.xml.XmlParsingFactory;
 import lombok.extern.slf4j.Slf4j;

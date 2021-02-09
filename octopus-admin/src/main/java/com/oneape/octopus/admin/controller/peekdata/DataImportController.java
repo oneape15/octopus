@@ -4,7 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.admin.controller.peekdata.form.DataImportForm;
-import com.oneape.octopus.datasource.data.Result;
+import com.oneape.octopus.query.data.Result;
 import com.oneape.octopus.admin.model.vo.ApiResult;
 import com.oneape.octopus.admin.model.vo.ImportRecordVO;
 import com.oneape.octopus.admin.service.peekdata.ImportRecordService;

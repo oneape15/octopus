@@ -1,9 +1,15 @@
 package com.oneape.octopus.admin.service.gateway.impl;
 
+import com.google.common.base.Preconditions;
+import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.admin.service.gateway.GatewayRouteService;
+import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.domain.gateway.GatewayRouteDO;
+import com.oneape.octopus.domain.serve.ServeGroupDO;
+import com.oneape.octopus.domain.serve.ServeRlGroupDO;
 import com.oneape.octopus.mapper.gateway.GatewayRouteMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +40,36 @@ public class GatewayRouteServiceImpl implements GatewayRouteService {
      */
     @Override
     public int save(GatewayRouteDO model) {
-        return 0;
+        Preconditions.checkNotNull(model, I18nMsgConfig.getMessage("route.info.null"));
+        Preconditions.checkArgument(
+                StringUtils.isNotBlank(model.getUri()),
+                I18nMsgConfig.getMessage("route.uri.empty")
+        );
+        Preconditions.checkArgument(
+                StringUtils.isNotBlank(model.getRouteId()),
+                I18nMsgConfig.getMessage("route.routeId.empty"));
+
+        // whether is updating.
+        boolean isUpdate = false;
+        if (model.getId() != null && model.getId() > 0) {
+            Preconditions.checkNotNull(findById(model.getId()),
+                    I18nMsgConfig.getMessage("route.id.invalid"));
+            isUpdate = true;
+        }
+
+        Preconditions.checkArgument(
+                gatewayRouteMapper.hasExistRouteId(model.getRouteId(), isUpdate ? model.getId() : null) == 0,
+                I18nMsgConfig.getMessage("route.routeId.restrict")
+        );
+
+        int status;
+        if (isUpdate) {
+            status = gatewayRouteMapper.update(model);
+        } else {
+            status = gatewayRouteMapper.insert(model);
+
+        }
+        return status;
     }
 
     /**
@@ -45,7 +80,9 @@ public class GatewayRouteServiceImpl implements GatewayRouteService {
      */
     @Override
     public int deleteById(Long id) {
-        return 0;
+        Preconditions.checkNotNull(findById(id),
+                I18nMsgConfig.getMessage("route.id.invalid"));
+        return gatewayRouteMapper.delete(new GatewayRouteDO(id));
     }
 
     /**
@@ -56,7 +93,7 @@ public class GatewayRouteServiceImpl implements GatewayRouteService {
      */
     @Override
     public GatewayRouteDO findById(Long id) {
-        return null;
+        return gatewayRouteMapper.findById(id);
     }
 
     /**
@@ -67,6 +104,6 @@ public class GatewayRouteServiceImpl implements GatewayRouteService {
      */
     @Override
     public List<GatewayRouteDO> find(GatewayRouteDO model) {
-        return null;
+        return gatewayRouteMapper.list(model);
     }
 }

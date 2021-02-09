@@ -6,7 +6,7 @@ import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.constant.OctopusConstant;
 import com.oneape.octopus.commons.value.Pair;
 import com.oneape.octopus.admin.controller.peekdata.form.PeekForm;
-import com.oneape.octopus.datasource.data.Result;
+import com.oneape.octopus.query.data.Result;
 import com.oneape.octopus.admin.model.vo.ApiResult;
 import com.oneape.octopus.domain.peekdata.PeekDO;
 import com.oneape.octopus.admin.service.peekdata.PeekService;

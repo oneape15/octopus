@@ -4,6 +4,7 @@ import com.oneape.octopus.admin.controller.BaseForm;
 import com.oneape.octopus.domain.task.QuartzTaskDO;
 import com.oneape.octopus.dto.task.QuartzTaskParamDTO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,6 +15,7 @@ import javax.validation.constraints.NotNull;
  * Modify:
  */
 @Data
+@EqualsAndHashCode
 public class TaskForm extends BaseForm {
     @NotNull(message = "{TaskForm.NotNull.id}", groups = {EditCheck.class})
     private Long               id;

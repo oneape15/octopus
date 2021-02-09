@@ -21,7 +21,7 @@
         <module>octopus-api</module>
         <module>octopus-gateway</module>
         <module>octopus-query</module>
-        <module>octopus-parsing</module>
+        <module>octopus-parse</module>
         <module>octopus-commons</module>
         <module>octopus-dao</module>
     </modules>

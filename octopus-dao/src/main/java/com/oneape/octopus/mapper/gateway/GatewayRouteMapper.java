@@ -60,4 +60,14 @@ public interface GatewayRouteMapper {
      */
     @SelectProvider(type = GatewayRouteSqlProvider.class, method = "list")
     List<GatewayRouteDO> list(@Param("model") GatewayRouteDO model);
+
+    /**
+     * Determine if the same routeID exists。
+     *
+     * @param routeId  String
+     * @param filterId Long
+     * @return int
+     */
+    @SelectProvider(type = GatewayRouteSqlProvider.class, method = "hasExistRouteId")
+    int hasExistRouteId(@Param("routeId") String routeId, @Param("filterId") Long filterId);
 }

@@ -1,7 +1,7 @@
 package com.oneape.octopus.admin.service.peekdata.impl;
 
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.datasource.data.Result;
+import com.oneape.octopus.query.data.Result;
 import com.oneape.octopus.mapper.peekdata.ImportRecordMapper;
 import com.oneape.octopus.domain.peekdata.ImportRecordDO;
 import com.oneape.octopus.admin.model.vo.ImportRecordVO;

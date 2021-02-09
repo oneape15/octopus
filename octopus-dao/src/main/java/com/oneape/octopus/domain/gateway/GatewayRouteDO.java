@@ -3,6 +3,8 @@ package com.oneape.octopus.domain.gateway;
 import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.domain.BaseDO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * gateway information manage do.
@@ -11,6 +13,8 @@ import lombok.Data;
  * Modify:
  */
 @Data
+@EqualsAndHashCode
+@NoArgsConstructor
 public class GatewayRouteDO extends BaseDO {
     /**
      * the route unique id
@@ -41,4 +45,12 @@ public class GatewayRouteDO extends BaseDO {
      * metadata configuration information.
      */
     private String  metadata;
+    /**
+     * the route comment
+     */
+    private String  comment;
+
+    public GatewayRouteDO(Long id) {
+        this.setId(id);
+    }
 }
