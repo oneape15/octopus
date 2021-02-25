@@ -1,49 +1,51 @@
 -- datasource Data source information table.
 CREATE TABLE `datasource`
 (
-  `id`            BIGINT(20)    NOT NULL
+  `id`             BIGINT(20)    NOT NULL
   COMMENT 'primary key',
-  `name`          VARCHAR(64)   NOT NULL
+  `name`           VARCHAR(64)   NOT NULL
   COMMENT 'The data source name',
-  `type`          VARCHAR(64)   NOT NULL
+  `type`           VARCHAR(64)   NOT NULL
   COMMENT 'The data source type. eg: MySQL, Oracle',
-  `status`        TINYINT(1)    NOT NULL DEFAULT 0
+  `status`         TINYINT(1)    NOT NULL DEFAULT 0
   COMMENT 'The data source statue , 0 - usable; 1 - disabled',
-  `jdbc_driver`   VARCHAR(256)  NULL
+  `jdbc_driver`    VARCHAR(256)  NULL
   COMMENT 'The data source driver class.',
-  `jdbc_url`      VARCHAR(512)  NOT NULL
+  `jdbc_url`       VARCHAR(512)  NOT NULL
   COMMENT 'The data source jdbc url.',
-  `username`      VARCHAR(64)   NOT NULL
+  `username`       VARCHAR(64)   NOT NULL
   COMMENT 'The data source login username.',
-  `password`      VARCHAR(64)   NULL     DEFAULT NULL
+  `password`       VARCHAR(64)   NULL     DEFAULT NULL
   COMMENT 'The data source login password.',
-  `sync`          TINYINT(1)    NULL     DEFAULT 0
+  `sync`           TINYINT(1)    NULL     DEFAULT 0
   COMMENT 'Data source synchronization state. 0 - Out of sync; 1 - sync',
-  `cron`          VARCHAR(128)  NULL
+  `last_sync_time` BIGINT(20)    NULL
+  COMMENT 'The last sync time.',
+  `cron`           VARCHAR(128)  NULL
   COMMENT 'Synchronization period expression ''0 0 9 * * ?''',
-  `max_pool_size` INT(11)       NOT NULL DEFAULT 5
+  `max_pool_size`  INT(11)       NOT NULL DEFAULT 5
   COMMENT 'The maximum number of connections in the pool',
-  `min_idle`      INT(11)       NOT NULL DEFAULT 5
+  `min_idle`       INT(11)       NOT NULL DEFAULT 5
   COMMENT 'The minimum number of idle connections in the pool to maintain',
-  `read_only`     TINYINT(1)    NOT NULL DEFAULT 0
+  `read_only`      TINYINT(1)    NOT NULL DEFAULT 0
   COMMENT 'Read-only data source tag',
-  `can_ddl`       TINYINT(1)    NOT NULL DEFAULT 0
+  `can_ddl`        TINYINT(1)    NOT NULL DEFAULT 0
   COMMENT ' Can support DDL operations',
-  `timeout`       INT(11)       NULL     DEFAULT 60
+  `timeout`        INT(11)       NULL     DEFAULT 60
   COMMENT 'Connection pool timeout(ms)',
-  `test_sql`      VARCHAR(1024) NULL
+  `test_sql`       VARCHAR(1024) NULL
   COMMENT 'The check status SQL',
-  `comment`       VARCHAR(256)  NULL
+  `comment`        VARCHAR(256)  NULL
   COMMENT 'description',
-  `archive`       TINYINT(1)    NOT NULL DEFAULT 0
+  `archive`        TINYINT(1)    NOT NULL DEFAULT 0
   COMMENT '0 - normal data; 1 - have archive (soft delete)',
-  `created`       BIGINT(20)    NOT NULL
+  `created`        BIGINT(20)    NOT NULL
   COMMENT 'create time ',
-  `creator`       BIGINT(20)    NOT NULL
+  `creator`        BIGINT(20)    NOT NULL
   COMMENT 'Data record creator',
-  `modified`      BIGINT(20)    NULL     DEFAULT NULL
+  `modified`       BIGINT(20)    NULL     DEFAULT NULL
   COMMENT 'Last updated time',
-  `modifier`      BIGINT(20)    NULL     DEFAULT NULL
+  `modifier`       BIGINT(20)    NULL     DEFAULT NULL
   COMMENT 'Data record  modifier',
   PRIMARY KEY (`id`)
 )

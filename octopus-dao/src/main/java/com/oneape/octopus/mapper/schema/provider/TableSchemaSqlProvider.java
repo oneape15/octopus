@@ -38,9 +38,11 @@ public class TableSchemaSqlProvider extends BaseSqlProvider<TableSchemaDO> {
         return new SQL()
                 .UPDATE(getTableName())
                 .SET("status = 1",
+                        "sync_time = " + DB_CURRENT_TIME,
                         FIELD_MODIFIED + "=" + DB_CURRENT_TIME)
                 .WHERE(FIELD_ARCHIVE + "=" + Archive.NORMAL.value(),
                         "datasource_id = #{dsId}",
+                        "status = 0",
                         sb.toString())
                 .toString();
     }

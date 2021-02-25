@@ -366,6 +366,16 @@ public class QuartzTaskServiceImpl implements QuartzTaskService {
      */
     @Override
     public int executeTaskById(Long taskId) {
-        return 0;
+        Preconditions.checkNotNull(quartzTaskMapper.findById(taskId), I18nMsgConfig.getMessage("task.id.invalid"));
+        int status = 0;
+
+        // success, update the last run time
+        if (status > 0) {
+            QuartzTaskDO modal = new QuartzTaskDO();
+            modal.setId(taskId);
+            modal.setLastRunTime(System.currentTimeMillis());
+            quartzTaskMapper.update(modal);
+        }
+        return status;
     }
 }

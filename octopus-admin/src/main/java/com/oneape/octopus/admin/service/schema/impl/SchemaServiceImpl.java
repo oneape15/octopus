@@ -102,7 +102,9 @@ public class SchemaServiceImpl implements SchemaService {
      */
     @Override
     public int fetchAndSaveDatabaseInfo(Long dsId) {
-        DatasourceInfo dsi = Preconditions.checkNotNull(datasourceService.getDatasourceInfoById(dsId), "The data source does not exist, dsId: " + dsId);
+        DatasourceInfo dsi = Preconditions.checkNotNull(
+                datasourceService.getDatasourceInfoById(dsId),
+                I18nMsgConfig.getMessage("ds.id.invalid"));
 
         // Get the database name
         String schema = queryFactory.getSchema(dsi);
@@ -116,7 +118,7 @@ public class SchemaServiceImpl implements SchemaService {
         }
 
         try {
-            lock.lock(5, TimeUnit.MINUTES);
+            lock.lock(15, TimeUnit.MINUTES);
 
             List<SchemaTable> schemaTableList = queryFactory.allTables(dsi, schema);
             if (CollectionUtils.isEmpty(schemaTableList)) {
@@ -156,6 +158,9 @@ public class SchemaServiceImpl implements SchemaService {
                 tableSchemaMapper.dropTableBy(dsId, existTableNames);
             }
 
+            // update sync time of datasource.
+            datasourceService.updateSyncTime(dsId);
+
             log.info("Pulls the specified data source information and saves it success!");
             return 1;
         } finally {
@@ -176,6 +181,9 @@ public class SchemaServiceImpl implements SchemaService {
         DatasourceInfo dsi = Preconditions.checkNotNull(
                 datasourceService.getDatasourceInfoById(dsId),
                 I18nMsgConfig.getMessage("ds.id.invalid"));
+        TableSchemaDO tableDO = Preconditions.checkNotNull(
+                tableSchemaMapper.findBy(dsId, tableName),
+                I18nMsgConfig.getMessage("ds.tableName.valid"));
 
         // Get the database name
         String schema = queryFactory.getSchema(dsi);
@@ -248,6 +256,12 @@ public class SchemaServiceImpl implements SchemaService {
             if (CollectionUtils.isNotEmpty(existKeys)) {
                 tableColumnMapper.dropColumnBy(dsId, tableName, existKeys);
             }
+
+            // update sync time
+            TableSchemaDO modal = new TableSchemaDO();
+            modal.setId(tableDO.getId());
+            modal.setSyncTime(System.currentTimeMillis());
+            tableSchemaMapper.update(modal);
 
             log.info("Pulls the specified data source information and saves it success!");
             return retList;

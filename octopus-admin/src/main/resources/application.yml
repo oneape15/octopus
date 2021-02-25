@@ -17,6 +17,12 @@ spring:
   messages:
     basename: i18n.messages
     encoding: UTF-8
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9092
+          auto-create-topics: true
 
 mail:
   smtp-server:

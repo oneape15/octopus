@@ -77,6 +77,19 @@ public interface TableSchemaMapper {
     List<TableSchemaDO> getTableList(@Param("dsId") Long dsId);
 
     /**
+     * Query table information according to dsId and tableName
+     *
+     * @param dsId      Long
+     * @param tableName String
+     * @return TableSchemaDO
+     */
+    @Select({
+            "SELECT * FROM " + TableSchemaSqlProvider.TABLE_NAME
+                    + " WHERE  " + BaseSqlProvider.FIELD_ARCHIVE + " = 0  AND datasource_id = #{dsId} AND name = #{tableName}"
+    })
+    TableSchemaDO findBy(@Param("dsId") Long dsId, @Param("tableName") String tableName);
+
+    /**
      * Modify the table heat value.
      */
     @Update({

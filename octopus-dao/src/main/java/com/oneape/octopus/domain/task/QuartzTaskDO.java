@@ -1,5 +1,6 @@
 package com.oneape.octopus.domain.task;
 
+import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.domain.BaseDO;
 import com.oneape.octopus.dto.task.QuartzTaskParamDTO;
 import lombok.Data;
@@ -19,17 +20,17 @@ public class QuartzTaskDO extends BaseDO {
     /**
      * The task name
      */
-    @Column(name = "task_name")
+    @EntityColumn(name = "task_name")
     private String  taskName;
     /**
      * task group name
      */
-    @Column(name = "group_name")
+    @EntityColumn(name = "group_name")
     private String  groupName;
     /**
      * The class in which the job resides
      */
-    @Column(name = "job_class")
+    @EntityColumn(name = "job_class")
     private String  jobClass;
     /**
      * Cron expression
@@ -45,5 +46,10 @@ public class QuartzTaskDO extends BaseDO {
      * status 0 - block up; 1 - invoke
      */
     private Integer status;
+    /**
+     * Last run time
+     */
+    @EntityColumn(name = "last_run_time")
+    private Long    lastRunTime;
 
 }

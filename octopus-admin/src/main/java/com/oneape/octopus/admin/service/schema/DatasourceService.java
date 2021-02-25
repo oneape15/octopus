@@ -42,6 +42,14 @@ public interface DatasourceService extends BaseService<DatasourceDO> {
     List<DatasourceDO> findByName(String name);
 
     /**
+     * Update the sync time.
+     *
+     * @param dsId Long
+     * @return boolean true - success, false - fail.
+     */
+    boolean updateSyncTime(Long dsId);
+
+    /**
      * Initializes the synchronous Job
      */
     void initSyncJob();

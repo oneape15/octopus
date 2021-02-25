@@ -48,6 +48,11 @@ public class DatasourceDO extends BaseDO {
      */
     private Integer sync;
     /**
+     * The last sync time.
+     */
+    @EntityColumn(name = "last_sync_time")
+    private Long    lastSyncTime;
+    /**
      * Synchronization period expression '0 0 9 * * ?'
      */
     private String  cron;

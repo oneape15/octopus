@@ -1,7 +1,9 @@
 package com.oneape.octopus.admin.controller.datawarehouse;
 
+import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.admin.controller.datawarehouse.form.TableColumnForm;
 import com.oneape.octopus.admin.controller.datawarehouse.form.TableSchemaForm;
+import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.domain.schema.TableColumnDO;
 import com.oneape.octopus.domain.schema.TableSchemaDO;
 import com.oneape.octopus.admin.model.vo.ApiResult;
@@ -30,10 +32,10 @@ public class SchemaController {
     @GetMapping(value = "/reloadDatabase/{dsId}")
     public ApiResult reloadDatabaseById(@PathVariable(name = "dsId") Long dsId) {
         int status = schemaService.fetchAndSaveDatabaseInfo(dsId);
-        if (status <= 0) {
-            return ApiResult.ofMessage("Pull data source Schema fail!");
+        if (status > 0) {
+            return ApiResult.ofData(I18nMsgConfig.getMessage("ds.schema.reload.success"));
         }
-        return ApiResult.ofData("Pull data source Schema successfully!");
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("ds.schema.reload.fail"));
     }
 
 
@@ -41,9 +43,9 @@ public class SchemaController {
     public ApiResult fetchTableInfo(@PathVariable(name = "dsId") Long dsId, @PathVariable(name = "tableName") String tableName) {
         List<TableColumnDO> list = schemaService.fetchAndSaveTableColumnInfo(dsId, tableName);
         if (CollectionUtils.isNotEmpty(list)) {
-            return ApiResult.ofMessage("Pull table Schema fail!");
+            return ApiResult.ofMessage(I18nMsgConfig.getMessage("ds.schema.reload.table.fail"));
         }
-        return ApiResult.ofData("Pull table Schema successfully!");
+        return ApiResult.ofData(I18nMsgConfig.getMessage("ds.schema.reload.table.success"));
     }
 
     @GetMapping(value = "/fetchTableList/{dsId}")
@@ -65,17 +67,17 @@ public class SchemaController {
     public ApiResult changeColumnInfo(@RequestBody @Validated(value = TableColumnForm.InfoCheck.class) TableColumnForm form) {
         int status = schemaService.changeTableColumnInfo(form.toDO());
         if (status <= 0) {
-            return ApiResult.ofMessage("Modify the table field information fail!");
+            return ApiResult.ofMessage(I18nMsgConfig.getMessage("ds.schema.change.column.fail"));
         }
-        return ApiResult.ofData("Modify the table field information successfully!");
+        return ApiResult.ofData(I18nMsgConfig.getMessage("ds.schema.change.column.success"));
     }
 
     @PostMapping(value = "/table/changeInfo")
     public ApiResult<String> changeTableInfo(@RequestBody @Validated(value = TableSchemaForm.InfoCheck.class) TableSchemaForm form) {
         int status = schemaService.updateTableSchemaInfo(form.toDO());
         if (status <= 0) {
-            return ApiResult.ofMessage("Modify the table information fail!");
+            return ApiResult.ofMessage(I18nMsgConfig.getMessage("ds.schema.change.table.fail"));
         }
-        return ApiResult.ofData("Modify the table information successfully!");
+        return ApiResult.ofData(I18nMsgConfig.getMessage("ds.schema.change.table.success"));
     }
 }

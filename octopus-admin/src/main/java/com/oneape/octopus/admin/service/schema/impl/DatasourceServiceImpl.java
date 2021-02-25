@@ -200,6 +200,23 @@ public class DatasourceServiceImpl implements DatasourceService {
     }
 
     /**
+     * Update the sync time.
+     *
+     * @param dsId Long
+     * @return boolean true - success, false - fail.
+     */
+    @Override
+    public boolean updateSyncTime(Long dsId) {
+        Preconditions.checkNotNull(
+                datasourceMapper.findById(dsId),
+                I18nMsgConfig.getMessage("ds.id.invalid"));
+        DatasourceDO model = new DatasourceDO(dsId);
+        model.setLastSyncTime(System.currentTimeMillis());
+        int status = datasourceMapper.update(model);
+        return status > 0;
+    }
+
+    /**
      * Initializes the synchronous Job
      */
     @Override
