@@ -2,8 +2,8 @@ package com.oneape.octopus.admin.job;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.admin.config.ApplicationContextProvider;
-import com.oneape.octopus.domain.schema.TableColumnDO;
-import com.oneape.octopus.admin.service.schema.SchemaService;
+import com.oneape.octopus.domain.warehouse.TableColumnDO;
+import com.oneape.octopus.admin.service.warehouse.SchemaService;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;

@@ -1,4 +1,4 @@
-package com.oneape.octopus.domain.schema;
+package com.oneape.octopus.domain.warehouse;
 
 import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.domain.BaseDO;

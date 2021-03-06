@@ -1,14 +1,14 @@
-package com.oneape.octopus.mapper.schema;
+package com.oneape.octopus.mapper.wharehouse;
 
 import com.oneape.octopus.mapper.BaseSqlProvider;
-import com.oneape.octopus.mapper.schema.provider.DatasourceSqlProvider;
-import com.oneape.octopus.domain.schema.DatasourceDO;
+import com.oneape.octopus.mapper.wharehouse.provider.DatasourceSqlProvider;
+import com.oneape.octopus.domain.warehouse.DatasourceDO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
 /**
- * 数据源Mapper
+ * datasource Mapper
  */
 @Mapper
 public interface DatasourceMapper {

@@ -1,9 +1,9 @@
-package com.oneape.octopus.mapper.schema.provider;
+package com.oneape.octopus.mapper.wharehouse.provider;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.mapper.BaseSqlProvider;
-import com.oneape.octopus.domain.schema.TableColumnDO;
+import com.oneape.octopus.domain.warehouse.TableColumnDO;
 import com.oneape.octopus.commons.enums.Archive;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.ibatis.annotations.Param;

@@ -12,7 +12,7 @@ import com.oneape.octopus.domain.task.QuartzTaskDO;
 import com.oneape.octopus.dto.task.QuartzTaskParamDTO;
 import com.oneape.octopus.admin.job.QuartzScheduledJob;
 import com.oneape.octopus.admin.model.vo.ApiResult;
-import com.oneape.octopus.admin.service.schema.DatasourceService;
+import com.oneape.octopus.admin.service.warehouse.DatasourceService;
 import com.oneape.octopus.admin.service.serve.ServeInfoService;
 import com.oneape.octopus.admin.service.task.QuartzTaskService;
 import io.swagger.annotations.Api;

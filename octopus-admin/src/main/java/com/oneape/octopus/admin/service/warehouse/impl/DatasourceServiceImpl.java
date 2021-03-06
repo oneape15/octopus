@@ -1,4 +1,4 @@
-package com.oneape.octopus.admin.service.schema.impl;
+package com.oneape.octopus.admin.service.warehouse.impl;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.admin.config.I18nMsgConfig;
@@ -7,11 +7,11 @@ import com.oneape.octopus.commons.enums.Archive;
 import com.oneape.octopus.commons.security.PBEUtils;
 import com.oneape.octopus.query.DatasourceTypeHelper;
 import com.oneape.octopus.query.data.DatasourceInfo;
-import com.oneape.octopus.domain.schema.DatasourceDO;
+import com.oneape.octopus.domain.warehouse.DatasourceDO;
 import com.oneape.octopus.domain.task.QuartzTaskDO;
 import com.oneape.octopus.admin.job.SchemaSyncJob;
-import com.oneape.octopus.mapper.schema.DatasourceMapper;
-import com.oneape.octopus.admin.service.schema.DatasourceService;
+import com.oneape.octopus.mapper.wharehouse.DatasourceMapper;
+import com.oneape.octopus.admin.service.warehouse.DatasourceService;
 import com.oneape.octopus.admin.service.task.QuartzTaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

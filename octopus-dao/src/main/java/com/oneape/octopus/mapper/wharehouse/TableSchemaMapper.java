@@ -1,8 +1,8 @@
-package com.oneape.octopus.mapper.schema;
+package com.oneape.octopus.mapper.wharehouse;
 
-import com.oneape.octopus.domain.schema.TableSchemaDO;
+import com.oneape.octopus.domain.warehouse.TableSchemaDO;
 import com.oneape.octopus.mapper.BaseSqlProvider;
-import com.oneape.octopus.mapper.schema.provider.TableSchemaSqlProvider;
+import com.oneape.octopus.mapper.wharehouse.provider.TableSchemaSqlProvider;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

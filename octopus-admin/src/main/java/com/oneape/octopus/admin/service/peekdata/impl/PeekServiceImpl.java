@@ -26,7 +26,7 @@ import com.oneape.octopus.admin.service.peekdata.AggregationOperatorHelper;
 import com.oneape.octopus.admin.service.peekdata.ModelService;
 import com.oneape.octopus.admin.service.peekdata.PeekRuleTypeHelper;
 import com.oneape.octopus.admin.service.peekdata.PeekService;
-import com.oneape.octopus.admin.service.schema.DatasourceService;
+import com.oneape.octopus.admin.service.warehouse.DatasourceService;
 import com.oneape.octopus.admin.service.system.AccountService;
 import com.oneape.octopus.admin.service.uid.UIDGeneratorService;
 import lombok.extern.slf4j.Slf4j;

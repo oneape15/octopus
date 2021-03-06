@@ -1,7 +1,7 @@
 package com.oneape.octopus.admin.controller.datawarehouse.form;
 
 import com.oneape.octopus.commons.validation.IntValueRangeDetection;
-import com.oneape.octopus.domain.schema.TableSchemaDO;
+import com.oneape.octopus.domain.warehouse.TableSchemaDO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 

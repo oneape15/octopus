@@ -12,7 +12,7 @@ import com.oneape.octopus.mapper.system.UserRlRoleMapper;
 import com.oneape.octopus.domain.system.RoleDO;
 import com.oneape.octopus.domain.system.RoleRlResourceDO;
 import com.oneape.octopus.domain.system.RoleRlSchemaDO;
-import com.oneape.octopus.admin.service.schema.DatasourceService;
+import com.oneape.octopus.admin.service.warehouse.DatasourceService;
 import com.oneape.octopus.admin.service.system.RoleService;
 import com.oneape.octopus.admin.service.uid.UIDGeneratorService;
 import lombok.extern.slf4j.Slf4j;

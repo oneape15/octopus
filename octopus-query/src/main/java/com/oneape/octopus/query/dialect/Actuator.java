@@ -464,6 +464,7 @@ public abstract class Actuator {
 
         } catch (Exception e) {
             result.setErrMsg(e.toString());
+            result.setStatus(Result.QueryStatus.ERROR);
         } finally {
             watch.stop();
             result.setRunTime(watch.getTime(TimeUnit.MILLISECONDS));

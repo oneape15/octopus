@@ -1,4 +1,4 @@
-package com.oneape.octopus.admin.service.schema.impl;
+package com.oneape.octopus.admin.service.warehouse.impl;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.admin.config.I18nMsgConfig;
@@ -8,13 +8,13 @@ import com.oneape.octopus.query.QueryFactory;
 import com.oneape.octopus.query.data.DatasourceInfo;
 import com.oneape.octopus.query.schema.SchemaTable;
 import com.oneape.octopus.query.schema.SchemaTableField;
-import com.oneape.octopus.domain.schema.TableColumnDO;
-import com.oneape.octopus.domain.schema.TableSchemaDO;
+import com.oneape.octopus.domain.warehouse.TableColumnDO;
+import com.oneape.octopus.domain.warehouse.TableSchemaDO;
 import com.oneape.octopus.domain.task.QuartzTaskDO;
-import com.oneape.octopus.mapper.schema.TableColumnMapper;
-import com.oneape.octopus.mapper.schema.TableSchemaMapper;
-import com.oneape.octopus.admin.service.schema.DatasourceService;
-import com.oneape.octopus.admin.service.schema.SchemaService;
+import com.oneape.octopus.mapper.wharehouse.TableColumnMapper;
+import com.oneape.octopus.mapper.wharehouse.TableSchemaMapper;
+import com.oneape.octopus.admin.service.warehouse.DatasourceService;
+import com.oneape.octopus.admin.service.warehouse.SchemaService;
 import com.oneape.octopus.admin.service.task.QuartzTaskService;
 import com.oneape.octopus.admin.service.uid.UIDGeneratorService;
 import lombok.extern.slf4j.Slf4j;

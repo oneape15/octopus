@@ -1,6 +1,6 @@
 package com.oneape.octopus.admin.model.vo;
 
-import com.oneape.octopus.domain.schema.DatasourceDO;
+import com.oneape.octopus.domain.warehouse.DatasourceDO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 

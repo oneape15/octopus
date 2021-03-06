@@ -1,7 +1,7 @@
 package com.oneape.octopus.admin.controller.datawarehouse.form;
 
 import com.oneape.octopus.admin.controller.BaseForm;
-import com.oneape.octopus.domain.schema.DatasourceDO;
+import com.oneape.octopus.domain.warehouse.DatasourceDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;

@@ -1,10 +1,11 @@
 package com.oneape.octopus.commons.security;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Created by oneape<oneape15@163.com>
@@ -24,6 +25,6 @@ public class RSAUtilsTest {
         byte[] secrtStr = RSAUtils.encryptByPublicKey(tmp.getBytes(), Base64Utils.fromBase64(pubKey));
         byte[] mwArr = RSAUtils.decryptByPrivateKey(secrtStr, Base64Utils.fromBase64(priKey));
 
-        Assert.assertTrue("RSA加密算法异常", StringUtils.equals(tmp, new String(mwArr)));
+        assertTrue(StringUtils.equals(tmp, new String(mwArr)), "RSA加密算法异常");
     }
 }

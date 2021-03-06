@@ -1,7 +1,7 @@
 package com.oneape.octopus.admin.config;
 
-import com.oneape.octopus.admin.service.schema.DatasourceService;
-import com.oneape.octopus.admin.service.schema.SchemaService;
+import com.oneape.octopus.admin.service.warehouse.DatasourceService;
+import com.oneape.octopus.admin.service.warehouse.SchemaService;
 import com.oneape.octopus.admin.service.task.QuartzTaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;

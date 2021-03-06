@@ -1,7 +1,7 @@
-package com.oneape.octopus.admin.service.schema;
+package com.oneape.octopus.admin.service.warehouse;
 
 import com.oneape.octopus.query.data.DatasourceInfo;
-import com.oneape.octopus.domain.schema.DatasourceDO;
+import com.oneape.octopus.domain.warehouse.DatasourceDO;
 import com.oneape.octopus.admin.service.BaseService;
 
 import java.util.List;

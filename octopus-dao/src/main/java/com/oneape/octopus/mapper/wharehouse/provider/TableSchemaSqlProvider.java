@@ -1,7 +1,7 @@
-package com.oneape.octopus.mapper.schema.provider;
+package com.oneape.octopus.mapper.wharehouse.provider;
 
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.domain.schema.TableSchemaDO;
+import com.oneape.octopus.domain.warehouse.TableSchemaDO;
 import com.oneape.octopus.mapper.BaseSqlProvider;
 import com.oneape.octopus.commons.enums.Archive;
 import org.apache.commons.collections4.CollectionUtils;

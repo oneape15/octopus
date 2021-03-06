@@ -40,6 +40,7 @@
         <spring-boot-starter-webflux.version>2.4.2</spring-boot-starter-webflux.version>
         <spring-boot-admin-starter-client.version>2.3.1</spring-boot-admin-starter-client.version>
         <spring-cloud-starter-netflix-hystrix.version>2.2.6.RELEASE</spring-cloud-starter-netflix-hystrix.version>
+        <spring-boot-starter-jdbc.version>2.4.3</spring-boot-starter-jdbc.version>
 
         <lombok.version>1.18.10</lombok.version>
         <commons-lang3.version>3.9</commons-lang3.version>
@@ -69,17 +70,31 @@
 
         <octopus-commons.version>1.0-SNAPSHOT</octopus-commons.version>
         <octopus-dao.version>1.0-SNAPSHOT</octopus-dao.version>
-        <octopus-parsing.version>1.0-SNAPSHOT</octopus-parsing.version>
+        <octopus-parse.version>1.0-SNAPSHOT</octopus-parse.version>
         <octopus-query.version>1.0-SNAPSHOT</octopus-query.version>
 
-        <junit-jupiter.version>5.7.0</junit-jupiter.version>
+        <junit-bom.version>5.8.0-M1</junit-bom.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -141,6 +156,13 @@
                 <artifactId>spring-cloud-starter-stream-kafka</artifactId>
                 <version>${spring-cloud-starter-stream-kafka.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jdbc -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-jdbc</artifactId>
+                <version>${spring-boot-starter-jdbc.version}</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>com.oneape</groupId>
@@ -159,8 +181,8 @@
             </dependency>
             <dependency>
                 <groupId>com.oneape</groupId>
-                <artifactId>octopus-parsing</artifactId>
-                <version>${octopus-parsing.version}</version>
+                <artifactId>octopus-parse</artifactId>
+                <version>${octopus-parse.version}</version>
             </dependency>
 
             <dependency>
@@ -328,6 +350,15 @@
                 <version>${redisson.version}</version>
             </dependency>
 
+            <!-- https://mvnrepository.com/artifact/org.junit/junit-bom -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -335,11 +366,12 @@
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${maven-failsafe-plugin.version}</version>
             </plugin>
         </plugins>
     </build>

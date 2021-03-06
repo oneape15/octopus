@@ -29,7 +29,7 @@
         </dependency>
         <dependency>
             <groupId>com.oneape</groupId>
-            <artifactId>octopus-parsing</artifactId>
+            <artifactId>octopus-parse</artifactId>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -81,6 +81,10 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-stream-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>

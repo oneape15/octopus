@@ -1,19 +1,24 @@
-package com.oneape.octopus.mapper.schema.provider;
+package com.oneape.octopus.mapper.wharehouse.provider;
 
-import com.oneape.octopus.mapper.BaseSqlProvider;
-import com.oneape.octopus.domain.schema.DatasourceDO;
 import com.oneape.octopus.commons.enums.Archive;
+import com.oneape.octopus.domain.warehouse.DdlAuditInfoDO;
+import com.oneape.octopus.mapper.BaseSqlProvider;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatasourceSqlProvider extends BaseSqlProvider<DatasourceDO> {
-    public static final String TABLE_NAME = "datasource";
+/**
+ * Created by oneape<oneape15@163.com>
+ * Created 2021-02-25 16:08.
+ * Modify:
+ */
+public class DdlAuditInfoSqlProvider extends BaseSqlProvider<DdlAuditInfoDO> {
+    public static final String TABLE_NAME = "ddl_audit_info";
 
     /**
-     * Gets the table name.
+     * get table name.
      *
      * @return String
      */
@@ -22,7 +27,7 @@ public class DatasourceSqlProvider extends BaseSqlProvider<DatasourceDO> {
         return TABLE_NAME;
     }
 
-    public String getSameBy(@Param("name") String name, @Param("filterId") Long filterId) {
+    public String checkSameName(@Param("name") String name, @Param("filterId") Long filterId) {
         List<String> wheres = new ArrayList<>();
         wheres.add(FIELD_ARCHIVE + " = " + Archive.NORMAL.value());
         wheres.add("name = #{name}");
