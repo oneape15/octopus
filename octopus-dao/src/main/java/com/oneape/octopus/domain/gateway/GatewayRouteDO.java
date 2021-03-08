@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
  * Modify:
  */
 @Data
-@EqualsAndHashCode
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class GatewayRouteDO extends BaseDO {
     /**
      * the route unique id

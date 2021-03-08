@@ -27,10 +27,4 @@ public class SchemaTable implements Serializable {
      * The schema table description.
      */
     private String  comment;
-
-
-    public SchemaTable(String name, String comment) {
-        this.name = name;
-        this.comment = comment;
-    }
 }

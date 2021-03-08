@@ -26,10 +26,10 @@ public enum ServeType {
     LOV("LOV", "List Of Value");
 
 
-    private String code;
-    private String desc;
+    private final String code;
+    private final String desc;
 
-    private static LinkedHashMap<String, ServeType> map;
+    private static final LinkedHashMap<String, ServeType> map;
 
     static {
         map = new LinkedHashMap<>();

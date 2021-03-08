@@ -191,35 +191,6 @@ public class H2Actuator extends MySQLActuator {
             case "smalldatetime":
                 dt = DataType.TIMESTAMP;
                 break;
-            case "binary":
-            case "varbinary":
-            case "longvarbinary":
-            case "raw":
-            case "bytea":
-            case "blob":
-            case "tinyblob":
-            case "mediumblob":
-            case "longblob":
-            case "image":
-            case "oid":
-            case "clob":
-            case "tinytext":
-            case "text":
-            case "longtext":
-            case "ntext":
-            case "nclob":
-            case "varchar":
-            case "varchar2":
-            case "nvarchar":
-            case "varchar_casesensitive":
-            case "varchar_ignorecase":
-            case "longvarchar":
-            case "char":
-            case "character":
-            case "nchar":
-            case "other":
-                dt = DataType.STRING;
-                break;
             default:
                 dt = DataType.STRING;
                 break;

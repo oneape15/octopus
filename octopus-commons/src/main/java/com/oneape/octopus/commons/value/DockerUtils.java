@@ -49,7 +49,7 @@ public class DockerUtils {
     /**
      * Whether a docker
      *
-     * @return
+     * @return boolean
      */
     public static boolean isDocker() {
         return IS_DOCKER;

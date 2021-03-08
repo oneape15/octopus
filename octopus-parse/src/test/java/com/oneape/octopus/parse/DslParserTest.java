@@ -3,6 +3,8 @@ package com.oneape.octopus.parse;
 import com.oneape.octopus.commons.dto.DataType;
 import com.oneape.octopus.commons.dto.Value;
 import com.oneape.octopus.parse.xml.DslParser;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +34,9 @@ public class DslParserTest {
             "LIMIT @{start}, @{end}";
 
 
-    public static void main(String[] args) {
+    @Test
+    @DisplayName("DSL Parse")
+    void dslParse() {
         Map<String, Value> map = new HashMap<>();
         Value val1 = new Value(new Integer[]{1, 3}, DataType.INTEGER);
         val1.setRange(true);
@@ -44,7 +48,7 @@ public class DslParserTest {
         map.put("end", new Value(20, DataType.INTEGER));
 
         DslParser dp = new DslParser(dslSql, map);
-
         System.out.println(dp.getRawSql());
+        System.out.println(dp.getArgs());
     }
 }

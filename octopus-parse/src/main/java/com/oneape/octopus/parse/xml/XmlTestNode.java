@@ -2,6 +2,7 @@ package com.oneape.octopus.parse.xml;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.util.Stack;
 
@@ -11,12 +12,13 @@ import java.util.Stack;
  * Modify:
  */
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class XmlTestNode extends XmlNode {
 
-    private String         exp1;
-    private Operator       op;
-    private String         exp2;
+    private String exp1;
+    private Operator op;
+    private String exp2;
 
     private Stack<XmlNode> stack;
 

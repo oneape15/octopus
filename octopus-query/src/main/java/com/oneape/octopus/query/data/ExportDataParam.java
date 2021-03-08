@@ -15,7 +15,7 @@ public class ExportDataParam extends ExecParam {
     /**
      * The local file title.
      */
-    private String       title;
+    private String title;
     /**
      * Additional information.
      */
@@ -24,9 +24,9 @@ public class ExportDataParam extends ExecParam {
     /**
      * The file type.
      */
-    private FileType exportFileType   = FileType.CSV;
+    private FileType exportFileType = FileType.CSV;
     /**
      * Whether a compressed file tag is required.
      */
-    private Boolean  needCompressFile = Boolean.TRUE;
+    private Boolean needCompressFile = Boolean.TRUE;
 }

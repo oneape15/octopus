@@ -15,7 +15,7 @@ public class ExecParam implements Serializable {
     /**
      * Native SQL
      */
-    private String      rawSql;
+    private String rawSql;
     /**
      * The parameters is That Replace native SQL "?".
      */
@@ -23,16 +23,16 @@ public class ExecParam implements Serializable {
     /**
      * Page number, starting at 1.
      */
-    private Integer     pageIndex;
+    private Integer pageIndex;
     /**
      * Number of entries per page.
      */
-    private Integer     pageSize;
+    private Integer pageSize;
     /**
      * The limit size.
      * An exception is thrown if the number of queries is greater than the limit.
      */
-    private Integer limitSize     = -1;
+    private Integer limitSize = -1;
     /**
      * Whether need total size.
      */

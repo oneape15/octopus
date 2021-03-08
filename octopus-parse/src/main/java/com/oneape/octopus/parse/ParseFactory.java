@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Parser the dsl language
  */
-public interface ParsingFactory {
+public interface ParseFactory {
 
     /**
      * parser the dsl language to sql.

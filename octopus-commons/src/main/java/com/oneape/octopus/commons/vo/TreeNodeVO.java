@@ -24,21 +24,21 @@ public class TreeNodeVO implements Serializable {
     public static final String KEY_LEAF_SIZE = "leafSize";
 
     // 此项必须设置（其值在整个树范围内唯一）
-    private String           key;
+    private String key;
     // 默认根据此属性值进行筛选（其值在整个树范围内唯一）
-    private String           value;
+    private String value;
     // 树节点显示的内容
-    private String           title;
+    private String title;
     // 图标
-    private String           icon;
+    private String icon;
     // 子节点
     private List<TreeNodeVO> children;
     // 是否是叶子节点
-    private boolean             isLeaf   = true;
+    private boolean isLeaf = true;
     // 是否禁用
-    private boolean             disabled = false;
+    private boolean disabled = false;
     // 节点额外属性值
-    private Map<String, String> props    = new HashMap<>();
+    private Map<String, String> props = new HashMap<>();
 
     public TreeNodeVO(String key, String title) {
         this.key = key;

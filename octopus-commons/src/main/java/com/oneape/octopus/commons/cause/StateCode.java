@@ -20,8 +20,8 @@ public enum StateCode {
     ;
 
 
-    private int code;
-    private String message;
+    private final int code;
+    private final String message;
 
     StateCode(int code, String message) {
         this.code = code;

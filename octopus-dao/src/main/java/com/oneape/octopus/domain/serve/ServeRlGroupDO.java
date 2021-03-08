@@ -3,6 +3,7 @@ package com.oneape.octopus.domain.serve;
 import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.domain.BaseDO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class ServeRlGroupDO extends BaseDO {
     @EntityColumn(name = "serve_id")
     private Long serveId;

@@ -176,13 +176,6 @@ public class PostgreSQLActuator extends Actuator {
             case "numeric":
                 dt = DataType.DECIMAL;
                 break;
-            case "char":
-            case "bpchar":
-            case "varchar":
-            case "text":
-            case "name":
-                dt = DataType.STRING;
-                break;
             case "bool":
             case "bit":
                 dt = DataType.BOOLEAN;
@@ -198,6 +191,11 @@ public class PostgreSQLActuator extends Actuator {
             case "timestampz":
                 dt = DataType.TIMESTAMP;
                 break;
+            case "char":
+            case "bpchar":
+            case "varchar":
+            case "text":
+            case "name":
             case "bytea":
             case "refcursor":
             case "json":

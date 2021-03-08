@@ -16,8 +16,8 @@ public enum DdlAuditType {
     ERROR(4, "Perform error"),
     FINISH(5, "completes");
 
-    private Integer code;
-    private String  description;
+    private final Integer code;
+    private final String  description;
 
     DdlAuditType(int code, String description) {
         this.code = code;

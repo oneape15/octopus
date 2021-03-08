@@ -24,16 +24,16 @@ public final class OptStringUtils {
     }
 
     public static String iterator2String(Iterator<String> iter) {
-        String s = "[";
+        StringBuilder s = new StringBuilder("[");
         int index = 0;
         while (iter.hasNext()) {
             if (index++ > 0) {
-                s += ",";
+                s.append(",");
             }
-            s += iter.next();
+            s.append(iter.next());
         }
-        s += "]";
+        s.append("]");
 
-        return s;
+        return s.toString();
     }
 }

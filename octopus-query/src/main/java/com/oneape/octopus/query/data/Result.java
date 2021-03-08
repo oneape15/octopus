@@ -20,7 +20,7 @@ public class Result implements Serializable {
     /**
      * The table column information
      */
-    private List<ColumnHead>          columns;
+    private List<ColumnHead> columns;
     /**
      * The data rows
      */
@@ -28,7 +28,7 @@ public class Result implements Serializable {
     /**
      * total size
      */
-    private Integer                   countSize;
+    private Integer countSize;
     /**
      * Attached information.
      */

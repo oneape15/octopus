@@ -5,17 +5,19 @@ import com.oneape.octopus.commons.annotation.Creator;
 import com.oneape.octopus.commons.annotation.Modifier;
 import com.oneape.octopus.commons.enums.EntityColumn;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
+@NoArgsConstructor
 public class BaseDO implements Serializable {
     /**
      * the primary key.
      */
     @AutoUniqueId
     @EntityColumn(name = "id", unique = true, nullable = false)
-    private Long    id;
+    private Long id;
     /**
      * The soft deleted status. 0 - normal； 1 - archive；
      */
@@ -25,18 +27,18 @@ public class BaseDO implements Serializable {
      * creator of the data.
      */
     @Creator
-    private Long    creator;
+    private Long creator;
     /**
      * create time of the data.
      */
-    private Long    created;
+    private Long created;
     /**
      * modifier of the data.
      */
     @Modifier
-    private Long    modifier;
+    private Long modifier;
     /**
      * Recently, update time of the data.
      */
-    private Long    modified;
+    private Long modified;
 }

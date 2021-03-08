@@ -23,7 +23,7 @@ public class EntityColumnUtils {
         }
 
         List<Field> fields;
-        Class clazz = o.getClass();
+        Class<?> clazz = o.getClass();
         // When the parent class is null, the uppermost parent class (Object class) has been reached.
         while (clazz != null) {
             fields = Arrays.asList(clazz.getDeclaredFields());
@@ -82,15 +82,14 @@ public class EntityColumnUtils {
 
         Object obj = beanClass.newInstance();
 
-        Class oo = obj.getClass();
-        List<Class> clazzList = new ArrayList<>();
-        while (true) {
+        Class<?> oo = obj.getClass();
+        List<Class<?>> clazzList = new ArrayList<>();
+        do {
             clazzList.add(oo);
             oo = oo.getSuperclass();
-            if (oo == null || oo == Object.class) break;
-        }
+        } while (oo != null && oo != Object.class);
 
-        for (Class clz : clazzList) {
+        for (Class<?> clz : clazzList) {
             Field[] fields = clz.getDeclaredFields();
             for (Field field : fields) {
                 int mod = field.getModifiers();
@@ -117,16 +116,15 @@ public class EntityColumnUtils {
     public static Map<String, Object> objectToMap(Object obj) throws Exception {
         if (obj == null) return null;
 
-        Class oo = obj.getClass();
-        List<Class> clazzList = new ArrayList<>();
-        while (true) {
+        Class<?> oo = obj.getClass();
+        List<Class<?>> clazzList = new ArrayList<>();
+        do {
             clazzList.add(oo);
             oo = oo.getSuperclass();
-            if (oo == null || oo == Object.class) break;
-        }
+        } while (oo != null && oo != Object.class);
         Map<String, Object> map = new HashMap<>();
 
-        for (Class clz : clazzList) {
+        for (Class<?> clz : clazzList) {
             Field[] declaredFields = clz.getDeclaredFields();
             for (Field field : declaredFields) {
                 int mod = field.getModifiers();

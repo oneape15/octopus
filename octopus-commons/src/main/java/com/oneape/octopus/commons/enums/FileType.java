@@ -12,7 +12,7 @@ public enum FileType {
     CSV(".csv"),
     XLS(".xlsx");
 
-    private String suffix;
+    private final String suffix;
 
     private FileType(String suffix) {
         this.suffix = suffix;

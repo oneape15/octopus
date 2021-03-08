@@ -1,5 +1,7 @@
 package com.oneape.octopus.commons.security;
 
+import java.util.Arrays;
+
 /**
  * base58工具
  * Created by oneape<oneape15@163.com>
@@ -14,9 +16,7 @@ public class Base58Utils {
     private static final int[] INDEXES = new int[128];
 
     static {
-        for (int i = 0; i < INDEXES.length; i++) {
-            INDEXES[i] = -1;
-        }
+        Arrays.fill(INDEXES, -1);
         for (int i = 0; i < ALPHABET.length; i++) {
             INDEXES[ALPHABET[i]] = i;
         }
@@ -60,7 +60,7 @@ public class Base58Utils {
         for (int i = 0; i < input.length(); ++i) {
             char c = input.charAt(i);
             int digit58 = -1;
-            if (c >= 0 && c < 128) {
+            if (c < 128) {
                 digit58 = INDEXES[c];
             }
             if (digit58 < 0) {

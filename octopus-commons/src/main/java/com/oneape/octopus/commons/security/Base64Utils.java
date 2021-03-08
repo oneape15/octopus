@@ -3,6 +3,7 @@ package com.oneape.octopus.commons.security;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Base64;
  * Modify:
  */
 public class Base64Utils {
-    private static final Charset utf8 = Charset.forName("UTF-8");
+    private static final Charset utf8 = StandardCharsets.UTF_8;
 
     private static final Base64.Decoder decoder = Base64.getDecoder();
     private static final Base64.Encoder encoder = Base64.getEncoder();

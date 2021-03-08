@@ -3,7 +3,7 @@ package com.oneape.octopus.parse.xml;
 import com.oneape.octopus.commons.dto.Value;
 import com.oneape.octopus.parse.data.ParseResult;
 import com.oneape.octopus.parse.data.SyntaxException;
-import com.oneape.octopus.parse.ParsingFactory;
+import com.oneape.octopus.parse.ParseFactory;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
@@ -14,7 +14,7 @@ import java.util.Map;
  * Created 2020-07-08 17:27.
  * Modify:
  */
-public class XmlParsingFactory implements ParsingFactory {
+public class XmlParseFactory implements ParseFactory {
     /**
      * parser the dsl language to sql.
      *

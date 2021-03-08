@@ -165,7 +165,7 @@ public final class DatetimeMacroUtils {
     private static Date setOption(Unit unit, Tag tag, Integer offset) {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(new Date());
-        boolean isEndDay = tag != null && tag == Tag.END;
+        boolean isEndDay = tag == Tag.END;
 
         switch (unit) {
             case DAYS:

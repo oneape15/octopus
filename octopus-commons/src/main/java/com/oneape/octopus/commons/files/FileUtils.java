@@ -17,19 +17,15 @@ public class FileUtils {
     public static void delDir(String dirPath) {
         File file = new File(dirPath);
         boolean status;
-        if (file.isFile()) {
-            status = file.delete();
-        } else {
+        if (!file.isFile()) {
             File[] files = file.listFiles();
-            if (files == null) {
-                status = file.delete();
-            } else {
+            if (files != null) {
                 for (File f : files) {
                     delDir(f.getAbsolutePath());
                 }
-                status = file.delete();
             }
         }
+        status = file.delete();
         log.info("删除文件: {} {}", dirPath, status ? "成功" : "失败");
     }
 

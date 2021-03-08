@@ -23,7 +23,7 @@ import javax.sql.DataSource;
 @Configuration
 public class QuartzJobConfig {
     @Resource
-    private DataSource                 dataSource;
+    private DataSource dataSource;
     @Resource
     private PlatformTransactionManager txManager;
 

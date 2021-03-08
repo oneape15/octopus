@@ -154,29 +154,24 @@ public class OdpsActuator extends MySQLActuator {
                 return DataType.BOOLEAN;
             case "DATETIME":
                 return DataType.DATETIME;
-            case "STRING":
-                return DataType.STRING;
             case "DECIMAL":
                 return DataType.DECIMAL;
             case "MAP":
             case "ARRAY":
             case "VOID":
             case "TINYINT":
-                return DataType.INTEGER;
             case "SMALLINT":
-                return DataType.INTEGER;
             case "INT":
                 return DataType.INTEGER;
             case "FLOAT":
                 return DataType.FLOAT;
-            case "CHAR":
-                return DataType.STRING;
-            case "VARCHAR":
-                return DataType.STRING;
             case "DATE":
                 return DataType.DATE;
             case "TIMESTAMP":
                 return DataType.TIMESTAMP;
+            case "STRING":
+            case "CHAR":
+            case "VARCHAR":
             case "BINARY":
                 return DataType.STRING;
             case "INTERVAL_DAY_TIME":

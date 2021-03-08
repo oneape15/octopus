@@ -7,7 +7,7 @@ import lombok.Getter;
  */
 @Getter
 public class UnauthorizedException extends BizException {
-    private String msg;
+    private final String msg;
 
     /**
      * Default constructor.

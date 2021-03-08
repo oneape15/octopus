@@ -28,10 +28,10 @@ public enum VisualType {
     RADAR(16, "RADAR");
 
 
-    private Integer code;
-    private String  desc;
+    private final Integer code;
+    private final String  desc;
 
-    private static LinkedHashMap<Integer, VisualType> map;
+    private static final LinkedHashMap<Integer, VisualType> map;
 
     static {
         map = new LinkedHashMap<>();

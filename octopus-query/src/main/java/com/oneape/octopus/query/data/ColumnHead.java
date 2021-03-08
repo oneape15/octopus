@@ -12,11 +12,11 @@ public class ColumnHead implements Serializable {
     /**
      * The column name.
      */
-    private String   name;
+    private String name;
     /**
      * The column alias.
      */
-    private String   label;
+    private String label;
     /**
      * The column data type.
      */

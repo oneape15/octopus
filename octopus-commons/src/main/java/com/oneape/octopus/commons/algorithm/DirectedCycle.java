@@ -12,12 +12,12 @@ import java.util.Stack;
  */
 public class DirectedCycle<T> {
 
-    private boolean[] marked;
-    private int[]     edgeTo;
+    private final boolean[] marked;
+    private final int[]     edgeTo;
     // All vertices in a directed ring (if any).
     private Stack<T>  cycle;
     // All vertices on the stack of recursive calls.
-    private boolean[] onStack;
+    private final boolean[] onStack;
 
     public DirectedCycle(Digraph<T> digraph) {
         onStack = new boolean[digraph.V()];
@@ -43,7 +43,7 @@ public class DirectedCycle<T> {
                 edgeTo[wIndex] = vIndex;
                 dfs(digraph, w);
             } else if (onStack[wIndex]) {
-                cycle = new Stack<T>();
+                cycle = new Stack<>();
                 for (int x = vIndex; x != wIndex; x = edgeTo[x]) {
                     cycle.push(digraph.getVertexByIndex(x));
                 }

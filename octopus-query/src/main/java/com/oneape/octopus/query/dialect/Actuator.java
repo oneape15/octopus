@@ -910,7 +910,7 @@ public abstract class Actuator {
     }
 
     @Data
-    private class ExecuteResult {
+    private static class ExecuteResult {
         private Integer                   type;
         private Boolean                   success;
         private List<ColumnHead>          columnHeads;

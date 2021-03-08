@@ -18,7 +18,7 @@ public class DetailInfo implements Serializable {
     // error info message
     private String errMsg;
     // run time
-    private Long   runTime;
+    private Long runTime;
     // Export file path
     private String exportFile;
 }

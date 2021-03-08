@@ -8,38 +8,38 @@ import java.io.Serializable;
 @Data
 public class DatasourceInfo implements Serializable {
 
-    public static final Integer DEFAULT_TIMEOUT   = 60 * 1000;
+    public static final Integer DEFAULT_TIMEOUT = 60 * 1000;
     public static final Integer DEFAULT_POOL_SIZE = 5;
-    public static final Integer DEFAULT_IDLE      = 1;
+    public static final Integer DEFAULT_IDLE = 1;
 
     /**
      * the datasource primary key
      */
-    private           Long                 id;
+    private Long id;
     /**
      * The Data source type helper class.
      */
-    private           DatasourceTypeHelper datasourceType;
+    private DatasourceTypeHelper datasourceType;
     /**
      * DB url
      */
-    private           String               url;
+    private String url;
     /**
      * Database login name
      */
-    private           String               username;
+    private String username;
     /**
      * Database login password
      */
-    private transient String               password;
+    private transient String password;
     /**
      * The sql of use to test.
      */
-    private           String               testSql;
+    private String testSql;
     /**
      * Data source connection timeout(ms).
      */
-    private Integer timeout     = DEFAULT_TIMEOUT;
+    private Integer timeout = DEFAULT_TIMEOUT;
     /**
      * Data source max pool size.
      */
@@ -47,9 +47,9 @@ public class DatasourceInfo implements Serializable {
     /**
      * Minimum free connection.
      */
-    private Integer minIdle     = 1;
+    private Integer minIdle = 1;
     /**
      * The datasource is read only.
      */
-    private Boolean readOnly    = Boolean.TRUE;
+    private Boolean readOnly = Boolean.TRUE;
 }

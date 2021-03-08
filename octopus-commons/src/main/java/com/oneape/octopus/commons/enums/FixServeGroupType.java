@@ -10,8 +10,8 @@ public enum FixServeGroupType {
     PERSONAL(-1L, "个人文件夹"),
     ARCHIVE(-2L, "已归档目录");
 
-    private Long   id;
-    private String groupName;
+    private final Long   id;
+    private final String groupName;
 
     FixServeGroupType(Long id, String groupName) {
         this.id = id;

@@ -1,6 +1,7 @@
 package com.oneape.octopus.parse.xml;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Created by oneape<oneape15@163.com>
@@ -8,6 +9,7 @@ import lombok.Data;
  * Modify:
  */
 @Data
+@NoArgsConstructor
 public class XmlNode {
     // The xml node name.
     private NodeName nodeName;

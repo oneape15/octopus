@@ -21,11 +21,11 @@ public enum DatasourceTypeHelper {
     /**
      * Full name of the driver class.
      */
-    private String driverClass;
+    private final String driverClass;
     /**
      * URL address template.
      */
-    private String urlTemplate;
+    private final String urlTemplate;
 
     DatasourceTypeHelper(String driverClass, String urlTemplate) {
         this.driverClass = driverClass;

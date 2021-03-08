@@ -6,8 +6,6 @@ import com.oneape.octopus.dto.task.QuartzTaskParamDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.Column;
-
 /**
  * quartz任务自定义对象类
  * Created by oneape<oneape15@163.com>
@@ -21,27 +19,27 @@ public class QuartzTaskDO extends BaseDO {
      * The task name
      */
     @EntityColumn(name = "task_name")
-    private String  taskName;
+    private String taskName;
     /**
      * task group name
      */
     @EntityColumn(name = "group_name")
-    private String  groupName;
+    private String groupName;
     /**
      * The class in which the job resides
      */
     @EntityColumn(name = "job_class")
-    private String  jobClass;
+    private String jobClass;
     /**
      * Cron expression
      */
-    private String  cron;
+    private String cron;
     /**
      * Run task parameters (JSON format)
      *
      * @see QuartzTaskParamDTO
      */
-    private String  params;
+    private String params;
     /**
      * status 0 - block up; 1 - invoke
      */
@@ -50,6 +48,6 @@ public class QuartzTaskDO extends BaseDO {
      * Last run time
      */
     @EntityColumn(name = "last_run_time")
-    private Long    lastRunTime;
+    private Long lastRunTime;
 
 }

@@ -15,10 +15,10 @@ public enum ReportParamType {
     LOV(8, "LOV"),
     STATIC_LOV(16, "STATIC_LOV");
 
-    private int    code;
-    private String desc;
+    private final int code;
+    private final String desc;
 
-    private static LinkedHashMap<Integer, ReportParamType> map;
+    private static final LinkedHashMap<Integer, ReportParamType> map;
 
     static {
         map = new LinkedHashMap<>();

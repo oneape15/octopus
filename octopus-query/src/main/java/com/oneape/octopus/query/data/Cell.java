@@ -18,7 +18,7 @@ public class Cell implements Serializable {
     /**
      * The value of cell.
      */
-    private Object     value;
+    private Object value;
 
     public Cell(ColumnHead head, Object value) {
         this.head = head;

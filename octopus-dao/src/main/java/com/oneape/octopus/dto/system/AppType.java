@@ -11,7 +11,7 @@ public enum AppType {
     PC(1),
     MOBILE(2);
 
-    private Integer code;
+    private final Integer code;
 
     AppType(int code) {
         this.code = code;

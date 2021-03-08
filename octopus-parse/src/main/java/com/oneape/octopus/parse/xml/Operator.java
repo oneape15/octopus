@@ -37,7 +37,7 @@ public enum Operator {
     // include
     INCLUDE("ic");
 
-    private String code;
+    private final String code;
 
     private final static Map<String, Operator> map;
 

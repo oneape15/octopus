@@ -8,6 +8,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.SecureRandom;
 
@@ -20,7 +21,7 @@ import java.security.SecureRandom;
 @Slf4j
 public final class AESUtils {
     private final static String  password = "octopus_is_data_center";
-    private final static Charset charset  = Charset.forName("UTF-8");
+    private final static Charset charset  = StandardCharsets.UTF_8;
 
     private static Key    key;
     private static Cipher cipher;

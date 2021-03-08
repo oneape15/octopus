@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -26,7 +27,7 @@ public class DslParser {
     private static final int    SEQ_COMMA_CHAR_LEN = SEQ_COMMA_END.length();
 
     // The node stack
-    private       Stack<XmlNode>     stack;
+    private final Stack<XmlNode>     stack;
     private final Map<String, Value> paramMap;
 
     private String      rawSql;
@@ -266,7 +267,7 @@ public class DslParser {
         if (stack.isEmpty()) return;
 
         Pair<Integer, XmlNode> valPair = testIfNode(stack, 0, true);
-        if (valPair == null || valPair.getRight() == null) {
+        if (valPair.getRight() == null) {
             throw new SyntaxException("Run expression Error, The result is null.");
         }
 
@@ -297,7 +298,7 @@ public class DslParser {
             if (i + 1 < len && chars[i + 1] == '{') {
                 boolean hasFound = false;
                 int j = i + 1;
-                for (; j < len; ) {
+                while (j < len) {
                     if (chars[j++] == '}') {
                         hasFound = true;
                         break;
@@ -466,12 +467,12 @@ public class DslParser {
             retStack.push(node);
         }
 
-        String text = "";
+        StringBuilder text = new StringBuilder();
         boolean testStatus = ifTest;
         for (XmlNode node : retStack) {
             if (node.getNodeName() == NodeName.TEXT) {
                 if (testStatus) {
-                    text += " " + ((XmlTextNode) node).getContent();
+                    text.append(" ").append(((XmlTextNode) node).getContent());
                 }
             } else if (node.getNodeName() == NodeName.ELSEIF) {
                 testStatus = testNode((XmlTestNode) node);
@@ -479,7 +480,7 @@ public class DslParser {
                 testStatus = !ifTest;
             }
         }
-        return new Pair<>(curIndex, new XmlTextNode(text));
+        return new Pair<>(curIndex, new XmlTextNode(text.toString()));
     }
 
     private boolean testNode(XmlTestNode testNode) {
@@ -595,7 +596,7 @@ public class DslParser {
      */
     public static String clearDslSqlString(String rawSql) {
         // Remove comments and line breaks and non-characters
-        Charset charset = Charset.forName("utf8");
+        Charset charset = StandardCharsets.UTF_8;
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(rawSql.getBytes(charset)), charset));
 

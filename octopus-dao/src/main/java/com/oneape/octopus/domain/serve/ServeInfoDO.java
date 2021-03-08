@@ -3,9 +3,9 @@ package com.oneape.octopus.domain.serve;
 import com.oneape.octopus.commons.annotation.SortId;
 import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.commons.enums.ServeStatusType;
-import com.oneape.octopus.domain.BaseDO;
 import com.oneape.octopus.commons.enums.ServeType;
 import com.oneape.octopus.commons.enums.VisualType;
+import com.oneape.octopus.domain.BaseDO;
 import com.oneape.octopus.dto.serve.ServeConfigTextDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -72,17 +72,8 @@ public class ServeInfoDO extends BaseDO {
      */
     private String comment;
 
-    public ServeInfoDO(String name) {
-        this.name = name;
-    }
-
-
     public ServeInfoDO(Long id) {
         this.setId(id);
     }
 
-    public ServeInfoDO(Long id, String name) {
-        setId(id);
-        this.name = name;
-    }
 }

@@ -11,5 +11,5 @@ public enum UserStatus {
     // normal state
     NORMAL,
     // lock state
-    LOCK;
+    LOCK
 }

@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.FileWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -19,13 +20,13 @@ import java.util.List;
  */
 @Slf4j
 public class EasyCsv {
-    private final static Charset   charset       = Charset.forName("utf-8");
+    private final static Charset   charset       = StandardCharsets.UTF_8;
     private final static CSVFormat csvFormat     = CSVFormat.DEFAULT.withRecordSeparator("\n");
     private final static String    commonCsvHead = new String(new byte[]{(byte) 0xEF, (byte) 0xBB, (byte) 0xBF}, charset);
 
     private final FileWriter fileWriter;
     private final CSVPrinter csvPrinter;
-    private boolean isActive = false;
+    private boolean isActive;
 
     public EasyCsv(String fullFileName) throws Exception {
         if (StringUtils.isBlank(fullFileName)) {
@@ -38,7 +39,7 @@ public class EasyCsv {
         }
 
         // Determine if the file exists.
-        Boolean isExist = FileUtils.isExist(fullFileName);
+        boolean isExist = FileUtils.isExist(fullFileName);
         if (isExist) {
             throw new BizException("File already exists! filePath: " + fullFileName);
         }

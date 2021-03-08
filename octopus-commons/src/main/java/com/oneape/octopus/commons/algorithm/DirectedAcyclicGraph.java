@@ -11,9 +11,9 @@ import java.util.*;
 public class DirectedAcyclicGraph<T> {
 
     // The dag vertex list.
-    private Set<T>         vertex;
+    private final Set<T>         vertex;
     // A set of pre vertices of vertices.
-    private Map<T, Set<T>> map;
+    private final Map<T, Set<T>> map;
 
     public DirectedAcyclicGraph(Digraph<T> digraph) {
         vertex = new HashSet<>();
@@ -43,11 +43,7 @@ public class DirectedAcyclicGraph<T> {
             throw new IllegalArgumentException("Directed graph edge information exception.");
         }
 
-        Set<T> prevs = map.get(v);
-        if (prevs == null) {
-            prevs = new HashSet<>();
-            map.put(v, prevs);
-        }
+        Set<T> prevs = map.computeIfAbsent(v, k -> new HashSet<>());
 
         if (prevs.contains(w)) {
             throw new IllegalArgumentException("The edges of a directed graph with multiple duplicates.");

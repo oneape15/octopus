@@ -21,13 +21,13 @@ public class Graph<T> {
     private final boolean directed;
 
     // The vertex size.
-    private int            vertexSize;
+    private final int vertexSize;
     // The edge size.
-    private int            edgeSize;
+    private int edgeSize;
     // The graph adjacency list array.
-    private Set<Integer>[] adj;
+    private final Set<Integer>[] adj;
     // The vertex list.
-    private List<T>        keys;
+    private final List<T> keys;
 
     public Graph(int V) {
         this(V, false);
@@ -110,7 +110,7 @@ public class Graph<T> {
      * @return T
      */
     public T getVertexByIndex(int index) {
-        if (index < 0 && keys.size() >= index) {
+        if (index < 0) {
             throw new IndexOutOfBoundsException("The normal index is [ 0 ~ " + (keys.size() - 1) + "] , input index: " + index);
         }
         return keys.get(index);
@@ -210,16 +210,16 @@ public class Graph<T> {
      */
     @Override
     public String toString() {
-        String s = this.getClass().getName() + " { \n" + vertexSize + " vertices, " + edgeSize + " edges\n";
+        StringBuilder s = new StringBuilder(this.getClass().getName() + " { \n" + vertexSize + " vertices, " + edgeSize + " edges\n");
         for (int i = 0; i < vertexSize; i++) {
             T v = getVertexByIndex(i);
-            s += v + ": ";
+            s.append(v).append(": ");
             for (T w : this.adj(v)) {
-                s += w + " ";
+                s.append(w).append(" ");
             }
-            s += "\n";
+            s.append("\n");
         }
-        s += "}\n";
-        return s;
+        s.append("}\n");
+        return s.toString();
     }
 }

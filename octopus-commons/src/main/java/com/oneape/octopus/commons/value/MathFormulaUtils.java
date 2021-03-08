@@ -39,6 +39,9 @@ public class MathFormulaUtils {
 
     /**
      * Computes the value of the specified formula.
+     *
+     * @param str String
+     * @return String
      */
     public static String calculate(String str) {
         List<String> rpn = getRpn(str);
@@ -50,7 +53,7 @@ public class MathFormulaUtils {
      */
     private static List<String> getRpn(String str) {
         String tmp = StringUtils.trim(str);
-        List<String> formulaList = Arrays.asList(tmp.split(" "));
+        String[] formulaList = tmp.split(" ");
 
         Stack<String> operators = new Stack<>();
         List<String> result = new ArrayList<>();

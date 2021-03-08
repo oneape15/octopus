@@ -7,7 +7,7 @@ package com.oneape.octopus.commons.algorithm;
  */
 public class DepthFirstSearch<T> {
 
-    private boolean[] marked;
+    private final boolean[] marked;
     private int       count;
 
     public DepthFirstSearch(Graph<T> graph, T s) {

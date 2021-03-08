@@ -26,6 +26,6 @@ public class OctopusConstant {
     public final static Integer FAIL    = 0;
 
     public static boolean isSuccess(Integer status) {
-        return status != null && SUCCESS.equals(status);
+        return SUCCESS.equals(status);
     }
 }

@@ -4,6 +4,7 @@ import com.oneape.octopus.commons.enums.DdlAuditType;
 import com.oneape.octopus.commons.enums.EntityColumn;
 import com.oneape.octopus.domain.BaseDO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Created by oneape<oneape15@163.com>
@@ -11,6 +12,7 @@ import lombok.Data;
  * Modify:
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class DdlAuditInfoDO extends BaseDO {
     /**
      * ddl audit name

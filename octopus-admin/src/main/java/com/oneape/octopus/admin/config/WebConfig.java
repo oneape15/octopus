@@ -45,7 +45,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
             arr = new String[1];
             arr[0] = defaultVal;
         } else {
-            arr = tmps.toArray(new String[tmps.size()]);
+            arr = tmps.toArray(new String[0]);
         }
         return arr;
     }

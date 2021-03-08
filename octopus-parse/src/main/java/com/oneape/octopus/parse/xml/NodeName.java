@@ -13,5 +13,5 @@ public enum NodeName {
     IF,
     ELSEIF,
     ELSE,
-    FI;
+    FI
 }

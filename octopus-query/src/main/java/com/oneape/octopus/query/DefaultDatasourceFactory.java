@@ -26,7 +26,7 @@ import static com.oneape.octopus.commons.constant.OctopusConstant.PWD_MASK_TAG;
 @Slf4j
 public class DefaultDatasourceFactory implements DatasourceFactory {
 
-    private static ConcurrentHashMap<String, HikariDataSource> datasourceMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, HikariDataSource> datasourceMap = new ConcurrentHashMap<>();
 
     private static final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
@@ -86,7 +86,7 @@ public class DefaultDatasourceFactory implements DatasourceFactory {
             readWriteLock.writeLock().lock();
             HikariDataSource ds = datasourceMap.getOrDefault(key, null);
             if (ds != null) {
-                log.info("The data source already exists. datasource: ", JSON.toJSONString(dsInfo));
+                log.info("The data source already exists. datasource: {}", JSON.toJSONString(dsInfo));
                 return 1;
             }
             datasourceMap.put(key, initDataSource(dsInfo));

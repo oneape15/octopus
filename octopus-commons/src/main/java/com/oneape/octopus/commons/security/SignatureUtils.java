@@ -34,6 +34,7 @@ public class SignatureUtils {
         byte[] keyBytes = Base64Utils.fromBase64(privateKey);
 
         // 构造PKCS8EncodedKeySpec对象
+        assert keyBytes != null;
         PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(keyBytes);
 
         // KEY_ALGORITHM 指定的加密算法
@@ -66,6 +67,7 @@ public class SignatureUtils {
         byte[] keyBytes = Base64Utils.fromBase64(publicKey);
 
         // 构造X509EncodedKeySpec对象
+        assert keyBytes != null;
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
 
         // KEY_ALGORITHM 指定的加密算法

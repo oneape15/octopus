@@ -18,19 +18,19 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class DefaultQueryFactory implements QueryFactory {
 
-    private DatasourceFactory datasourceFactory;
+    private final DatasourceFactory datasourceFactory;
     // Table information cache
     private static final String KEY_TABLE = "table_";
     // Table field information cache
     private static final String KEY_FIELD = "field_";
 
-    private Cache<String, List<SchemaTable>> tableCache = CacheBuilder
+    private final Cache<String, List<SchemaTable>> tableCache = CacheBuilder
             .newBuilder()
             .expireAfterWrite(15, TimeUnit.MINUTES)
             .maximumSize(4 * 1024 * 1024)
             .build();
 
-    private Cache<String, List<SchemaTableField>> fieldCache = CacheBuilder
+    private final Cache<String, List<SchemaTableField>> fieldCache = CacheBuilder
             .newBuilder()
             .expireAfterWrite(15, TimeUnit.MINUTES)
             .maximumSize(10 * 1024 * 1024)

@@ -275,11 +275,10 @@ public class MySQLActuator extends Actuator {
         boolean fromIsValid = DataUtils.isInteger(arr[0]) || MathFormulaUtils.isValidMathFormula(arr[0]);
         if (arr.length == 1) {
             return fromIsValid;
-        } else if (arr.length == 2) {
+        } else {
             boolean offsetIsValid = DataUtils.isInteger(arr[1]) || MathFormulaUtils.isValidMathFormula(arr[1]);
             return fromIsValid && offsetIsValid;
         }
 
-        return false;
     }
 }
