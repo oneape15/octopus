@@ -5,7 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.admin.controller.peekdata.form.TagForm;
 import com.oneape.octopus.domain.peekdata.ModelTagDO;
-import com.oneape.octopus.admin.model.vo.ApiResult;
+import com.oneape.octopus.commons.dto.ApiResult;
 import com.oneape.octopus.admin.service.peekdata.ModelTagService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;

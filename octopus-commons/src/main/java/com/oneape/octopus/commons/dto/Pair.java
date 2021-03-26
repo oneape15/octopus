@@ -1,4 +1,4 @@
-package com.oneape.octopus.commons.value;
+package com.oneape.octopus.commons.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

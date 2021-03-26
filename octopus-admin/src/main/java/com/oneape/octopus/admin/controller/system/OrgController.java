@@ -1,13 +1,13 @@
 package com.oneape.octopus.admin.controller.system;
 
 import com.oneape.octopus.admin.config.I18nMsgConfig;
-import com.oneape.octopus.commons.cause.StateCode;
-import com.oneape.octopus.commons.vo.TreeNodeVO;
 import com.oneape.octopus.admin.controller.system.form.OrgForm;
+import com.oneape.octopus.admin.service.system.OrganizationService;
+import com.oneape.octopus.commons.cause.StateCode;
+import com.oneape.octopus.commons.dto.ApiResult;
+import com.oneape.octopus.commons.dto.TreeNodeDTO;
 import com.oneape.octopus.domain.system.OrganizationDO;
 import com.oneape.octopus.domain.system.UserDO;
-import com.oneape.octopus.admin.model.vo.ApiResult;
-import com.oneape.octopus.admin.service.system.OrganizationService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,8 +74,8 @@ public class OrgController {
      * Building a organization tree.
      */
     @PostMapping("/tree")
-    public ApiResult getOrgTree(@RequestBody OrgForm form) {
-        List<TreeNodeVO> treeNodes = orgService.genTree(form.isAddChildrenSize(), form.isAddRootNode(), form.getDisabledKeys());
+    public ApiResult<List<TreeNodeDTO>> getOrgTree(@RequestBody OrgForm form) {
+        List<TreeNodeDTO> treeNodes = orgService.genTree(form.isAddChildrenSize(), form.isAddRootNode(), form.getDisabledKeys());
         return ApiResult.ofData(treeNodes);
     }
 

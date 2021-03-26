@@ -13,7 +13,7 @@ import java.io.*;
 @Slf4j
 public class FileUtils {
 
-    // 删除文件夹
+    // delete the dir.
     public static void delDir(String dirPath) {
         File file = new File(dirPath);
         boolean status;
@@ -26,34 +26,44 @@ public class FileUtils {
             }
         }
         status = file.delete();
-        log.info("删除文件: {} {}", dirPath, status ? "成功" : "失败");
+        log.info("Delete dir: {} {}", dirPath, status ? "success" : "fail");
     }
 
+    /**
+     * create directory.
+     *
+     * @param dirPath String
+     */
     public static void makeDir(String dirPath) {
         if (StringUtils.isBlank(dirPath)) {
-            throw new RuntimeException("目录路径为空");
+            throw new RuntimeException("The directory path is empty.");
         }
         File file = new File(dirPath);
         if (!file.exists()) {
             boolean status = file.mkdirs();
 
-            log.info("目录: {} 创建: {}", dirPath, status ? "成功" : "失败");
+            log.info("Directory: {} create: {}", dirPath, status ? "success" : "fail");
         }
 
     }
 
-    // 删除文件
+    /**
+     * delete file
+     *
+     * @param file File
+     * @return boolean
+     */
     public static boolean delFile(File file) {
         if (file != null) {
             boolean status = file.delete();
-            log.info("删除文件: {} {}", file.getName(), status ? "成功" : "失败");
+            log.info("Delete file: {} {}", file.getName(), status ? "success" : "fail");
             return status;
         }
         return false;
     }
 
     /**
-     * 获取文件名后缀
+     * Get filename suffix.
      *
      * @param fileName String
      * @return String
@@ -70,7 +80,7 @@ public class FileUtils {
     }
 
     /**
-     * 获取文件名
+     * Get file name.
      *
      * @param filePath String
      * @return String
@@ -87,10 +97,10 @@ public class FileUtils {
     }
 
     /**
-     * 文件是否存在
+     * Determine whether the file exists.
      *
      * @param filePath String
-     * @return true - 存在; false - 不存在;
+     * @return true - exist; false - not exist;
      */
     public static boolean isExist(String filePath) {
         if (StringUtils.isBlank(filePath)) return false;
@@ -100,19 +110,33 @@ public class FileUtils {
         return (!file.isDirectory()) && file.exists();
     }
 
+    /**
+     * delete the file.
+     *
+     * @param filePath String
+     * @return boolean
+     */
     public static boolean delFileByPath(String filePath) {
         if (StringUtils.isBlank(filePath)) {
-            throw new RuntimeException("文件路径为空");
+            throw new RuntimeException("The file path is empty.");
         }
         return delFile(new File(filePath));
     }
 
-    // 写一个txt文件
+    /**
+     * Write a TXT file
+     *
+     * @param filePath String
+     * @param fileName String
+     * @param content  String
+     * @return File
+     * @throws IOException e
+     */
     public static File writeTxtFile(String filePath, String fileName, String content) throws IOException {
         File file = new File(filePath);
         if (!file.exists()) {
             boolean status = file.mkdir();
-            log.debug("文件夹:{} 创建{}", filePath, status ? "成功" : "失败");
+            log.debug("Directory :{} create {}", filePath, status ? "success" : "fail");
         }
         File txtFile = File.createTempFile(fileName, ".txt", new File(filePath));
 
@@ -125,26 +149,26 @@ public class FileUtils {
     }
 
     /**
-     * 读取txt文本内容
+     * Read a TXT file
      *
      * @param file File
-     * @return String 文本内容
+     * @return String
      */
     public static String readTxtFile(File file) {
         StringBuilder result = new StringBuilder();
         try {
 
-            //构造一个BufferedReader类来读取文件
+            // Construct a BufferedReader class to read the file.
             BufferedReader br = new BufferedReader(new FileReader(file));
             String s = null;
-            //使用readLine方法，一次读一行
+            // Using the readLine method, read one line at a time.
             while ((s = br.readLine()) != null) {
                 result.append(System.lineSeparator()).append(s);
             }
             br.close();
         } catch (Exception e) {
-            log.error("读取文件失败.", e);
-            throw new RuntimeException("读取文件内容失败", e);
+            log.error("Read file: {} fail.", file.getName(), e);
+            throw new RuntimeException("Read file fail.", e);
         }
         return result.toString();
     }

@@ -29,4 +29,22 @@ public enum DataType {
         }
         return null;
     }
+
+    /**
+     * Determine if it is a numeric type.
+     *
+     * @return boolean
+     */
+    public boolean isNumber() {
+        switch (this) {
+            case INTEGER:
+            case DECIMAL:
+            case LONG:
+            case FLOAT:
+            case DOUBLE:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

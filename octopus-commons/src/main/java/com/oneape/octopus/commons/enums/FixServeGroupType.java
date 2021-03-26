@@ -6,11 +6,11 @@ package com.oneape.octopus.commons.enums;
  * Modify:
  */
 public enum FixServeGroupType {
-    ROOT(0L, "根目录"),
-    PERSONAL(-1L, "个人文件夹"),
-    ARCHIVE(-2L, "已归档目录");
+    ROOT(0L, "Root"),
+    PERSONAL(-1L, "Personal"),
+    ARCHIVE(-2L, "Archive");
 
-    private final Long   id;
+    private final Long id;
     private final String groupName;
 
     FixServeGroupType(Long id, String groupName) {

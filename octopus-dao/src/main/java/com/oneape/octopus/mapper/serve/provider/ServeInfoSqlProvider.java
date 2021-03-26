@@ -44,7 +44,7 @@ public class ServeInfoSqlProvider extends BaseSqlProvider<ServeInfoDO> {
                 .SELECT("id", "name", "icon", "time_based", "serve_type", "visual_type", "sort_id",
                         "comment", "archive", "created", "creator", "modified", "modifier")
                 .FROM(getTableName())
-                .WHERE(wheres.toArray(new String[wheres.size()]))
+                .WHERE(wheres.toArray(new String[0]))
                 .toString();
     }
 
@@ -59,7 +59,7 @@ public class ServeInfoSqlProvider extends BaseSqlProvider<ServeInfoDO> {
         return new SQL()
                 .SELECT("COUNT(0)")
                 .FROM(TABLE_NAME)
-                .WHERE(wheres.toArray(new String[wheres.size()]))
+                .WHERE(wheres.toArray(new String[0]))
                 .toString();
     }
 

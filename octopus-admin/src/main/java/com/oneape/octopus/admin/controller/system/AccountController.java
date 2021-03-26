@@ -2,16 +2,16 @@ package com.oneape.octopus.admin.controller.system;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.admin.config.I18nMsgConfig;
-import com.oneape.octopus.admin.controller.SessionThreadLocal;
+import com.oneape.octopus.admin.config.SessionThreadLocal;
 import com.oneape.octopus.admin.controller.system.form.UserForm;
+import com.oneape.octopus.admin.service.system.AccountService;
+import com.oneape.octopus.commons.cause.StateCode;
+import com.oneape.octopus.commons.dto.ApiResult;
 import com.oneape.octopus.domain.system.UserDO;
 import com.oneape.octopus.dto.system.AppType;
 import com.oneape.octopus.dto.system.UserDTO;
 import com.oneape.octopus.dto.system.UserStatus;
-import com.oneape.octopus.admin.model.vo.ApiResult;
-import com.oneape.octopus.admin.service.system.AccountService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +56,7 @@ public class AccountController {
      * The user login out option.
      */
     @PostMapping(value = "/logout")
-    public ApiResult doOutLogin() {
+    public ApiResult<String> doOutLogin() {
         Long userId = SessionThreadLocal.getUserId();
         int status = accountService.logout(userId, AppType.MANAGE);
         if (status > 0) {
@@ -121,7 +121,7 @@ public class AccountController {
     }
 
     @PostMapping("/lockUser/{userId}")
-    public ApiResult lockUser(@PathVariable(name = "userId") Long userId) {
+    public ApiResult<String> lockUser(@PathVariable(name = "userId") Long userId) {
         int status = accountService.changeUserStatus(userId, UserStatus.LOCK);
         if (status > 0) {
             return ApiResult.ofData(I18nMsgConfig.getMessage("account.lock.success"));
@@ -130,7 +130,7 @@ public class AccountController {
     }
 
     @PostMapping("/unlockUser/{userId}")
-    public ApiResult unlockUser(@PathVariable(name = "userId") Long userId) {
+    public ApiResult<String> unlockUser(@PathVariable(name = "userId") Long userId) {
         int status = accountService.changeUserStatus(userId, UserStatus.NORMAL);
         if (status > 0) {
             return ApiResult.ofData(I18nMsgConfig.getMessage("account.unlock.success"));
@@ -139,7 +139,7 @@ public class AccountController {
     }
 
     @PostMapping("/saveUserRole")
-    public ApiResult saveUserRole(@RequestBody @Validated(value = UserForm.KeyCheck.class) UserForm form) {
+    public ApiResult<String> saveUserRole(@RequestBody @Validated(value = UserForm.KeyCheck.class) UserForm form) {
         int status = accountService.saveUserRole(form.getId(), form.getRoleIds());
         if (status > 0) {
             return ApiResult.ofData(I18nMsgConfig.getMessage("account.saveRole.success"));

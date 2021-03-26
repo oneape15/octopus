@@ -97,11 +97,14 @@ public class OdpsActuator extends MySQLActuator {
                 " 0 " + COL_PRI_KEY + ", " +
                 " COLUMN_COMMENT  " + COL_COMMENT + " " +
                 "FROM information_schema.COLUMNS " +
-                "WHERE AND UPPER(TABLE_SCHEMA) = UPPER(?)";
+                "WHERE AND UPPER(TABLE_SCHEMA) = UPPER(?) " +
+                "ORDER BY TABLE_NAME, ordinal_position ASC " +
+                "LIMIT 500000";
     }
 
     /**
      * Gets the specified table field to execute SQL.
+     * There cannot be more than 5000 fields in a single table.
      *
      * @return String
      */
@@ -117,7 +120,9 @@ public class OdpsActuator extends MySQLActuator {
                 " 0 " + COL_PRI_KEY + ", " +
                 " COLUMN_COMMENT  " + COL_COMMENT + " " +
                 "FROM information_schema.COLUMNS " +
-                "WHERE AND UPPER(TABLE_SCHEMA) = UPPER(?) AND TABLE_NAME = ? ";
+                "WHERE AND UPPER(TABLE_SCHEMA) = UPPER(?) AND TABLE_NAME = ? " +
+                "ORDER BY ordinal_position ASC " +
+                "LIMIT 5000";
     }
 
     /**

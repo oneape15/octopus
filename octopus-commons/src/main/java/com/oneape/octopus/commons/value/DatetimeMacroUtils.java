@@ -17,60 +17,6 @@ import java.util.GregorianCalendar;
 public final class DatetimeMacroUtils {
 
     /**
-     * The macro rule enum
-     */
-    public enum Rule {
-        SET,
-        ADD;
-
-        public static Rule getByName(String name) {
-            for (Rule r : values()) {
-                if (StringUtils.equalsIgnoreCase(name, r.name())) {
-                    return r;
-                }
-            }
-            return null;
-        }
-    }
-
-    /**
-     * The macro unit enum
-     */
-    public enum Unit {
-        YEARS,
-        MONTHS,
-        DAYS,
-        QUARTERS,
-        WEEKS;
-
-        public static Unit getByName(String name) {
-            for (Unit unit : values()) {
-                if (StringUtils.equalsIgnoreCase(name, unit.name())) {
-                    return unit;
-                }
-            }
-            return null;
-        }
-    }
-
-    /**
-     * The macro tag enum
-     */
-    public enum Tag {
-        BEGIN,
-        END;
-
-        public static Tag getByName(String name) {
-            for (Tag tag : values()) {
-                if (StringUtils.equalsIgnoreCase(name, tag.name())) {
-                    return tag;
-                }
-            }
-            return null;
-        }
-    }
-
-    /**
      * Parser the datetime macro string.
      * <p>
      * ADD 1 DAYS     Add one day to the current date
@@ -116,7 +62,7 @@ public final class DatetimeMacroUtils {
         }
 
         Rule rule = Rule.getByName(macro[0]);
-        Integer offset = DataUtils.toInt(macro[1], null);
+        Integer offset = DataUtils.str2Integer(macro[1], null);
         Unit unit = Unit.getByName(macro[2]);
         if (rule == null || offset == null || unit == null) {
             log.error("Invalid datetime macro string.");
@@ -235,6 +181,61 @@ public final class DatetimeMacroUtils {
         }
 
         return calendar.getTime();
+    }
+
+
+    /**
+     * The macro rule enum
+     */
+    public enum Rule {
+        SET,
+        ADD;
+
+        public static Rule getByName(String name) {
+            for (Rule r : values()) {
+                if (StringUtils.equalsIgnoreCase(name, r.name())) {
+                    return r;
+                }
+            }
+            return null;
+        }
+    }
+
+    /**
+     * The macro unit enum
+     */
+    public enum Unit {
+        YEARS,
+        MONTHS,
+        DAYS,
+        QUARTERS,
+        WEEKS;
+
+        public static Unit getByName(String name) {
+            for (Unit unit : values()) {
+                if (StringUtils.equalsIgnoreCase(name, unit.name())) {
+                    return unit;
+                }
+            }
+            return null;
+        }
+    }
+
+    /**
+     * The macro tag enum
+     */
+    public enum Tag {
+        BEGIN,
+        END;
+
+        public static Tag getByName(String name) {
+            for (Tag tag : values()) {
+                if (StringUtils.equalsIgnoreCase(name, tag.name())) {
+                    return tag;
+                }
+            }
+            return null;
+        }
     }
 
 }

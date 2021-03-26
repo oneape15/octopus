@@ -1,6 +1,6 @@
 package com.oneape.octopus.domain.system;
 
-import com.oneape.octopus.commons.enums.EntityColumn;
+import com.oneape.octopus.commons.annotation.EntityColumn;
 import com.oneape.octopus.domain.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

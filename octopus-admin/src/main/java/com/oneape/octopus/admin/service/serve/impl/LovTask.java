@@ -9,8 +9,8 @@ import com.oneape.octopus.dto.serve.ServeParamDTO;
  */
 public class LovTask {
 
-    private ServeParamDTO pdo;
-    private Runnable      runnable;
+    private final ServeParamDTO pdo;
+    private final Runnable runnable;
 
     public LovTask(ServeParamDTO pdo, Runnable runnable) {
         this.pdo = pdo;

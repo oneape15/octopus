@@ -6,7 +6,7 @@ import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.admin.controller.system.form.CommonInfoForm;
 import com.oneape.octopus.domain.system.CommonInfoDO;
-import com.oneape.octopus.admin.model.vo.ApiResult;
+import com.oneape.octopus.commons.dto.ApiResult;
 import com.oneape.octopus.admin.service.system.CommonInfoService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -54,7 +54,7 @@ public class CommonInfoController {
      * Get the basic information list according to classify
      */
     @PostMapping("/getInfo")
-    public ApiResult getInfoByClassify(@RequestBody @Validated CommonInfoForm form) {
+    public ApiResult<List<CommonInfoDO>> getInfoByClassify(@RequestBody @Validated CommonInfoForm form) {
         List<CommonInfoDO> list = commonInfoService.find(form.toDO());
         return ApiResult.ofData(list);
     }

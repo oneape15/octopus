@@ -2,17 +2,17 @@ package com.oneape.octopus.admin.service.system.impl;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.admin.config.I18nMsgConfig;
+import com.oneape.octopus.admin.service.DefaultTreeService;
+import com.oneape.octopus.admin.service.system.OrganizationService;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.enums.FixServeGroupType;
-import com.oneape.octopus.commons.value.TypeValueUtils;
-import com.oneape.octopus.commons.vo.TreeNodeVO;
+import com.oneape.octopus.commons.value.DataUtils;
+import com.oneape.octopus.commons.dto.TreeNodeDTO;
 import com.oneape.octopus.domain.system.OrganizationDO;
 import com.oneape.octopus.domain.system.UserDO;
 import com.oneape.octopus.dto.system.OrgUserSizeDTO;
 import com.oneape.octopus.mapper.system.OrganizationMapper;
 import com.oneape.octopus.mapper.system.UserRlOrgMapper;
-import com.oneape.octopus.admin.service.DefaultTreeService;
-import com.oneape.octopus.admin.service.system.OrganizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -119,14 +119,14 @@ public class OrganizationServiceImpl extends DefaultTreeService implements Organ
      * @return List
      */
     @Override
-    public List<TreeNodeVO> genTree(boolean addNodeSize, boolean addRootNode, List<Long> disabledKeys) {
+    public List<TreeNodeDTO> genTree(boolean addNodeSize, boolean addRootNode, List<Long> disabledKeys) {
 
         // Set sort mode.
         List<String> orders = new ArrayList<>();
         orders.add("id ASC");
         List<OrganizationDO> orgList = orgMapper.listWithOrder(new OrganizationDO(), orders);
 
-        List<TreeNodeVO> nodes = new ArrayList<>();
+        List<TreeNodeDTO> nodes = new ArrayList<>();
 
         if (CollectionUtils.isNotEmpty(orgList)) {
             Map<Long, Long> id2parentIdMap = new HashMap<>();
@@ -146,15 +146,15 @@ public class OrganizationServiceImpl extends DefaultTreeService implements Organ
             }
 
             List<Long> parentIds = new ArrayList<>();
-            LinkedHashMap<Long, TreeNodeVO> id2NodeMap = new LinkedHashMap<>();
+            LinkedHashMap<Long, TreeNodeDTO> id2NodeMap = new LinkedHashMap<>();
             orgList.forEach(sg -> {
-                Long parentId = TypeValueUtils.getOrDefault(sg.getParentId(), FixServeGroupType.ROOT.getId());
+                Long parentId = DataUtils.getOrDefault(sg.getParentId(), FixServeGroupType.ROOT.getId());
                 id2parentIdMap.put(sg.getId(), parentId);
 
                 // build org tree node
-                TreeNodeVO node = new TreeNodeVO(sg.getId() + "", sg.getName());
+                TreeNodeDTO node = new TreeNodeDTO(sg.getId() + "", sg.getName());
                 node.setDisabled(disabledKeys != null && disabledKeys.contains(sg.getId()));
-                node.setLeafSize(groupWithSizeMap.containsKey(sg.getId()) ? groupWithSizeMap.get(sg.getId()) : 0);
+                node.setLeafSize(groupWithSizeMap.getOrDefault(sg.getId(), 0));
                 id2NodeMap.put(sg.getId(), node);
 
                 // record parent id
@@ -164,7 +164,7 @@ public class OrganizationServiceImpl extends DefaultTreeService implements Organ
             });
 
             // build tree
-            List<TreeNodeVO> rootNodes = buildTree(parentIds, orgIds, id2parentIdMap, id2NodeMap);
+            List<TreeNodeDTO> rootNodes = buildTree(parentIds, orgIds, id2parentIdMap, id2NodeMap);
 
             nodes.addAll(rootNodes);
             nodes.addAll(id2NodeMap.values());

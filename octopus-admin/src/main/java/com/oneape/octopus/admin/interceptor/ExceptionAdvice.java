@@ -3,7 +3,7 @@ package com.oneape.octopus.admin.interceptor;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.commons.cause.UnauthorizedException;
-import com.oneape.octopus.admin.model.vo.ApiResult;
+import com.oneape.octopus.commons.dto.ApiResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;

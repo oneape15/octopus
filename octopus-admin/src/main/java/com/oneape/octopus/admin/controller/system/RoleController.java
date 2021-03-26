@@ -3,19 +3,19 @@ package com.oneape.octopus.admin.controller.system;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.base.Preconditions;
-import com.oneape.octopus.commons.cause.StateCode;
-import com.oneape.octopus.commons.enums.Archive;
 import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.admin.controller.system.form.RoleForm;
-import com.oneape.octopus.domain.system.RoleDO;
-import com.oneape.octopus.admin.model.vo.ApiResult;
 import com.oneape.octopus.admin.service.system.AccountService;
 import com.oneape.octopus.admin.service.system.RoleService;
+import com.oneape.octopus.commons.cause.StateCode;
+import com.oneape.octopus.commons.dto.ApiResult;
+import com.oneape.octopus.commons.enums.Archive;
+import com.oneape.octopus.domain.system.RoleDO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,9 +27,9 @@ import java.util.Set;
 @RequestMapping("/role")
 public class RoleController {
     @Resource
-    private RoleService     roleService;
+    private RoleService roleService;
     @Resource
-    private AccountService  accountService;
+    private AccountService accountService;
 
     @PostMapping("/save")
     public ApiResult<String> doSaveRole(@RequestBody @Validated(value = RoleForm.SaveCheck.class) RoleForm form) {
@@ -53,8 +53,8 @@ public class RoleController {
      * Gets the specified role resource permission.
      */
     @PostMapping("/permission/{roleId}")
-    public ApiResult getResByRoleId(@PathVariable(name = "roleId") Long roleId) {
-        Map<Long, Set<Integer>> mask = roleService.getRoleRes(Arrays.asList(roleId));
+    public ApiResult<Map<Long, Set<Integer>>> getResByRoleId(@PathVariable(name = "roleId") Long roleId) {
+        Map<Long, Set<Integer>> mask = roleService.getRoleRes(Collections.singletonList(roleId));
         return ApiResult.ofData(mask);
     }
 
@@ -99,7 +99,7 @@ public class RoleController {
      * @param form RoleForm
      */
     @PostMapping("/saveSchemaPermission")
-    public ApiResult saveSchemaPermission(@RequestBody @Validated(value = RoleForm.KeyCheck.class) RoleForm form) {
+    public ApiResult<String> saveSchemaPermission(@RequestBody @Validated(value = RoleForm.KeyCheck.class) RoleForm form) {
         int status = roleService.batchSaveRoleRlSchema(form.getId(), form.getSchemaDOList());
         if (status > 0) {
             return ApiResult.ofData(I18nMsgConfig.getMessage("role.saveSchema.success"));

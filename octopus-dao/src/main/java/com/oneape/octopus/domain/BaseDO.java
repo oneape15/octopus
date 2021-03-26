@@ -3,7 +3,7 @@ package com.oneape.octopus.domain;
 import com.oneape.octopus.commons.annotation.AutoUniqueId;
 import com.oneape.octopus.commons.annotation.Creator;
 import com.oneape.octopus.commons.annotation.Modifier;
-import com.oneape.octopus.commons.enums.EntityColumn;
+import com.oneape.octopus.commons.annotation.EntityColumn;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

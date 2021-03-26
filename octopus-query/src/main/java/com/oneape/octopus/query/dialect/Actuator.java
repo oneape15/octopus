@@ -12,11 +12,15 @@ import com.alibaba.excel.write.metadata.WriteSheet;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.dto.DataType;
+import com.oneape.octopus.commons.dto.Pair;
 import com.oneape.octopus.commons.dto.Value;
 import com.oneape.octopus.commons.enums.FileType;
 import com.oneape.octopus.commons.files.EasyCsv;
 import com.oneape.octopus.commons.files.ZipUtils;
-import com.oneape.octopus.commons.value.*;
+import com.oneape.octopus.commons.value.CodeBuilderUtils;
+import com.oneape.octopus.commons.value.DataUtils;
+import com.oneape.octopus.commons.value.DateUtils;
+import com.oneape.octopus.commons.value.SystemInfoUtils;
 import com.oneape.octopus.query.CellProcess;
 import com.oneape.octopus.query.data.*;
 import com.oneape.octopus.query.schema.SchemaTable;
@@ -31,8 +35,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigInteger;
 import java.sql.*;
-import java.util.*;
 import java.util.Date;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -43,29 +47,29 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public abstract class Actuator {
-    private static final int TAG_COUNT_SQL  = 0;
+    private static final int TAG_COUNT_SQL = 0;
     private static final int TAG_DETAIL_SQL = 1;
 
     private static final String ZIP_FILE_SUFFIX = ".zip";
 
     // schema name
-    public static final String COL_SCHEMA      = "schema_name";
+    public static final String COL_SCHEMA = "schema_name";
     // schema table
-    public static final String COL_TABLE       = "table_name";
+    public static final String COL_TABLE = "table_name";
     // schema table type
-    public static final String COL_TABLE_TYPE  = "table_type";
+    public static final String COL_TABLE_TYPE = "table_type";
     // column name
-    public static final String COL_COLUMN      = "column_name";
+    public static final String COL_COLUMN = "column_name";
     // The default column value.
     public static final String COL_DEFAULT_VAL = "default_val";
     // nullable tag
-    public static final String COL_NULLABLE    = "nullable";
+    public static final String COL_NULLABLE = "nullable";
     // The column data type.
-    public static final String COL_DATA_TYPE   = "data_type";
+    public static final String COL_DATA_TYPE = "data_type";
     // Is the primary key name
-    public static final String COL_PRI_KEY     = "pri_key";
-    public static final String COL_COMMENT     = "comment";
-    public static final String COL_COUNT_SIZE  = "count_size";
+    public static final String COL_PRI_KEY = "pri_key";
+    public static final String COL_COMMENT = "comment";
+    public static final String COL_COUNT_SIZE = "count_size";
 
     protected Connection conn;
 
@@ -73,7 +77,7 @@ public abstract class Actuator {
         this.conn = conn;
     }
 
-    private static ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
+    private static final ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
             10,
             30,
             5,
@@ -113,6 +117,7 @@ public abstract class Actuator {
 
     /**
      * Gets the specified table field to execute SQL.
+     * There cannot be more than 5000 fields in a single table.
      *
      * @return String
      */
@@ -448,7 +453,7 @@ public abstract class Actuator {
 
                 List<Map<String, Object>> rows = execRet.getRows();
                 if (TAG_COUNT_SQL == execRet.getType() && CollectionUtils.isNotEmpty(rows)) {
-                    result.setCountSize(TypeValueUtils.obj2int(rows.get(0).get(COL_COUNT_SIZE), -1));
+                    result.setCountSize(DataUtils.obj2Integer(rows.get(0).get(COL_COUNT_SIZE), -1));
                     continue;
                 }
                 if (TAG_DETAIL_SQL == execRet.getType()) {
@@ -464,7 +469,7 @@ public abstract class Actuator {
 
         } catch (Exception e) {
             result.setErrMsg(e.toString());
-            result.setStatus(Result.QueryStatus.ERROR);
+            result.setStatus(QueryStatus.ERROR);
         } finally {
             watch.stop();
             result.setRunTime(watch.getTime(TimeUnit.MILLISECONDS));
@@ -597,14 +602,14 @@ public abstract class Actuator {
     }
 
     /**
-     * 获取数据总条数
+     * Gets the total number of data items.
      *
      * @param countSql String
-     * @return int -1 - 未获取到
+     * @return int
      */
     private int getTotalSizeBySql(String countSql) {
         if (StringUtils.isBlank(countSql)) {
-            throw new RuntimeException("执行TOTAL查询语句为空");
+            throw new RuntimeException("The execution of the TOTAL query is empty.");
         }
         try (PreparedStatement ps = conn.prepareStatement(countSql)) {
             try (ResultSet rs = ps.executeQuery()) {
@@ -612,12 +617,12 @@ public abstract class Actuator {
                 return rs.getInt(COL_COUNT_SIZE);
             }
         } catch (Exception e) {
-            throw new RuntimeException("获取数据总条数异常~", e);
+            throw new RuntimeException("The total number of data retrieved is abnormal~", e);
         }
     }
 
     /**
-     * 组装查询SQL
+     * Assemble query SQL.
      *
      * @param rawSql String
      * @param params List
@@ -665,7 +670,7 @@ public abstract class Actuator {
 
                     @Override
                     public BigInteger convertToJavaData(CellData cellData, ExcelContentProperty ecp, GlobalConfiguration gc) throws Exception {
-                        return BigInteger.valueOf(Long.valueOf(cellData.getData().toString()));
+                        return BigInteger.valueOf(Long.parseLong(cellData.getData().toString()));
                     }
 
                     @Override
@@ -911,11 +916,11 @@ public abstract class Actuator {
 
     @Data
     private static class ExecuteResult {
-        private Integer                   type;
-        private Boolean                   success;
-        private List<ColumnHead>          columnHeads;
+        private Integer type;
+        private Boolean success;
+        private List<ColumnHead> columnHeads;
         private List<Map<String, Object>> rows;
-        private Exception                 exception;
+        private Exception exception;
 
         public ExecuteResult() {
             this.success = false;

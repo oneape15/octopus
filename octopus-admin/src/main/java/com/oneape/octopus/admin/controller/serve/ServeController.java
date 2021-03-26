@@ -3,18 +3,18 @@ package com.oneape.octopus.admin.controller.serve;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.admin.config.I18nMsgConfig;
+import com.oneape.octopus.admin.controller.serve.form.ServeForm;
+import com.oneape.octopus.admin.controller.serve.form.ServeGroupForm;
+import com.oneape.octopus.commons.dto.ApiResult;
+import com.oneape.octopus.admin.service.serve.ServeGroupService;
+import com.oneape.octopus.admin.service.serve.ServeInfoService;
 import com.oneape.octopus.commons.cause.StateCode;
+import com.oneape.octopus.commons.dto.TreeNodeDTO;
 import com.oneape.octopus.commons.enums.ReportParamType;
 import com.oneape.octopus.commons.enums.ServeType;
 import com.oneape.octopus.commons.enums.VisualType;
-import com.oneape.octopus.commons.value.Pair;
-import com.oneape.octopus.commons.vo.TreeNodeVO;
-import com.oneape.octopus.admin.controller.serve.form.ServeForm;
-import com.oneape.octopus.admin.controller.serve.form.ServeGroupForm;
+import com.oneape.octopus.commons.dto.Pair;
 import com.oneape.octopus.domain.serve.ServeInfoDO;
-import com.oneape.octopus.admin.model.vo.ApiResult;
-import com.oneape.octopus.admin.service.serve.ServeGroupService;
-import com.oneape.octopus.admin.service.serve.ServeInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,7 @@ import java.util.List;
 public class ServeController {
 
     @Resource
-    private ServeInfoService  serveInfoService;
+    private ServeInfoService serveInfoService;
     @Resource
     private ServeGroupService serveGroupService;
 
@@ -68,7 +68,7 @@ public class ServeController {
         if (status > 0) {
             return ApiResult.ofData(I18nMsgConfig.getMessage("serve.copy.success"));
         }
-        return ApiResult.ofError(StateCode.BizError,I18nMsgConfig.getMessage("serve.copy.fail"));
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("serve.copy.fail"));
     }
 
     /**
@@ -82,7 +82,7 @@ public class ServeController {
         if (status > 0) {
             return ApiResult.ofData(I18nMsgConfig.getMessage("serve.copy.success"));
         }
-        return ApiResult.ofError(StateCode.BizError,I18nMsgConfig.getMessage("serve.copy.fail"));
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("serve.copy.fail"));
     }
 
     /**
@@ -101,12 +101,12 @@ public class ServeController {
      * @param serveId Long
      */
     @PostMapping("/publish/{serveId}")
-    public ApiResult publishServe(@PathVariable(name = "serveId") Long serveId) {
+    public ApiResult<String> publishServe(@PathVariable(name = "serveId") Long serveId) {
         int status = serveInfoService.publishServe(serveId);
         if (status > 0) {
             return ApiResult.ofData(I18nMsgConfig.getMessage("serve.publish.success"));
         }
-        return ApiResult.ofError(StateCode.BizError,I18nMsgConfig.getMessage("serve.publish.fail"));
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("serve.publish.fail"));
     }
 
     /**
@@ -116,12 +116,12 @@ public class ServeController {
      * @param verCode String
      */
     @PostMapping("/rollback/{serveId}/{verCode}")
-    public ApiResult rollbackServe(@PathVariable(name = "serveId") Long serveId, @PathVariable(name = "verCode") String verCode) {
+    public ApiResult<String> rollbackServe(@PathVariable(name = "serveId") Long serveId, @PathVariable(name = "verCode") String verCode) {
         int status = serveInfoService.rollbackServe(serveId, verCode);
         if (status > 0) {
             return ApiResult.ofData(I18nMsgConfig.getMessage("serve.rollback.success"));
         }
-        return ApiResult.ofError(StateCode.BizError,I18nMsgConfig.getMessage("serve.rollback.fail"));
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("serve.rollback.fail"));
     }
 
     /**
@@ -131,12 +131,27 @@ public class ServeController {
      * @param groupId Long
      */
     @PostMapping("/move/{serveId}/{groupId}")
-    public ApiResult moveServe(@PathVariable(name = "serveId") Long serveId, @PathVariable(name = "groupId") Long groupId) {
+    public ApiResult<String> moveServe(@PathVariable(name = "serveId") Long serveId, @PathVariable(name = "groupId") Long groupId) {
         int status = serveInfoService.moveServe(serveId, groupId);
         if (status > 0) {
             return ApiResult.ofData(I18nMsgConfig.getMessage("serve.move.success"));
         }
-        return ApiResult.ofError(StateCode.BizError,I18nMsgConfig.getMessage("serve.move.fail"));
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("serve.move.fail"));
+    }
+
+    /**
+     * Modify the Serve responsible person
+     *
+     * @param serveId Long
+     * @param ownerId Long
+     */
+    @PostMapping("/changeOwner/{serveId}/{ownerId}")
+    public ApiResult<String> changeOwner(@PathVariable(name = "serveId") Long serveId, @PathVariable(name = "ownerId") Long ownerId) {
+        int status = serveInfoService.changeServeOwner(serveId, ownerId);
+        if (status > 0) {
+            return ApiResult.ofData(I18nMsgConfig.getMessage("serve.changeOwner.success"));
+        }
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("serve.changeOwner.fail"));
     }
 
     /**
@@ -185,12 +200,12 @@ public class ServeController {
      * @param from ServeGroupForm
      */
     @PostMapping("/group/save")
-    public ApiResult saveGroup(@RequestBody @Validated(value = ServeGroupForm.AddCheck.class) ServeGroupForm from) {
+    public ApiResult<String> saveGroup(@RequestBody @Validated(value = ServeGroupForm.AddCheck.class) ServeGroupForm from) {
         int status = serveGroupService.save(from.toDO());
         if (status > 0) {
             return ApiResult.ofData(I18nMsgConfig.getMessage("serve.group.save.success"));
         }
-        return ApiResult.ofError(StateCode.BizError,I18nMsgConfig.getMessage("serve.group.save.fail"));
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("serve.group.save.fail"));
     }
 
     /**
@@ -200,12 +215,12 @@ public class ServeController {
      * @param newParentId Long
      */
     @PostMapping("/group/move/{groupId}/{newParentId}")
-    public ApiResult moveGroup(@PathVariable(name = "groupId") Long groupId, @PathVariable(name = "newParentId") Long newParentId) {
+    public ApiResult<String> moveGroup(@PathVariable(name = "groupId") Long groupId, @PathVariable(name = "newParentId") Long newParentId) {
         int status = serveGroupService.moveGroup(groupId, newParentId);
         if (status > 0) {
             return ApiResult.ofData(I18nMsgConfig.getMessage("serve.group.move.success"));
         }
-        return ApiResult.ofError(StateCode.BizError,I18nMsgConfig.getMessage("serve.group.move.fail"));
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("serve.group.move.fail"));
     }
 
     /**
@@ -217,16 +232,16 @@ public class ServeController {
         if (status > 0) {
             return ApiResult.ofData(I18nMsgConfig.getMessage("serve.group.del.success"));
         }
-        return ApiResult.ofError(StateCode.BizError,I18nMsgConfig.getMessage("serve.group.del.fail"));
+        return ApiResult.ofError(StateCode.BizError, I18nMsgConfig.getMessage("serve.group.del.fail"));
     }
 
     /**
      * Building a grouping tree.
      */
     @PostMapping("/group/tree")
-    public ApiResult getGroupTree(@RequestBody @Validated(value = ServeGroupForm.TreeCheck.class) ServeGroupForm from) {
+    public ApiResult<List<TreeNodeDTO>> getGroupTree(@RequestBody @Validated(value = ServeGroupForm.TreeCheck.class) ServeGroupForm from) {
 
-        List<TreeNodeVO> treeNodes = serveGroupService.genServeGroupTree(
+        List<TreeNodeDTO> treeNodes = serveGroupService.genServeGroupTree(
                 ServeType.getByCode(from.getServeType()),
                 from.isAddChildrenSize(),
                 from.isAddRootNode(),

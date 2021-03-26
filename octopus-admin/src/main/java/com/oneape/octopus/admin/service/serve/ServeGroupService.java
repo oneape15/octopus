@@ -1,7 +1,7 @@
 package com.oneape.octopus.admin.service.serve;
 
 import com.oneape.octopus.commons.enums.ServeType;
-import com.oneape.octopus.commons.vo.TreeNodeVO;
+import com.oneape.octopus.commons.dto.TreeNodeDTO;
 import com.oneape.octopus.domain.serve.ServeGroupDO;
 import com.oneape.octopus.admin.service.BaseService;
 
@@ -63,9 +63,9 @@ public interface ServeGroupService extends BaseService<ServeGroupDO> {
      * @param addPersonalNode boolean
      * @return List
      */
-    List<TreeNodeVO> genServeGroupTree(ServeType serveType,
-                                       boolean addNodeSize,
-                                       boolean addRootNode,
-                                       boolean addArchiveNode,
-                                       boolean addPersonalNode);
+    List<TreeNodeDTO> genServeGroupTree(ServeType serveType,
+                                        boolean addNodeSize,
+                                        boolean addRootNode,
+                                        boolean addArchiveNode,
+                                        boolean addPersonalNode);
 }

@@ -1,13 +1,13 @@
 package com.oneape.octopus.admin.interceptor;
 
+import com.oneape.octopus.admin.config.ApplicationContextProvider;
+import com.oneape.octopus.admin.service.system.AccountService;
+import com.oneape.octopus.admin.service.uid.UIDGeneratorService;
 import com.oneape.octopus.commons.annotation.AutoUniqueId;
 import com.oneape.octopus.commons.annotation.Creator;
 import com.oneape.octopus.commons.annotation.Modifier;
 import com.oneape.octopus.commons.annotation.SortId;
 import com.oneape.octopus.commons.constant.OctopusConstant;
-import com.oneape.octopus.admin.config.ApplicationContextProvider;
-import com.oneape.octopus.admin.service.system.AccountService;
-import com.oneape.octopus.admin.service.uid.UIDGeneratorService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -27,7 +27,7 @@ import java.util.Properties;
 })
 public class MyBatisFillValueInterceptor implements Interceptor {
 
-    private AccountService      accountService;
+    private AccountService accountService;
     private UIDGeneratorService uidGeneratorService;
 
     private synchronized Long getUserId() {
@@ -120,7 +120,7 @@ public class MyBatisFillValueInterceptor implements Interceptor {
     private static Field[] getAllFields(Object object) {
         if (object == null) return new Field[0];
 
-        Class clazz = object.getClass();
+        Class<?> clazz = object.getClass();
         List<Field> fieldList = new ArrayList<>();
         while (clazz != null) {
             fieldList.addAll(new ArrayList<>(Arrays.asList(clazz.getDeclaredFields())));
@@ -134,7 +134,7 @@ public class MyBatisFillValueInterceptor implements Interceptor {
     private static Object getFieldValueByName(String name, Object object) throws Exception {
         String getter = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
         Method method;
-        method = object.getClass().getMethod(getter, new Class[]{});
+        method = object.getClass().getMethod(getter);
         return method.invoke(object);
     }
 

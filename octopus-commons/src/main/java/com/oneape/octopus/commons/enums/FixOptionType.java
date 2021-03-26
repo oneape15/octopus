@@ -3,7 +3,10 @@ package com.oneape.octopus.commons.enums;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * 固定的下拉框选择项
+ * Fixed drop-down box selection.
+ * Created by oneape<oneape15@163.com>
+ * Created 2020-11-08 18:07.
+ * Modify:
  */
 public enum FixOptionType {
     NULL,

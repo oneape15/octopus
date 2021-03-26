@@ -1,4 +1,4 @@
-package com.oneape.octopus.admin.model.vo;
+package com.oneape.octopus.commons.dto;
 
 import com.oneape.octopus.commons.cause.StateCode;
 import lombok.Data;
@@ -8,17 +8,17 @@ import java.io.Serializable;
 @Data
 public class ApiResult<T> implements Serializable {
     /**
-     * 返回结果
+     * result data object.
      */
-    private T       data;
+    private T data;
     /**
-     * 错误码
+     * error code.
      */
     private Integer code;
     /**
-     * 错误信息
+     * error msg.
      */
-    private String  msg;
+    private String msg;
 
     public ApiResult() {
         this(StateCode.OK);

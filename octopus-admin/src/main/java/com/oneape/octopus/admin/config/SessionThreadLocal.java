@@ -1,4 +1,4 @@
-package com.oneape.octopus.admin.controller;
+package com.oneape.octopus.admin.config;
 
 import com.oneape.octopus.dto.system.UserDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class SessionThreadLocal {
 
-    private static ThreadLocal<UserDTO> local = new ThreadLocal<>();
+    private static final ThreadLocal<UserDTO> local = new ThreadLocal<>();
 
     /**
      * Set user Session.

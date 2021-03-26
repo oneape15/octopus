@@ -2,7 +2,7 @@ package com.oneape.octopus.admin.service.warehouse.impl;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.admin.config.I18nMsgConfig;
-import com.oneape.octopus.admin.controller.SessionThreadLocal;
+import com.oneape.octopus.admin.config.SessionThreadLocal;
 import com.oneape.octopus.admin.service.warehouse.DatasourceService;
 import com.oneape.octopus.admin.service.warehouse.DdlAuditService;
 import com.oneape.octopus.commons.cause.BizException;
@@ -11,6 +11,7 @@ import com.oneape.octopus.domain.warehouse.DdlAuditInfoDO;
 import com.oneape.octopus.mapper.wharehouse.DdlAuditInfoMapper;
 import com.oneape.octopus.query.QueryFactory;
 import com.oneape.octopus.query.data.DatasourceInfo;
+import com.oneape.octopus.query.data.QueryStatus;
 import com.oneape.octopus.query.data.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -32,9 +33,9 @@ public class DdlAuditServiceImpl implements DdlAuditService {
     @Resource
     private DdlAuditInfoMapper ddlAuditInfoMapper;
     @Resource
-    private DatasourceService  datasourceService;
+    private DatasourceService datasourceService;
     @Resource
-    private QueryFactory       queryFactory;
+    private QueryFactory queryFactory;
 
     /**
      * save data to table.
@@ -140,7 +141,7 @@ public class DdlAuditServiceImpl implements DdlAuditService {
         Result result = queryFactory.runSql(dsInfo, model.getDdlText());
 
         int status;
-        if (result.getStatus() == Result.QueryStatus.SUCCESS) {
+        if (result.getStatus() == QueryStatus.SUCCESS) {
             status = 1;
             model.setStatus(DdlAuditType.FINISH);
         } else {

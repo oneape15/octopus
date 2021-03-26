@@ -2,7 +2,9 @@ package com.oneape.octopus.commons.enums;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Serve Type
@@ -23,7 +25,11 @@ public enum ServeType {
     /**
      * List of Value
      */
-    LOV("LOV", "List Of Value");
+    LOV("LOV", "List Of Value"),
+    /**
+     * static text
+     */
+    TEXT("TEXT", "static text");
 
 
     private final String code;

@@ -1,6 +1,6 @@
 package com.oneape.octopus.admin.service.peekdata;
 
-import com.oneape.octopus.commons.value.Pair;
+import com.oneape.octopus.commons.dto.Pair;
 import com.oneape.octopus.query.data.Result;
 import com.oneape.octopus.domain.peekdata.PeekDO;
 import com.oneape.octopus.admin.model.vo.ModelVO;

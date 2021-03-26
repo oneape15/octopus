@@ -1,7 +1,7 @@
 package com.oneape.octopus.parse.xml;
 
 import com.oneape.octopus.commons.dto.Value;
-import com.oneape.octopus.commons.value.Pair;
+import com.oneape.octopus.commons.dto.Pair;
 import com.oneape.octopus.parse.data.SyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -21,16 +21,16 @@ import java.util.*;
  */
 @Slf4j
 public class DslParser {
-    private final static String LINE_COMMENT       = "-- ";
-    private static final String SEQ_COMMA_START    = "/*";
-    private static final String SEQ_COMMA_END      = "*/";
-    private static final int    SEQ_COMMA_CHAR_LEN = SEQ_COMMA_END.length();
+    private final static String LINE_COMMENT = "-- ";
+    private static final String SEQ_COMMA_START = "/*";
+    private static final String SEQ_COMMA_END = "*/";
+    private static final int SEQ_COMMA_CHAR_LEN = SEQ_COMMA_END.length();
 
     // The node stack
-    private final Stack<XmlNode>     stack;
+    private final Stack<XmlNode> stack;
     private final Map<String, Value> paramMap;
 
-    private String      rawSql;
+    private String rawSql;
     private List<Value> args;
     // The dsl grammar is right ?
     private boolean grammarStatus = false;
@@ -323,7 +323,7 @@ public class DslParser {
                         List<Object> arrVal = new ArrayList<>();
                         if (valObj.getClass().isArray()) {
                             if (valObj instanceof List) {
-                                arrVal.addAll((List) valObj);
+                                arrVal.addAll((List<?>) valObj);
                             } else {
                                 Object[] arr = (Object[]) valObj;
                                 arrVal.addAll(Arrays.asList(arr));
@@ -503,7 +503,7 @@ public class DslParser {
                 || startPos >= endPos
                 || chars.length <= startPos
                 || chars.length < endPos
-                ) {
+        ) {
             return null;
         }
 

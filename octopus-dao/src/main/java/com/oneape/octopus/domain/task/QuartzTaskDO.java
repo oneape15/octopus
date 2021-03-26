@@ -1,6 +1,6 @@
 package com.oneape.octopus.domain.task;
 
-import com.oneape.octopus.commons.enums.EntityColumn;
+import com.oneape.octopus.commons.annotation.EntityColumn;
 import com.oneape.octopus.domain.BaseDO;
 import com.oneape.octopus.dto.task.QuartzTaskParamDTO;
 import lombok.Data;
@@ -49,5 +49,10 @@ public class QuartzTaskDO extends BaseDO {
      */
     @EntityColumn(name = "last_run_time")
     private Long lastRunTime;
+    /**
+     * The task own user id.
+     */
+    @EntityColumn(name = "owner_id")
+    private Long ownerId;
 
 }

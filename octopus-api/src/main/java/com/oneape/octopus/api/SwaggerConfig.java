@@ -1,4 +1,4 @@
-package com.oneape.octopus.admin;
+package com.oneape.octopus.api;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -269,8 +269,8 @@ public class RoleServiceImpl implements RoleService {
         SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH);
         try {
             RoleRlSchemaMapper mapper = session.getMapper(RoleRlSchemaMapper.class);
-            updateList.forEach(l -> mapper.update(l));
-            insertList.forEach(l -> mapper.insert(l));
+            updateList.forEach(mapper::update);
+            insertList.forEach(mapper::insert);
 
             // delete the not exist table schema.
             if (CollectionUtils.isNotEmpty(needDeleteIds)) {

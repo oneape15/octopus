@@ -24,13 +24,12 @@ import java.util.List;
 public class ModelMetaServiceImpl implements ModelMetaService {
     @Resource
     private ModelMetaMapper modelMetaMapper;
-
     @Resource
-    private SqlSessionFactory   sqlSessionFactory;
+    private SqlSessionFactory sqlSessionFactory;
     @Resource
     private UIDGeneratorService uidGeneratorService;
     @Resource
-    private AccountService      accountService;
+    private AccountService accountService;
 
 
     /**

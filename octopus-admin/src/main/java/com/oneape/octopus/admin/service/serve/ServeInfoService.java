@@ -8,9 +8,9 @@ public interface ServeInfoService extends BaseService<ServeInfoDO> {
     /**
      * The serve code length.
      */
-    public static final Integer CODE_LEN            = 16;
-    public static final String  COPY_TAG            = "_copy_";
-    public static final Integer COPY_TAG_RANDOM_LEN = 6;
+    Integer CODE_LEN = 16;
+    String COPY_TAG = "_copy_";
+    Integer COPY_TAG_RANDOM_LEN = 6;
 
     /**
      * save data to table.
@@ -66,4 +66,13 @@ public interface ServeInfoService extends BaseService<ServeInfoDO> {
      * @return int 1 - success, 0 - fail
      */
     int moveServe(Long serveId, Long groupId);
+
+    /**
+     * Change the serve owner id.
+     *
+     * @param serveId Long
+     * @param ownerId Long
+     * @return int 1 - success, 0 - fail
+     */
+    int changeServeOwner(Long serveId, Long ownerId);
 }

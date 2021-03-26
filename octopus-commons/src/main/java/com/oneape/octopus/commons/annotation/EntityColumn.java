@@ -1,4 +1,4 @@
-package com.oneape.octopus.commons.enums;
+package com.oneape.octopus.commons.annotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

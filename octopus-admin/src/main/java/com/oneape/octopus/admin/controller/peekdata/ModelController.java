@@ -6,7 +6,7 @@ import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.admin.controller.peekdata.form.ModelForm;
 import com.oneape.octopus.domain.peekdata.ModelDO;
 import com.oneape.octopus.domain.peekdata.ModelMetaDO;
-import com.oneape.octopus.admin.model.vo.ApiResult;
+import com.oneape.octopus.commons.dto.ApiResult;
 import com.oneape.octopus.admin.model.vo.ModelVO;
 import com.oneape.octopus.admin.service.peekdata.ModelService;
 import lombok.extern.slf4j.Slf4j;

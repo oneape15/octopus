@@ -5,12 +5,9 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.dto.DataType;
-import com.oneape.octopus.commons.value.Pair;
+import com.oneape.octopus.commons.dto.Pair;
 import com.oneape.octopus.query.QueryFactory;
-import com.oneape.octopus.query.data.DatasourceInfo;
-import com.oneape.octopus.query.data.ExecParam;
-import com.oneape.octopus.query.data.ExportDataParam;
-import com.oneape.octopus.query.data.Result;
+import com.oneape.octopus.query.data.*;
 import com.oneape.octopus.domain.peekdata.ModelMetaDO;
 import com.oneape.octopus.domain.peekdata.PeekDO;
 import com.oneape.octopus.domain.peekdata.PeekFieldDO;
@@ -364,7 +361,7 @@ public class PeekServiceImpl implements PeekService {
         Result result = queryFactory.exportData(dsi, param);
         log.info("导出文件内容为：{}", JSON.toJSONString(result));
 
-        int status = result.getStatus() == Result.QueryStatus.SUCCESS ? 1 : 0;
+        int status = result.getStatus() == QueryStatus.SUCCESS ? 1 : 0;
         if (status > 0) {
             peekMapper.incPeekTime(peekId);
         }

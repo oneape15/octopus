@@ -1,7 +1,7 @@
 package com.oneape.octopus.domain.serve;
 
 import com.oneape.octopus.commons.annotation.SortId;
-import com.oneape.octopus.commons.enums.EntityColumn;
+import com.oneape.octopus.commons.annotation.EntityColumn;
 import com.oneape.octopus.commons.enums.ServeType;
 import com.oneape.octopus.domain.BaseDO;
 import lombok.Data;

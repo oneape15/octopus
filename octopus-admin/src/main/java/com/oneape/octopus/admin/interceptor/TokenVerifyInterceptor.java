@@ -2,7 +2,7 @@ package com.oneape.octopus.admin.interceptor;
 
 import com.oneape.octopus.commons.cause.UnauthorizedException;
 import com.oneape.octopus.admin.config.ApplicationContextProvider;
-import com.oneape.octopus.admin.controller.SessionThreadLocal;
+import com.oneape.octopus.admin.config.SessionThreadLocal;
 import com.oneape.octopus.dto.system.UserDTO;
 import com.oneape.octopus.admin.service.system.AccountService;
 import lombok.extern.slf4j.Slf4j;

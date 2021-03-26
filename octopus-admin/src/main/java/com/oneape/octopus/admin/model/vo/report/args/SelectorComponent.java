@@ -1,6 +1,6 @@
 package com.oneape.octopus.admin.model.vo.report.args;
 
-import com.oneape.octopus.commons.value.TitleValueDTO;
+import com.oneape.octopus.commons.dto.TitleValueDTO;
 import com.oneape.octopus.commons.enums.ComponentType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

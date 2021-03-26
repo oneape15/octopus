@@ -1,7 +1,7 @@
-package com.oneape.octopus.commons.vo;
+package com.oneape.octopus.commons.dto;
 
 import com.oneape.octopus.commons.enums.FixServeGroupType;
-import com.oneape.octopus.commons.value.TypeValueUtils;
+import com.oneape.octopus.commons.value.DataUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @Data
 @NoArgsConstructor
-public class TreeNodeVO implements Serializable {
+public class TreeNodeDTO implements Serializable {
     public static final String KEY_LEAF_SIZE = "leafSize";
 
     // 此项必须设置（其值在整个树范围内唯一）
@@ -32,7 +32,7 @@ public class TreeNodeVO implements Serializable {
     // 图标
     private String icon;
     // 子节点
-    private List<TreeNodeVO> children;
+    private List<TreeNodeDTO> children;
     // 是否是叶子节点
     private boolean isLeaf = true;
     // 是否禁用
@@ -40,37 +40,31 @@ public class TreeNodeVO implements Serializable {
     // 节点额外属性值
     private Map<String, String> props = new HashMap<>();
 
-    public TreeNodeVO(String key, String title) {
+    public TreeNodeDTO(String key, String title) {
         this.key = key;
         this.value = key;
         this.title = title;
     }
 
-    public TreeNodeVO(FixServeGroupType fgt) {
+    public TreeNodeDTO(FixServeGroupType fgt) {
         this.key = String.valueOf(fgt.getId());
         this.value = key;
         this.title = fgt.getGroupName();
     }
 
-    public void addChildren(List<TreeNodeVO> list) {
-        if (CollectionUtils.isEmpty(list)) {
-            return;
-        }
-        if (children == null) {
-            children = new ArrayList<>();
-        }
+    public void addChildren(List<TreeNodeDTO> list) {
+        if (CollectionUtils.isEmpty(list)) return;
+
+        if (children == null) children = new ArrayList<>();
 
         children.addAll(list);
     }
 
-    public void addChild(TreeNodeVO child) {
-        if (child == null) {
-            return;
-        }
+    public void addChild(TreeNodeDTO child) {
+        if (child == null) return;
 
-        if (children == null) {
-            children = new ArrayList<>();
-        }
+        if (children == null) children = new ArrayList<>();
+
         this.isLeaf = false;
         children.add(child);
     }
@@ -80,11 +74,11 @@ public class TreeNodeVO implements Serializable {
     }
 
     public void setLeafSize(Integer size) {
-        props.put(KEY_LEAF_SIZE, TypeValueUtils.int2str(size, "0"));
+        props.put(KEY_LEAF_SIZE, DataUtils.int2String(size, "0"));
     }
 
     public Integer getLeafSize() {
         String val = props.get(KEY_LEAF_SIZE);
-        return TypeValueUtils.str2int(val, 0);
+        return DataUtils.str2Integer(val, 0);
     }
 }

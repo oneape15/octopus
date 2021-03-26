@@ -262,7 +262,7 @@ public class DefaultQueryFactory implements QueryFactory {
 
     private Result failResult(Exception e) {
         Result result = new Result();
-        result.setStatus(Result.QueryStatus.ERROR);
+        result.setStatus(QueryStatus.ERROR);
         result.setErrMsg(e.toString());
         return result;
     }

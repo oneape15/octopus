@@ -23,8 +23,4 @@ public class SystemInfoUtils {
         }
         return tmp;
     }
-
-    public static void main(String[] args) {
-        System.out.print(tmpDir());
-    }
 }

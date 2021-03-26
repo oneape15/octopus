@@ -15,7 +15,7 @@ public class ZipUtils {
     private static final int BUFFER_SIZE = 2 * 1024;
 
     /**
-     * 压缩文件
+     * The compressed file
      *
      * @param srcFile File 需要压缩的文件
      * @param out     OutputStream 压缩文件输出流

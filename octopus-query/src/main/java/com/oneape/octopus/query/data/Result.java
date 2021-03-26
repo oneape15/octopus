@@ -34,15 +34,6 @@ public class Result implements Serializable {
      */
     private DetailInfo detailInfo = new DetailInfo();
 
-    /**
-     * query status enum
-     */
-    public enum QueryStatus {
-        SUCCESS,
-        TIMEOUT,
-        ERROR;
-    }
-
     public static Result ofError(String errMsg) {
         Result ret = new Result();
         ret.setErrMsg(errMsg);

@@ -1,5 +1,5 @@
 -- Gateway routing configuration information table.
-CREATE TABLE `gateway_route`
+create TABLE `gateway_route`
 (
   `id`         BIGINT(20)    NOT NULL
   COMMENT 'primary key',
@@ -35,7 +35,7 @@ CREATE TABLE `gateway_route`
   COLLATE = utf8_general_ci;
 
 -- UID generator
-CREATE TABLE `sys_worker_node`
+create TABLE `sys_worker_node`
 (
   id          BIGINT(20)  NOT NULL AUTO_INCREMENT
   COMMENT 'Since the primary key',
@@ -57,7 +57,7 @@ CREATE TABLE `sys_worker_node`
   ENGINE InnoDB;
 
 -- Basic information table
-CREATE TABLE `sys_common_info`
+create TABLE `sys_common_info`
 (
   `id`        BIGINT(20)   NOT NULL
   COMMENT 'primary key',
@@ -87,7 +87,7 @@ CREATE TABLE `sys_common_info`
   COLLATE = utf8_general_ci;
 
 -- Organizational structure information table.
-CREATE TABLE `sys_org`
+create TABLE `sys_org`
 (
   `id`                BIGINT(20)   NOT NULL
   COMMENT 'primary key',
@@ -119,7 +119,7 @@ CREATE TABLE `sys_org`
   COLLATE = utf8_general_ci;
 
 --  System user information table.
-CREATE TABLE `sys_user`
+create TABLE `sys_user`
 (
   `id`       BIGINT(20)   NOT NULL
   COMMENT 'primary key',
@@ -155,7 +155,7 @@ CREATE TABLE `sys_user`
   COLLATE = utf8_general_ci;
 
 -- User - Org association table
-CREATE TABLE `sys_user_rl_org`
+create TABLE `sys_user_rl_org`
 (
   `id`       BIGINT(20) NOT NULL
   COMMENT 'primary key',
@@ -181,7 +181,7 @@ CREATE TABLE `sys_user_rl_org`
   COLLATE = utf8_general_ci;
 
 --  User session information table
-CREATE TABLE `sys_user_session`
+create TABLE `sys_user_session`
 (
   `id`          BIGINT(20)   NOT NULL
   COMMENT 'primary key',
@@ -215,7 +215,7 @@ CREATE TABLE `sys_user_session`
   COLLATE = utf8_general_ci;
 
 -- User role information table.
-CREATE TABLE `sys_role`
+create TABLE `sys_role`
 (
   `id`       BIGINT(20)   NOT NULL
   COMMENT 'primary key',
@@ -247,7 +247,7 @@ CREATE TABLE `sys_role`
   COLLATE = utf8_general_ci;
 
 -- User - role association table
-CREATE TABLE `sys_user_rl_role`
+create TABLE `sys_user_rl_role`
 (
   `id`       BIGINT(20) NOT NULL
   COMMENT 'primary key',
@@ -273,7 +273,7 @@ CREATE TABLE `sys_user_rl_role`
   COLLATE = utf8_general_ci;
 
 -- Resource information table
-CREATE TABLE `sys_resource`
+create TABLE `sys_resource`
 (
   `id`        BIGINT(20)   NOT NULL
   COMMENT 'primary key',
@@ -311,7 +311,7 @@ CREATE TABLE `sys_resource`
   COLLATE = utf8_general_ci;
 
 -- Role - resource association table
-CREATE TABLE `sys_role_rl_resource`
+create TABLE `sys_role_rl_resource`
 (
   `id`          BIGINT(20) NOT NULL
   COMMENT 'primary key',
@@ -339,7 +339,7 @@ CREATE TABLE `sys_role_rl_resource`
   COLLATE = utf8_general_ci;
 
 -- Role - datasource schema association table
-CREATE TABLE `sys_role_rl_schema`
+create TABLE `sys_role_rl_schema`
 (
   `id`          BIGINT(20)   NOT NULL
   COMMENT 'primary key',
@@ -369,7 +369,7 @@ CREATE TABLE `sys_role_rl_schema`
   COLLATE = utf8_general_ci;
 
 -- Serve information table.
-CREATE TABLE `serve_info`
+create TABLE `serve_info`
 (
   `id`          BIGINT(20)   NOT NULL
   COMMENT 'primary key',
@@ -387,6 +387,8 @@ CREATE TABLE `serve_info`
   COMMENT 'the serve status',
   `sort_id`     BIGINT(20)   NOT NULL
   COMMENT 'Sort field',
+  `owner_id`      BIGINT(20)          NULL
+  COMMENT 'The owner of the serve',
   `comment`     VARCHAR(256) NULL
   COMMENT 'description',
   `config_text` TEXT         NULL
@@ -409,7 +411,7 @@ CREATE TABLE `serve_info`
   COLLATE = utf8_general_ci;
 
 -- Serve information table.
-CREATE TABLE `serve_group`
+create TABLE `serve_group`
 (
   `id`         BIGINT(20)   NOT NULL
   COMMENT 'primary key',
@@ -443,7 +445,7 @@ CREATE TABLE `serve_group`
   COLLATE = utf8_general_ci;
 
 -- Service and grouping association relational table.
-CREATE TABLE `serve_rl_group`
+create TABLE `serve_rl_group`
 (
   `id`       BIGINT(20) NOT NULL
   COMMENT 'primary key',
@@ -469,7 +471,7 @@ CREATE TABLE `serve_rl_group`
   COLLATE = utf8_general_ci;
 
 -- datasource Data source information table.
-CREATE TABLE `datasource`
+create TABLE `datasource`
 (
   `id`             BIGINT(20)    NOT NULL
   COMMENT 'primary key',
@@ -525,7 +527,7 @@ CREATE TABLE `datasource`
   COLLATE = utf8_general_ci;
 
 -- table_schema Table basic information table
-CREATE TABLE `table_schema`
+create TABLE `table_schema`
 (
   `id`            BIGINT(20)   NOT NULL
   COMMENT 'primary key',
@@ -569,7 +571,7 @@ CREATE TABLE `table_schema`
   COLLATE = utf8_general_ci;
 
 -- table_column Table field information table
-CREATE TABLE `table_column`
+create TABLE `table_column`
 (
 
   `id`            BIGINT(20)   NOT NULL
@@ -610,7 +612,7 @@ CREATE TABLE `table_column`
   COLLATE = utf8_general_ci;
 
 -- DDL audit information table
-CREATE TABLE `ddl_audit_info`
+create TABLE `ddl_audit_info`
 (
   `id`            BIGINT(20)   NOT NULL
   COMMENT 'primary key',
@@ -646,7 +648,7 @@ CREATE TABLE `ddl_audit_info`
   COLLATE = utf8_general_ci;
 
 -- 取数实例信息表 pd_peek
-CREATE TABLE `pd_peek`
+create TABLE `pd_peek`
 (
   `id`         BIGINT(20)  NOT NULL
   COMMENT '主键Id',
@@ -675,7 +677,7 @@ CREATE TABLE `pd_peek`
   COLLATE = utf8_general_ci;
 
 -- 取数字段信息表 pd_peek_field
-CREATE TABLE `pd_peek_field`
+create TABLE `pd_peek_field`
 (
   `id`             BIGINT(20)  NOT NULL
   COMMENT '主键Id',
@@ -709,7 +711,7 @@ CREATE TABLE `pd_peek_field`
   COLLATE = utf8_general_ci;
 
 -- 取数规则信息表 pd_peek_rule
-CREATE TABLE `pd_peek_rule`
+create TABLE `pd_peek_rule`
 (
   `id`          BIGINT(20)   NOT NULL
   COMMENT '主键Id',
@@ -740,7 +742,7 @@ CREATE TABLE `pd_peek_rule`
   COLLATE = utf8_general_ci;
 
 -- 模型信息表 pd_model
-CREATE TABLE `pd_model`
+create TABLE `pd_model`
 (
   `id`            BIGINT(20)   NOT NULL
   COMMENT '主键Id',
@@ -772,7 +774,7 @@ CREATE TABLE `pd_model`
   COLLATE = utf8_general_ci;
 
 -- 模型元素信息表 pd_model_meta
-CREATE TABLE `pd_model_meta`
+create TABLE `pd_model_meta`
 (
   `id`               BIGINT(20)   NOT NULL
   COMMENT '主键Id',
@@ -810,7 +812,7 @@ CREATE TABLE `pd_model_meta`
   COLLATE = utf8_general_ci;
 
 -- 模型标签表 pd_model_tag
-CREATE TABLE `pd_model_tag`
+create TABLE `pd_model_tag`
 (
   `id`        BIGINT(20)  NOT NULL
   COMMENT '主键Id',
@@ -838,7 +840,7 @@ CREATE TABLE `pd_model_tag`
   COLLATE = utf8_general_ci;
 
 -- 数据导入记录表 pd_import_record
-CREATE TABLE `pd_import_record`
+create TABLE `pd_import_record`
 (
   `id`             BIGINT(20)   NOT NULL
   COMMENT '主键Id',
@@ -872,7 +874,7 @@ CREATE TABLE `pd_import_record`
   COLLATE = utf8_general_ci;
 
 -- quartz_task Custom timer task information table
-CREATE TABLE `quartz_task`
+create TABLE `quartz_task`
 (
   `id`            BIGINT(20) UNSIGNED NOT NULL
   COMMENT 'primary key',
@@ -890,6 +892,8 @@ CREATE TABLE `quartz_task`
   COMMENT 'Run task parameters (JSON format)',
   `last_run_time` BIGINT(20)          NULL
   COMMENT 'Last run time',
+  `owner_id`      BIGINT(20)          NULL
+  COMMENT 'The owner of the task',
   `archive`       TINYINT(1)          NOT NULL  DEFAULT 0
   COMMENT '0 - normal data; 1 - have archive (soft delete)',
   `created`       BIGINT(20)          NOT NULL
@@ -908,7 +912,7 @@ CREATE TABLE `quartz_task`
   COLLATE = utf8_general_ci;
 
 -- Store a jobDetail
-CREATE TABLE qrtz_job_details (
+create TABLE qrtz_job_details (
   sched_name        VARCHAR(120) NOT NULL,
   job_name          VARCHAR(190) NOT NULL,
   job_group         VARCHAR(190) NOT NULL,
@@ -929,7 +933,7 @@ CREATE TABLE qrtz_job_details (
   COLLATE = utf8_general_ci;
 
 -- Basic information about triggers
-CREATE TABLE qrtz_triggers (
+create TABLE qrtz_triggers (
   sched_name     VARCHAR(120) NOT NULL,
   trigger_name   VARCHAR(190) NOT NULL,
   trigger_group  VARCHAR(190) NOT NULL,
@@ -968,7 +972,7 @@ CREATE TABLE qrtz_triggers (
   COLLATE = utf8_general_ci;
 
 -- Information for a simple trigger
-CREATE TABLE qrtz_simple_triggers (
+create TABLE qrtz_simple_triggers (
   sched_name      VARCHAR(120) NOT NULL,
   trigger_name    VARCHAR(190) NOT NULL,
   trigger_group   VARCHAR(190) NOT NULL,
@@ -985,7 +989,7 @@ CREATE TABLE qrtz_simple_triggers (
   COLLATE = utf8_general_ci;
 
 -- Store a Cron trigger
-CREATE TABLE qrtz_cron_triggers (
+create TABLE qrtz_cron_triggers (
   sched_name      VARCHAR(120) NOT NULL,
   trigger_name    VARCHAR(190) NOT NULL,
   trigger_group   VARCHAR(190) NOT NULL,
@@ -1000,7 +1004,7 @@ CREATE TABLE qrtz_cron_triggers (
   DEFAULT CHARACTER SET = utf8
   COLLATE = utf8_general_ci;
 -- Details of simple triggers
-CREATE TABLE qrtz_simprop_triggers
+create TABLE qrtz_simprop_triggers
 (
   sched_name    VARCHAR(120)   NOT NULL,
   trigger_name  VARCHAR(190)   NOT NULL,
@@ -1026,7 +1030,7 @@ CREATE TABLE qrtz_simprop_triggers
   COLLATE = utf8_general_ci;
 
 -- Store a Blob type triggers
-CREATE TABLE qrtz_blob_triggers (
+create TABLE qrtz_blob_triggers (
   sched_name    VARCHAR(120) NOT NULL,
   trigger_name  VARCHAR(190) NOT NULL,
   trigger_group VARCHAR(190) NOT NULL,
@@ -1042,7 +1046,7 @@ CREATE TABLE qrtz_blob_triggers (
   COLLATE = utf8_general_ci;
 
 -- Store calendar information, Quartz can configure a calendar to specify a time range
-CREATE TABLE qrtz_calendars (
+create TABLE qrtz_calendars (
   sched_name    VARCHAR(120) NOT NULL,
   calendar_name VARCHAR(190) NOT NULL,
   calendar      BLOB         NOT NULL,
@@ -1054,7 +1058,7 @@ CREATE TABLE qrtz_calendars (
   COLLATE = utf8_general_ci;
 
 -- Store a suspended trigger
-CREATE TABLE qrtz_paused_trigger_grps (
+create TABLE qrtz_paused_trigger_grps (
   sched_name    VARCHAR(120) NOT NULL,
   trigger_group VARCHAR(190) NOT NULL,
   PRIMARY KEY (sched_name, trigger_group)
@@ -1065,7 +1069,7 @@ CREATE TABLE qrtz_paused_trigger_grps (
   COLLATE = utf8_general_ci;
 
 -- Stores the triggered trigger
-CREATE TABLE qrtz_fired_triggers (
+create TABLE qrtz_fired_triggers (
   sched_name        VARCHAR(120) NOT NULL,
   entry_id          VARCHAR(95)  NOT NULL,
   trigger_name      VARCHAR(190) NOT NULL,
@@ -1093,7 +1097,7 @@ CREATE TABLE qrtz_fired_triggers (
   COLLATE = utf8_general_ci;
 
 -- Scheduler state
-CREATE TABLE qrtz_scheduler_state (
+create TABLE qrtz_scheduler_state (
   sched_name        VARCHAR(120) NOT NULL,
   instance_name     VARCHAR(190) NOT NULL,
   last_checkin_time BIGINT(13)   NOT NULL,
@@ -1106,7 +1110,7 @@ CREATE TABLE qrtz_scheduler_state (
   COLLATE = utf8_general_ci;
 
 -- Stores information about the pessimistic lock of the program
-CREATE TABLE qrtz_locks (
+create TABLE qrtz_locks (
   sched_name VARCHAR(120) NOT NULL,
   lock_name  VARCHAR(40)  NOT NULL,
   PRIMARY KEY (sched_name, lock_name)

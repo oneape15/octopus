@@ -17,6 +17,7 @@ import java.util.Map;
 public class DslParserTest {
 
     private static final String dslSql = "SELECT * FROM \n" +
+            "-- this is user table\n"+
             "tb_user\n" +
             "WHERE 1 = 1 \n" +
             "<if test=\"#{useType} nb\">\n" +

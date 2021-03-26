@@ -3,6 +3,8 @@ package com.oneape.octopus.admin.service.serve.impl;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.admin.config.I18nMsgConfig;
+import com.oneape.octopus.admin.config.SessionThreadLocal;
+import com.oneape.octopus.admin.service.system.AccountService;
 import com.oneape.octopus.commons.algorithm.Digraph;
 import com.oneape.octopus.commons.algorithm.DirectedCycle;
 import com.oneape.octopus.commons.cause.BizException;
@@ -39,15 +41,18 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class ServeInfoServiceImpl implements ServeInfoService {
     @Resource
-    private ServeInfoMapper    serveInfoMapper;
+    private ServeInfoMapper serveInfoMapper;
     @Resource
-    private ServeGroupMapper   serveGroupMapper;
+    private ServeGroupMapper serveGroupMapper;
     @Resource
     private ServeRlGroupMapper serveRlGroupMapper;
     @Resource
     private ServeVersionMapper serveVersionMapper;
     @Resource
-    private RedissonClient     redissonClient;
+    private RedissonClient redissonClient;
+
+    @Resource
+    private AccountService accountService;
 
     /**
      * save data to table.
@@ -122,6 +127,7 @@ public class ServeInfoServiceImpl implements ServeInfoService {
                     serveRlGroupMapper.updateGroupIdByServeId(model.getId(), groupId);
                 }
             } else {
+                model.setOwnerId(SessionThreadLocal.getUserId());
                 status = serveInfoMapper.insert(model);
                 if (status > 0) {
                     serveRlGroupMapper.insert(new ServeRlGroupDO(model.getId(), groupId));
@@ -165,6 +171,7 @@ public class ServeInfoServiceImpl implements ServeInfoService {
             name = name + COPY_TAG + CodeBuilderUtils.randomStr(COPY_TAG_RANDOM_LEN);
         }
         siDo.setName(name);
+        siDo.setOwnerId(SessionThreadLocal.getUserId());
         siDo.setId(null);
         return serveInfoMapper.insert(siDo);
     }
@@ -290,6 +297,24 @@ public class ServeInfoServiceImpl implements ServeInfoService {
     }
 
     /**
+     * Change the serve owner id.
+     *
+     * @param serveId Long
+     * @param ownerId Long
+     * @return int 1 - success, 0 - fail
+     */
+    @Override
+    public int changeServeOwner(Long serveId, Long ownerId) {
+        Preconditions.checkNotNull(
+                serveInfoMapper.findById(serveId),
+                I18nMsgConfig.getMessage("serve.id.invalid"));
+        Preconditions.checkNotNull(
+                accountService.findById(ownerId),
+                I18nMsgConfig.getMessage("account.id.invalid"));
+        return serveInfoMapper.changeServeOwner(serveId, ownerId);
+    }
+
+    /**
      * Checks if the configuration is correct.
      *
      * @param textDTO ServeConfigTextDTO
@@ -398,10 +423,20 @@ public class ServeInfoServiceImpl implements ServeInfoService {
         return digraph;
     }
 
+    /**
+     * Detection field information is valid information.
+     *
+     * @param columns List
+     */
     private void checkServeColumn(List<ServeColumnDTO> columns) {
 
     }
 
+    /**
+     * Detection sql information is valid information
+     *
+     * @param sqlDTO ServeSqlDTO
+     */
     private void checkServeSql(ServeSqlDTO sqlDTO) {
 
     }

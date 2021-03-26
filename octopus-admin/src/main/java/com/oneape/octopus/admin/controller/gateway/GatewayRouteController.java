@@ -4,7 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.oneape.octopus.admin.config.I18nMsgConfig;
 import com.oneape.octopus.admin.controller.gateway.form.RouteForm;
-import com.oneape.octopus.admin.model.vo.ApiResult;
+import com.oneape.octopus.commons.dto.ApiResult;
 import com.oneape.octopus.admin.service.gateway.GatewayRouteService;
 import com.oneape.octopus.commons.cause.StateCode;
 import com.oneape.octopus.domain.gateway.GatewayRouteDO;

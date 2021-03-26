@@ -1,7 +1,7 @@
 package com.oneape.octopus.commons.value;
 
 import com.oneape.octopus.commons.dto.EntityAttribute;
-import com.oneape.octopus.commons.enums.EntityColumn;
+import com.oneape.octopus.commons.annotation.EntityColumn;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;

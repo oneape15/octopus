@@ -1,7 +1,7 @@
 package com.oneape.octopus.domain.serve;
 
 import com.oneape.octopus.commons.annotation.SortId;
-import com.oneape.octopus.commons.enums.EntityColumn;
+import com.oneape.octopus.commons.annotation.EntityColumn;
 import com.oneape.octopus.commons.enums.ServeStatusType;
 import com.oneape.octopus.commons.enums.ServeType;
 import com.oneape.octopus.commons.enums.VisualType;
@@ -19,19 +19,20 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class ServeInfoDO extends BaseDO {
     /**
+     * deploy datasource id.
+     */
+    @EntityColumn(name = "datasource_id")
+    private Long datasourceId;
+    /**
      * serveId name.
      */
     @EntityColumn(name = "name", nullable = false)
-    private String  name;
+    private String name;
     /**
      * Serve code.
      */
     @EntityColumn(name = "code", nullable = false)
-    private String  code;
-    /**
-     * The serve icon url.
-     */
-    private String  icon;
+    private String code;
     /**
      * Timeliness of serve data. 0 - real time, 1 - minutes, 2 - hours, 3 - days, 4 - months;
      */
@@ -42,14 +43,13 @@ public class ServeInfoDO extends BaseDO {
      * serve type , report;  interface; eg.
      */
     @EntityColumn(name = "serve_type", nullable = false)
-    private String  serveType;
+    private String serveType;
     /**
      * {@link VisualType}
      * the serveId visual type , 1 - table; 2 - line; 4 - bar; eg.
      */
     @EntityColumn(name = "visual_type", nullable = false)
     private Integer visualType;
-
     /**
      * {@link ServeStatusType}
      * the serve status
@@ -60,7 +60,12 @@ public class ServeInfoDO extends BaseDO {
      */
     @SortId
     @EntityColumn(name = "sort_id")
-    private Long   sortId;
+    private Long sortId;
+    /**
+     * The owner id of the serve.
+     */
+    @EntityColumn(name = "owner_id")
+    private Long ownerId;
     /**
      * {@link ServeConfigTextDTO }
      * The serve config text information.

@@ -1,7 +1,7 @@
 package com.oneape.octopus.admin.service;
 
 import com.oneape.octopus.commons.enums.FixServeGroupType;
-import com.oneape.octopus.commons.vo.TreeNodeVO;
+import com.oneape.octopus.commons.dto.TreeNodeDTO;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
@@ -25,11 +25,11 @@ public class DefaultTreeService {
      * @param id2NodeMap     Map
      * @return List
      */
-    protected List<TreeNodeVO> buildTree(List<Long> parentIds,
-                                         List<Long> nodeIds,
-                                         Map<Long, Long> id2parentIdMap,
-                                         LinkedHashMap<Long, TreeNodeVO> id2NodeMap) {
-        List<TreeNodeVO> rootNodes = new ArrayList<>();
+    protected List<TreeNodeDTO> buildTree(List<Long> parentIds,
+                                          List<Long> nodeIds,
+                                          Map<Long, Long> id2parentIdMap,
+                                          LinkedHashMap<Long, TreeNodeDTO> id2NodeMap) {
+        List<TreeNodeDTO> rootNodes = new ArrayList<>();
 
         // build tree
         while (CollectionUtils.isNotEmpty(parentIds)) {
@@ -40,9 +40,9 @@ public class DefaultTreeService {
 
                 leafNodeIds.add(id);
 
-                TreeNodeVO node = id2NodeMap.remove(id);
+                TreeNodeDTO node = id2NodeMap.remove(id);
                 if (node != null) {
-                    TreeNodeVO parentNode = id2NodeMap.get(parentId);
+                    TreeNodeDTO parentNode = id2NodeMap.get(parentId);
                     if (FixServeGroupType.ROOT.getId().equals(parentId)) {
                         rootNodes.add(node);
                     } else if (parentNode != null) {
@@ -73,9 +73,9 @@ public class DefaultTreeService {
     /**
      * DISABLED is contagious to all child nodes.
      *
-     * @param nodeVO TreeNodeVO
+     * @param nodeVO TreeNodeDTO
      */
-    protected void setChildrenDisable(TreeNodeVO nodeVO, boolean disabled) {
+    protected void setChildrenDisable(TreeNodeDTO nodeVO, boolean disabled) {
         nodeVO.setDisabled(disabled);
         if (CollectionUtils.isNotEmpty(nodeVO.getChildren())) {
             nodeVO.getChildren().forEach(c -> setChildrenDisable(c, disabled));
@@ -87,12 +87,12 @@ public class DefaultTreeService {
      *
      * @param nodes List
      */
-    protected void wrapRootNode(List<TreeNodeVO> nodes) {
+    protected void wrapRootNode(List<TreeNodeDTO> nodes) {
         if (nodes == null) {
             nodes = new ArrayList<>();
         }
 
-        TreeNodeVO rootNode = new TreeNodeVO(FixServeGroupType.ROOT);
+        TreeNodeDTO rootNode = new TreeNodeDTO(FixServeGroupType.ROOT);
         rootNode.addChildren(nodes);
         nodes.clear();
         nodes.add(rootNode);

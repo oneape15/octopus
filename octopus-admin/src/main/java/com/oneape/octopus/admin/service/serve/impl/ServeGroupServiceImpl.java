@@ -2,20 +2,20 @@ package com.oneape.octopus.admin.service.serve.impl;
 
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.admin.config.I18nMsgConfig;
+import com.oneape.octopus.admin.config.SessionThreadLocal;
+import com.oneape.octopus.admin.service.DefaultTreeService;
+import com.oneape.octopus.admin.service.serve.ServeGroupService;
 import com.oneape.octopus.commons.cause.BizException;
 import com.oneape.octopus.commons.cause.UnauthorizedException;
 import com.oneape.octopus.commons.enums.FixServeGroupType;
 import com.oneape.octopus.commons.enums.ServeType;
-import com.oneape.octopus.commons.value.TypeValueUtils;
-import com.oneape.octopus.commons.vo.TreeNodeVO;
-import com.oneape.octopus.admin.controller.SessionThreadLocal;
+import com.oneape.octopus.commons.value.DataUtils;
+import com.oneape.octopus.commons.dto.TreeNodeDTO;
 import com.oneape.octopus.domain.serve.ServeGroupDO;
 import com.oneape.octopus.dto.serve.ServeGroupSizeDTO;
 import com.oneape.octopus.mapper.serve.ServeGroupMapper;
 import com.oneape.octopus.mapper.serve.ServeInfoMapper;
 import com.oneape.octopus.mapper.serve.ServeRlGroupMapper;
-import com.oneape.octopus.admin.service.DefaultTreeService;
-import com.oneape.octopus.admin.service.serve.ServeGroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -75,7 +75,7 @@ public class ServeGroupServiceImpl extends DefaultTreeService implements ServeGr
             return serveGroupMapper.update(model);
         } else {
             // check the parent id.
-            Long parentId = TypeValueUtils.getOrDefault(model.getParentId(), FixServeGroupType.ROOT.getId());
+            Long parentId = DataUtils.getOrDefault(model.getParentId(), FixServeGroupType.ROOT.getId());
             if (!FixServeGroupType.ROOT.getId().equals(parentId)) {
                 Preconditions.checkNotNull(serveGroupMapper.findById(parentId),
                         I18nMsgConfig.getMessage("serve.group.parentId.invalid"));
@@ -215,7 +215,7 @@ public class ServeGroupServiceImpl extends DefaultTreeService implements ServeGr
      * @return List
      */
     @Override
-    public List<TreeNodeVO> genServeGroupTree(ServeType serveType, boolean addNodeSize, boolean addRootNode, boolean addArchiveNode, boolean addPersonalNode) {
+    public List<TreeNodeDTO> genServeGroupTree(ServeType serveType, boolean addNodeSize, boolean addRootNode, boolean addArchiveNode, boolean addPersonalNode) {
         Preconditions.checkNotNull(serveType, I18nMsgConfig.getMessage("serve.type.invalid"));
         Long userId = SessionThreadLocal.getUserId();
         if (userId == null) {
@@ -229,7 +229,7 @@ public class ServeGroupServiceImpl extends DefaultTreeService implements ServeGr
         ServeGroupDO query = new ServeGroupDO();
         query.setServeType(serveType.getCode());
 
-        List<TreeNodeVO> nodes = new ArrayList<>();
+        List<TreeNodeDTO> nodes = new ArrayList<>();
         List<ServeGroupDO> groupList = serveGroupMapper.listWithOrder(query, orders);
         if (CollectionUtils.isNotEmpty(groupList)) {
             Map<Long, Long> id2parentIdMap = new HashMap<>();
@@ -248,15 +248,15 @@ public class ServeGroupServiceImpl extends DefaultTreeService implements ServeGr
             }
 
             List<Long> parentIds = new ArrayList<>();
-            LinkedHashMap<Long, TreeNodeVO> id2NodeMap = new LinkedHashMap<>();
+            LinkedHashMap<Long, TreeNodeDTO> id2NodeMap = new LinkedHashMap<>();
             groupList.forEach(sg -> {
-                Long parentId = TypeValueUtils.getOrDefault(sg.getParentId(), FixServeGroupType.ROOT.getId());
+                Long parentId = DataUtils.getOrDefault(sg.getParentId(), FixServeGroupType.ROOT.getId());
                 id2parentIdMap.put(sg.getId(), parentId);
 
                 // build group tree node
-                TreeNodeVO node = new TreeNodeVO(sg.getId() + "", sg.getName());
+                TreeNodeDTO node = new TreeNodeDTO(sg.getId() + "", sg.getName());
                 node.setIcon(sg.getIcon());
-                node.setLeafSize(groupWithSizeMap.containsKey(sg.getId()) ? groupWithSizeMap.get(sg.getId()) : 0);
+                node.setLeafSize(groupWithSizeMap.getOrDefault(sg.getId(), 0));
                 id2NodeMap.put(sg.getId(), node);
 
                 // record parent id
@@ -266,7 +266,7 @@ public class ServeGroupServiceImpl extends DefaultTreeService implements ServeGr
             });
 
             // build tree
-            List<TreeNodeVO> rootNodes = buildTree(parentIds, groupIds, id2parentIdMap, id2NodeMap);
+            List<TreeNodeDTO> rootNodes = buildTree(parentIds, groupIds, id2parentIdMap, id2NodeMap);
 
             nodes.addAll(rootNodes);
             nodes.addAll(id2NodeMap.values());
@@ -274,7 +274,7 @@ public class ServeGroupServiceImpl extends DefaultTreeService implements ServeGr
 
         // personal node deal.
         if (addPersonalNode) {
-            TreeNodeVO personalNode = new TreeNodeVO(FixServeGroupType.PERSONAL);
+            TreeNodeDTO personalNode = new TreeNodeDTO(FixServeGroupType.PERSONAL);
             if (addNodeSize) {
                 int size = serveInfoMapper.countPersonalServe(serveType.getCode(), userId);
                 personalNode.setLeafSize(size);
@@ -284,7 +284,7 @@ public class ServeGroupServiceImpl extends DefaultTreeService implements ServeGr
 
         // archive node deal.
         if (addArchiveNode) {
-            TreeNodeVO archiveNode = new TreeNodeVO(FixServeGroupType.ARCHIVE);
+            TreeNodeDTO archiveNode = new TreeNodeDTO(FixServeGroupType.ARCHIVE);
             if (addNodeSize) {
                 int size = serveInfoMapper.countArchiveServe(serveType.getCode());
                 archiveNode.setLeafSize(size);

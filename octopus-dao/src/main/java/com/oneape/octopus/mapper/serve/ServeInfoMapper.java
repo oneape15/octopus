@@ -68,15 +68,45 @@ public interface ServeInfoMapper {
     @SelectProvider(type = ServeInfoSqlProvider.class, method = "hasSameName")
     int hasSameName(@Param("name") String name, @Param("filterId") Long filterId);
 
+    /**
+     * Whether the serveId Id is valid
+     *
+     * @param serveId Long
+     * @return int
+     */
     @Select({
             "SELECT COUNT(0) FROM " + ServeInfoSqlProvider.TABLE_NAME +
                     " WHERE " + BaseSqlProvider.FIELD_ARCHIVE + " = 0 AND id = #{serveId}"
     })
     int checkServeId(@Param("serveId") Long serveId);
 
+    /**
+     * Count the number of archived serves
+     *
+     * @param serveType String
+     */
     @SelectProvider(type = ServeInfoSqlProvider.class, method = "countArchiveServe")
     int countArchiveServe(@Param("serveType") String serveType);
 
+    /**
+     * Count the number of personal serves
+     *
+     * @param serveType String
+     * @param userId    Long
+     */
     @SelectProvider(type = ServeInfoSqlProvider.class, method = "countPersonalServe")
     int countPersonalServe(@Param("serveType") String serveType, @Param("userId") Long userId);
+
+    /**
+     * Change the owner id of the serve.
+     *
+     * @param serveId Long
+     * @param ownerId Long
+     */
+    @Update(
+            "UPDATE " + ServeInfoSqlProvider.TABLE_NAME +
+                    " SET owner_id = #{ownerId} " +
+                    " WHERE id = #{serveId}"
+    )
+    int changeServeOwner(@Param("serveId") Long serveId, @Param("ownerId") Long ownerId);
 }

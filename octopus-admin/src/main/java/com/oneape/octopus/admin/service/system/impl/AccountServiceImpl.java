@@ -8,7 +8,7 @@ import com.oneape.octopus.commons.security.MD5Utils;
 import com.oneape.octopus.commons.value.CodeBuilderUtils;
 import com.oneape.octopus.commons.value.MaskUtils;
 import com.oneape.octopus.admin.config.I18nMsgConfig;
-import com.oneape.octopus.admin.controller.SessionThreadLocal;
+import com.oneape.octopus.admin.config.SessionThreadLocal;
 import com.oneape.octopus.domain.system.RoleDO;
 import com.oneape.octopus.domain.system.UserDO;
 import com.oneape.octopus.domain.system.UserRlRoleDO;
@@ -403,8 +403,7 @@ public class AccountServiceImpl implements AccountService {
         list.forEach(resource -> {
             String key = resource.getPath();
             if (StringUtils.isNotBlank(key)) {
-                Set<Integer> maskList = new HashSet<>();
-                maskList.addAll(MaskUtils.getList(resource.getMask()));
+                Set<Integer> maskList = new HashSet<>(MaskUtils.getList(resource.getMask()));
                 if (ret.containsKey(key)) {
                     maskList.addAll(ret.get(key));
                 }
@@ -417,6 +416,7 @@ public class AccountServiceImpl implements AccountService {
 
     private String getFileContent(String template_name) throws Exception {
         InputStream is = ClassLoader.getSystemResourceAsStream(template_name);
+        assert is != null;
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();
         String line;
@@ -483,7 +483,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public int saveUserRole(Long userId, List<Long> roleIds) {
         Preconditions.checkNotNull(userMapper.findById(userId), I18nMsgConfig.getMessage("account.user.null"));
-        List<Long> needInsertRoleIds = new ArrayList<>();
+        List<Long> needInsertRoleIds;
         List<Long> needDeleteRoleIds = new ArrayList<>();
 
         List<RoleDO> roleDOs = roleService.findRoleByUserId(userId);
@@ -494,7 +494,7 @@ public class AccountServiceImpl implements AccountService {
             needDeleteRoleIds = existRoleIds.stream().filter(rId -> !roleIds.contains(rId)).collect(Collectors.toList());
             needInsertRoleIds = roleIds.stream().filter(rId -> !existRoleIds.contains(rId)).collect(Collectors.toList());
         } else {
-            needInsertRoleIds.addAll(roleIds);
+            needInsertRoleIds = new ArrayList<>(roleIds);
         }
 
         SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH);

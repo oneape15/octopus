@@ -5,16 +5,16 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.admin.config.I18nMsgConfig;
-import com.oneape.octopus.commons.cause.BizException;
-import com.oneape.octopus.commons.enums.QuartzTaskType;
 import com.oneape.octopus.admin.controller.task.from.TaskForm;
-import com.oneape.octopus.domain.task.QuartzTaskDO;
-import com.oneape.octopus.dto.task.QuartzTaskParamDTO;
 import com.oneape.octopus.admin.job.QuartzScheduledJob;
-import com.oneape.octopus.admin.model.vo.ApiResult;
-import com.oneape.octopus.admin.service.warehouse.DatasourceService;
 import com.oneape.octopus.admin.service.serve.ServeInfoService;
 import com.oneape.octopus.admin.service.task.QuartzTaskService;
+import com.oneape.octopus.admin.service.warehouse.DatasourceService;
+import com.oneape.octopus.commons.cause.BizException;
+import com.oneape.octopus.commons.dto.ApiResult;
+import com.oneape.octopus.commons.enums.QuartzTaskType;
+import com.oneape.octopus.domain.task.QuartzTaskDO;
+import com.oneape.octopus.dto.task.QuartzTaskParamDTO;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -41,17 +41,23 @@ public class QuartzTaskController {
     @Resource
     private DatasourceService datasourceService;
     @Resource
-    private ServeInfoService  serveInfoService;
+    private ServeInfoService serveInfoService;
 
+    /**
+     * Get task information list.
+     */
     @PostMapping(value = "/list")
-    public ApiResult listTask(@RequestBody TaskForm form) {
+    public ApiResult<PageInfo<QuartzTaskDO>> listTask(@RequestBody TaskForm form) {
         PageHelper.startPage(form.getCurrent(), form.getPageSize());
         List<QuartzTaskDO> vos = quartzTaskService.find(form.toDO());
         return ApiResult.ofData(new PageInfo<>(vos));
     }
 
+    /**
+     * Save task information.
+     */
     @PostMapping(value = "/save")
-    public ApiResult saveTask(@RequestBody @Validated(value = TaskForm.AddCheck.class) TaskForm form) {
+    public ApiResult<String> saveTask(@RequestBody @Validated(value = TaskForm.AddCheck.class) TaskForm form) {
         int status = quartzTaskService.save(formatTaskDO(form));
         if (status > 0) {
             return ApiResult.ofMessage(I18nMsgConfig.getMessage("task.save.success"));
@@ -59,8 +65,13 @@ public class QuartzTaskController {
         return ApiResult.ofError(-1, I18nMsgConfig.getMessage("task.save.fail"));
     }
 
+    /**
+     * Delete the task by task id.
+     *
+     * @param taskId Long
+     */
     @PostMapping(value = "/delete/{taskId}")
-    public ApiResult deleteTask(@PathVariable(name = "taskId") Long taskId) {
+    public ApiResult<String> deleteTask(@PathVariable(name = "taskId") Long taskId) {
         int status = quartzTaskService.deleteById(taskId);
         if (status > 0) {
             return ApiResult.ofMessage(I18nMsgConfig.getMessage("task.del.success"));
@@ -68,13 +79,23 @@ public class QuartzTaskController {
         return ApiResult.ofError(-1, I18nMsgConfig.getMessage("task.del.fail"));
     }
 
+    /**
+     * Get the task information by task id.
+     *
+     * @param taskId Long
+     */
     @PostMapping(value = "/get/{taskId}")
-    public ApiResult listTask(@PathVariable(name = "taskId") Long taskId) {
+    public ApiResult<QuartzTaskDO> listTask(@PathVariable(name = "taskId") Long taskId) {
         return ApiResult.ofData(quartzTaskService.findById(taskId));
     }
 
+    /**
+     * Run a task for once.
+     *
+     * @param taskId Long
+     */
     @PostMapping(value = "/runOnce/{taskId}")
-    public ApiResult runOnceTask(@PathVariable(name = "taskId") Long taskId) {
+    public ApiResult<String> runOnceTask(@PathVariable(name = "taskId") Long taskId) {
         int status = quartzTaskService.runOnce(taskId);
         if (status > 0) {
             return ApiResult.ofMessage(I18nMsgConfig.getMessage("task.run.success"));
@@ -82,8 +103,14 @@ public class QuartzTaskController {
         return ApiResult.ofError(-1, I18nMsgConfig.getMessage("task.run.fail"));
     }
 
+    /**
+     * Change task status.
+     *
+     * @param taskId Long
+     * @param status Integer
+     */
     @PostMapping(value = "/changeStatus/{taskId}/{status}")
-    public ApiResult changeTaskStatus(@PathVariable(name = "taskId") Long taskId, @PathVariable(name = "status") Integer status) {
+    public ApiResult<String> changeTaskStatus(@PathVariable(name = "taskId") Long taskId, @PathVariable(name = "status") Integer status) {
         int retStatus = quartzTaskService.updateTaskStatus(taskId, status);
         if (retStatus > 0) {
             return ApiResult.ofMessage(I18nMsgConfig.getMessage("task.changeStatus.success"));
