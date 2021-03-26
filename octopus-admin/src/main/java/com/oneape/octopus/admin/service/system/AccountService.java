@@ -1,25 +1,25 @@
 package com.oneape.octopus.admin.service.system;
 
+import com.oneape.octopus.admin.service.BaseService;
 import com.oneape.octopus.domain.system.UserDO;
 import com.oneape.octopus.dto.system.AppType;
 import com.oneape.octopus.dto.system.UserDTO;
 import com.oneape.octopus.dto.system.UserStatus;
-import com.oneape.octopus.admin.service.BaseService;
 
 import java.util.List;
 import java.util.Map;
 
 public interface AccountService extends BaseService<UserDO> {
 
-    long   ONE_MINUTE       = 60 * 1000;
-    int    TOKEN_TIMEOUT    = 60;
+    long ONE_MINUTE = 60 * 1000;
+    int TOKEN_TIMEOUT = 60;
     String TOKEN_INFO_SPLIT = "<@>";
 
     /**
      * Get user information according to token
      *
      * @param token String
-     * @return UserVO
+     * @return UserDTO
      */
     UserDTO getUserInfoByToken(String token);
 
