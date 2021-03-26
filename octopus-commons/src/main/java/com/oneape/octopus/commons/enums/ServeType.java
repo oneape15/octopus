@@ -29,7 +29,11 @@ public enum ServeType {
     /**
      * static text
      */
-    TEXT("TEXT", "static text");
+    TEXT("TEXT", "static text"),
+    /**
+     * The Dashboard type
+     */
+    DASHBOARD("Dashboard", "");
 
 
     private final String code;

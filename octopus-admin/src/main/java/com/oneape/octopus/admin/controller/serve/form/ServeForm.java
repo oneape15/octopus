@@ -35,6 +35,7 @@ public class ServeForm extends BaseForm implements Serializable {
     private Long   sortId;
     private String comment;
 
+    //
     private List<ServeParamDTO>  params;
     private List<ServeColumnDTO> columns;
     private ServeSqlDTO          sql;

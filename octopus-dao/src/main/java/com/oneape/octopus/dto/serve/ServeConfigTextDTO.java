@@ -2,6 +2,7 @@ package com.oneape.octopus.dto.serve;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -10,7 +11,7 @@ import java.util.List;
  * Modify:
  */
 @Data
-public class ServeConfigTextDTO {
+public class ServeConfigTextDTO implements Serializable {
     /**
      * the serve column information.
      */

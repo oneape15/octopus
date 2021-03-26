@@ -3,13 +3,15 @@ package com.oneape.octopus.dto.serve;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
-public class ServeSqlDTO {
+public class ServeSqlDTO implements Serializable {
     /**
      * dependency on the data source id
      */
-    private Long    datasourceId;
+    private Long datasourceId;
     /**
      * Cache time (seconds)
      */
@@ -21,10 +23,10 @@ public class ServeSqlDTO {
     /**
      * dsl sql content
      */
-    private String  text;
+    private String text;
     /**
      * description
      */
-    private String  comment;
+    private String comment;
 
 }

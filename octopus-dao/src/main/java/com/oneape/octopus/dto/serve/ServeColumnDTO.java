@@ -4,12 +4,14 @@ import com.oneape.octopus.commons.dto.DataType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * Serve field information DTO.
  */
 @Data
 @NoArgsConstructor
-public class ServeColumnDTO {
+public class ServeColumnDTO implements Serializable {
 
     /**
      * The serve column name.
