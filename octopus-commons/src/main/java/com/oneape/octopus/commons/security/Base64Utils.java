@@ -35,7 +35,7 @@ public class Base64Utils {
      * @param cipher String
      * @return byte[]
      */
-    public static byte[] fromBase64(String cipher) throws Exception {
+    public static byte[] fromBase64(String cipher) {
         if (StringUtils.isBlank(cipher)) {
             return null;
         }

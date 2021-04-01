@@ -3,15 +3,15 @@ package com.oneape.octopus.commons.security;
 import java.util.Arrays;
 
 /**
- * base58工具
+ * base58 tool.
  * Created by oneape<oneape15@163.com>
  * Created 2020-02-27 10:04.
  * Modify:
  */
 public class Base58Utils {
     private static final char[] ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".toCharArray();
-    private static final int    BASE_58  = ALPHABET.length;
-    private static final int    BASE_256 = 256;
+    private static final int BASE_58 = ALPHABET.length;
+    private static final int BASE_256 = 256;
 
     private static final int[] INDEXES = new int[128];
 

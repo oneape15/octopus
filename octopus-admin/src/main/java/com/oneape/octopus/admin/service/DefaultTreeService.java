@@ -57,7 +57,7 @@ public class DefaultTreeService {
                     id2parentIdMap.remove(id);
                 }
 
-                if (!id2parentIdMap.values().contains(parentId)) {
+                if (!id2parentIdMap.containsValue(parentId)) {
                     needRemoveParentIds.add(parentId);
                 }
             });

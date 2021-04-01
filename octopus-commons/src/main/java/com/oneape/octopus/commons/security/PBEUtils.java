@@ -10,65 +10,68 @@ import javax.crypto.spec.PBEParameterSpec;
 import java.security.Key;
 
 /**
- * PBE（Password Based Encryption 基于口令加密）算法结合了消息摘要算法和对称加密算法的优点。
- * 但是口令还是有可能被穷举出来，所以一般通过加盐salt的方式进行加密。PBE算法只是对已有算法进行了包装，通常有JDK和BC 两种实现。
+ * PBE（Password Based Encryption）
  * Created by oneape<oneape15@163.com>
  * Created 2020-04-30 16:48.
  * Modify:
  */
 @Slf4j
 public final class PBEUtils {
-    // 固定的盐值
-    private final static byte[] salt     = "octopus!".getBytes();
-    // 这个是加密用的口令
+    // Fixed salt value.
+    private final static byte[] salt = "octopus!".getBytes();
+    // This is the password for encryption.
     private final static String password = "octopus_is_very_gooooood";
+    // Number of iterations
+    private final static Integer iterTime = 50;
 
-    private static Key              key;
-    private static PBEParameterSpec parameterSpec;
-    private static Cipher           cipher;
+    private final static String secretKey = "PBEWITHMD5andDES";
+
+    private final static Key key;
+    private final static PBEParameterSpec parameterSpec;
+    private final static Cipher cipher;
 
     static {
         try {
-            //2.2 把密码转换成秘钥
+            // Convert the password to a secret key.
             PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray());
-            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBEWITHMD5andDES");
+            SecretKeyFactory factory = SecretKeyFactory.getInstance(secretKey);
             key = factory.generateSecret(pbeKeySpec);
-            parameterSpec = new PBEParameterSpec(salt, 100);//100是你选择迭代的次数
-            cipher = Cipher.getInstance("PBEWITHMD5andDES");
+            parameterSpec = new PBEParameterSpec(salt, iterTime);
+            cipher = Cipher.getInstance(secretKey);
         } catch (Exception e) {
-            log.error("生成PBE秘钥失败", e);
+            throw new RuntimeException(e);
         }
     }
 
     /**
-     * 加密
+     * encrypt
      *
-     * @param str 明文字符串
-     * @return String 十六进制加密字符串
+     * @param str Plaintext string
+     * @return String A hexadecimal string
      */
     public static String encrypt(String str) {
         if (StringUtils.isBlank(str)) {
-            throw new RuntimeException("加密字符串不能为空");
+            throw new RuntimeException("The encryption string is blank.");
         }
         try {
             cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec);
             byte[] result = cipher.doFinal(str.getBytes());
             return ByteArrayToStringUtils.bytes2String(result);
         } catch (Exception e) {
-            log.error("PBE加密字符串失败", e);
+            log.error("PBE encryption string failed.", e);
         }
         return null;
     }
 
     /**
-     * 解密
+     * decrypt
      *
-     * @param str String 十六进制字符串
-     * @return String 明文字符串
+     * @param str String A hexadecimal string
+     * @return String Plaintext string
      */
     public static String decrypt(String str) {
         if (StringUtils.isBlank(str)) {
-            throw new RuntimeException("解密字符串不能为空");
+            throw new RuntimeException("The decryption string is blank.");
         }
         try {
             cipher.init(Cipher.DECRYPT_MODE, key, parameterSpec);
@@ -77,7 +80,7 @@ public final class PBEUtils {
 
             return new String(result);
         } catch (Exception e) {
-            log.error("PBE解密失败", e);
+            log.error("PBE decryption string failed.", e);
         }
         return null;
     }

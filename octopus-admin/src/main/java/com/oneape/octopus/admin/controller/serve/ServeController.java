@@ -14,6 +14,7 @@ import com.oneape.octopus.commons.enums.ReportParamType;
 import com.oneape.octopus.commons.enums.ServeType;
 import com.oneape.octopus.commons.enums.VisualType;
 import com.oneape.octopus.commons.dto.Pair;
+import com.oneape.octopus.domain.serve.ServeGroupDO;
 import com.oneape.octopus.domain.serve.ServeInfoDO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -159,8 +160,8 @@ public class ServeController {
      */
     @GetMapping("/get/{serveId}")
     public ApiResult<ServeInfoDO> getById(@PathVariable(name = "serveId") Long serveId) {
-        ServeInfoDO vo = serveInfoService.findById(serveId);
-        return ApiResult.ofData(vo);
+        ServeInfoDO dto = serveInfoService.findById(serveId);
+        return ApiResult.ofData(dto);
     }
 
     /**
@@ -192,6 +193,17 @@ public class ServeController {
         List<Pair<Integer, String>> pairs = new ArrayList<>();
         ReportParamType.getList().forEach(rpt -> pairs.add(new Pair<>(rpt.getCode(), rpt.getDesc())));
         return ApiResult.ofData(pairs);
+    }
+
+    /**
+     * Get serve group information by id.
+     *
+     * @param groupId     Long
+     */
+    @GetMapping("/group/get/{groupId}")
+    public ApiResult<ServeGroupDO> getGroup(@PathVariable(name = "groupId") Long groupId) {
+        ServeGroupDO groupDO = serveGroupService.findById(groupId);
+        return ApiResult.ofData(groupDO);
     }
 
     /**

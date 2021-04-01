@@ -13,47 +13,47 @@ import java.security.Key;
 import java.security.SecureRandom;
 
 /**
- * AES使用的最多的对称加密算法，AES的优势之一是至今尚未被破解。AES通常用于移动通信系统加密以及基于SSH协议的软件.
+ * AES is the most widely used symmetric encryption algorithm,
+ * and one of the advantages of AES is that it has not yet been cracked.
+ * AES is commonly used for mobile communication system encryption and software based on SSH protocol.
  * Created by oneape<oneape15@163.com>
  * Created 2020-04-30 15:39.
  * Modify:
  */
 @Slf4j
 public final class AESUtils {
-    private final static String  password = "octopus_is_data_center";
-    private final static Charset charset  = StandardCharsets.UTF_8;
+    private final static String password = "octopus_is_data_center";
+    private final static Charset charset = StandardCharsets.UTF_8;
 
-    private static Key    key;
-    private static Cipher cipher;
+    private final static Key key;
+    private final static Cipher cipher;
 
     static {
         try {
-
-            //1.生成KEY
+            //1. gen key.
             KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
             SecureRandom sr = new SecureRandom(password.getBytes(charset));
             keyGenerator.init(sr);
             SecretKey secretKey = keyGenerator.generateKey();
             byte[] byteKey = secretKey.getEncoded();
-            log.info("byteKey: {}", ByteArrayToStringUtils.bytes2String(byteKey));
 
-            //2.转换KEY
+            //2. change key.
             key = new SecretKeySpec(byteKey, "AES");
             cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         } catch (Exception e) {
-            log.error("AES算法实例化失败", e);
+            throw new RuntimeException(e);
         }
     }
 
     /**
-     * 加密
+     * encrypt
      *
      * @param str String
-     * @return String 十六进制字符串
+     * @return String  A hexadecimal string.
      */
-    public static String encode(String str) {
+    public static String encrypt(String str) {
         if (StringUtils.isBlank(str)) {
-            throw new RuntimeException("加密字符串不能为空");
+            throw new RuntimeException("Encryption string is blank.");
         }
         try {
             cipher.init(Cipher.ENCRYPT_MODE, key);
@@ -61,29 +61,28 @@ public final class AESUtils {
 
             return ByteArrayToStringUtils.bytes2String(result);
         } catch (Exception e) {
-            log.error("加密字符串异常", e);
+            log.error("AES encrypt fail.", e);
         }
         return null;
     }
 
     /**
-     * 解密
+     * decrypt
      *
-     * @param str String 十六进制字符串
+     * @param str String  A hexadecimal string
      * @return String
      */
-    public static String decode(String str) {
+    public static String decrypt(String str) {
         if (StringUtils.isBlank(str)) {
-            throw new RuntimeException("解密字符串不能为空");
+            throw new RuntimeException("decryption string is blank.");
         }
         try {
-            //4.解密
             cipher.init(Cipher.DECRYPT_MODE, key);
             byte[] tmp = ByteArrayToStringUtils.String2bytes(str);
             byte[] result = cipher.doFinal(tmp);
             return new String(result);
         } catch (Exception e) {
-            log.error("解密操作失败", e);
+            log.error("AES decrypt fail.", e);
         }
         return null;
     }

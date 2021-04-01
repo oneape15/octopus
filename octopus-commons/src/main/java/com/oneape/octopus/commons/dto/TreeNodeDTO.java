@@ -23,21 +23,23 @@ import java.util.Map;
 public class TreeNodeDTO implements Serializable {
     public static final String KEY_LEAF_SIZE = "leafSize";
 
-    // 此项必须设置（其值在整个树范围内唯一）
+    // The parent node key.
+    private String pKey;
+    // The node key,This must be set（Its value is unique across the entire tree）
     private String key;
-    // 默认根据此属性值进行筛选（其值在整个树范围内唯一）
+    // The default filter is based on this property value（Its value is unique across the entire tree）
     private String value;
-    // 树节点显示的内容
+    // The content displayed by the tree node.
     private String title;
-    // 图标
+    // Icons displayed on tree nodes.
     private String icon;
-    // 子节点
+    // The node children.
     private List<TreeNodeDTO> children;
-    // 是否是叶子节点
+    // Leaf node marker
     private boolean isLeaf = true;
-    // 是否禁用
+    // disabled tag.
     private boolean disabled = false;
-    // 节点额外属性值
+    // Node additional attribute values.
     private Map<String, String> props = new HashMap<>();
 
     public TreeNodeDTO(String key, String title) {

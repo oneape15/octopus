@@ -34,9 +34,9 @@ import java.util.*;
 @Service
 public class ServeGroupServiceImpl extends DefaultTreeService implements ServeGroupService {
     @Resource
-    private ServeInfoMapper    serveInfoMapper;
+    private ServeInfoMapper serveInfoMapper;
     @Resource
-    private ServeGroupMapper   serveGroupMapper;
+    private ServeGroupMapper serveGroupMapper;
     @Resource
     private ServeRlGroupMapper serveRlGroupMapper;
 
@@ -255,6 +255,7 @@ public class ServeGroupServiceImpl extends DefaultTreeService implements ServeGr
 
                 // build group tree node
                 TreeNodeDTO node = new TreeNodeDTO(sg.getId() + "", sg.getName());
+                node.setPKey(parentId + "");
                 node.setIcon(sg.getIcon());
                 node.setLeafSize(groupWithSizeMap.getOrDefault(sg.getId(), 0));
                 id2NodeMap.put(sg.getId(), node);

@@ -3,14 +3,14 @@ package com.oneape.octopus.commons.security;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * byte数组转为字符串
+ * Byte array to String.
  * Created by oneape<oneape15@163.com>
  * Created 2020-02-27 10:05.
  * Modify:
  */
 public class ByteArrayToStringUtils {
     /**
-     * 下面这个函数用于将字节数组换成成字符串
+     * The byte array is replaced with a string.
      *
      * @param byteArray byte[]
      * @return String
@@ -29,7 +29,7 @@ public class ByteArrayToStringUtils {
     }
 
     /**
-     * 十六进制字符串转换成byte数组
+     * A hexadecimal string is converted to a byte array.
      *
      * @param hexString String
      * @return byte[]
@@ -41,7 +41,8 @@ public class ByteArrayToStringUtils {
         hexString = hexString.toLowerCase();
         final byte[] byteArray = new byte[hexString.length() / 2];
         int k = 0;
-        //因为是16进制，最多只会占用4位，转换成字节需要两个16进制的字符，高位在先
+        // Since it is hexadecimal, it takes up only four bits at most,
+        // and the conversion to bytes requires two hexadecimal characters, with the higher order coming first.
         for (int i = 0; i < byteArray.length; i++) {
             byte high = (byte) (Character.digit(hexString.charAt(k), 16) & 0xff);
             byte low = (byte) (Character.digit(hexString.charAt(k + 1), 16) & 0xff);
