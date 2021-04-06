@@ -59,7 +59,7 @@ public interface QueryFactory {
      * @param ddlSql String
      * @return Result
      */
-    Result runSql(DatasourceInfo dsi, String ddlSql);
+    Result execute(DatasourceInfo dsi, String ddlSql);
 
     /**
      * Perform SQL query operations.
@@ -68,7 +68,7 @@ public interface QueryFactory {
      * @param param ExecParam
      * @return Result
      */
-    Result execSql(DatasourceInfo dsi, ExecParam param);
+    Result executeQuery(DatasourceInfo dsi, ExecParam param);
 
     /**
      * Perform SQL query operations.
@@ -78,7 +78,7 @@ public interface QueryFactory {
      * @param process CellProcess
      * @return Result
      */
-    Result execSql(DatasourceInfo dsi, ExecParam param, CellProcess<Cell, Object> process);
+    Result executeQuery(DatasourceInfo dsi, ExecParam param, CellProcess<Cell, Object> process);
 
     /**
      * Export data to a local file.

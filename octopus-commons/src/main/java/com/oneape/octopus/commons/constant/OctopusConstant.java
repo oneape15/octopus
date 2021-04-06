@@ -12,7 +12,7 @@ public class OctopusConstant {
     /**
      * The system user id.
      */
-    public final static Long   SYS_USER     = -1L;
+    public final static Long SYS_USER = -1L;
 
     /**
      * The default value.
@@ -20,10 +20,10 @@ public class OctopusConstant {
     public final static Long DEFAULT_VALUE = 0L;
 
     public final static Integer YES = 1;
-    public final static Integer NO  = 0;
+    public final static Integer NO = 0;
 
     public final static Integer SUCCESS = 1;
-    public final static Integer FAIL    = 0;
+    public final static Integer FAIL = 0;
 
     public static boolean isSuccess(Integer status) {
         return SUCCESS.equals(status);

@@ -7,7 +7,11 @@ import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
-public class Value implements Serializable {
+public class Value implements Cloneable, Serializable {
+    /**
+     * The value name
+     */
+    private String name;
     /**
      * The data type
      */
@@ -15,18 +19,28 @@ public class Value implements Serializable {
     /**
      * The specific value
      */
-    private Object   value;
+    private Object value;
     /**
      * Whether to scope query
      */
-    private boolean  isRange;
+    private boolean isRange;
     /**
      * Is it a multi-valued query
      */
-    private boolean  isMulti;
+    private boolean isMulti;
 
     public Value(Object value, DataType dt) {
         this.value = value;
         this.dataType = dt;
+    }
+
+    @Override
+    public Value clone() {
+        try {
+            return (Value) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

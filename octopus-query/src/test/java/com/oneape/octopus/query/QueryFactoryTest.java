@@ -34,9 +34,9 @@ public class QueryFactoryTest {
         schema = "test";
 
         dsi = new DatasourceInfo();
-        dsi.setUsername("helloword");
+        dsi.setUsername("dx2");
         dsi.setPassword("helloword");
-        dsi.setUrl("jdbc:postgresql://127.0.0.1:5432/test");
+        dsi.setUrl("jdbc:postgresql://pg-dev.dian.so:5432/dx2");
         dsi.setDatasourceType(DatasourceTypeHelper.PostgreSQL);
 
         queryFactory = new DefaultQueryFactory(datasourceFactory);
@@ -124,7 +124,7 @@ public class QueryFactoryTest {
         execParam.setPageIndex(1);
         execParam.setPageSize(5);
 
-        Result result = queryFactory.execSql(dsi, execParam);
+        Result result = queryFactory.executeQuery(dsi, execParam);
 
         log.info("查询结果： {}", JSON.toJSONString(result));
     }
@@ -142,7 +142,7 @@ public class QueryFactoryTest {
         execParam.setPageIndex(1);
         execParam.setPageSize(5);
 
-        Result result = queryFactory.execSql(dsi, execParam, cell -> {
+        Result result = queryFactory.executeQuery(dsi, execParam, cell -> {
             if (StringUtils.equals("updator", cell.getHead().getLabel())) {
                 return String.valueOf(cell.getValue()) + "_大人";
             }

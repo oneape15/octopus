@@ -1,9 +1,9 @@
 package com.oneape.octopus.parse.xml;
 
 import com.oneape.octopus.commons.dto.Value;
+import com.oneape.octopus.parse.ParseFactory;
 import com.oneape.octopus.parse.data.ParseResult;
 import com.oneape.octopus.parse.data.SyntaxException;
-import com.oneape.octopus.parse.ParseFactory;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
@@ -15,6 +15,7 @@ import java.util.Map;
  * Modify:
  */
 public class XmlParseFactory implements ParseFactory {
+
     /**
      * parser the dsl language to sql.
      *
@@ -25,6 +26,7 @@ public class XmlParseFactory implements ParseFactory {
      */
     @Override
     public ParseResult parse(String dslSql, Map<String, Value> params) throws SyntaxException {
+
         // check the dsl sql.
         DslParser dslParser = new DslParser(dslSql, params);
         if (!dslParser.isGrammarStatus()) {
@@ -36,17 +38,6 @@ public class XmlParseFactory implements ParseFactory {
         pr.setValues(dslParser.getArgs());
 
         return pr;
-    }
-
-    /**
-     * Remove the SQL comment information.
-     *
-     * @param dslSql The dsl language text.
-     * @return String
-     */
-    @Override
-    public String clearCommaInfo(String dslSql) {
-        return DslParser.clearDslSqlString(dslSql);
     }
 
     /**

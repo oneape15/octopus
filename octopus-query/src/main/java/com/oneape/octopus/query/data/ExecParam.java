@@ -1,5 +1,6 @@
 package com.oneape.octopus.query.data;
 
+import com.oneape.octopus.commons.dsl.Macro;
 import com.oneape.octopus.commons.dto.Value;
 import lombok.Data;
 
@@ -38,9 +39,9 @@ public class ExecParam implements Serializable {
      */
     private Boolean needCountSize = Boolean.FALSE;
     /**
-     * Field alias list.
+     * The macro list.
      */
-    private Map<String, String> field2Alias;
+    private List<Macro> macros;
 
     public ExecParam() {
         this.pageIndex = -1;

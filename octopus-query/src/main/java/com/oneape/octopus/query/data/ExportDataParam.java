@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Export data param.
@@ -12,6 +13,10 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ExportDataParam extends ExecParam {
+    /**
+     * Field alias list.
+     */
+    private Map<String, String> field2Alias;
     /**
      * The local file title.
      */

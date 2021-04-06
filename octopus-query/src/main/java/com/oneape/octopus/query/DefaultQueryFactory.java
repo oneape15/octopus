@@ -182,10 +182,10 @@ public class DefaultQueryFactory implements QueryFactory {
      * @return Result
      */
     @Override
-    public Result runSql(DatasourceInfo dsi, String ddlSql) {
+    public Result execute(DatasourceInfo dsi, String ddlSql) {
         try (Connection conn = datasourceFactory.getConnection(dsi)) {
             Actuator actuator = ActuatorFactory.build(conn, dsi.getDatasourceType());
-            return actuator.runSql(ddlSql);
+            return actuator.execute(ddlSql);
         } catch (BizException be) {
             throw be;
         } catch (Exception e) {
@@ -202,8 +202,8 @@ public class DefaultQueryFactory implements QueryFactory {
      * @return Result
      */
     @Override
-    public Result execSql(DatasourceInfo dsi, ExecParam param) {
-        return execSql(dsi, param, null);
+    public Result executeQuery(DatasourceInfo dsi, ExecParam param) {
+        return executeQuery(dsi, param, null);
     }
 
     /**
@@ -215,10 +215,10 @@ public class DefaultQueryFactory implements QueryFactory {
      * @return Result
      */
     @Override
-    public Result execSql(DatasourceInfo dsi, ExecParam param, CellProcess<Cell, Object> process) {
+    public Result executeQuery(DatasourceInfo dsi, ExecParam param, CellProcess<Cell, Object> process) {
         try (Connection conn = datasourceFactory.getConnection(dsi)) {
             Actuator actuator = ActuatorFactory.build(conn, dsi.getDatasourceType());
-            return actuator.execSql(param, process);
+            return actuator.executeQuery(param, process);
         } catch (BizException be) {
             throw be;
         } catch (Exception e) {

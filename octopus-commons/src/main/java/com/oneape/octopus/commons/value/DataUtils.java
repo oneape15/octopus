@@ -78,6 +78,16 @@ public class DataUtils {
     }
 
     /**
+     * Convert Object to Integer.
+     *
+     * @param val String
+     * @return Integer
+     */
+    public static Integer obj2Integer(Object val) {
+        return obj2Integer(val, null);
+    }
+
+    /**
      * Convert Object to Integer with default value.
      *
      * @param val        String
@@ -90,6 +100,33 @@ public class DataUtils {
             return Integer.parseInt(String.valueOf(val));
         } catch (Exception e) {
             log.warn("Object:'{}' to Integer error!", val);
+        }
+        return defaultVal;
+    }
+
+    /**
+     * Convert Object to Integer.
+     *
+     * @param val String
+     * @return Integer
+     */
+    public static String obj2String(Object val) {
+        return obj2String(val, null);
+    }
+
+    /**
+     * Convert Object to Integer with default value.
+     *
+     * @param val        String
+     * @param defaultVal Integer
+     * @return Integer
+     */
+    public static String obj2String(Object val, String defaultVal) {
+        if (val == null) return defaultVal;
+        try {
+            return String.valueOf(val);
+        } catch (Exception e) {
+            log.warn("Object:'{}' to String error!", val);
         }
         return defaultVal;
     }
@@ -137,6 +174,16 @@ public class DataUtils {
     }
 
     /**
+     * Convert Object to Boolean.
+     *
+     * @param val String
+     * @return Boolean
+     */
+    public static Boolean obj2Boolean(Object val) {
+        return obj2Boolean(val, null);
+    }
+
+    /**
      * Convert Object to Boolean with default value.
      *
      * @param val        String
@@ -168,6 +215,34 @@ public class DataUtils {
     }
 
     /**
+     * Convert Object to Long.
+     *
+     * @param val String
+     * @return Long
+     */
+    public static Long obj2Long(Object val) {
+        return obj2Long(val, null);
+    }
+
+    /**
+     * Convert Object to Long with default value.
+     *
+     * @param val        String
+     * @param defaultVal Long
+     * @return Long
+     */
+    public static Long obj2Long(Object val, Long defaultVal) {
+        if (val == null) return defaultVal;
+
+        try {
+            return Long.parseLong(String.valueOf(val));
+        } catch (Exception e) {
+            log.warn("Object:'{}' to Long error!", val);
+        }
+        return defaultVal;
+    }
+
+    /**
      * Convert String to Float.
      *
      * @param val String
@@ -193,6 +268,16 @@ public class DataUtils {
             log.warn("String:'{}' to Float error!", val);
         }
         return defaultVal;
+    }
+
+    /**
+     * Convert Object to Float.
+     *
+     * @param val String
+     * @return Float
+     */
+    public static Float obj2Float(Object val) {
+        return obj2Float(val, null);
     }
 
     /**
@@ -241,6 +326,16 @@ public class DataUtils {
     }
 
     /**
+     * Convert Object to Double.
+     *
+     * @param val String
+     * @return Double
+     */
+    public static Double obj2Double(Object val) {
+        return obj2Double(val, null);
+    }
+
+    /**
      * Convert Object to Double with default value.
      *
      * @param val        String
@@ -283,6 +378,16 @@ public class DataUtils {
             log.warn("String:'{}' to BigDecimal error!", val);
         }
         return defaultVal;
+    }
+
+    /**
+     * Convert Object to BigDecimal.
+     *
+     * @param val String
+     * @return BigDecimal
+     */
+    public static BigDecimal obj2Decimal(Object val) {
+        return obj2Decimal(val, null);
     }
 
     /**

@@ -22,14 +22,6 @@ public interface ParseFactory {
     ParseResult parse(String dslSql, Map<String, Value> params) throws SyntaxException;
 
     /**
-     * Remove the SQL comment information.
-     *
-     * @param dslSql The dsl language text.
-     * @return String
-     */
-    String clearCommaInfo(String dslSql);
-
-    /**
      * Validate the DSL syntax
      *
      * @param dslSql The dsl language text.

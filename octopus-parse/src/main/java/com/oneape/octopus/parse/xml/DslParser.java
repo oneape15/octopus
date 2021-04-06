@@ -1,7 +1,7 @@
 package com.oneape.octopus.parse.xml;
 
-import com.oneape.octopus.commons.dto.Value;
 import com.oneape.octopus.commons.dto.Pair;
+import com.oneape.octopus.commons.dto.Value;
 import com.oneape.octopus.parse.data.SyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -25,6 +25,7 @@ public class DslParser {
     private static final String SEQ_COMMA_START = "/*";
     private static final String SEQ_COMMA_END = "*/";
     private static final int SEQ_COMMA_CHAR_LEN = SEQ_COMMA_END.length();
+    private static final Charset charset = StandardCharsets.UTF_8;
 
     // The node stack
     private final Stack<XmlNode> stack;
@@ -47,8 +48,11 @@ public class DslParser {
         this.stack = new Stack<>();
         this.paramMap = params == null ? new HashMap<>() : params;
 
+        // clear comma
+        this.rawSql = clearComma(rawSql);
+
         // parse the raw sql
-        parsing(rawSql);
+        parsingDsl();
 
         // Grammatical correctness detection.
         // Check if-elseif-else-fi
@@ -64,25 +68,22 @@ public class DslParser {
 
     /**
      * parse the raw sql
-     *
-     * @param rawSql String
      */
-    private void parsing(String rawSql) {
+    private void parsingDsl() {
         // Checks if the string is empty.
         if (StringUtils.isBlank(rawSql)) {
             log.warn("The rawSql is blank.");
             return;
         }
 
-        String neatDslString = clearDslSqlString(rawSql);
-        log.debug("The raw dsl String: {}", neatDslString);
-        int dslLen = neatDslString.length();
+        log.debug("The raw dsl String: {}", rawSql);
+        int dslLen = rawSql.length();
         if (dslLen <= 0) {
             return;
         }
 
         // Convert to an array of characters.
-        char[] chars = neatDslString.toCharArray();
+        char[] chars = rawSql.toCharArray();
 
         int prevIndex = 0;
         for (int i = 0; i < dslLen; ) {
@@ -588,15 +589,14 @@ public class DslParser {
     /**
      * Remove comments and line breaks and non-characters.
      * <p>
-     * 1. Remove line breaks
-     * 2. Remove comments
+     * a. Remove line breaks
+     * b. Remove comments
      *
      * @param rawSql The dsl sql text
      * @return String
      */
-    public static String clearDslSqlString(String rawSql) {
+    private String clearComma(String rawSql) {
         // Remove comments and line breaks and non-characters
-        Charset charset = StandardCharsets.UTF_8;
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(rawSql.getBytes(charset)), charset));
 

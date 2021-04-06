@@ -138,7 +138,7 @@ public class DdlAuditServiceImpl implements DdlAuditService {
         model.setExecutor(curUserId);
 
         // to execute ddl statements
-        Result result = queryFactory.runSql(dsInfo, model.getDdlText());
+        Result result = queryFactory.execute(dsInfo, model.getDdlText());
 
         int status;
         if (result.getStatus() == QueryStatus.SUCCESS) {

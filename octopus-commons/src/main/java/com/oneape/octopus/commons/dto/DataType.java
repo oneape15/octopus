@@ -16,7 +16,8 @@ public enum DataType {
     DATE,
     TIME,
     TIMESTAMP,
-    DATETIME;
+    DATETIME,
+    JSON;
 
     public static DataType byName(String name) {
         if (StringUtils.isBlank(name)) {
@@ -47,4 +48,6 @@ public enum DataType {
                 return false;
         }
     }
+
+
 }

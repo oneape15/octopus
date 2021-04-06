@@ -235,7 +235,7 @@ public class PeekServiceImpl implements PeekService {
         param.setPageIndex(0);
         param.setNeedCountSize(true);
 
-        return queryFactory.execSql(dsi, param);
+        return queryFactory.executeQuery(dsi, param);
     }
 
     /**

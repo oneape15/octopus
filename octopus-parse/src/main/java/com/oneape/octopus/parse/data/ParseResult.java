@@ -16,9 +16,9 @@ import java.util.Map;
 @Data
 public class ParseResult implements Serializable {
     // The sql of parse.
-    private String              rawSql;
-    // Replace  in rawSql the '?' char, List of values .
-    private List<Value>         values;
+    private String rawSql;
+    // Replace  in rawSql the '?' char, List of values.
+    private List<Value> values;
     // The alias for the field name is null by default.
     private Map<String, String> field2Alias;
 }
