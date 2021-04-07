@@ -1,4 +1,4 @@
-package com.oneape.octopus.commons.dto;
+package com.oneape.octopus.commons.enums;
 
 /**
  * Table item related properties.

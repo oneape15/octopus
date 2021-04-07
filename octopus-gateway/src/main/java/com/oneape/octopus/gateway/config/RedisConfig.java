@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 
 /**
  * Created by oneape<oneape15@163.com>
- * Created 2021-02-02 14:57.
+ * Created 2021-02-02 14:57
  * Modify:
  */
 @Configuration

@@ -3,6 +3,7 @@ package com.oneape.octopus.commons.dsl;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +25,11 @@ public class CrossTabMacro extends Macro {
     /**
      * Category value field name.
      */
-    private String typeValueKey;
+    private String typeShowKey;
+    /**
+     * crosstab keys
+     */
+    private List<String> crossKeys;
 
     /**
      * Get the macro type.
@@ -44,5 +49,31 @@ public class CrossTabMacro extends Macro {
     @Override
     public boolean isCompositeQuery() {
         return false;
+    }
+
+    /**
+     * Add the row key
+     *
+     * @param key String
+     * @return CrossTabMacro
+     */
+    public CrossTabMacro addRowKey(String key) {
+        if (rowKeys == null) rowKeys = new ArrayList<>();
+
+        rowKeys.add(key);
+        return this;
+    }
+
+    /**
+     * Add the cross key
+     *
+     * @param key String
+     * @return CrossTabMacro
+     */
+    public CrossTabMacro addCrossKey(String key) {
+        if (crossKeys == null) crossKeys = new ArrayList<>();
+
+        crossKeys.add(key);
+        return this;
     }
 }

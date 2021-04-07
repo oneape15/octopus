@@ -11,11 +11,10 @@ import com.alibaba.excel.write.builder.ExcelWriterBuilder;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.google.common.base.Preconditions;
 import com.oneape.octopus.commons.cause.BizException;
-import com.oneape.octopus.commons.constant.OctopusConstant;
 import com.oneape.octopus.commons.dsl.*;
 import com.oneape.octopus.commons.dto.*;
-import com.oneape.octopus.commons.enums.DateType;
 import com.oneape.octopus.commons.enums.FileType;
+import com.oneape.octopus.commons.enums.TabulationCellPropKey;
 import com.oneape.octopus.commons.files.EasyCsv;
 import com.oneape.octopus.commons.files.ZipUtils;
 import com.oneape.octopus.commons.value.CodeBuilderUtils;
@@ -26,14 +25,11 @@ import com.oneape.octopus.query.CellProcess;
 import com.oneape.octopus.query.data.*;
 import com.oneape.octopus.query.schema.SchemaTable;
 import com.oneape.octopus.query.schema.SchemaTableField;
-import com.zaxxer.hikari.pool.HikariProxyPreparedStatement;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.xmlbeans.impl.regex.REUtil;
-import org.h2.table.Column;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -460,7 +456,7 @@ public abstract class Actuator {
     }
 
     /**
-     * Crosstab query
+     * year on year query
      *
      * @param result  Result
      * @param param   ExecParam
@@ -675,6 +671,8 @@ public abstract class Actuator {
         List<String> fields = new ArrayList<>();
         if (CollectionUtils.isEmpty(compareFiledList)) {
             heads.forEach(ch -> fields.add(ch.getName()));
+        } else {
+            fields.addAll(compareFiledList);
         }
 
         if (CollectionUtils.isNotEmpty(compareFilterFiledList)) {
@@ -714,27 +712,75 @@ public abstract class Actuator {
             // execute query
             try (ResultSet rs = ps.executeQuery()) {
                 final List<ColumnHead> columnHeads = getColumnHeads(rs.getMetaData());
-
+                Map<String, ColumnHead> crossHeadMap = new HashMap<>();
                 while (rs.next()) {
                     // get one row.
                     Map<String, Object> row = getRow(rs, columnHeads, process);
 
                     String crossTabRowKey = calcCrossTabRowKey(row, macro.getRowKeys());
-                    String typeNameKey = DataUtils.obj2String(row.getOrDefault(macro.getTypeNameKey(), "other"));
-                    Object typeNameValue = row.getOrDefault(macro.getTypeValueKey(), null);
+
+                    String typeNameValue = DataUtils.obj2String(row.getOrDefault(macro.getTypeNameKey(), "other"));
+                    String typeLabelValue = "";
+                    if (StringUtils.isNotBlank(macro.getTypeShowKey())) {
+                        typeLabelValue = DataUtils.obj2String(row.getOrDefault(macro.getTypeShowKey(), ""));
+                    }
+
+                    Map<String, Object> rowKeyMap = new HashMap<>();
+                    Map<String, Object> crossMap = new HashMap<>();
+                    for (ColumnHead ch : columnHeads) {
+                        String key = ch.getName();
+                        if (StringUtils.equals(key, macro.getTypeNameKey()) ||
+                                StringUtils.equals(key, macro.getTypeShowKey())) {
+                            continue;
+                        }
+
+                        if (macro.getRowKeys().contains(key)) {
+                            rowKeyMap.put(key, row.get(key));
+                        } else {
+                            String crossKey = typeNameValue + "_" + key;
+                            crossMap.put(crossKey, row.get(key));
+                            if (!crossHeadMap.containsKey(crossKey)) {
+                                ColumnHead crossHead = new ColumnHead(crossKey, typeLabelValue + "_" + ch.getLabel());
+                                crossHead.setDataType(ch.getDataType());
+                                crossHeadMap.put(crossKey, crossHead);
+                            }
+                        }
+                    }
+
                     if (rowsMap.containsKey(crossTabRowKey)) {
-                        rowsMap.get(crossTabRowKey).put(typeNameKey, typeNameValue);
+                        rowsMap.get(crossTabRowKey).putAll(crossMap);
                     } else {
                         Map<String, Object> tmpMap = new HashMap<>();
-                        macro.getRowKeys().forEach(k -> tmpMap.put(k, row.get(k)));
-                        tmpMap.put(typeNameKey, typeNameValue);
+                        tmpMap.putAll(rowKeyMap);
+                        tmpMap.putAll(crossMap);
                         rowsMap.put(crossTabRowKey, tmpMap);
                     }
                 }
                 result.setStatus(QueryStatus.SUCCESS);
-                result.setRows((List<Map<String, Object>>) rowsMap.values());
-                result.setCountSize(result.getRows().size());
+
+                // Replenish the missing KV.
+                List<Map<String, Object>> rows = new ArrayList<>();
+                if (!rowsMap.isEmpty()) {
+                    rowsMap.forEach((k, v) -> {
+                        crossHeadMap.keySet().forEach(crossKey -> {
+                            if (!v.containsKey(crossKey)) v.put(crossKey, null);
+                        });
+                        rows.add(v);
+                    });
+                }
+                result.setRows(rows);
+                result.setCountSize(rows.size());
                 result.setCountSql(null);
+
+                // column set
+                List<ColumnHead> chList = new ArrayList<>();
+                for (ColumnHead ch : columnHeads) {
+                    if (macro.getRowKeys().contains(ch.getName())) {
+                        chList.add(ch);
+                    }
+                }
+                crossHeadMap.forEach((k, v) -> chList.add(v));
+                result.setColumns(chList);
             }
         } catch (Exception e) {
             log.error("SQL execution error, sql: {}", sql, e);

@@ -347,7 +347,7 @@ public class DataUtils {
         try {
             return Double.parseDouble(String.valueOf(val));
         } catch (Exception e) {
-            log.warn("Object:'{}' to Float error!", val);
+            log.warn("Object:'{}' to Double error!", val);
         }
         return defaultVal;
     }
@@ -402,7 +402,7 @@ public class DataUtils {
         try {
             return new BigDecimal(String.valueOf(val));
         } catch (Exception e) {
-            log.warn("Object:'{}' to Float error!", val);
+            log.warn("Object:'{}' to BigDecimal error!", val);
         }
         return defaultVal;
     }

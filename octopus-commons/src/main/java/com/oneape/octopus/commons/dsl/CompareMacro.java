@@ -4,6 +4,7 @@ import com.oneape.octopus.commons.enums.DateType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -57,5 +58,44 @@ public class CompareMacro extends Macro {
     @Override
     public boolean isCompositeQuery() {
         return true;
+    }
+
+    /**
+     * Add the row key
+     *
+     * @param key String
+     * @return CompareMacro
+     */
+    public CompareMacro addRowKey(String key) {
+        if (rowKeys == null) rowKeys = new ArrayList<>();
+
+        rowKeys.add(key);
+        return this;
+    }
+
+    /**
+     * Add the compare key
+     *
+     * @param key String
+     * @return CompareMacro
+     */
+    public CompareMacro addCompareKey(String key) {
+        if (compareFilterFiledList == null) compareFilterFiledList = new ArrayList<>();
+
+        compareFilterFiledList.add(key);
+        return this;
+    }
+
+    /**
+     * Add the filter key
+     *
+     * @param key String
+     * @return CompareMacro
+     */
+    public CompareMacro addFilterKey(String key) {
+        if (compareFiledList == null) compareFiledList = new ArrayList<>();
+
+        compareFiledList.add(key);
+        return this;
     }
 }
