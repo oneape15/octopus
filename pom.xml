@@ -56,7 +56,7 @@
         <commons-fileupload.version>1.4</commons-fileupload.version>
         <logback-classic.version>1.2.3</logback-classic.version>
         <mysql-connector-java.version>8.0.18</mysql-connector-java.version>
-        <postgresql.version>42.2.9</postgresql.version>
+        <postgresql.version>42.2.25</postgresql.version>
         <odps-jdbc.version>3.2.0</odps-jdbc.version>
         <persistence-api.version>1.0.2</persistence-api.version>
         <javax.mail.version>1.6.2</javax.mail.version>
