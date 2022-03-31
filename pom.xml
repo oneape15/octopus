@@ -37,7 +37,7 @@
         <spring-cloud-starter-bus-kafka.version>3.0.1</spring-cloud-starter-bus-kafka.version>
         <spring-cloud-starter-bus-amqp.version>3.0.1</spring-cloud-starter-bus-amqp.version>
         <spring-cloud-starter-stream-kafka.version>3.1.1</spring-cloud-starter-stream-kafka.version>
-        <spring-boot-starter-webflux.version>2.4.2</spring-boot-starter-webflux.version>
+        <spring-boot-starter-webflux.version>2.5.12</spring-boot-starter-webflux.version>
         <spring-boot-admin-starter-client.version>2.3.1</spring-boot-admin-starter-client.version>
         <spring-cloud-starter-netflix-hystrix.version>2.2.6.RELEASE</spring-cloud-starter-netflix-hystrix.version>
         <spring-boot-starter-jdbc.version>2.4.3</spring-boot-starter-jdbc.version>
